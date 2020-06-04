@@ -26,7 +26,7 @@ export class RunComponent implements OnInit {
   availablePorts: any;
   currentPort: any;
   requests = [];
-
+  testReport : any;
   constructor(
     private localStorageService: LocalStorageService,
     private dataService: DataService,
@@ -48,7 +48,12 @@ export class RunComponent implements OnInit {
     this.dataSource = this.run.tests;
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
+    this.dataService.getTestReport(this.run.runId).subscribe(
+      body => {
+        console.log(body);
+      },
+      error => window.alert(error)
+    );
   }
 
   applyFilter(event: Event) {

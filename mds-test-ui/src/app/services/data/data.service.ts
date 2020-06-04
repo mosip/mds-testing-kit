@@ -18,6 +18,13 @@ export class DataService {
         catchError(this.handleError)
       );
   }
+  
+  getTestReport(runId) {
+    return this.httpClient.get(environment.base_url + 'testmanager/report/'+runId)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 
   getTests(requestBody) {
     return this.httpClient.post(environment.base_url + 'testmanager/test', requestBody)
