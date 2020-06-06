@@ -26,6 +26,7 @@ export class RunComponent implements OnInit {
   availablePorts: any;
   currentPort: any;
   requests = [];
+  objectKeys = Object.keys;
   testReport : any;
   constructor(
     private localStorageService: LocalStorageService,
