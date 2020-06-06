@@ -48,14 +48,16 @@ export class RunComponent implements OnInit {
     this.dataSource = this.run.tests;
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.dataService.getTestReport(this.run.runId).subscribe(
+    this.fetchReport();
+  }
+  fetchReport(){
+   this.dataService.getTestReport(this.run.runId).subscribe(
       body => {
         console.log(body);
       },
       error => window.alert(error)
     );
   }
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
