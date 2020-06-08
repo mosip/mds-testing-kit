@@ -481,7 +481,8 @@ public class TestManager {
 
 	private String ProcessResponse(TestResult testResult)
 	{
-		String renderContent = "";
+		//if(allTests.get(testResult.testId).testId == "capture")
+		String renderContent = "<img src=\"https://www.mosip.io/images/logo.png\"/>";
 		return renderContent;
 	}
 
