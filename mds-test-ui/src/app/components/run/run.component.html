@@ -1,112 +1,76 @@
-<mat-form-field appearance="fill">
-  <mat-label>Available Ports</mat-label>
-  <mat-select (selectionChange)='OnPortSelect($event.value)'>
-    <mat-option *ngFor="let port of availablePorts" [value]="port">
-      {{port}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-<mat-form-field appearance="fill">
-  <mat-label>Device</mat-label>
-  <mat-select [(ngModel)]="selectedDevice">
-    <mat-option *ngFor="let obj of devices;" [value]="obj">{{obj.purpose + obj.deviceId}}</mat-option>
-  </mat-select>
-</mat-form-field>
-<button mat-raised-button
-        (click)="onRunClicked()">
-  RUN
-</button>
-<br/>
-<!--<pre>{{run | json}}</pre>-->
-
-
-<!--Table Starts-->
-<div class="table">
-  <mat-form-field >
-    <mat-label>Filter</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia">
+<app-discover-devices></app-discover-devices>
+<!--TODO: *ngIf="!testReportObject"-->
+<div >
+  <mat-form-field appearance="fill">
+    <mat-label>Available Ports</mat-label>
+    <mat-select (selectionChange)='OnPortSelect($event.value)'>
+      <mat-option *ngFor="let port of availablePorts" [value]="port">
+        {{port}}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
-
-  <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource" matSort>
-
-      <!-- ID Column -->
-      <ng-container matColumnDef="testId">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> TEST ID </th>
-        <td mat-cell *matCellDef="let row"> {{row}}</td>
-      </ng-container>
-
-      <!-- Progress Column -->
-      <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-        <td mat-cell *matCellDef="let row">
-          <span *ngIf="isComplete(row)">View </span>
-          <span *ngIf="!isComplete(row)">Run </span>
-        </td>
-      </ng-container>
-
-<!--      &lt;!&ndash; Name Column &ndash;&gt;-->
-<!--      <ng-container matColumnDef="createdOn">-->
-<!--        <th mat-header-cell *matHeaderCellDef mat-sort-header> Created On </th>-->
-<!--        <td mat-cell *matCellDef="let row"> {{row.createdOn | date: 'full'}} </td>&lt;!&ndash;use 'long' to remove day&ndash;&gt;-->
-<!--      </ng-container>-->
-
-      <!-- Color Column -->
-      <!--    <ng-container matColumnDef="color">-->
-      <!--      <th mat-header-cell *matHeaderCellDef mat-sort-header> Color </th>-->
-      <!--      <td mat-cell *matCellDef="let row" [style.color]="row.color"> {{row.color}} </td>-->
-      <!--    </ng-container>-->
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;">
-      </tr>
-    </table>
-
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
-  </div>
+  <mat-form-field appearance="fill">
+    <mat-label>Device</mat-label>
+    <mat-select [(ngModel)]="selectedDevice">
+      <mat-option *ngFor="let obj of devices;" [value]="obj">{{obj.purpose + obj.deviceId}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-raised-button
+          (click)="onRunClicked()">
+    RUN
+  </button>
 </div>
+<br/>
+<!--Form Ends-->
 
+<mat-accordion *ngIf="testReportObject">
+  <mat-expansion-panel *ngFor="let key of objectKeys(testReportObject.testReport)">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{key}}
+      </mat-panel-title>
+      <mat-panel-description>
+        {{testReportObject.testReport[key].validationResults[0].status}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-tab-group>
+      <mat-tab label="Description">
+        <p>Executed On: {{testReportObject.testReport[key].executedOn | date}}</p>
+        <br/>
+        <p *ngIf="testReportObject.testReport[key].summary">{{testReportObject.testReport[key].summary}}</p>
+      </mat-tab>
+      <mat-tab label="Validation Result">
+        <mat-accordion>
+          <mat-expansion-panel *ngFor="let result of testReportObject.testReport[key].validationResults">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span *ngIf="result.status == 'Passed'" class="material-icons" style="margin-right: 24px;color: green;">done</span>
+                <span *ngIf="result.status == 'Failed' || result.status == 'InternalException'" class="material-icons" style="margin-right: 24px;color: red;">highlight_off</span>
+                <span *ngIf="result.status == 'Pending'" class="material-icons" style="margin-right: 24px;color: yellow;">hourglass_full</span>
+                {{result.validationName}}
+              </mat-panel-title>
+              <mat-panel-description>
+                {{result.validationDescription}}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <pre *ngIf="result.errors.isEmpty">{{ result.errors | json}}</pre>
+          </mat-expansion-panel>
+        </mat-accordion>
 
-<mat-tab-group *ngIf="testReportObject">
-  <mat-tab *ngFor="let key of objectKeys(testReportObject.testReport)" label="{{key}}">
-    Executed On: {{testReportObject.testReport[key].executedOn | date: 'full'}}
-    <mat-accordion>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Validation results
-          </mat-panel-title>
-          <mat-panel-description>
-            {{testReportObject.testReport[key].validationResults[0].status}}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-
-        <pre>{{testReportObject.testReport[key].validationResults | json}}</pre>
-      </mat-expansion-panel>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Request Data
-          </mat-panel-title>
-          <mat-panel-description>
-
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-
-        <pre>{{testReportObject.testReport[key].requestData | json}}</pre>
-      </mat-expansion-panel>
-      <mat-expansion-panel (opened)="panelOpenState = true"
-                           (closed)="panelOpenState = false">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Response Data
-          </mat-panel-title>
-          <mat-panel-description>
-            Currently I am {{panelOpenState ? 'open' : 'closed'}}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
+      </mat-tab>
+      <mat-tab label="Request">
+        <!--        TODO: wrap texts-->
+        <p>{{testReportObject.testReport[key].requestData | json}}</p>
+      </mat-tab>
+      <mat-tab label="Response">
         <pre>{{testReportObject.testReport[key].responseData | json}}</pre>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </mat-tab>
-</mat-tab-group>
+      </mat-tab>
+      <mat-tab label="Result">
+        <div>
+          <!--            TODO: Render as html-->
+          {{testReportObject.testReport[key].renderContent}}
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-expansion-panel>
+</mat-accordion>

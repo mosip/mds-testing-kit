@@ -25,3 +25,10 @@ td, th {
 .table {
   margin: 15px 20px;
 }
+
+
+mat-tab {
+  /*height: 400px;*/
+  /*height: 400px;*/
+  /*TODO: Fix height of tabs*/
+}
