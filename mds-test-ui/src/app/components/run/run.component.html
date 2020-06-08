@@ -56,20 +56,15 @@
             <pre *ngIf="result.errors.isEmpty">{{ result.errors | json}}</pre>
           </mat-expansion-panel>
         </mat-accordion>
-
       </mat-tab>
       <mat-tab label="Request">
-        <!--        TODO: wrap texts-->
-        <p>{{testReportObject.testReport[key].requestData | json}}</p>
+        <pre>{{JSON.parse(testReportObject.testReport[key].requestData) | json}}</pre>
       </mat-tab>
       <mat-tab label="Response">
-        <pre>{{testReportObject.testReport[key].responseData | json}}</pre>
+        <pre>{{JSON.parse(testReportObject.testReport[key].responseData) | json}}</pre>
       </mat-tab>
       <mat-tab label="Result">
-        <div>
-          <!--            TODO: Render as html-->
-          {{testReportObject.testReport[key].renderContent}}
-        </div>
+        <div [innerHTML]="testReportObject.testReport[key].renderContent"></div>
       </mat-tab>
     </mat-tab-group>
   </mat-expansion-panel>
