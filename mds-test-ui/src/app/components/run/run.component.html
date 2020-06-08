@@ -33,9 +33,9 @@
         {{testReportObject.testReport[key].validationResults[0].status}}
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <mat-tab-group>
+    <mat-tab-group dynamicHeight>
       <mat-tab label="Description">
-        <p>Executed On: {{testReportObject.testReport[key].executedOn | date}}</p>
+        <p>Executed On: {{testReportObject.testReport[key].executedOn | date: 'full'}}</p>
         <br/>
         <p *ngIf="testReportObject.testReport[key].summary">{{testReportObject.testReport[key].summary}}</p>
       </mat-tab>
