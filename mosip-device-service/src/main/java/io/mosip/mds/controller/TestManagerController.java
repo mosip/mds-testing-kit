@@ -2,7 +2,6 @@ package io.mosip.mds.controller;
 
 import io.mosip.mds.entitiy.*;
 
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +16,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import java.io.IOException;
 
 @CrossOrigin("*")
 @RestController
