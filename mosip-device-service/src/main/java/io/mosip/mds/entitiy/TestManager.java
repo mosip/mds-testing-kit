@@ -26,10 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.util.Arrays;
-import java.util.Base64;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -340,8 +337,8 @@ public class TestManager {
 
 		return new HttpEntity<byte[]>(baos.toByteArray(), header);
 	}
+
 	public ByteArrayOutputStream generatePdf(String html) {
-		String pdfFilePath = "";
 		PdfWriter pdfWriter = null;
 		Document document = new Document();
 		try {
@@ -481,88 +478,43 @@ public class TestManager {
 
 	private String ProcessResponse(TestResult testResult)
 	{
-		//if(allTests.get(testResult.testId).testId == "capture")
-		String renderContent = "<img src=\"https://www.mosip.io/images/logo.png\"/>";
+		String method = allTests.get(testResult.testId).method;
+		String renderContent = "";
+		switch(method)
+		{
+			case "capture":
+				renderContent += CaptureHelper.Render(CaptureHelper.Decode(testResult.responseData));
+				break;
+			case "rcapture":
+				renderContent += CaptureHelper.Render(CaptureHelper.Decode(testResult.responseData));
+				break;
+			case "deviceinfo":
+				DeviceInfoResponse[] diResponse = DecodeDeviceInfo(testResult.responseData);
+				for (DeviceInfoResponse deviceInfoResponse : diResponse) {
+					renderContent += DeviceInfoHelper.Render(deviceInfoResponse) + "<BR/>";
+				} 
+				renderContent = "";
+				break;
+			case "discover":
+				DiscoverResponse[] dResponse = DecodeDiscoverInfo(testResult.responseData);
+				for (DiscoverResponse discoverResponse : dResponse) {
+					renderContent += DiscoverHelper.Render(discoverResponse) + "<BR/>";
+				} 
+				break;
+			case "stream":
+				renderContent = "<p><u>Stream Output</u></p><img alt=\"stream video feed\" src=\"127.0.0.1:4501/stream\" style=\"height:200;width:200;\">";
+				break;
+			default:
+				renderContent = "<img src=\"https://www.mosip.io/images/logo.png\"/>";
+		}
 		return renderContent;
 	}
 
 	public DiscoverResponse[] DecodeDiscoverInfo(String discoverInfo) {
-		DiscoverResponse[] response = new DiscoverResponse[1];
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		try {
-			response = (DiscoverResponse[]) (mapper.readValue(discoverInfo.getBytes(), DiscoverResponse[].class));
-			for(DiscoverResponse resp:response)
-			{
-				try {
-					if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
-						resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
-					else
-					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(
-						new String(Base64.getDecoder().decode(resp.digitalId)).getBytes(),
-						DigitalId.class));
-				}
-				catch(Exception dex)
-				{
-					resp.analysisError = "Error interpreting digital id: " + dex.getMessage();		
-				}
-			}
-		}
-		catch(Exception ex)
-		{
-			response[0] = new DiscoverResponse();
-			response[0].analysisError = "Error parsing discover info: " + ex.getMessage();
-		}
-		return response;
+		return DiscoverHelper.Decode(discoverInfo);
 	}
 
 	public DeviceInfoResponse[] DecodeDeviceInfo(String deviceInfo) {
-		DeviceInfoMinimal[] input = null;
-		List<DeviceInfoResponse> response = new ArrayList<DeviceInfoResponse>();
-		ObjectMapper mapper = new ObjectMapper();
-		Pattern pattern = Pattern.compile("(?<=\\.)(.*)(?=\\.)");
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		try {
-			input = (DeviceInfoMinimal[])(mapper.readValue(deviceInfo.getBytes(), DeviceInfoMinimal[].class));
-			for(DeviceInfoMinimal respMin:input)
-			{
-				DeviceInfoResponse resp = new DeviceInfoResponse();
-				try
-				{
-					Matcher matcher = pattern.matcher(respMin.deviceInfo);
-					String afterMatch = null;
-					if (matcher.find()) {
-						afterMatch = matcher.group(1);
-					}			
-					String result = new String(
-						Base64.getUrlDecoder().decode(new String(Base64.getUrlDecoder().decode(afterMatch)).getBytes()));
-					resp = (DeviceInfoResponse) (mapper.readValue(result.getBytes(), DeviceInfoResponse.class));
-				
-					try {
-						if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
-							resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
-						else
-						resp.digitalIdDecoded = (DigitalId) (mapper.readValue(
-							new String(Base64.getDecoder().decode(resp.digitalId)).getBytes(),
-							DigitalId.class));
-					}
-					catch(Exception dex)
-					{
-						resp.analysisError = "Error interpreting digital id: " + dex.getMessage();
-					}
-				}
-				catch(Exception rex)
-				{
-					resp.analysisError = "Error interpreting device info id: " + rex.getMessage();
-				}
-				response.add(resp);
-			}
-		} catch (Exception exception) {
-			DeviceInfoResponse errorResp = new DeviceInfoResponse();
-			errorResp.analysisError = "Error parsing request input" + exception.getMessage();
-			response.add(errorResp);
-		}
-		return response.toArray(new DeviceInfoResponse[response.size()]);
+		return DeviceInfoHelper.Decode(deviceInfo);
 	}
 }

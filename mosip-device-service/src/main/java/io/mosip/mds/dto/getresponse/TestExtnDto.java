@@ -9,6 +9,9 @@ import lombok.Data;
 @Data
 public class TestExtnDto {
 
+	@ApiModelProperty(value = "method", required = true, dataType = "java.lang.String")
+	public String method;
+
 	@ApiModelProperty(value = "testId", required = true, dataType = "java.lang.String")
 	public String testId;
 	

@@ -1,20 +1,16 @@
 [
     {
-        "testId": "discover",
+        "testId": "discover device",
+        "method": "discover",
         "testDescription": null,
         "requestGenerator": null,
-        "uiInput": [
-            {
-                "field": "port",
-                "behaviour": "numeric"
-            }
-        ],
+        "uiInput": null,
         "processes": [
             "REGISTRATION",
             "AUTHENTICATION"
         ],
         "biometricTypes": [
-            "FINGERPRINT"
+            "FINGERPRINT", "FACE", "IRIS"
         ],
         "deviceTypes": [
             "SLAP",
@@ -29,7 +25,8 @@
         ]
     },
     {
-        "testId": "capture",
+        "testId": "device info",
+        "method": "deviceinfo",
         "testDescription": null,
         "requestGenerator": null,
         "uiInput": null,
@@ -38,11 +35,121 @@
             "AUTHENTICATION"
         ],
         "biometricTypes": [
-            "FINGERPRINT"
+            "FINGERPRINT", "IRIS", "FACE"
         ],
         "deviceTypes": [
             "SLAP",
             "FINGER"
+        ],
+        "mdsSpecVersions": null,
+        "validators": [
+            {
+                "Name": "CoinTossValidator",
+                "Description": "Randomly succeeding or failing validator"
+            },
+            {
+                "Name": "AlwaysPassValidator",
+                "Description": "Always passing validator"
+            }
+        ]
+    },
+    {
+        "testId": "stream input",
+        "method": "stream",
+        "testDescription": null,
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "REGISTRATION"
+        ],
+        "biometricTypes": [
+            "FINGERPRINT", "FACE", "IRIS"
+        ],
+        "deviceTypes": [
+            "SLAP",
+            "FINGER",
+            "MONOCULAR",
+            "BINOCULAR",
+            "CAMERA"
+        ],
+        "mdsSpecVersions": null,
+        "validators": [
+            {
+                "Name": "CoinTossValidator",
+                "Description": "Randomly succeeding or failing validator"
+            }
+        ]
+    },
+    {
+        "testId": "registration capture",
+        "method": "rcapture",
+        "testDescription": null,
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "REGISTRATION"
+        ],
+        "biometricTypes": [
+            "FINGERPRINT", "FACE", "IRIS"
+        ],
+        "deviceTypes": [
+            "SLAP",
+            "CAMERA",
+            "BINOCULAR"
+        ],
+        "mdsSpecVersions": null,
+        "validators": [
+            {
+                "Name": "AlwaysPassValidator",
+                "Description": "Always passing validator"
+            }
+        ]
+    },
+    {
+        "testId": "registration capture fail case",
+        "method": "rcapture",
+        "testDescription": null,
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "REGISTRATION"
+        ],
+        "biometricTypes": [
+            "FINGERPRINT", "FACE", "IRIS"
+        ],
+        "deviceTypes": [
+            "SLAP",
+            "CAMERA",
+            "BINOCULAR"
+        ],
+        "mdsSpecVersions": null,
+        "validators": [
+            {
+                "Name": "CoinTossValidator",
+                "Description": "Randomly succeeding or failing validator"
+            },
+            {
+                "Name": "AlwaysFailValidator",
+                "Description": "Always failing validator"
+            }
+        ]
+    },
+    {
+        "testId": "capture",
+        "method": "capture",
+        "testDescription": null,
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "REGISTRATION"
+        ],
+        "biometricTypes": [
+            "FINGERPRINT", "FACE", "IRIS"
+        ],
+        "deviceTypes": [
+            "MONOCULAR",
+            "FINGER",
+            "CAMERA"
         ],
         "mdsSpecVersions": null,
         "validators": [
