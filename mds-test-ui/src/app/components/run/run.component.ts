@@ -21,12 +21,14 @@ export class RunComponent implements OnInit {
   testReportObject: any;
   panelOpenState: boolean;
   JSON: any;
+  Object: any;
   constructor(
     private localStorageService: LocalStorageService,
     private dataService: DataService,
     private mdsService: MdsService
   ) {
     this.JSON = JSON;
+    this.Object = Object;
   }
 
   ngOnInit(): void {
@@ -41,6 +43,7 @@ export class RunComponent implements OnInit {
    this.dataService.getTestReport(this.run.runId).subscribe(
       body => {
         this.testReportObject = body;
+        console.log(body);
       },
       error => window.alert(error)
     );

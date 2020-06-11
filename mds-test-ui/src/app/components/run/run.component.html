@@ -1,6 +1,5 @@
-<app-discover-devices></app-discover-devices>
-<!--TODO: *ngIf="!testReportObject"-->
-<div >
+<div *ngIf="!testReportObject || Object.keys(testReportObject.testReport).length === 0">
+  <app-discover-devices></app-discover-devices>
   <mat-form-field appearance="fill">
     <mat-label>Available Ports</mat-label>
     <mat-select (selectionChange)='OnPortSelect($event.value)'>
