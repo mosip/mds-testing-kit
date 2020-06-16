@@ -9,19 +9,19 @@
   width: 100%;
 }
 
-table {
-  width: 100%;
-
-}
 
 .mat-form-field {
   font-size: 14px;
   width: 100%;
 }
 
-td, th {
-  width: 25%;
+
+:host ::ng-deep .mat-tab-body-wrapper {
+  min-height: 150px;
+
 }
-.table {
-  margin: 15px 20px;
+
+:host ::ng-deep .mat-tab-body.mat-tab-body-active {
+  min-height: 150px;
+
 }
