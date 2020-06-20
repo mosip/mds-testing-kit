@@ -31,7 +31,7 @@ public class DeviceInfoHelper {
 		DeviceInfoMinimal[] input = null;
 		List<DeviceInfoResponse> response = new ArrayList<DeviceInfoResponse>();
 		ObjectMapper mapper = new ObjectMapper();
-		Pattern pattern = Pattern.compile("(?<=\\.)(.*)(?=\\.)");
+		//Pattern pattern = Pattern.compile("(?<=\\.)(.*)(?=\\.)");
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		try {
 			input = (DeviceInfoMinimal[])(mapper.readValue(deviceInfo.getBytes(), DeviceInfoMinimal[].class));
@@ -40,26 +40,36 @@ public class DeviceInfoHelper {
 				DeviceInfoResponse resp = new DeviceInfoResponse();
 				try
 				{
-					Matcher matcher = pattern.matcher(respMin.deviceInfo);
-					String afterMatch = null;
-					if (matcher.find()) {
-						afterMatch = matcher.group(1);
-					}			
-					String result = new String(
-						Base64.getUrlDecoder().decode(new String(Base64.getUrlDecoder().decode(afterMatch)).getBytes()));
-					resp = (DeviceInfoResponse) (mapper.readValue(result.getBytes(), DeviceInfoResponse.class));
-				
-					try {
-						if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
-							resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
-						else
-						resp.digitalIdDecoded = (DigitalId) (mapper.readValue(
-							new String(Base64.getDecoder().decode(resp.digitalId)).getBytes(),
-							DigitalId.class));
-					}
-					catch(Exception dex)
+					//Matcher matcher = pattern.matcher(respMin.deviceInfo);
+					//String afterMatch = null;
+					// if (matcher.find()) {
+					// 	afterMatch = matcher.group(1);
+					// }
+					String[] groups = respMin.deviceInfo.split("[.]");
+					if(groups.length != 3)
 					{
-						resp.analysisError = "Error interpreting digital id: " + dex.getMessage();
+						resp.analysisError = "The device info information is not in the expected format of header.payload.signature";
+					}
+					else
+					{
+						String headerEncoded = groups[0];
+						String payloadEncoded = groups[1];
+						String signatureEncoded = groups[2];
+						String result = new String(Base64.getUrlDecoder().decode(payloadEncoded.getBytes()));
+						resp = (DeviceInfoResponse) (mapper.readValue(result.getBytes(), DeviceInfoResponse.class));
+					
+						try {
+							if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
+								resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
+							else
+							resp.digitalIdDecoded = (DigitalId) (mapper.readValue(
+								new String(Base64.getDecoder().decode(resp.digitalId)).getBytes(),
+								DigitalId.class));
+						}
+						catch(Exception dex)
+						{
+							resp.analysisError = "Error interpreting digital id: " + dex.getMessage();
+						}
 					}
 				}
 				catch(Exception rex)
