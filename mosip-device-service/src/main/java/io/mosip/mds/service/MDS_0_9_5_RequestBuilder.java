@@ -129,7 +129,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         //requestBody.purpose = "AUTHENTICATION";
         requestBody.specVersion = "0.9.2";
         requestBody.timeout = 30;
-        requestBody.registrationId = "" + System.currentTimeMillis();
+        requestBody.transactionId = "" + System.currentTimeMillis();
         RegistrationCaptureRequest.RegistrationCaptureBioRequest bio = requestBody.new RegistrationCaptureBioRequest();
         bio.count = 1;
         bio.deviceId = device.discoverInfo;

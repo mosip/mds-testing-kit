@@ -4,7 +4,7 @@ import io.mosip.mds.dto.CaptureRequest;
 import io.mosip.mds.dto.DeviceDto;
 import io.mosip.mds.dto.DeviceInfoRequest;
 import io.mosip.mds.dto.DiscoverRequest;
-import io.mosip.mds.dto.RegistrationCaptureRequest;
+import io.mosip.mds.dto.RegistrationCaptureRequest_0_9_2;
 import io.mosip.mds.dto.StreamRequest;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
@@ -122,7 +122,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
 
     private String RegistrationCapture(TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
-        RegistrationCaptureRequest requestBody = new RegistrationCaptureRequest();
+        RegistrationCaptureRequest_0_9_2 requestBody = new RegistrationCaptureRequest_0_9_2();
         requestBody.captureTime = (new Date()).toString();
         //requestBody.domainUri = "default";
         requestBody.env = "test";
@@ -130,7 +130,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         requestBody.specVersion = "0.9.2";
         requestBody.timeout = 30;
         requestBody.registrationId = "" + System.currentTimeMillis();
-        RegistrationCaptureRequest.RegistrationCaptureBioRequest bio = requestBody.new RegistrationCaptureBioRequest();
+        RegistrationCaptureRequest_0_9_2.RegistrationCaptureBioRequest_0_9_2 bio = requestBody.new RegistrationCaptureBioRequest_0_9_2();
         bio.count = 1;
         bio.deviceId = device.discoverInfo;
         bio.deviceSubId = 1;
@@ -138,7 +138,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         bio.requestedScore = 80;
         bio.exception = new String[]{};
         bio.type = "FACE";
-        requestBody.bio = new RegistrationCaptureRequest.RegistrationCaptureBioRequest[]{bio};
+        requestBody.bio = new RegistrationCaptureRequest_0_9_2.RegistrationCaptureBioRequest_0_9_2[]{bio};
         return mapper.writeValueAsString(requestBody);
     }
 

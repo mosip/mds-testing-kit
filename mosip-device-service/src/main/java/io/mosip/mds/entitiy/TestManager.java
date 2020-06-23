@@ -385,38 +385,31 @@ public class TestManager {
 		return FilterRuns(email);
 	}
 
-	private IMDSRequestBuilder GetRequestBuilder(String version)
+	private IMDSRequestBuilder GetRequestBuilder(List<String> version)
 	{
-		if(version.equals("0.9.2"))
-			return new MDS_0_9_2_RequestBuilder();
-		if(version.equals("0.9.5"))
+		// Order of comparison is from newer to older. Default is the latest
+		//if(version == null || version.size() == 0)
+		//	return new MDS_0_9_5_RequestBuilder();	
+		if(version.contains("0.9.5"))
 			return new MDS_0_9_5_RequestBuilder();
+		if(version.contains("0.9.2"))
+			return new MDS_0_9_2_RequestBuilder();
 		return new MDS_0_9_5_RequestBuilder();
 	}
 
 	private ComposeRequestResponseDto BuildRequest(ComposeRequestDto requestParams)
 	{
-		// TODO handle spec version more elegantly
-		DiscoverResponse response = new DiscoverResponse();
+		DeviceInfoResponse response = new DeviceInfoResponse();
 
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		try {
-			response = (mapper.readValue(requestParams.deviceInfo.discoverInfo.getBytes(), DiscoverResponse.class));
-		}catch(Exception ex)
-		{
-			response = new DiscoverResponse();
-			response.analysisError = "Error parsing discover info: " + ex.getMessage();
-		}
+		response = DeviceInfoHelper.DecodeDeviceInfo(requestParams.deviceInfo.deviceInfo);
 		String specVersion = response.specVersion[0];
-		IMDSRequestBuilder builder = GetRequestBuilder(specVersion);
+		IMDSRequestBuilder builder = GetRequestBuilder(Arrays.asList(specVersion));
 		
 		TestRun run = testRuns.get(requestParams.runId);
 		if(run == null || !run.tests.contains(requestParams.testId))
 			return null;
 
-		run.deviceInfo = DecodeDeviceInfo(requestParams.deviceInfo.deviceInfo)[0];
-		// TODO handle selection from array. Right now picking first device
+		run.deviceInfo = response;
 		// Overwrites the device info for every call
 
 		PersistRun(run);
@@ -424,19 +417,19 @@ public class TestManager {
 		TestExtnDto test = allTests.get(requestParams.testId);
 		Intent intent = Intent.Discover;
 
-		if(requestParams.testId.contains("deviceinfo"))
+		if(test.method.equals("deviceinfo"))
 		{
 			intent = Intent.DeviceInfo;
 		}
-		else if(requestParams.testId.contains("rcapture"))
+		else if(test.method.equals("rcapture"))
 		{
 			intent = Intent.RegistrationCapture;
 		}
-		else if(requestParams.testId.contains("capture"))
+		else if(test.method.equals("capture"))
 		{
 			intent = Intent.Capture;
 		}
-		else if(requestParams.testId.contains("stream"))
+		else if(test.method.equals("stream"))
 		{
 			intent = Intent.Stream;
 		}

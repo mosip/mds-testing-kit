@@ -3,8 +3,6 @@ package io.mosip.mds.entitiy;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,46 +35,7 @@ public class DeviceInfoHelper {
 			input = (DeviceInfoMinimal[])(mapper.readValue(deviceInfo.getBytes(), DeviceInfoMinimal[].class));
 			for(DeviceInfoMinimal respMin:input)
 			{
-				DeviceInfoResponse resp = new DeviceInfoResponse();
-				try
-				{
-					//Matcher matcher = pattern.matcher(respMin.deviceInfo);
-					//String afterMatch = null;
-					// if (matcher.find()) {
-					// 	afterMatch = matcher.group(1);
-					// }
-					String[] groups = respMin.deviceInfo.split("[.]");
-					if(groups.length != 3)
-					{
-						resp.analysisError = "The device info information is not in the expected format of header.payload.signature";
-					}
-					else
-					{
-						String headerEncoded = groups[0];
-						String payloadEncoded = groups[1];
-						String signatureEncoded = groups[2];
-						String result = new String(Base64.getUrlDecoder().decode(payloadEncoded.getBytes()));
-						resp = (DeviceInfoResponse) (mapper.readValue(result.getBytes(), DeviceInfoResponse.class));
-					
-						try {
-							if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
-								resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
-							else
-							resp.digitalIdDecoded = (DigitalId) (mapper.readValue(
-								new String(Base64.getDecoder().decode(resp.digitalId)).getBytes(),
-								DigitalId.class));
-						}
-						catch(Exception dex)
-						{
-							resp.analysisError = "Error interpreting digital id: " + dex.getMessage();
-						}
-					}
-				}
-				catch(Exception rex)
-				{
-					resp.analysisError = "Error interpreting device info id: " + rex.getMessage();
-				}
-				response.add(resp);
+				response.add(DecodeDeviceInfo(respMin.deviceInfo));
 			}
 		} catch (Exception exception) {
 			DeviceInfoResponse errorResp = new DeviceInfoResponse();
@@ -84,6 +43,47 @@ public class DeviceInfoHelper {
 			response.add(errorResp);
 		}
 		return response.toArray(new DeviceInfoResponse[response.size()]);
+	}
+
+	public static DeviceInfoResponse DecodeDeviceInfo(String decodeInfo)
+	{
+		DeviceInfoResponse resp = new DeviceInfoResponse();
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		try
+		{
+			String[] groups = decodeInfo.split("[.]");
+			if(groups.length != 3)
+			{
+				resp.analysisError = "The device info information is not in the expected format of header.payload.signature";
+			}
+			else
+			{
+				//String headerEncoded = groups[0];
+				String payloadEncoded = groups[1];
+				//String signatureEncoded = groups[2];
+				String result = new String(Base64.getUrlDecoder().decode(payloadEncoded.getBytes()));
+				resp = (DeviceInfoResponse) (mapper.readValue(result.getBytes(), DeviceInfoResponse.class));
+			
+				try {
+					if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
+						resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
+					else
+					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(
+						new String(Base64.getDecoder().decode(resp.digitalId)).getBytes(),
+						DigitalId.class));
+				}
+				catch(Exception dex)
+				{
+					resp.analysisError = "Error interpreting digital id: " + dex.getMessage();
+				}
+			}
+		}
+		catch(Exception rex)
+		{
+			resp.analysisError = "Error interpreting device info id: " + rex.getMessage();
+		}
+		return resp;		
 	}
 
 }

@@ -1,7 +1,37 @@
 package io.mosip.mds.dto;
 
 public class CaptureResponse {
+
+    public static class CaptureBiometricData
+    {
+      public String digitalId;
+      public DigitalId digitalIdDecoded;
+      public String deviceCode;
+      public String deviceServiceVersion; //Service version
+      public String bioType; //Finger
+      public String bioSubType; //UNKNOWN
+      public String purpose; //Auth  or Registration
+      public String env; //Target environment
+      public String domainUri; //URI of the auth server
+      public String bioValue; //Encrypted with session key and base64urlencoded biometric data
+      public String transactionId; //Unique transaction id
+      public String timestamp; //ISO format datetime with time zone
+      public float requestedScore; //Floating point number to represent the minimum required score for the capture
+      public float qualityScore; //Floating point number representing the score for the current capture
+    }
+
+    public static class CaptureBiometric{
+      public String specVersion;
+      public String hash;
+      public String sessionKey;
+      public String thumbprint;
+      public MDSError error;
+      public CaptureBiometricData dataDecoded;
+      public String data;
+    }
+
     public String analysisError = "";
+    public CaptureBiometric[] biometrics;
 
     /*
 
