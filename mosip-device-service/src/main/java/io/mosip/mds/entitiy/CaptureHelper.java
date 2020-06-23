@@ -82,7 +82,7 @@ public class CaptureHelper {
 		// strip iso header
 		byte[] imageData = ExtractJPGfromISO(decodedData, bioType);
 		// save image to file
-		String fileName = "data/renders/" + UUID.randomUUID() + ".jpg";
+		String fileName = "data/renders/" + UUID.randomUUID() + ".jp2";
 		
 		File file = new File(fileName);
 		try
