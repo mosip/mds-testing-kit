@@ -476,10 +476,10 @@ public class TestManager {
 		switch(method)
 		{
 			case "capture":
-				renderContent += CaptureHelper.Render(CaptureHelper.Decode(testResult.responseData));
+				renderContent += CaptureHelper.Render(CaptureHelper.Decode(testResult.responseData,false));
 				break;
 			case "rcapture":
-				renderContent += CaptureHelper.Render(CaptureHelper.Decode(testResult.responseData));
+				renderContent += CaptureHelper.Render(CaptureHelper.Decode(testResult.responseData,true));
 				break;
 			case "deviceinfo":
 				DeviceInfoResponse[] diResponse = DecodeDeviceInfo(testResult.responseData);

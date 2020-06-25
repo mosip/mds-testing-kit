@@ -75,28 +75,13 @@
             <version>1.5</version>
         </dependency>
 
-
-        <!--<dependency>
-            <groupId>io.mosip.registration</groupId>
-            <artifactId>registration-services</artifactId>
-            <version>1.0.9-SNAPSHOT</version>
-             <exclusions>
-              <exclusion>
-                <groupId>io.mosip.kernel</groupId>
-                <artifactId>kernel-dataaccess-hibernate</artifactId>
-              </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>io.mosip.registration</groupId>
-            <artifactId>registration-client</artifactId>
-            <version>1.0.9-SNAPSHOT</version>
-        </dependency>
-            <dependency>
-            <groupId>io.mosip.registration</groupId>
-            <artifactId>registration-libs</artifactId>
-            <version>1.0.9-SNAPSHOT</version>
-        </dependency>-->
+		<!-- https://mvnrepository.com/artifact/org.bitbucket.b_c/jose4j -->
+		<dependency>
+		    <groupId>org.bitbucket.b_c</groupId>
+		    <artifactId>jose4j</artifactId>
+		    <version>0.7.1</version>
+		</dependency>		
+       
 	</dependencies>
 	<build>
 		<plugins>

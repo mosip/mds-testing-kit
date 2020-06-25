@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.lang.JoseException;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -11,6 +14,14 @@ import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.DigitalId;
 
 public class DeviceInfoHelper {
+
+	private static ObjectMapper mapper;
+
+	static {
+		mapper = new ObjectMapper();
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
+
     public static String Render(DeviceInfoResponse response)
 	{
 		//TODO modify this method for proper response
@@ -28,9 +39,8 @@ public class DeviceInfoHelper {
     public static DeviceInfoResponse[] Decode(String deviceInfo) {
 		DeviceInfoMinimal[] input = null;
 		List<DeviceInfoResponse> response = new ArrayList<DeviceInfoResponse>();
-		ObjectMapper mapper = new ObjectMapper();
 		//Pattern pattern = Pattern.compile("(?<=\\.)(.*)(?=\\.)");
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
 		try {
 			input = (DeviceInfoMinimal[])(mapper.readValue(deviceInfo.getBytes(), DeviceInfoMinimal[].class));
 			for(DeviceInfoMinimal respMin:input)
@@ -45,38 +55,21 @@ public class DeviceInfoHelper {
 		return response.toArray(new DeviceInfoResponse[response.size()]);
 	}
 
-	public static DeviceInfoResponse DecodeDeviceInfo(String decodeInfo)
+	public static DeviceInfoResponse DecodeDeviceInfo(String encodeInfo)
 	{
 		DeviceInfoResponse resp = new DeviceInfoResponse();
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		try
 		{
-			String[] groups = decodeInfo.split("[.]");
-			if(groups.length != 3)
-			{
-				resp.analysisError = "The device info information is not in the expected format of header.payload.signature";
+			resp = (DeviceInfoResponse) (mapper.readValue(getPayload(encodeInfo), DeviceInfoResponse.class));
+			try {
+				if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
+					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
+				else
+					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(getPayload(resp.digitalId), DigitalId.class));
 			}
-			else
+			catch(Exception dex)
 			{
-				//String headerEncoded = groups[0];
-				String payloadEncoded = groups[1];
-				//String signatureEncoded = groups[2];
-				String result = new String(Base64.getUrlDecoder().decode(payloadEncoded.getBytes()));
-				resp = (DeviceInfoResponse) (mapper.readValue(result.getBytes(), DeviceInfoResponse.class));
-			
-				try {
-					if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
-						resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
-					else
-					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(
-						new String(Base64.getDecoder().decode(resp.digitalId)).getBytes(),
-						DigitalId.class));
-				}
-				catch(Exception dex)
-				{
-					resp.analysisError = "Error interpreting digital id: " + dex.getMessage();
-				}
+				resp.analysisError = "Error interpreting digital id: " + dex.getMessage();
 			}
 		}
 		catch(Exception rex)
@@ -84,6 +77,19 @@ public class DeviceInfoHelper {
 			resp.analysisError = "Error interpreting device info id: " + rex.getMessage();
 		}
 		return resp;		
+	}
+
+	private static byte[] getPayload(String data) throws Exception{
+		try {
+			JsonWebSignature jws = new JsonWebSignature();
+			jws.setCompactSerialization(data);
+			//TODO - validate header and signature
+			return jws.getPayloadBytes();
+
+		} catch (JoseException e) {
+			e.printStackTrace();
+			throw new Exception("Failed to parse and validate Json web signture");
+		}
 	}
 
 }

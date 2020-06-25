@@ -20,5 +20,7 @@ public class ValidateResponseRequestDto {
 
 	@ApiModelProperty(value = "resultVerbosity", required = true, dataType = "java.lang.String")
 	public String resultVerbosity;
+
+	public CaptureResponse captureResponse; 
 	
 }
