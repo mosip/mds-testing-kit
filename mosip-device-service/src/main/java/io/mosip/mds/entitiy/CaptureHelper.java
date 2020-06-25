@@ -1,100 +1,236 @@
 package io.mosip.mds.entitiy;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource.PSpecified;
+import javax.crypto.spec.SecretKeySpec;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.CaptureResponse;
+import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.DigitalId;;
 
 public class CaptureHelper {
 
 	private static String RCAPTURE = "rCapture";
 	private static String CAPTURE = "Capture";
-	private static String RCAPTURE_DECODE_ERROR = "Error while decoding the " + RCAPTURE + " request";
-	private static String CAPTURE_DECODE_ERROR = "Error while decoding the " + CAPTURE + " request";
+	private static String RCAPTURE_DECODE_ERROR = "Error while decoding the " + CAPTURE + " request";
+	// private static String CAPTURE_DECODE_ERROR = "Error while decoding the " +
+	// CAPTURE + " request";
 
 	private static String PAYLOAD_EMPTY = "PayLoad Empty";
 
 	public static CaptureResponse Decode(String responseInfo, boolean isRCapture) {
 
 		CaptureResponse response = null;
-		if (isRCapture) {
-			ObjectMapper mapper = new ObjectMapper();
 
-			// Pattern pattern = Pattern.compile("(?<=\\.)(.*)(?=\\.)");
-			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-			// Deserialize Capture Response
-			try {
-				response = (CaptureResponse) (mapper.readValue(responseInfo.getBytes(), CaptureResponse.class));
+		ObjectMapper mapper = new ObjectMapper();
 
-				for (CaptureResponse.CaptureBiometric biometric : response.biometrics) {
+		// Pattern pattern = Pattern.compile("(?<=\\.)(.*)(?=\\.)");
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		// Deserialize Capture Response
+		try {
+			response = (CaptureResponse) (mapper.readValue(responseInfo.getBytes(), CaptureResponse.class));
 
-					if (biometric.getData() == null) {
+			for (CaptureResponse.CaptureBiometric biometric : response.biometrics) {
 
-						response.setAnalysisError(RCAPTURE_DECODE_ERROR + " : data empty");
-						break;
+				if (biometric.getData() == null) {
 
-					}
-					// extract payload from encoded data
-					String[] groups = biometric.getData().split("[.]");
-					if (groups.length != 3) {
-						response.setAnalysisError(
-								"Error parsing request input. Data not in header.payload.signature format");
-						break;
-					}
-					// String header = groups[0];
-					String payload = groups[1];
-					// String signature = groups[2];
+					response.setAnalysisError(RCAPTURE_DECODE_ERROR + " : data empty");
+					break;
 
-					if (payload == null) {
-						response.analysisError = RCAPTURE_DECODE_ERROR + " : " + PAYLOAD_EMPTY;
-						break;
+				}
+				// extract payload from encoded data
+				String[] groups = biometric.getData().split("[.]");
+				if (groups.length != 3) {
+					response.setAnalysisError(
+							"Error parsing request input. Data not in header.payload.signature format");
+					break;
+				}
+				// String header = groups[0];
+				String payload = groups[1];
+				// String signature = groups[2];
 
-					}
-					try {
-						// Decode data
-						biometric.setDataDecoded((CaptureResponse.CaptureBiometricData) (mapper.readValue(
-								Base64.getUrlDecoder().decode(payload.getBytes()),
-								CaptureResponse.CaptureBiometricData.class)));
+				if (payload == null) {
+					response.analysisError = RCAPTURE_DECODE_ERROR + " : " + PAYLOAD_EMPTY;
+					break;
 
-						// TODO Verify Digital Id with mock mds
-						// Decode.DigitalId
+				}
+				try {
 
-						if (biometric.getDataDecoded().getDigitalId() != null) {
-							biometric.getDataDecoded()
-									.setDigitalIdDecoded((DigitalId) (mapper.readValue(
-											Base64.getUrlDecoder()
-													.decode(biometric.getDataDecoded().getDigitalId().getBytes()),
-											DigitalId.class)));
-						} else {
-							response.analysisError = RCAPTURE_DECODE_ERROR + " : " + "digital id is empty";
+					// Decode data
+					biometric.setDataDecoded((CaptureResponse.CaptureBiometricData) (mapper.readValue(
+							Base64.getUrlDecoder().decode(payload.getBytes()),
+							CaptureResponse.CaptureBiometricData.class)));
+
+					if (!isRCapture) {
+
+						if (biometric.getSessionKey() == null) {
+							response.analysisError = RCAPTURE_DECODE_ERROR + " : " + "Session Key is empty";
 							break;
 						}
 
-					} catch (IllegalArgumentException illegalArgumentException) {
-						response.setAnalysisError(RCAPTURE_DECODE_ERROR + " : Error while decoding payload"
-								+ illegalArgumentException.getMessage());
+						biometric.getDataDecoded().setBioValue(String.valueOf(getDecryptedBioValue(biometric)));
+					}
+					// TODO Verify Digital Id with mock mds
+					// Decode.DigitalId
+
+					if (biometric.getDataDecoded().getDigitalId() != null) {
+						biometric.getDataDecoded()
+								.setDigitalIdDecoded((DigitalId) (mapper.readValue(
+										Base64.getUrlDecoder()
+												.decode(biometric.getDataDecoded().getDigitalId().getBytes()),
+										DigitalId.class)));
+					} else {
+						response.analysisError = RCAPTURE_DECODE_ERROR + " : " + "digital id is empty";
+						break;
 					}
 
+				} catch (IllegalArgumentException illegalArgumentException) {
+					response.setAnalysisError(RCAPTURE_DECODE_ERROR + " : Error while decoding payload"
+							+ illegalArgumentException.getMessage());
 				}
-			} catch (Exception exception) {
-				response = new CaptureResponse();
-				response.setAnalysisError(RCAPTURE_DECODE_ERROR + exception.getMessage());
+
 			}
+		} catch (Exception exception) {
+			response = new CaptureResponse();
+			response.setAnalysisError(RCAPTURE_DECODE_ERROR + exception.getMessage());
 		}
 
 		return response;
 
+	}
+
+	private static byte[] getDecryptedBioValue(CaptureBiometric biometric)
+			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
+			BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException, IOException {
+		CaptureHelper captureHelper = new CaptureHelper();
+		PrivateKey privateKey = captureHelper.getPrivateKeyFromResources("private.key");
+
+		byte[] decryptedSessionKey = decryptSessionKey(privateKey, biometric.getSessionKey().getBytes());
+
+		SecretKey secretKey = getSecretKey(decryptedSessionKey);
+
+		// byte[] saltLastBytes = getLastBytes(timestamp,
+		// env.getProperty(IdAuthConfigKeyConstants.IDA_SALT_LASTBYTES_NUM,
+		// Integer.class, DEFAULT_SALT_LAST_BYTES_NUM));
+		//
+		// String salt = CryptoUtil.encodeBase64(saltLastBytes);
+
+		return decryptBioValue(secretKey, biometric.getDataDecoded().getBioValue().getBytes(),
+				getAad(biometric.getDataDecoded().getTimestamp()));
+	}
+
+	private static byte[] getAad(String timestamp) {
+		timestamp = String.valueOf(timestamp);
+
+		byte[] aadLastBytes = getLastBytes(timestamp, 16);
+
+		return org.apache.commons.codec.binary.Base64.encodeBase64(aadLastBytes);
+	}
+
+	private static byte[] decryptBioValue(SecretKey secretKey, byte[] data, byte[] aad)
+			throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException,
+			InvalidKeyException, InvalidAlgorithmParameterException {
+
+		Cipher cipher;
+		cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
+
+		byte[] output = null;
+		byte[] randomIV = generateIV(cipher.getBlockSize());
+
+		SecretKeySpec keySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
+		GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, randomIV);
+		cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
+		output = new byte[cipher.getOutputSize(data.length) + cipher.getBlockSize()];
+		if (aad != null && aad.length != 0) {
+			cipher.updateAAD(aad);
+		}
+		byte[] processData = cipher.doFinal(data);
+		System.arraycopy(processData, 0, output, 0, processData.length);
+		System.arraycopy(randomIV, 0, output, processData.length, randomIV.length);
+
+		return output;
+
+	}
+
+	private static SecretKey getSecretKey(byte[] decryptedSessionKey) {
+		return new SecretKeySpec(decryptedSessionKey, 0, decryptedSessionKey.length, "AES");
+
+	}
+
+	@SuppressWarnings("restriction")
+	private static byte[] decryptSessionKey(PrivateKey privateKey, byte[] data)
+			throws InvalidKeyException, InvalidAlgorithmParameterException, BadPaddingException,
+			NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException {
+		Cipher cipher;
+		cipher = Cipher.getInstance("RSA/ECB/NoPadding");
+
+		cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+		/*
+		 * This is a hack of removing OEAP padding after decryption with NO Padding as
+		 * SoftHSM does not support it.Will be removed after HSM implementation
+		 */
+		byte[] paddedPlainText = cipher.doFinal(data);
+		if (paddedPlainText.length < 2048 / 8) {
+			byte[] tempPipe = new byte[2048 / 8];
+			System.arraycopy(paddedPlainText, 0, tempPipe, tempPipe.length - paddedPlainText.length,
+					paddedPlainText.length);
+			paddedPlainText = tempPipe;
+		}
+		final OAEPParameterSpec oaepParams = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256,
+				PSpecified.DEFAULT);
+
+		sun.security.rsa.RSAPadding padding = sun.security.rsa.RSAPadding
+				.getInstance(sun.security.rsa.RSAPadding.PAD_OAEP_MGF1, 2048 / 8, new SecureRandom(), oaepParams);
+		return padding.unpad(paddedPlainText);
+
+	}
+
+	private PrivateKey getPrivateKeyFromResources(String privateKeyFilePath)
+			throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+		File privateKeyFile = new File(getClass().getClassLoader().getResource(privateKeyFilePath).getFile());
+
+		FileInputStream privateKeyInputStream = new FileInputStream(privateKeyFile);
+
+		DataInputStream privateKeyDataInputStream = new DataInputStream(privateKeyInputStream);
+		byte[] keyBytes = new byte[(int) privateKeyFile.length()];
+		privateKeyDataInputStream.readFully(keyBytes);
+		privateKeyDataInputStream.close();
+
+		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		return keyFactory.generatePrivate(spec);
 	}
 
 	public static String Render(CaptureResponse response) {
@@ -172,5 +308,32 @@ public class CaptureHelper {
 			isoHeaderSize = sizeIndex + 4;
 		}
 		return Arrays.copyOfRange(isoValue, isoHeaderSize, isoHeaderSize + imageSize);
+	}
+
+	/**
+	 * Gets the last bytes.
+	 *
+	 * @param timestamp
+	 *            the timestamp
+	 * @param lastBytesNum
+	 *            the last bytes num
+	 * @return the last bytes
+	 */
+	private static byte[] getLastBytes(String timestamp, int lastBytesNum) {
+		assert (timestamp.length() >= lastBytesNum);
+		return timestamp.substring(timestamp.length() - lastBytesNum).getBytes();
+	}
+
+	/**
+	 * Generator for IV(Initialisation Vector)
+	 * 
+	 * @param blockSize
+	 *            blocksize of current cipher
+	 * @return generated IV
+	 */
+	private static byte[] generateIV(int blockSize) {
+		byte[] byteIV = new byte[blockSize];
+		new SecureRandom().nextBytes(byteIV);
+		return byteIV;
 	}
 }
