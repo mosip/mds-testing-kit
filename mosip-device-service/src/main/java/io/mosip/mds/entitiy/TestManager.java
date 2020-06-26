@@ -455,7 +455,9 @@ public class TestManager {
 		testResult.responseData = validateRequestDto.mdsResponse;
 		testResult.runId = run.runId;
 		testResult.testId = test.testId;
-
+		
+		validateRequestDto.captureResponse = getCaptureResponse(test.method, testResult.responseData);
+		
 		for(Validator v:test.validators)
 		{
 			testResult.validationResults.add(v.Validate(validateRequestDto));
@@ -467,6 +469,16 @@ public class TestManager {
 		run.testReport.put(test.testId, testResult);
 		PersistRun(run);
 		return testResult; 
+	}
+	
+	private CaptureResponse getCaptureResponse(String method, String responseData) {
+		switch(method) {
+		case "capture":
+			return CaptureHelper.Decode(responseData,false);
+		case "rcapture":
+			return CaptureHelper.Decode(responseData,true);
+		}
+		return null;
 	}
 
 	private String ProcessResponse(TestResult testResult)
