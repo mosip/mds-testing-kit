@@ -134,7 +134,7 @@ public class CaptureHelper {
 			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
 			BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException, IOException {
 		CaptureHelper captureHelper = new CaptureHelper();
-		PrivateKey privateKey = captureHelper.getPrivateKeyFromResources("private.key");
+		PrivateKey privateKey = captureHelper.getPrivateKeyFromResources("private.pem");
 
 		byte[] decryptedSessionKey = decryptSessionKey(privateKey, biometric.getSessionKey().getBytes());
 
