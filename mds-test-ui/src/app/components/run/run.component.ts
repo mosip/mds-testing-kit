@@ -62,7 +62,7 @@ export class RunComponent implements OnInit {
       const composeRequest = new ComposeRequest();
       const deviceDto = {
         port: this.currentPort,
-        discoverInfo: JSON.stringify(this.selectedDevice)
+        deviceInfo: this.selectedDevice
       };
       this.run.tests.forEach(
         test => {

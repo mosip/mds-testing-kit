@@ -30,7 +30,7 @@
             ]
         },
         {
-            "type": "IRIS",
+            "type": "FACE",
             "deviceType": [
                 "STILL",
                 "VIDEO"

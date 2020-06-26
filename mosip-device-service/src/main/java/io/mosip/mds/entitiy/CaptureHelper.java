@@ -37,9 +37,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
-import io.mosip.mds.dto.DigitalId;;
+import io.mosip.mds.dto.DigitalId;
+import io.mosip.mds.util.SecurityUtil;;
 
 public class CaptureHelper {
+	
+	private static ObjectMapper mapper;
+	
+	static {
+		mapper = new ObjectMapper();
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
 
 	private static String RCAPTURE = "rCapture";
 	private static String CAPTURE = "Capture";
@@ -49,14 +57,10 @@ public class CaptureHelper {
 
 	private static String PAYLOAD_EMPTY = "PayLoad Empty";
 
-	public static CaptureResponse Decode(String responseInfo, boolean isRCapture) {
+	public static CaptureResponse decode(String responseInfo, boolean isRCapture) {
 
 		CaptureResponse response = null;
 
-		ObjectMapper mapper = new ObjectMapper();
-
-		// Pattern pattern = Pattern.compile("(?<=\\.)(.*)(?=\\.)");
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		// Deserialize Capture Response
 		try {
 			response = (CaptureResponse) (mapper.readValue(responseInfo.getBytes(), CaptureResponse.class));
@@ -69,28 +73,12 @@ public class CaptureHelper {
 					break;
 
 				}
-				// extract payload from encoded data
-				String[] groups = biometric.getData().split("[.]");
-				if (groups.length != 3) {
-					response.setAnalysisError(
-							"Error parsing request input. Data not in header.payload.signature format");
-					break;
-				}
-				// String header = groups[0];
-				String payload = groups[1];
-				// String signature = groups[2];
-
-				if (payload == null) {
-					response.analysisError = RCAPTURE_DECODE_ERROR + " : " + PAYLOAD_EMPTY;
-					break;
-
-				}
+				
 				try {
 
 					// Decode data
 					biometric.setDataDecoded((CaptureResponse.CaptureBiometricData) (mapper.readValue(
-							Base64.getUrlDecoder().decode(payload.getBytes()),
-							CaptureResponse.CaptureBiometricData.class)));
+							SecurityUtil.getPayload(biometric.getData()), CaptureResponse.CaptureBiometricData.class)));
 
 					if (!isRCapture) {
 
@@ -106,9 +94,7 @@ public class CaptureHelper {
 
 					if (biometric.getDataDecoded().getDigitalId() != null) {
 						biometric.getDataDecoded()
-								.setDigitalIdDecoded((DigitalId) (mapper.readValue(
-										Base64.getUrlDecoder()
-												.decode(biometric.getDataDecoded().getDigitalId().getBytes()),
+								.setDigitalIdDecoded((DigitalId) (mapper.readValue(SecurityUtil.getPayload(biometric.getDataDecoded().getDigitalId()),
 										DigitalId.class)));
 					} else {
 						response.analysisError = RCAPTURE_DECODE_ERROR + " : " + "digital id is empty";
@@ -233,27 +219,11 @@ public class CaptureHelper {
 		return keyFactory.generatePrivate(spec);
 	}
 
-	public static String Render(CaptureResponse response) {
-		// TODO modify this method for proper reponse
-		List<File> images = new ArrayList<>();
-		for (CaptureResponse.CaptureBiometric biometric : response.biometrics) {
-			File imageFile = ExtractImage(biometric.dataDecoded.bioValue, biometric.dataDecoded.bioSubType);
-			images.add(imageFile);
-		}
-
-		String renderContent = "<p><u>Capture Info</u></p>";
-		renderContent += "<b>Images Captured:</b>" + images.size() + "<br/>";
-		for (File file : images) {
-			renderContent += "<img src=\"data/renders/" + file.getName() + "\"/>";
-		}
-		return renderContent;
-	}
-
-	private static File ExtractImage(String bioValue, String bioType) {
+	public static File extractImage(byte[] bioValue, String bioType) {
 		// do base64 url decoding
 		byte[] decodedData = Base64.getUrlDecoder().decode(bioValue);
 		// strip iso header
-		byte[] imageData = ExtractJPGfromISO(decodedData, bioType);
+		byte[] imageData = extractJPGfromISO(decodedData, bioType);
 		// save image to file
 		String fileName = "data/renders/" + UUID.randomUUID() + ".jp2";
 
@@ -270,7 +240,7 @@ public class CaptureHelper {
 		return file;
 	}
 
-	private static byte[] ExtractJPGfromISO(byte[] isoValue, String bioType) {
+	private static byte[] extractJPGfromISO(byte[] isoValue, String bioType) {
 		// TODO set the correct iso handling technique here
 		int isoHeaderSize = 0;
 		byte hasCertBlock = 0;

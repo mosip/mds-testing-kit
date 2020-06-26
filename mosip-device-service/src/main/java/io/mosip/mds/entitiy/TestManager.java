@@ -15,7 +15,10 @@ import io.mosip.mds.dto.postresponse.RunExtnDto;
 import io.mosip.mds.service.IMDSRequestBuilder;
 import io.mosip.mds.service.MDS_0_9_2_RequestBuilder;
 import io.mosip.mds.service.MDS_0_9_5_RequestBuilder;
-import io.mosip.mds.service.IMDSRequestBuilder.Intent;
+import io.mosip.mds.service.MDS_0_9_5_ResponseProcessor;
+import io.mosip.mds.service.IMDSResponseProcessor;
+import io.mosip.mds.util.Intent;
+import io.mosip.mds.util.SecurityUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -33,7 +36,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Data;
@@ -50,6 +55,13 @@ import org.springframework.http.MediaType;
 @Data
 @Table(name ="test_manager")
 public class TestManager {
+	
+	private static ObjectMapper mapper;
+	
+	static {
+		mapper = new ObjectMapper();
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
 
 	@Id
 	@Column(name = "run_id")
@@ -156,7 +168,7 @@ public class TestManager {
 				BiometricTypeDto iris = new BiometricTypeDto("IRIS");
 				Collections.addAll(iris.deviceType, "MONOCULAR", "BINOCULAR", "CAMERA");
 				Collections.addAll(iris.segments, "FULL", "CROPPED");
-				BiometricTypeDto face = new BiometricTypeDto("IRIS");
+				BiometricTypeDto face = new BiometricTypeDto("FACE");
 				Collections.addAll(face.deviceType, "STILL", "VIDEO");
 				Collections.addAll(face.segments, "BUST", "HEAD");
 				Collections.addAll(biometricTypes, finger, iris, face);
@@ -251,7 +263,7 @@ public class TestManager {
 		return Store.SaveTestRun(run.user, run);
 	}
 
-	public MasterDataResponseDto GetMasterData()
+	public MasterDataResponseDto getMasterData()
 	{
 		MasterDataResponseDto masterData = new MasterDataResponseDto();
 		SetupMasterData();
@@ -374,7 +386,7 @@ public class TestManager {
 		}
 	}
 
-	private TestRun[] FilterRuns(String email)
+	private TestRun[] filterRuns(String email)
 	{
 		// TODO add filter code based on email
 		return testRuns.values().toArray(new TestRun[0]);
@@ -382,10 +394,10 @@ public class TestManager {
 
 	public TestRun[] GetRuns(String email)
 	{
-		return FilterRuns(email);
+		return filterRuns(email);
 	}
 
-	private IMDSRequestBuilder GetRequestBuilder(List<String> version)
+	private IMDSRequestBuilder getRequestBuilder(List<String> version)
 	{
 		// Order of comparison is from newer to older. Default is the latest
 		//if(version == null || version.size() == 0)
@@ -397,13 +409,11 @@ public class TestManager {
 		return new MDS_0_9_5_RequestBuilder();
 	}
 
-	private ComposeRequestResponseDto BuildRequest(ComposeRequestDto requestParams)
+	private ComposeRequestResponseDto buildRequest(ComposeRequestDto requestParams)
 	{
-		DeviceInfoResponse response = new DeviceInfoResponse();
-
-		response = DeviceInfoHelper.DecodeDeviceInfo(requestParams.deviceInfo.deviceInfo);
+		DeviceInfoResponse  response = requestParams.deviceInfo.getDeviceInfo();
 		String specVersion = response.specVersion[0];
-		IMDSRequestBuilder builder = GetRequestBuilder(Arrays.asList(specVersion));
+		IMDSRequestBuilder builder = getRequestBuilder(Arrays.asList(specVersion));
 		
 		TestRun run = testRuns.get(requestParams.runId);
 		if(run == null || !run.tests.contains(requestParams.testId))
@@ -415,36 +425,18 @@ public class TestManager {
 		PersistRun(run);
 
 		TestExtnDto test = allTests.get(requestParams.testId);
-		Intent intent = Intent.Discover;
-
-		if(test.method.equals("deviceinfo"))
-		{
-			intent = Intent.DeviceInfo;
-		}
-		else if(test.method.equals("rcapture"))
-		{
-			intent = Intent.RegistrationCapture;
-		}
-		else if(test.method.equals("capture"))
-		{
-			intent = Intent.Capture;
-		}
-		else if(test.method.equals("stream"))
-		{
-			intent = Intent.Stream;
-		}
-
-		return builder.BuildRequest(run, test, requestParams.deviceInfo, intent);
+		
+		return builder.buildRequest(run, test, requestParams.deviceInfo, getIntent(test.method));
 		
 	}
 
-	public ComposeRequestResponseDto ComposeRequest(ComposeRequestDto composeRequestDto) {
+	public ComposeRequestResponseDto composeRequest(ComposeRequestDto composeRequestDto) {
 
 		// TODO create and use actual request composers		
-		return BuildRequest(composeRequestDto);
+		return buildRequest(composeRequestDto);
 	}
 
-	public TestResult ValidateResponse(ValidateResponseRequestDto validateRequestDto) {
+	public TestResult validateResponse(ValidateResponseRequestDto validateRequestDto) {
 		if(!testRuns.keySet().contains(validateRequestDto.runId) || !allTests.keySet().contains(validateRequestDto.testId))
 			return null;
 		TestRun run = testRuns.get(validateRequestDto.runId);
@@ -456,14 +448,18 @@ public class TestManager {
 		testResult.runId = run.runId;
 		testResult.testId = test.testId;
 		
-		validateRequestDto.captureResponse = getCaptureResponse(test.method, testResult.responseData);
+		Intent intent = getIntent(test.method);
+		
+		IMDSResponseProcessor responseProcessor = getResponseProcessor(run.targetProfile.mdsSpecVersion);
+		
+		validateRequestDto.captureResponse = responseProcessor.getCaptureResponse(intent, testResult.responseData);
 		
 		for(Validator v:test.validators)
 		{
 			testResult.validationResults.add(v.Validate(validateRequestDto));
 		}
 		
-		testResult.renderContent = ProcessResponse(testResult);
+		testResult.renderContent = responseProcessor.getRenderContent(intent, testResult.responseData);
 		run.runStatus = RunStatus.InProgress;
 		// TODO when should this status be Done
 		run.testReport.put(test.testId, testResult);
@@ -471,55 +467,41 @@ public class TestManager {
 		return testResult; 
 	}
 	
-	private CaptureResponse getCaptureResponse(String method, String responseData) {
-		switch(method) {
-		case "capture":
-			return CaptureHelper.Decode(responseData,false);
-		case "rcapture":
-			return CaptureHelper.Decode(responseData,true);
-		}
-		return null;
-	}
-
-	private String ProcessResponse(TestResult testResult)
+	private IMDSResponseProcessor getResponseProcessor(String version)
 	{
-		String method = allTests.get(testResult.testId).method;
-		String renderContent = "";
-		switch(method)
+		if(version.contains("0.9.5"))
+			return new MDS_0_9_5_ResponseProcessor();
+		
+		return new MDS_0_9_5_ResponseProcessor();
+	}
+	
+	private Intent getIntent(String method) {
+		Intent intent = Intent.Discover;
+
+		if(method.equals("deviceinfo"))
 		{
-			case "capture":
-				renderContent += CaptureHelper.Render(CaptureHelper.Decode(testResult.responseData,false));
-				break;
-			case "rcapture":
-				renderContent += CaptureHelper.Render(CaptureHelper.Decode(testResult.responseData,true));
-				break;
-			case "deviceinfo":
-				DeviceInfoResponse[] diResponse = DecodeDeviceInfo(testResult.responseData);
-				for (DeviceInfoResponse deviceInfoResponse : diResponse) {
-					renderContent += DeviceInfoHelper.Render(deviceInfoResponse) + "<BR/>";
-				} 
-				renderContent = "";
-				break;
-			case "discover":
-				DiscoverResponse[] dResponse = DecodeDiscoverInfo(testResult.responseData);
-				for (DiscoverResponse discoverResponse : dResponse) {
-					renderContent += DiscoverHelper.Render(discoverResponse) + "<BR/>";
-				} 
-				break;
-			case "stream":
-				renderContent = "<p><u>Stream Output</u></p><img alt=\"stream video feed\" src=\"127.0.0.1:4501/stream\" style=\"height:200;width:200;\">";
-				break;
-			default:
-				renderContent = "<img src=\"https://www.mosip.io/images/logo.png\"/>";
+			intent = Intent.DeviceInfo;
 		}
-		return renderContent;
+		else if(method.equals("rcapture"))
+		{
+			intent = Intent.RegistrationCapture;
+		}
+		else if(method.equals("capture"))
+		{
+			intent = Intent.Capture;
+		}
+		else if(method.equals("stream"))
+		{
+			intent = Intent.Stream;
+		}
+		return intent;
 	}
 
-	public DiscoverResponse[] DecodeDiscoverInfo(String discoverInfo) {
-		return DiscoverHelper.Decode(discoverInfo);
+	public DiscoverResponse[] decodeDiscoverInfo(String discoverInfo) {
+		return DiscoverHelper.decode(discoverInfo);
 	}
 
-	public DeviceInfoResponse[] DecodeDeviceInfo(String deviceInfo) {
-		return DeviceInfoHelper.Decode(deviceInfo);
+	public DeviceInfoResponse[] decodeDeviceInfo(String deviceInfo) {
+		return DeviceInfoHelper.decode(deviceInfo);
 	}
 }

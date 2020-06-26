@@ -1,21 +1,19 @@
 package io.mosip.mds.service;
 
+import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.DeviceDto;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
+import io.mosip.mds.util.Intent;
 
 public interface IMDSResponseProcessor {
-    public enum Intent
-	{
-		Discover,
-		DeviceInfo,
-		Capture,
-		RegistrationCapture,
-		Stream
-    }
+    
+    public String getSpecVersion();
 
-    public String GetSpecVersion();
-
-    public String ProcessResponse(TestRun run, TestExtnDto test, DeviceDto device, Intent op);
+    public String processResponse(TestRun run, TestExtnDto test, DeviceDto device, Intent op);
+    
+    public String getRenderContent(Intent op, String responseData);
+    
+    public CaptureResponse getCaptureResponse(Intent intent, String responseData);
 
 }

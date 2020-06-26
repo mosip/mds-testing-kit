@@ -4,20 +4,13 @@ import io.mosip.mds.dto.DeviceDto;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
+import io.mosip.mds.util.Intent;
 
 public interface IMDSRequestBuilder {
-    public enum Intent
-	{
-		Discover,
-		DeviceInfo,
-		Capture,
-		RegistrationCapture,
-		Stream
-    }
+   
+    public String getSpecVersion();
 
-    public String GetSpecVersion();
-
-    public ComposeRequestResponseDto BuildRequest(TestRun run, TestExtnDto test, DeviceDto device, Intent op);
+    public ComposeRequestResponseDto buildRequest(TestRun run, TestExtnDto test, DeviceDto device, Intent op);
    
 
 }

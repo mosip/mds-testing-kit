@@ -33,7 +33,7 @@ public class TestManagerController {
 			@ApiResponse(code = 500, message = "While retrieving MasterData any error occured") })
 	public MasterDataResponseDto getMasterData() {
 		// TODO Add try catch here to handle 500 cases
-		return testManager.GetMasterData();			
+		return testManager.getMasterData();			
 	}
 
 	@PostMapping("/test")
