@@ -1,12 +1,15 @@
 package io.mosip.mds.entitiy;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -38,6 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.DigitalId;
+import io.mosip.mds.util.CryptoUtility;
 import io.mosip.mds.util.SecurityUtil;;
 
 public class CaptureHelper {
@@ -87,7 +91,7 @@ public class CaptureHelper {
 							break;
 						}
 
-						biometric.getDataDecoded().setBioValue(String.valueOf(getDecryptedBioValue(biometric)));
+						biometric.getDataDecoded().setBioValue(getDecryptedBioValue(biometric));
 					}
 					// TODO Verify Digital Id with mock mds
 					// Decode.DigitalId
@@ -108,6 +112,7 @@ public class CaptureHelper {
 
 			}
 		} catch (Exception exception) {
+			exception.printStackTrace();
 			response = new CaptureResponse();
 			response.setAnalysisError(RCAPTURE_DECODE_ERROR + exception.getMessage());
 		}
@@ -116,108 +121,46 @@ public class CaptureHelper {
 
 	}
 
-	private static byte[] getDecryptedBioValue(CaptureBiometric biometric)
-			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException,
-			BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException, IOException {
-		CaptureHelper captureHelper = new CaptureHelper();
-		PrivateKey privateKey = captureHelper.getPrivateKeyFromResources("private.pem");
-
-		byte[] decryptedSessionKey = decryptSessionKey(privateKey, biometric.getSessionKey().getBytes());
-
-		SecretKey secretKey = getSecretKey(decryptedSessionKey);
-
-		// byte[] saltLastBytes = getLastBytes(timestamp,
-		// env.getProperty(IdAuthConfigKeyConstants.IDA_SALT_LASTBYTES_NUM,
-		// Integer.class, DEFAULT_SALT_LAST_BYTES_NUM));
-		//
-		// String salt = CryptoUtil.encodeBase64(saltLastBytes);
-
-		return decryptBioValue(secretKey, biometric.getDataDecoded().getBioValue().getBytes(),
-				getAad(biometric.getDataDecoded().getTimestamp()));
+	private static String getDecryptedBioValue(CaptureBiometric biometric) {
+		PrivateKey privateKey = getPrivateKey();		
+		String plainBioValue = CryptoUtility.decrypt(privateKey, biometric.sessionKey, biometric.getDataDecoded().bioValue, 
+				biometric.getDataDecoded().timestamp);		
+		return Base64.getUrlEncoder().encodeToString(plainBioValue.getBytes());
 	}
+	
+	public static PrivateKey getPrivateKey() {		
+		try {
+			FileInputStream pkeyfis = new FileInputStream("data/keys/PrivateKey.pem");
 
-	private static byte[] getAad(String timestamp) {
-		timestamp = String.valueOf(timestamp);
-
-		byte[] aadLastBytes = getLastBytes(timestamp, 16);
-
-		return org.apache.commons.codec.binary.Base64.encodeBase64(aadLastBytes);
-	}
-
-	private static byte[] decryptBioValue(SecretKey secretKey, byte[] data, byte[] aad)
-			throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException,
-			InvalidKeyException, InvalidAlgorithmParameterException {
-
-		Cipher cipher;
-		cipher = Cipher.getInstance("AES/GCM/PKCS5Padding");
-
-		byte[] output = null;
-		byte[] randomIV = generateIV(cipher.getBlockSize());
-
-		SecretKeySpec keySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
-		GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, randomIV);
-		cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
-		output = new byte[cipher.getOutputSize(data.length) + cipher.getBlockSize()];
-		if (aad != null && aad.length != 0) {
-			cipher.updateAAD(aad);
+			String pKey = getFileContent(pkeyfis, "UTF-8");
+			pKey = trimBeginEnd(pKey);
+			KeyFactory kf = KeyFactory.getInstance("RSA");
+			return kf.generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(pKey)));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			//throw new Exception("Failed to get private key");
 		}
-		byte[] processData = cipher.doFinal(data);
-		System.arraycopy(processData, 0, output, 0, processData.length);
-		System.arraycopy(randomIV, 0, output, processData.length, randomIV.length);
-
-		return output;
-
+		return null;
 	}
-
-	private static SecretKey getSecretKey(byte[] decryptedSessionKey) {
-		return new SecretKeySpec(decryptedSessionKey, 0, decryptedSessionKey.length, "AES");
-
-	}
-
-	@SuppressWarnings("restriction")
-	private static byte[] decryptSessionKey(PrivateKey privateKey, byte[] data)
-			throws InvalidKeyException, InvalidAlgorithmParameterException, BadPaddingException,
-			NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException {
-		Cipher cipher;
-		cipher = Cipher.getInstance("RSA/ECB/NoPadding");
-
-		cipher.init(Cipher.DECRYPT_MODE, privateKey);
-
-		/*
-		 * This is a hack of removing OEAP padding after decryption with NO Padding as
-		 * SoftHSM does not support it.Will be removed after HSM implementation
-		 */
-		byte[] paddedPlainText = cipher.doFinal(data);
-		if (paddedPlainText.length < 2048 / 8) {
-			byte[] tempPipe = new byte[2048 / 8];
-			System.arraycopy(paddedPlainText, 0, tempPipe, tempPipe.length - paddedPlainText.length,
-					paddedPlainText.length);
-			paddedPlainText = tempPipe;
+	
+	public static String getFileContent(FileInputStream fis, String encoding) throws IOException {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(fis, encoding))) {
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+			return sb.toString();
 		}
-		final OAEPParameterSpec oaepParams = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256,
-				PSpecified.DEFAULT);
-
-		sun.security.rsa.RSAPadding padding = sun.security.rsa.RSAPadding
-				.getInstance(sun.security.rsa.RSAPadding.PAD_OAEP_MGF1, 2048 / 8, new SecureRandom(), oaepParams);
-		return padding.unpad(paddedPlainText);
-
 	}
 
-	private PrivateKey getPrivateKeyFromResources(String privateKeyFilePath)
-			throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-		File privateKeyFile = new File(getClass().getClassLoader().getResource(privateKeyFilePath).getFile());
-
-		FileInputStream privateKeyInputStream = new FileInputStream(privateKeyFile);
-
-		DataInputStream privateKeyDataInputStream = new DataInputStream(privateKeyInputStream);
-		byte[] keyBytes = new byte[(int) privateKeyFile.length()];
-		privateKeyDataInputStream.readFully(keyBytes);
-		privateKeyDataInputStream.close();
-
-		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		return keyFactory.generatePrivate(spec);
-	}
+	private static String trimBeginEnd(String pKey) {
+		pKey = pKey.replaceAll("-*BEGIN([^-]*)-*(\r?\n)?", "");
+		pKey = pKey.replaceAll("-*END([^-]*)-*(\r?\n)?", "");
+		pKey = pKey.replaceAll("\\s", "");
+		return pKey;
+	}	
 
 	public static File extractImage(byte[] bioValue, String bioType) {
 		// do base64 url decoding
@@ -278,32 +221,5 @@ public class CaptureHelper {
 			isoHeaderSize = sizeIndex + 4;
 		}
 		return Arrays.copyOfRange(isoValue, isoHeaderSize, isoHeaderSize + imageSize);
-	}
-
-	/**
-	 * Gets the last bytes.
-	 *
-	 * @param timestamp
-	 *            the timestamp
-	 * @param lastBytesNum
-	 *            the last bytes num
-	 * @return the last bytes
-	 */
-	private static byte[] getLastBytes(String timestamp, int lastBytesNum) {
-		assert (timestamp.length() >= lastBytesNum);
-		return timestamp.substring(timestamp.length() - lastBytesNum).getBytes();
-	}
-
-	/**
-	 * Generator for IV(Initialisation Vector)
-	 * 
-	 * @param blockSize
-	 *            blocksize of current cipher
-	 * @return generated IV
-	 */
-	private static byte[] generateIV(int blockSize) {
-		byte[] byteIV = new byte[blockSize];
-		new SecureRandom().nextBytes(byteIV);
-		return byteIV;
 	}
 }

@@ -141,13 +141,14 @@
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
-            "REGISTRATION"
+            "AUTHENTICATION"
         ],
         "biometricTypes": [
             "FINGERPRINT", "FACE", "IRIS"
         ],
         "deviceTypes": [
-            "MONOCULAR",
+			"SLAP",
+			"MONOCULAR",
             "FINGER",
             "CAMERA"
         ],
