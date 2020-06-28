@@ -18,7 +18,7 @@ public class Store {
     public static List<String> GetRunIds(String email)
     {
         List<String> files = new ArrayList<>();
-        File f = new File(GetStorePath() + "runs/" + email);
+        File f = new File(getStorePath() + "runs/" + email);
         try
         {
             for(File sub:f.listFiles())
@@ -37,7 +37,7 @@ public class Store {
     public static List<String> GetUsers()
     {
         List<String> files = new ArrayList<>();
-        File f = new File(GetStorePath() + "runs");
+        File f = new File(getStorePath() + "runs");
         try
         {
             for(File sub:f.listFiles())
@@ -57,7 +57,7 @@ public class Store {
     public static TestRun GetRun(String email, String runId)
     {
         TestRun result = null;
-        File runFile = new File(GetStorePath() + "runs/" + email + File.separator + runId );
+        File runFile = new File(getStorePath() + "runs/" + email + File.separator + runId );
         if(!runFile.exists())
             return null;
         ObjectMapper mapper = new ObjectMapper();
@@ -72,9 +72,9 @@ public class Store {
         return result;
     }
 
-    public static TestRun SaveTestRun(String email, TestRun run)
+    public static TestRun saveTestRun(String email, TestRun run)
     {
-        File dir = GetOrCreateDirectory(GetStorePath() + "runs/" + email);
+        File dir = getOrCreateDirectory(getStorePath() + "runs/" + email);
         File runFile = new File(dir.getAbsolutePath() + File.separator + run.runId);
         ObjectMapper mapper = new ObjectMapper();
             // Constructs a FileWriter given a file name, using the platform's default charset
@@ -90,19 +90,19 @@ public class Store {
         return run;
     }
 
-    private static String GetStorePath()
+    private static String getStorePath()
     {
         String storePath = System.getProperty("user.dir");
         if(!storePath.endsWith(File.separator))
             storePath += File.separator;
-        File dataDir = GetOrCreateDirectory(storePath + "data/");
+        File dataDir = getOrCreateDirectory(storePath + "data/");
         storePath = dataDir.getAbsolutePath();
         if(!storePath.endsWith(File.separator))
             storePath += File.separator;
         return storePath;
     }
     
-    private static File GetOrCreateDirectory(String path)
+    private static File getOrCreateDirectory(String path)
     {
         File f = new File(path);
         if(f.isDirectory())
@@ -116,7 +116,7 @@ public class Store {
 
     public static MasterDataResponseDto GetMasterData()
     {
-        File masterDataFile = new File(GetStorePath() + "config/masterdata.json");
+        File masterDataFile = new File(getStorePath() + "config/masterdata.json");
         if(!masterDataFile.exists())
             return null;
         try
@@ -132,7 +132,7 @@ public class Store {
 
     public static TestExtnDto[] GetTestDefinitions()
     {
-        File testDeinitionsFile = new File(GetStorePath() + "config/test-definitions.json");
+        File testDeinitionsFile = new File(getStorePath() + "config/test-definitions.json");
         if(!testDeinitionsFile.exists())
             return null;
         try

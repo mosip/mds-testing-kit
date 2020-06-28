@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Arrays;
 
 import javax.persistence.Column;
@@ -147,32 +148,12 @@ public class TestManager {
 
 	private static void SetupMasterData()
 	{
-		// TODO load master data here from file
 		if(!isMasterDataLoaded)
 		{
 			MasterDataResponseDto masterData = Store.GetMasterData();
-			if(masterData != null)
-			{
-				processList = masterData.process;
-				mdsSpecVersions = masterData.mdsSpecificationVersion;
-				biometricTypes = masterData.biometricType;
-			}
-			else
-			{
-				Collections.addAll(processList, "REGISTRATION", "AUTHENTICATION");
-				Collections.addAll(mdsSpecVersions, "0.9.2","0.9.3", "0.9.4", "0.9.5");
-				BiometricTypeDto finger = new BiometricTypeDto("FINGERPRINT");
-				Collections.addAll(finger.deviceType, "SLAP", "FINGER", "CAMERA");
-				Collections.addAll(finger.segments, "LEFT SLAP", "RIGHT SLAP", "TWO THUMBS", "LEFT THUMB", "RIGHT THUMB",
-				"LEFT INDEX", "RIGHT INDEX");
-				BiometricTypeDto iris = new BiometricTypeDto("IRIS");
-				Collections.addAll(iris.deviceType, "MONOCULAR", "BINOCULAR", "CAMERA");
-				Collections.addAll(iris.segments, "FULL", "CROPPED");
-				BiometricTypeDto face = new BiometricTypeDto("FACE");
-				Collections.addAll(face.deviceType, "STILL", "VIDEO");
-				Collections.addAll(face.segments, "BUST", "HEAD");
-				Collections.addAll(biometricTypes, finger, iris, face);
-			}
+			processList = masterData.process;
+			mdsSpecVersions = masterData.mdsSpecificationVersion;
+			biometricTypes = masterData.biometricType;
 			isMasterDataLoaded = true;
 		}
 	}
@@ -225,22 +206,21 @@ public class TestManager {
 
 	private static List<TestExtnDto> FilterTests(TestManagerGetDto filter)
 	{
-		List<TestExtnDto> results = new ArrayList<TestExtnDto>();
+		List<TestExtnDto> results =  allTests.values().stream().filter(test -> 
+				(isValid(test.processes) && test.processes.contains(filter.process)) && 
+				(isValid(test.biometricTypes) && test.biometricTypes.contains(filter.biometricType)) &&
+				(isValid(test.deviceTypes) && test.deviceTypes.contains(filter.deviceType)) && 
+				( !isValid(test.mdsSpecVersions) || test.mdsSpecVersions.contains(filter.mdsSpecificationVersion ) ))
+		.collect(Collectors.toList());
 
-		for(TestExtnDto test:allTests.values())
-		{
-			// TODO see if forEach lambda expression can be used		
-			if(test.processes.contains(filter.process)
-				&& test.biometricTypes.contains(filter.biometricType)
-				&& test.deviceTypes.contains(filter.deviceType)
-				&& (test.mdsSpecVersions == null || test.mdsSpecVersions.isEmpty() || test.mdsSpecVersions.contains(filter.mdsSpecificationVersion))
-			)
-				results.add(test);
-		}
 		return results;	
 	}
+	
+	private static boolean isValid(List<String> value) {
+		return (value != null && !value.isEmpty());
+	}
 
-	private void SaveRun(RunExtnDto newRun, TestManagerDto targetProfile)
+	private void saveRun(RunExtnDto newRun, TestManagerDto targetProfile)
 	{
 		// TODO save the Run to file as well as memory
 		if(testRuns.keySet().contains(newRun.runId))
@@ -254,13 +234,13 @@ public class TestManager {
 		newTestRun.tests = new ArrayList<>();
 		newTestRun.user = newRun.email;
 		Collections.addAll(newTestRun.tests, newRun.tests);
-		TestRun savedRun = PersistRun(newTestRun);
+		TestRun savedRun = persistRun(newTestRun);
 		testRuns.put(savedRun.runId, savedRun);
 	}
 
-	private TestRun PersistRun(TestRun run)
+	private TestRun persistRun(TestRun run)
 	{
-		return Store.SaveTestRun(run.user, run);
+		return Store.saveTestRun(run.user, run);
 	}
 
 	public MasterDataResponseDto getMasterData()
@@ -279,7 +259,7 @@ public class TestManager {
 		return FilterTests(filter).toArray(new TestExtnDto[0]);
 	}
 
-	public RunExtnDto CreateRun(TestManagerDto runInfo)
+	public RunExtnDto createRun(TestManagerDto runInfo)
 	{
 		RunExtnDto newRun = new RunExtnDto();
 		// Validate the tests given
@@ -303,7 +283,7 @@ public class TestManager {
 			newRun.email = runInfo.email;
 		else
 		newRun.email = "misc";
-		SaveRun(newRun, runInfo);
+		saveRun(newRun, runInfo);
 		return newRun;
 	}
 
@@ -386,13 +366,17 @@ public class TestManager {
 		}
 	}
 
-	private TestRun[] filterRuns(String email)
+	private List<TestRun> filterRuns(String email)
 	{
-		// TODO add filter code based on email
-		return testRuns.values().toArray(new TestRun[0]);
+		List<TestRun> runs = testRuns.values().stream().filter(test -> test.user.equals(email)).collect(Collectors.toList());
+		
+		if(runs == null)
+			runs = new ArrayList<>();
+		
+		return runs;
 	}
 
-	public TestRun[] GetRuns(String email)
+	public List<TestRun> getRuns(String email)
 	{
 		return filterRuns(email);
 	}
@@ -422,7 +406,7 @@ public class TestManager {
 		run.deviceInfo = response;
 		// Overwrites the device info for every call
 
-		PersistRun(run);
+		persistRun(run);
 
 		TestExtnDto test = allTests.get(requestParams.testId);
 		
@@ -463,7 +447,7 @@ public class TestManager {
 		run.runStatus = RunStatus.InProgress;
 		// TODO when should this status be Done
 		run.testReport.put(test.testId, testResult);
-		PersistRun(run);
+		persistRun(run);
 		return testResult; 
 	}
 	

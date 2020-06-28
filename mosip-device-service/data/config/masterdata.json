@@ -8,13 +8,9 @@
                 "CAMERA"
             ],
             "segments": [
-                "LEFT SLAP",
-                "RIGHT SLAP",
-                "TWO THUMBS",
-                "LEFT THUMB",
-                "RIGHT THUMB",
-                "LEFT INDEX",
-                "RIGHT INDEX"
+				"LEFT_SLAP",
+				"RIGHT_SLAP",
+				"TWO_THUMBS"				            
             ]
         },
         {
@@ -25,8 +21,9 @@
                 "CAMERA"
             ],
             "segments": [
-                "FULL",
-                "CROPPED"
+                "LEFT_EYE",
+                "RIGHT_EYE",
+				"LEFT_RIGHT_EYE"
             ]
         },
         {
@@ -37,7 +34,8 @@
             ],
             "segments": [
                 "BUST",
-                "HEAD"
+                "HEAD",
+				"FULL_FACE"
             ]
         }
     ],
