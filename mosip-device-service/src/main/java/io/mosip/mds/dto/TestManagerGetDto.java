@@ -1,5 +1,7 @@
 package io.mosip.mds.dto;
 
+import java.util.List;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -17,4 +19,7 @@ public class TestManagerGetDto {
 	
 	@ApiModelProperty(value = "deviceType", required = true, dataType = "java.lang.String")
 	public String deviceType;
+	
+	@ApiModelProperty(value = "segmentsToCapture", required = true)
+	public List<String> segmentsToCapture;
 }

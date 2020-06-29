@@ -1,9 +1,20 @@
 package io.mosip.mds.entitiy;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileReader;
+import java.security.PublicKey;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.spec.EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import org.bouncycastle.util.io.pem.PemReader;
+import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.lang.JoseException;
 
@@ -12,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.DigitalId;
+import io.mosip.mds.util.SecurityUtil;
 
 public class DeviceInfoHelper {
 	
@@ -22,7 +34,7 @@ public class DeviceInfoHelper {
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
 	
-    public static String Render(DeviceInfoResponse response)
+    public static String getRenderContent(DeviceInfoResponse response)
 	{
 		//TODO modify this method for proper response
 		String renderContent = "<p><u>Device Info</u></p>";
@@ -36,7 +48,7 @@ public class DeviceInfoHelper {
 		return renderContent;
     }
     
-    public static DeviceInfoResponse[] Decode(String deviceInfo) {
+    public static DeviceInfoResponse[] decode(String deviceInfo) {
 		DeviceInfoMinimal[] input = null;
 		List<DeviceInfoResponse> response = new ArrayList<DeviceInfoResponse>();		
 		//Pattern pattern = Pattern.compile("(?<=\\.)(.*)(?=\\.)");
@@ -45,7 +57,7 @@ public class DeviceInfoHelper {
 			input = (DeviceInfoMinimal[])(mapper.readValue(deviceInfo.getBytes(), DeviceInfoMinimal[].class));
 			for(DeviceInfoMinimal respMin:input)
 			{
-				response.add(DecodeDeviceInfo(respMin.deviceInfo));
+				response.add(decodeDeviceInfo(respMin.deviceInfo));
 			}
 		} catch (Exception exception) {
 			DeviceInfoResponse errorResp = new DeviceInfoResponse();
@@ -55,17 +67,17 @@ public class DeviceInfoHelper {
 		return response.toArray(new DeviceInfoResponse[response.size()]);
 	}
 
-	public static DeviceInfoResponse DecodeDeviceInfo(String encodeInfo)
+	public static DeviceInfoResponse decodeDeviceInfo(String encodeInfo)
 	{
 		DeviceInfoResponse resp = new DeviceInfoResponse();	
 		try
 		{		
-			resp = (DeviceInfoResponse) (mapper.readValue(getPayload(encodeInfo), DeviceInfoResponse.class));
+			resp = (DeviceInfoResponse) (mapper.readValue(SecurityUtil.getPayload(encodeInfo), DeviceInfoResponse.class));
 			try {
 				if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
 					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
 				else
-					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(getPayload(resp.digitalId), DigitalId.class));
+					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(SecurityUtil.getPayload(resp.digitalId), DigitalId.class));
 			}
 			catch(Exception dex)
 			{
@@ -79,17 +91,4 @@ public class DeviceInfoHelper {
 		return resp;		
 	}
 	
-	private static byte[] getPayload(String data) throws Exception{		
-		try {
-			JsonWebSignature jws = new JsonWebSignature();
-			jws.setCompactSerialization(data);
-			//TODO - validate header and signature
-			return jws.getPayloadBytes();
-			
-		} catch (JoseException e) {
-			e.printStackTrace();
-			throw new Exception("Failed to parse and validate Json web signture");
-		}
-	}
-
 }

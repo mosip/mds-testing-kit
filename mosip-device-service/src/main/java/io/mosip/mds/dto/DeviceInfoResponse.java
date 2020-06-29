@@ -5,7 +5,7 @@ public class DeviceInfoResponse {
     public String callbackId;
     public String certification;
     public String deviceCode;
-    public Integer deviceId;
+    public String deviceId;
     public String deviceStatus;
     public String digitalId;
     public DigitalId digitalIdDecoded;

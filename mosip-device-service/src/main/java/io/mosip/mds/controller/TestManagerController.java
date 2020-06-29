@@ -2,6 +2,8 @@ package io.mosip.mds.controller;
 
 import io.mosip.mds.entitiy.*;
 
+import java.util.List;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +35,7 @@ public class TestManagerController {
 			@ApiResponse(code = 500, message = "While retrieving MasterData any error occured") })
 	public MasterDataResponseDto getMasterData() {
 		// TODO Add try catch here to handle 500 cases
-		return testManager.GetMasterData();			
+		return testManager.getMasterData();			
 	}
 
 	@PostMapping("/test")
@@ -53,9 +55,9 @@ public class TestManagerController {
 			@ApiResponse(code = 200, message = "When Test retrieved"),
 			@ApiResponse(code = 404, message = "When No Test found"),
 			@ApiResponse(code = 500, message = "While retrieving Test any error occured") })
-	public TestRun[] getRuns(@PathVariable("email")String email) {
+	public List<TestRun> getRuns(@PathVariable("email")String email) {
 		// TODO Add try catch to handle 404 and 500 cases 
-		return testManager.GetRuns(email);
+		return testManager.getRuns(email);
 	}
 
 	
@@ -67,7 +69,7 @@ public class TestManagerController {
 	public RunExtnDto createRun(@RequestBody TestManagerDto testManagerDto) {
 	
 		// TODO Add try catch tp handle 500 cases
-		return testManager.CreateRun(testManagerDto);
+		return testManager.createRun(testManagerDto);
 		
 	}
 	
