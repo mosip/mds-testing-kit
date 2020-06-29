@@ -2,6 +2,7 @@ package io.mosip.mds.service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -82,7 +83,7 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
     	CaptureResponse captureResponse = decode(responseData,isRCapture);
     	List<File> images = new ArrayList<>();
 		for (CaptureResponse.CaptureBiometric biometric : captureResponse.biometrics) {
-			File imageFile = CaptureHelper.extractImage(SecurityUtil.getPayload(biometric.dataDecoded.bioValue), 
+			File imageFile = CaptureHelper.extractImage(biometric.dataDecoded.bioValue, 
 					biometric.dataDecoded.bioSubType);
 			images.add(imageFile);
 		}

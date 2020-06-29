@@ -72,10 +72,8 @@ public class CaptureHelper {
 			for (CaptureResponse.CaptureBiometric biometric : response.biometrics) {
 
 				if (biometric.getData() == null) {
-
 					response.setAnalysisError(RCAPTURE_DECODE_ERROR + " : data empty");
 					break;
-
 				}
 				
 				try {
@@ -91,7 +89,8 @@ public class CaptureHelper {
 							break;
 						}
 
-						biometric.getDataDecoded().setBioValue(getDecryptedBioValue(biometric));
+						String decryptedBioValue = getDecryptedBioValue(biometric);
+						biometric.getDataDecoded().setBioValue(decryptedBioValue);
 					}
 					// TODO Verify Digital Id with mock mds
 					// Decode.DigitalId
@@ -122,7 +121,8 @@ public class CaptureHelper {
 	}
 
 	private static String getDecryptedBioValue(CaptureBiometric biometric) {
-		PrivateKey privateKey = getPrivateKey();		
+		PrivateKey privateKey = getPrivateKey();
+		
 		String plainBioValue = CryptoUtility.decrypt(privateKey, biometric.sessionKey, biometric.getDataDecoded().bioValue, 
 				biometric.getDataDecoded().timestamp);		
 		return Base64.getUrlEncoder().encodeToString(plainBioValue.getBytes());
@@ -162,7 +162,7 @@ public class CaptureHelper {
 		return pKey;
 	}	
 
-	public static File extractImage(byte[] bioValue, String bioType) {
+	public static File extractImage(String bioValue, String bioType) {
 		// do base64 url decoding
 		byte[] decodedData = Base64.getUrlDecoder().decode(bioValue);
 		// strip iso header

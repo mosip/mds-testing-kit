@@ -201,12 +201,16 @@ public class CryptoUtility {
 		String bioValue = java.util.Base64.getUrlEncoder().encodeToString(encryptedData);
 		String sessionKey = java.util.Base64.getUrlEncoder().encodeToString(encryptedSymmetricKey);
 				
-		byte[] decodedSessionKey =  java.util.Base64.getUrlDecoder().decode(sessionKey);		
+		/*byte[] decodedSessionKey =  java.util.Base64.getUrlDecoder().decode(sessionKey);		
 		final byte[] symmetricKey = asymmetricDecrypt(pair.getPrivate(), decodedSessionKey);		
 		SecretKeySpec secretKeySpec = new SecretKeySpec(symmetricKey, "AES");
 		
 		byte[] decodedBioValue =  java.util.Base64.getUrlDecoder().decode(bioValue);
-		final byte[] decryptedData = symmetricDecrypt(secretKeySpec, decodedBioValue, ivBytes, aadBytes);
-		System.out.println(new String(decryptedData));
+		final byte[] decryptedData = symmetricDecrypt(secretKeySpec, decodedBioValue, ivBytes, aadBytes);		
+		
+		System.out.println(new String(decryptedData));*/
+		
+		String decryptedData = decrypt(pair.getPrivate(), sessionKey, bioValue, timestamp);
+		System.out.println(decryptedData);
 	}
 }
