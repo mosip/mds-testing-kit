@@ -7,7 +7,7 @@ import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.entitiy.Validator;
 
-public class MandatoryDeviceDiscoverResponseValidator  extends Validator {
+public class MandatoryDiscoverResponseValidator  extends Validator {
 
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
