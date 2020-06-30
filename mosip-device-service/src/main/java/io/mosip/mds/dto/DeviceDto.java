@@ -12,8 +12,7 @@ public class DeviceDto {
 	@ApiModelProperty(value = "discoverInfo", required = true, dataType = "java.lang.String")
 	public String discoverInfo;
 
-	@ApiModelProperty(value = "deviceInfo", required = true, dataType = "java.lang.String")
-	public String deviceInfo;
-
-
+	@ApiModelProperty(value = "deviceInfo", required = true)
+	public DeviceInfoResponse deviceInfo;
+	
 }

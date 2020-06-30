@@ -6,10 +6,14 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DiscoverResponse;
+import io.mosip.mds.util.SecurityUtil;
 import io.mosip.mds.dto.DigitalId;
 
 public class DiscoverHelper {
-    public static String Render(DiscoverResponse response)
+	
+	
+	
+    public static String getRenderContent(DiscoverResponse response)
 	{
 		//TODO modify this method for proper response
 		String renderContent = "<p><u>Discover Info</u></p>";
@@ -21,7 +25,7 @@ public class DiscoverHelper {
 		return renderContent;
     }
     
-    public static DiscoverResponse[] Decode(String discoverInfo) {
+    public static DiscoverResponse[] decode(String discoverInfo) {
 		DiscoverResponse[] response = new DiscoverResponse[1];
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -34,9 +38,7 @@ public class DiscoverHelper {
 					if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
 						resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
 					else
-					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(
-						new String(Base64.getDecoder().decode(resp.digitalId)).getBytes(),
-						DigitalId.class));
+						resp.digitalIdDecoded = (DigitalId) (mapper.readValue(SecurityUtil.getPayload(resp.digitalId),	DigitalId.class));
 				}
 				catch(Exception dex)
 				{

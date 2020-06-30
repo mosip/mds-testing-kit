@@ -27,7 +27,7 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 			return errors;
 		}
 		//Check for device certification
-		if(discoverResponse.certification != "L0" || discoverResponse.certification != "L1")
+		if(discoverResponse.certification != "L0" || discoverResponse.certification != "L1" || discoverResponse.certification != "L2" )
 		{
 			errors.add("Device info response certification is invalid");
 			return errors;
@@ -35,7 +35,7 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 		//Check for device sub id
 		for(Integer subid:discoverResponse.deviceSubId)
 		{
-			if(subid < 1 || subid >3)
+			if(subid < 0 || subid >3)
 			{
 				errors.add("Device info response deviceSubId - "+ subid +" is invalid");
 				return errors;
@@ -43,7 +43,10 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 		}
 
 		//TODO Check for digital id
+		//digitalId - Digital ID as per the Digital ID definition but it will not be signed.
 
+		
+		
 		//Check for purpose
 		if(discoverResponse.purpose != "Auth" || discoverResponse.purpose != "Registration")
 		{

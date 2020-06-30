@@ -15,16 +15,7 @@ public class BiometricTypeDto {
 	@ApiModelProperty(value = "deviceType", required = true, dataType = "java.util.List")
 	public List<String> deviceType = new ArrayList<>();
 	
-	
+	@ApiModelProperty(value = "segments", required = true, dataType = "java.util.List")
 	public List<String> segments = new ArrayList<>();
-	public BiometricTypeDto(String bioType)
-	{
-		type = bioType;
-	}
-
-	protected BiometricTypeDto()
-	{
-
-	}
 
 }

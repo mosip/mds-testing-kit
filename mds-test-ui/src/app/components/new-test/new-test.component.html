@@ -15,6 +15,23 @@
       </mat-select>
     </mat-form-field>
     <br/>
+
+  <mat-form-field appearance="fill">
+  <mat-label>Device SubType</mat-label>
+  <mat-select multiple [(ngModel)]="selectedSegments">
+    <mat-option *ngFor="let obj of segments;" [value]="obj">{{obj}}</mat-option>
+  </mat-select>
+  </mat-form-field>
+  <br/>
+
+  <mat-form-field appearance="fill">
+  <mat-label>Exceptions</mat-label>
+  <mat-select multiple [(ngModel)]="selectedExceptions">
+    <mat-option *ngFor="let obj of exceptionList;" [value]="obj">{{obj}}</mat-option>
+  </mat-select>
+  </mat-form-field>
+  <br/>
+
     <mat-form-field appearance="fill">
       <mat-label>MDS version</mat-label>
       <mat-select [(ngModel)]="selectedMdsVersion">

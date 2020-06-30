@@ -27,7 +27,7 @@ public class TestRunnerController {
 	public ComposeRequestResponseDto composeRequest(@RequestBody ComposeRequestDto composeRequestDto) {
 
 		TestManager testManager = new TestManager();
-		return testManager.ComposeRequest(composeRequestDto);
+		return testManager.composeRequest(composeRequestDto);
 
 		
 	}
@@ -40,7 +40,7 @@ public class TestRunnerController {
 	public TestResult validateResponse(@RequestBody ValidateResponseRequestDto validateRequestDto) {
 		// TODO handle null return for invalid runId and testId
 		TestManager testManager = new TestManager();
-		return testManager.ValidateResponse(validateRequestDto);	
+		return testManager.validateResponse(validateRequestDto);	
 	}
 
 	@PostMapping("/decodediscover")
@@ -51,7 +51,7 @@ public class TestRunnerController {
 	public DiscoverResponse[] decodeDiscover(@RequestBody String discoverInfo) {
 		// TODO handle null return for invalid runId and testId
 		TestManager testManager = new TestManager();
-		return testManager.DecodeDiscoverInfo(discoverInfo);	
+		return testManager.decodeDiscoverInfo(discoverInfo);	
 	}
 
 	@PostMapping("/decodedeviceinfo")
@@ -62,7 +62,7 @@ public class TestRunnerController {
 	public DeviceInfoResponse[] decodeDeviceInfo(@RequestBody String deviceInfo) {
 		// TODO handle null return for invalid runId and testId
 		TestManager testManager = new TestManager();
-		return testManager.DecodeDeviceInfo(deviceInfo);	
+		return testManager.decodeDeviceInfo(deviceInfo);	
 	}
 
 

@@ -13,9 +13,11 @@ public class RegistrationCaptureRequest {
         public String deviceId; //internal Id
         public Integer deviceSubId; //specific device Id
         public String previousHash; //hash of the previous block
+        public String[] bioSubType;
     };
     
     public String env; //target environment
+    public String purpose;
     public String specVersion; //expected MDS spec version
     public Integer timeout; //timeout for registration capture
     public String captureTime; //time of capture request in ISO format including timezone

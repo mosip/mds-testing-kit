@@ -10,6 +10,7 @@ import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.dto.postresponse.RequestInfoDto;
+import io.mosip.mds.util.Intent;
 
 import java.util.Date;
 
@@ -18,21 +19,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
 
-    public String GetSpecVersion()
+    public String getSpecVersion()
     {
         return "0.9.2";
     }
 
     String defaultPort = "4501";
 
-    private String GetPort(DeviceDto deviceDto)
+    private String getPort(DeviceDto deviceDto)
 	{
 		return (deviceDto != null && deviceDto.port != null) ? deviceDto.port : defaultPort;
 	}
     
     private ObjectMapper mapper = new ObjectMapper();
 
-    public ComposeRequestResponseDto BuildRequest(TestRun run, TestExtnDto test, DeviceDto device, Intent op)
+    public ComposeRequestResponseDto buildRequest(TestRun run, TestExtnDto test, DeviceDto device, Intent op)
     {
         ComposeRequestResponseDto composeRequestResponseDto=new ComposeRequestResponseDto(run.runId, test.testId);
 		RequestInfoDto requestInfoDto=new RequestInfoDto();
@@ -44,28 +45,28 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
             {
                 case Discover:
                     requestInfoDto.verb = "MOSIPDISC";
-                    requestInfoDto.body = Discover(test, device);
-                    requestInfoDto.url = "http://127.0.0.1:" + GetPort(device) + "/device";
+                    requestInfoDto.body = discover(test, device);
+                    requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/device";
                     break;
                 case Stream:
                     requestInfoDto.verb = "STREAM";
-                    requestInfoDto.body = Stream(test, device);
-                    requestInfoDto.url = "http://127.0.0.1:" + GetPort(device) + "/stream";
+                    requestInfoDto.body = stream(test, device);
+                    requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/stream";
                 break;
                 case Capture:
                     requestInfoDto.verb = "CAPTURE";
-                    requestInfoDto.body = Capture(test, device);
-                    requestInfoDto.url = "http://127.0.0.1:" + GetPort(device) + "/capture";
+                    requestInfoDto.body = capture(test, device);
+                    requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/capture";
                 break;
                 case RegistrationCapture:
                     requestInfoDto.verb = "RCAPTURE";
-                    requestInfoDto.body = RegistrationCapture(test, device);
-                    requestInfoDto.url = "http://127.0.0.1:" + GetPort(device) + "/capture";
+                    requestInfoDto.body = registrationCapture(test, device);
+                    requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/capture";
                 break;
                 case DeviceInfo:
-                    requestInfoDto.verb = "MOSIPDISC";
-                    requestInfoDto.body = DeviceInfo(test, device);
-                    requestInfoDto.url = "http://127.0.0.1:" + GetPort(device) + "/device";
+                    requestInfoDto.verb = "MOSIPDINFO";
+                    requestInfoDto.body = deviceInfo(test, device);
+                    requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/device";
         }
         }
         catch(JsonProcessingException jEx)
@@ -75,20 +76,20 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         return composeRequestResponseDto;
     }
 
-    private String Discover(TestExtnDto test, DeviceDto device) throws JsonProcessingException 
+    private String discover(TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
         DiscoverRequest requestBody = new DiscoverRequest();
         requestBody.type = "BIOMETRIC DEVICE";
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String DeviceInfo(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String deviceInfo(TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
         DeviceInfoRequest requestBody = new DeviceInfoRequest();
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String Stream(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String stream(TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
         StreamRequest requestBody = new StreamRequest();
         requestBody.deviceId = device.discoverInfo;
@@ -97,7 +98,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String Capture(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String capture(TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
         CaptureRequest requestBody = new CaptureRequest();
         requestBody.captureTime = (new Date()).toString();
@@ -110,7 +111,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         CaptureRequest.CaptureBioRequest bio = requestBody.new CaptureBioRequest();
         bio.count = 1;
 //        bio.deviceId = device.discoverInfo;
-        bio.deviceId = 1;
+        bio.deviceId = "1";
         bio.deviceSubId = 1;
         bio.previousHash = "";
         bio.requestedScore = 80;
@@ -120,7 +121,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String RegistrationCapture(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String registrationCapture(TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
         RegistrationCaptureRequest_0_9_2 requestBody = new RegistrationCaptureRequest_0_9_2();
         requestBody.captureTime = (new Date()).toString();
