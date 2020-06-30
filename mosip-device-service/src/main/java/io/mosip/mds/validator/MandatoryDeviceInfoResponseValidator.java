@@ -89,7 +89,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 			errors.add("DeviceInfo response does not contain specVersion");
 			return errors;
 		}
-		
+
 		return errors;
 	}
 

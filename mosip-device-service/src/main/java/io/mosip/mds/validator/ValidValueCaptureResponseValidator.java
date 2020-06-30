@@ -27,57 +27,62 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		for(CaptureResponse.CaptureBiometric bb:cr.biometrics)
 		{
 			CaptureBiometricData dataDecoded = bb.dataDecoded;
-			// Check for bioType elements
-			if(dataDecoded.bioType != FINGER && dataDecoded.bioType != IRIS && dataDecoded.bioType != FACE)
-			{
-				errors.add("Capture response biometrics bioType is invalid");
-				return errors;
-			}else {
-			
-			//Check for bioSubType
-				errors = validateBioSubType(errors, dataDecoded);
-				if(!ObjectUtils.isEmpty(errors))
-				return errors;
-			}
-			//Check for purpose elements
-			if(dataDecoded.purpose != AUTH || dataDecoded.purpose != REGISTRATION )
-			{
-				errors.add("Capture response biometrics purpose is invalid");
-				return errors;
-			}
-			
+			errors=validateActualValueDatadecoded(errors, dataDecoded);
+
 			//TODO check for env
-			
+
 			//TODO check time stamp for ISO Format date time with timezone
-			
+
 			//TODO check for requestedScore
-			
+
 			//TODO check for quality score
-			
-			
+
+
 		}
 
 
 		return errors;
 	}
+	private List<String> validateActualValueDatadecoded(List<String> errors, CaptureBiometricData dataDecoded) {
+		// Check for bioType elements
+		if(dataDecoded.bioType != FINGER && dataDecoded.bioType != IRIS && dataDecoded.bioType != FACE)
+		{
+			errors.add("Capture response biometrics-dataDecoded bioType is invalid");
+			return errors;
+		}else {
+
+			//Check for bioSubType
+			errors = validateBioSubType(errors, dataDecoded);
+			if(!ObjectUtils.isEmpty(errors))
+				return errors;
+		}
+		//Check for purpose elements
+		if(dataDecoded.purpose != AUTH && dataDecoded.purpose != REGISTRATION )
+		{
+			errors.add("Capture response biometrics-dataDecoded purpose is invalid");
+			return errors;
+		}
+		return errors;
+	}
+
 	private List<String> validateBioSubType(List<String> errors, CaptureBiometricData dataDecoded) {
 		// Check for bioSubType of Finger elements
-		if(!(dataDecoded.bioType == FINGER &&
-				bioSubTypeFingerList.contains(dataDecoded.bioSubType)))
+		if(dataDecoded.bioType == FINGER &&
+				!bioSubTypeFingerList.contains(dataDecoded.bioSubType))
 		{
 			errors.add("Capture response biometrics bioSubType is invalid for Finger");
 			return errors;
 		}
 		// Check for bioSubType of Iris elements
-		if(!(dataDecoded.bioType == IRIS &&
-				bioSubTypeIrisList.contains(dataDecoded.bioSubType)))
+		if(dataDecoded.bioType == IRIS &&
+				!bioSubTypeIrisList.contains(dataDecoded.bioSubType))
 		{
 			errors.add("Capture response biometrics bioSubType is invalid for Iris");
 			return errors;
 		}
 		// Check for bioSubType of Face elements
-		if(!(dataDecoded.bioType == FACE &&
-				(dataDecoded.bioSubType == null || dataDecoded.bioSubType.isEmpty())))
+		if(dataDecoded.bioType == FACE &&
+				!(dataDecoded.bioSubType == null || dataDecoded.bioSubType.isEmpty()))
 		{
 			errors.add("Capture response biometrics bioSubType is invalid for Face");
 			return errors;

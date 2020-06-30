@@ -9,6 +9,11 @@ import io.mosip.mds.entitiy.Validator;
 
 public class ValidValueDiscoverResponseValidator extends Validator {
 
+	private static final String L2 = "L2";
+	private static final String L1 = "L1";
+	private static final String L0 = "L0";
+	private static final String REGISTRATION = "Registration";
+	private static final String AUTH = "Auth";
 	private static final String NOT_REGISTERED = "Not Registered";
 	private static final String NOT_READY = "Not Ready";
 	private static final String BUSY = "Busy";
@@ -20,37 +25,36 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 		DiscoverResponse discoverResponse = response.discoverResponse;
 
 		//Check for device status
-		if(discoverResponse.deviceStatus != READY || discoverResponse.deviceStatus != BUSY
-				|| discoverResponse.deviceStatus != NOT_READY || discoverResponse.deviceStatus != NOT_REGISTERED)
+		if(discoverResponse.deviceStatus != READY && discoverResponse.deviceStatus != BUSY
+				&& discoverResponse.deviceStatus != NOT_READY && discoverResponse.deviceStatus != NOT_REGISTERED)
 		{
-			errors.add("Device info response device status is invalid");
+			errors.add("Device discover response device status is invalid");
 			return errors;
 		}
 		//Check for device certification
-		if(discoverResponse.certification != "L0" || discoverResponse.certification != "L1" || discoverResponse.certification != "L2" )
+		if(discoverResponse.certification != L0  && discoverResponse.certification != L1 && discoverResponse.certification != L2 )
 		{
-			errors.add("Device info response certification is invalid");
+			errors.add("Device discover response certification is invalid");
 			return errors;
 		}
 		//Check for device sub id
 		for(Integer subid:discoverResponse.deviceSubId)
 		{
-			if(subid < 0 || subid >3)
-			{
-				errors.add("Device info response deviceSubId - "+ subid +" is invalid");
-				return errors;
-			}
+			if(subid != null)
+				if(subid < 0 && subid >3)
+				{
+					errors.add("Device discover response deviceSubId - "+ subid +" is invalid");
+					return errors;
+				}
 		}
 
 		//TODO Check for digital id
 		//digitalId - Digital ID as per the Digital ID definition but it will not be signed.
 
-		
-		
 		//Check for purpose
-		if(discoverResponse.purpose != "Auth" || discoverResponse.purpose != "Registration")
+		if(discoverResponse.purpose != AUTH && discoverResponse.purpose != REGISTRATION)
 		{
-			errors.add("Device info response purpose is invalid");
+			errors.add("Device discover response purpose is invalid");
 			return errors;
 		}
 
