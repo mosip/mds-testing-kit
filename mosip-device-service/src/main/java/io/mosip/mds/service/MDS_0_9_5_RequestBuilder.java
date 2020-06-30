@@ -26,13 +26,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
-	
+
 	 private static ObjectMapper mapper;
-	    
+
     static {
     	mapper = new ObjectMapper();
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);    	
+		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
     }
 
     public String getSpecVersion()
@@ -45,8 +45,8 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
     private String getPort(DeviceDto deviceDto)
 	{
 		return (deviceDto != null && deviceDto.port != null) ? deviceDto.port : defaultPort;
-	}  
-   
+	}
+
 
     public ComposeRequestResponseDto buildRequest(TestRun run, TestExtnDto test, DeviceDto device, Intent op)
     {
@@ -93,7 +93,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         return composeRequestResponseDto;
     }
 
-    private String getDiscoverRequest(TestExtnDto test, DeviceDto device) throws JsonProcessingException 
+    private String getDiscoverRequest(TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
         DiscoverRequest requestBody = new DiscoverRequest();
         requestBody.type = "BIOMETRIC DEVICE";
@@ -125,9 +125,9 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         requestBody.specVersion = "0.9.5";
         requestBody.timeout = 30;
         requestBody.transactionId = "" + System.currentTimeMillis();
-        
+
         requestBody.bio = new CaptureRequest.CaptureBioRequest[targetProfile.segmentsToCapture.size()];
-        
+
         int i=0;
         for(String segment : targetProfile.segmentsToCapture) {
         	CaptureRequest.CaptureBioRequest bio = requestBody.new CaptureBioRequest();
@@ -135,16 +135,16 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
             bio.deviceId = device.deviceInfo.deviceId;
             bio.deviceSubId = getDeviceSubId(targetProfile.deviceType, segment);
             bio.previousHash = "";
-            bio.requestedScore = 80;            
-            bio.bioSubType = getBioSubTypes(segment, targetProfile.exceptions).toArray(new String[0]);            
+            bio.requestedScore = 80;
+            bio.bioSubType = getBioSubTypes(segment, targetProfile.exceptions).toArray(new String[0]);
             bio.type = getBioType(targetProfile.biometricType);
             requestBody.bio[i++] = bio;
         }
-        
+
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String getRegistrationCaptureRequest(TestManagerDto targetProfile, TestExtnDto test, DeviceDto device) 
+    private String getRegistrationCaptureRequest(TestManagerDto targetProfile, TestExtnDto test, DeviceDto device)
     		throws JsonProcessingException
     {
         RegistrationCaptureRequest requestBody = new RegistrationCaptureRequest();
@@ -155,98 +155,98 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         requestBody.specVersion = "0.9.5";
         requestBody.timeout = 30;
         requestBody.transactionId = "" + System.currentTimeMillis();
-        
+
         requestBody.bio = new RegistrationCaptureRequest.RegistrationCaptureBioRequest[targetProfile.segmentsToCapture.size()];
-       
+
         int i=0;
         for(String segment : targetProfile.segmentsToCapture) {
         	RegistrationCaptureRequest.RegistrationCaptureBioRequest bio = requestBody.new RegistrationCaptureBioRequest();
-            
+
         	bio.type = getBioType(targetProfile.biometricType);
         	bio.previousHash = "";
             bio.deviceId = device.deviceInfo.deviceId;
             bio.requestedScore = 80;
-            
-            bio.deviceSubId = getDeviceSubId(targetProfile.deviceType, segment);         
-            
-            bio.exception = targetProfile.exceptions == null ? new String[0] : 
+
+            bio.deviceSubId = getDeviceSubId(targetProfile.deviceType, segment);
+
+            bio.exception = targetProfile.exceptions == null ? new String[0] :
             	BioSubType.convertTo095(targetProfile.exceptions).toArray(new String[0]);
-            
-            bio.bioSubType = null; 
+
+            bio.bioSubType = null;
             bio.count = getCount(segment, bio.exception);
-            
+
             requestBody.bio[i++] = bio;
-        } 
+        }
         return mapper.writeValueAsString(requestBody);
     }
-    
-    
+
+
     private String getBioType(String biometricType) {
     	switch (biometricType) {
-		case "FINGERPRINT":	return "Finger";		
-		case "IRIS": return "Iris";			
+		case "FINGERPRINT":	return "Finger";
+		case "IRIS": return "Iris";
 		case "FACE": return "Face";
 		}
     	return null;
     }
-    
+
     private List<String> getBioSubTypes(String segment, List<String> exceptions) {
     	List<String> subTypes = BioSubType.get095BioSubTypes(segment);
-    	
+
     	if(exceptions != null)
     		subTypes.removeAll(BioSubType.convertTo095(exceptions));
-    	
+
     	return subTypes;
     }
-    
+
     private int getCount(String segment, String[] exceptions) {
     	switch (segment) {
-		case "LEFT_SLAP":	
+		case "LEFT_SLAP":
 			return 4 - exceptions.length;
 
-		case "RIGHT_SLAP":			
+		case "RIGHT_SLAP":
 			return 4 - exceptions.length;
-			
-		case "TWO_THUMBS":			
+
+		case "TWO_THUMBS":
 			return 2 - exceptions.length;
-			
-		case "LEFT_EYE":			
+
+		case "LEFT_EYE":
 			return 1 - exceptions.length;
 
-		case "RIGHT_EYE":			
+		case "RIGHT_EYE":
 			return 1 - exceptions.length;
-			
-		case "LEFT_RIGHT_EYE":			
+
+		case "LEFT_RIGHT_EYE":
 			return 2 - exceptions.length;
 		}
     	return 0;
     }
-    
+
     private int getDeviceSubId(String deviceType, String segment) {
     	switch (deviceType) {
-		case "SLAP": 
+		case "SLAP":
 			if(segment.equals("LEFT_SLAP"))
 				return 1;
-			
+
 			if(segment.equals("RIGHT_SLAP"))
 				return 2;
-			
+
 			if(segment.equals("TWO_THUMBS"))
 				return 3;
-			
-			break;	
-		
+
+			break;
+
 		case "BINOCULAR":
-		case "MONOCULAR": 
+		case "MONOCULAR":
 			if(segment.equals("LEFT_EYE"))
 				return 1;
-			
+
 			if(segment.equals("RIGHT_EYE"))
 				return 2;
-			
+
 			if(segment.equals("LEFT_RIGHT_EYE"))
 				return 3;
-			
+
 			break;
 		}
     	return 0;

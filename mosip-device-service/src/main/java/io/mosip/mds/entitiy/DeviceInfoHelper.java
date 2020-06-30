@@ -90,5 +90,5 @@ public class DeviceInfoHelper {
 		}
 		return resp;		
 	}
-	
+
 }

@@ -23,4 +23,8 @@ public class ValidateResponseRequestDto {
 
 	public CaptureResponse captureResponse; 
 	
+	public DeviceInfoResponse deviceInfoResponse;
+	
+	public DiscoverResponse discoverResponse;
+	
 }

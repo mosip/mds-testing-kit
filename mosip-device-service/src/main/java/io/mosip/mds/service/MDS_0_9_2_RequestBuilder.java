@@ -76,7 +76,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         return composeRequestResponseDto;
     }
 
-    private String discover(TestExtnDto test, DeviceDto device) throws JsonProcessingException 
+    private String discover(TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
         DiscoverRequest requestBody = new DiscoverRequest();
         requestBody.type = "BIOMETRIC DEVICE";
