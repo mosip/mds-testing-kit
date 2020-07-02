@@ -19,15 +19,9 @@ public class TestManagerDto {
 	@ApiModelProperty(value = "biometricType", required = true, dataType = "java.lang.String")
 	public String biometricType;
 
-	@ApiModelProperty(value = "deviceType", required = true, dataType = "java.lang.String")
-	public String deviceType;
+	@ApiModelProperty(value = "deviceSubType", required = true, dataType = "java.lang.String")
+	public String deviceSubType;
 	
-	@ApiModelProperty(value = "segmentsToCapture", required = true)
-	public List<String> segmentsToCapture;
-	
-	@ApiModelProperty(value = "exceptions", required = false)
-	public List<String> exceptions;
-
 	@ApiModelProperty(value = "runName", required = true, dataType = "java.lang.String")
 	public String runName;
 

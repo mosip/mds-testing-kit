@@ -22,6 +22,8 @@ export class RunComponent implements OnInit {
   panelOpenState: boolean;
   JSON: any;
   Object: any;
+
+
   constructor(
     private localStorageService: LocalStorageService,
     private dataService: DataService,
@@ -35,7 +37,7 @@ export class RunComponent implements OnInit {
     console.log(history.state.data);
     this.run = history.state.data;
     this.availablePorts = this.localStorageService.getAvailablePorts();
-    this.fetchReport();
+    //this.fetchReport();
     this.panelOpenState = false;
   }
 
@@ -96,5 +98,17 @@ export class RunComponent implements OnInit {
   OnPortSelect(value: any) {
     this.currentPort = value;
     this.devices = this.localStorageService.getDevicesByPortNumber(value);
+  }
+
+  getPassedValidators(value: any) {
+    if(value !== undefined) {
+      let total = 0;
+      for (let i = 0; i<value.length; i++) {
+        if(value[i].status == 'Passed')
+          total = total + 1;
+      }      
+      return total + ' out of ' + value.length + ' validations Passed';
+    }
+    return '0 out of 0 Passed';
   }
 }

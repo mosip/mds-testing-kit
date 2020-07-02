@@ -21,7 +21,7 @@ public class TestManagerServiceImpl implements TestManagerService {
 		if(testManagerDto!=null) {
 			
 			testManager.biometricType = testManagerDto.biometricType;
-			testManager.deviceType = testManagerDto.deviceType;
+			testManager.deviceSubType = testManagerDto.deviceSubType;
 			testManager.mdsSpecVersion = testManager.mdsSpecVersion;
 			testManager.tests = testManagerDto.tests;
 			testManager.process = testManagerDto.process;

@@ -185,41 +185,46 @@ public class CaptureHelper {
 
 	private static byte[] extractJPGfromISO(byte[] isoValue, String bioType) {
 		// TODO set the correct iso handling technique here
-		int isoHeaderSize = 0;
-		byte hasCertBlock = 0;
-		int recordLength = 0;
-		int sizeIndex = 0;
-		int imageSize = 0;
-		int qbSize = 0;
-		int cbSize = 0;
-		if (bioType.equalsIgnoreCase("Finger")) {
-			hasCertBlock = isoValue[14];
-			qbSize = isoValue[34] * 5;
-			cbSize = (hasCertBlock == 1) ? hasCertBlock + (isoValue[35 + qbSize] * 3) : 0;
-			recordLength = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 8, 12)).getInt();
-			sizeIndex = 35 + qbSize + cbSize + 18;
-			imageSize = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, sizeIndex, sizeIndex + 4)).getInt();
-			isoHeaderSize = sizeIndex + 4;
-		} else if (bioType.equalsIgnoreCase("Face")) {
-			hasCertBlock = isoValue[14];
-			qbSize = isoValue[35] * 5;
-			// cbSize = (hasCertBlock == 1) ? hasCertBlock + (isoValue[35 + qbSize] * 3) :
-			// 0;
-			recordLength = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 8, 12)).getInt();
-			int landmarkPoints = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 36 + qbSize, 36 + qbSize + 4)).getShort();
-			sizeIndex = 36 + qbSize + (landmarkPoints * 8) + cbSize + 28;
-			imageSize = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, sizeIndex, sizeIndex + 4)).getInt();
-			isoHeaderSize = sizeIndex + 4;
-		} else if (bioType.equalsIgnoreCase("Iris")) {
-			hasCertBlock = isoValue[14];
-			qbSize = isoValue[34] * 5;
-			// cbSize = (hasCertBlock == 1) ? hasCertBlock + (isoValue[35 + qbSize] * 3) :
-			// 0;
-			recordLength = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 8, 12)).getInt();
-			sizeIndex = 35 + qbSize + cbSize + 29;
-			imageSize = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, sizeIndex, sizeIndex + 4)).getInt();
-			isoHeaderSize = sizeIndex + 4;
+		try {
+			int isoHeaderSize = 0;
+			byte hasCertBlock = 0;
+			int recordLength = 0;
+			int sizeIndex = 0;
+			int imageSize = 0;
+			int qbSize = 0;
+			int cbSize = 0;
+			if (bioType.equalsIgnoreCase("Finger")) {
+				hasCertBlock = isoValue[14];
+				qbSize = isoValue[34] * 5;
+				cbSize = (hasCertBlock == 1) ? hasCertBlock + (isoValue[35 + qbSize] * 3) : 0;
+				recordLength = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 8, 12)).getInt();
+				sizeIndex = 35 + qbSize + cbSize + 18;
+				imageSize = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, sizeIndex, sizeIndex + 4)).getInt();
+				isoHeaderSize = sizeIndex + 4;
+			} else if (bioType.equalsIgnoreCase("Face")) {
+				hasCertBlock = isoValue[14];
+				qbSize = isoValue[35] * 5;
+				// cbSize = (hasCertBlock == 1) ? hasCertBlock + (isoValue[35 + qbSize] * 3) :
+				// 0;
+				recordLength = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 8, 12)).getInt();
+				int landmarkPoints = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 36 + qbSize, 36 + qbSize + 4)).getShort();
+				sizeIndex = 36 + qbSize + (landmarkPoints * 8) + cbSize + 28;
+				imageSize = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, sizeIndex, sizeIndex + 4)).getInt();
+				isoHeaderSize = sizeIndex + 4;
+			} else if (bioType.equalsIgnoreCase("Iris")) {
+				hasCertBlock = isoValue[14];
+				qbSize = isoValue[34] * 5;
+				// cbSize = (hasCertBlock == 1) ? hasCertBlock + (isoValue[35 + qbSize] * 3) :
+				// 0;
+				recordLength = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 8, 12)).getInt();
+				sizeIndex = 35 + qbSize + cbSize + 29;
+				imageSize = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, sizeIndex, sizeIndex + 4)).getInt();
+				isoHeaderSize = sizeIndex + 4;
+			}
+			return Arrays.copyOfRange(isoValue, isoHeaderSize, isoHeaderSize + imageSize);
+		} catch(Throwable t) {
+			t.printStackTrace();
 		}
-		return Arrays.copyOfRange(isoValue, isoHeaderSize, isoHeaderSize + imageSize);
+		return new byte[0];
 	}
 }

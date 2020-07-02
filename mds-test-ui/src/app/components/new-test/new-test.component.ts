@@ -14,13 +14,9 @@ export class NewTestComponent implements OnInit {
   tests: any;
   masterData: any;
   deviceTypes: [];
-  segments:[];
-  exceptionList: string[] = ['LeftIndex', 'LeftMiddle', 'LeftLittle', 'LeftRing', 'RightIndex', 'RightMiddle', 'RightLittle', 'RightRing', 'LeftThumb', 'RightThumb', 'LeftEye', 'RightEye']; 
   selectedTests = [];
   selectedBiometricType: any;
   selectedDeviceType: any;
-  selectedSegments: [];
-  selectedExceptions: [];
   selectedMdsVersion: any;
   selectedProcess: any;
   email = '';
@@ -39,16 +35,13 @@ export class NewTestComponent implements OnInit {
   }
 
   OnBiometricSelect(event) {
-    this.deviceTypes = event.value.deviceType;
-    this.segments = event.value.segments;
+    this.deviceTypes = event.value.deviceSubTypes;
   }
 
   OnGetTestsClicked() {
     const requestBody = {
       biometricType: this.selectedBiometricType.type,
-      deviceType: this.selectedDeviceType,
-      segmentsToCapture: this.selectedSegments,
-      exceptions: this.selectedExceptions,
+      deviceSubType: this.selectedDeviceType,
       mdsSpecificationVersion: this.selectedMdsVersion,
       process: this.selectedProcess
     };
@@ -63,9 +56,7 @@ export class NewTestComponent implements OnInit {
   OnCreateRunClicked() {
     const requestBody = {
       biometricType: this.selectedBiometricType.type,
-      deviceType: this.selectedDeviceType,
-      segmentsToCapture: this.selectedSegments,
-      exceptions: this.selectedExceptions,
+      deviceSubType: this.selectedDeviceType,
       mdsSpecVersion: this.selectedMdsVersion,
       process: this.selectedProcess,
       tests: this.selectedTests,

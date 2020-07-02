@@ -29,7 +29,7 @@ public class Store {
         }
         catch(Exception ex)
         {
-
+        	ex.printStackTrace();
         }
         return files;
     }
@@ -48,7 +48,7 @@ public class Store {
         }
         catch(Exception ex)
         {
-
+        	ex.printStackTrace();
         }
         return files;
     }
@@ -67,7 +67,7 @@ public class Store {
         }
         catch(Exception ex)
         {
-            // TODO write to log
+        	ex.printStackTrace();
         }
         return result;
     }
@@ -84,8 +84,7 @@ public class Store {
         }
         catch(Exception ex)
         {
-            // TODO write to log
-            return null;
+        	ex.printStackTrace();
         }
         return run;
     }
@@ -114,36 +113,38 @@ public class Store {
         return null;
     }
 
-    public static MasterDataResponseDto GetMasterData()
+    public static MasterDataResponseDto getMasterData()
     {
         File masterDataFile = new File(getStorePath() + "config/masterdata.json");
-        if(!masterDataFile.exists())
-            return null;
-        try
-        {
-        ObjectMapper mapper = new ObjectMapper();
-        return (MasterDataResponseDto)mapper.readValue(new FileImageInputStream(masterDataFile), MasterDataResponseDto.class); 
+        if(masterDataFile.exists()) {
+        	try
+            {
+            ObjectMapper mapper = new ObjectMapper();
+            return (MasterDataResponseDto)mapper.readValue(new FileImageInputStream(masterDataFile), MasterDataResponseDto.class); 
+            }
+            catch(Exception ex)
+            {
+            	ex.printStackTrace();
+            }
         }
-        catch(Exception ex)
-        {
-            return null;
-        }
+        return null;
     }
 
-    public static TestExtnDto[] GetTestDefinitions()
+    public static TestExtnDto[] getTestDefinitions()
     {
         File testDeinitionsFile = new File(getStorePath() + "config/test-definitions.json");
-        if(!testDeinitionsFile.exists())
-            return null;
-        try
-        {
-        ObjectMapper mapper = new ObjectMapper();
-        return (TestExtnDto[])mapper.readValue(new FileImageInputStream(testDeinitionsFile), TestExtnDto[].class); 
+        if(testDeinitionsFile.exists()) {
+        	try
+            {
+            ObjectMapper mapper = new ObjectMapper();
+            return (TestExtnDto[])mapper.readValue(new FileImageInputStream(testDeinitionsFile), TestExtnDto[].class); 
+            }
+            catch(Exception ex)
+            {
+            	ex.printStackTrace();                
+            }
         }
-        catch(Exception ex)
-        {
-            return null;
-        }
+        return null; 
     }
 
 

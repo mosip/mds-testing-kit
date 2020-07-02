@@ -82,11 +82,14 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
     {
     	CaptureResponse captureResponse = decode(responseData,isRCapture);
     	List<File> images = new ArrayList<>();
-		for (CaptureResponse.CaptureBiometric biometric : captureResponse.biometrics) {
-			File imageFile = CaptureHelper.extractImage(biometric.dataDecoded.bioValue, 
-					biometric.dataDecoded.bioSubType);
-			images.add(imageFile);
-		}
+    	
+    	if(captureResponse.biometrics != null) {
+    		for (CaptureResponse.CaptureBiometric biometric : captureResponse.biometrics) {
+    			File imageFile = CaptureHelper.extractImage(biometric.dataDecoded.bioValue, 
+    					biometric.dataDecoded.bioSubType);
+    			images.add(imageFile);
+    		}
+    	}
 
 		String renderContent = "<p><u>Capture Info</u></p>";
 		renderContent += "<b>Images Captured:</b>" + images.size() + "<br/>";
