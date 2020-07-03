@@ -81,7 +81,7 @@ public class TestManagerController {
 			@ApiResponse(code = 500, message = "While retrieving Test Report any error occured") })
 	public TestReport getTestReport(@PathVariable("runId")String runId, @PathVariable String format) {
 		// TODO Add try catch as well as return handler for 404 and 500 cases
-		return testManager.GetReport(runId);
+		return testManager.getReport(runId);
 	}
 
 	@GetMapping("/pdfreport/{runId}")

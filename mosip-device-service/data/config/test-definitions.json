@@ -1,22 +1,26 @@
 [
     {
-        "testId": "discover device",
+        "testId": "Discover device",
         "method": "discover",
-        "testDescription": null,
+        "testDescription": "Valid Discover Request",
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
-            "REGISTRATION",
-            "AUTHENTICATION"
+            "Registration",
+            "Auth"
         ],
         "biometricTypes": [
-            "FINGERPRINT", "FACE", "IRIS"
+            "Finger", "Face", "Iris"
         ],
-        "deviceTypes": [
-            "SLAP",
-            "FINGER"
+        "deviceSubTypes": [
+            "Slap",
+            "Single",
+            "Double",
+            "Full face"
         ],
-        "mdsSpecVersions": null,
+		"segments" : [],
+		"exceptions" : [],
+        "mdsSpecVersions":["0.9.5"],
         "validators": [
             {
                 "Name": "CoinTossValidator",
@@ -25,23 +29,27 @@
         ]
     },
     {
-        "testId": "device info",
+        "testId": "Device Info",
         "method": "deviceinfo",
-        "testDescription": null,
+        "testDescription": "Valid DeviceInfo Request",
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
-            "REGISTRATION",
-            "AUTHENTICATION"
+            "Registration",
+            "Auth"
         ],
         "biometricTypes": [
-            "FINGERPRINT", "IRIS", "FACE"
+            "Finger", "Face", "Iris"
         ],
-        "deviceTypes": [
-            "SLAP",
-            "FINGER"
+        "deviceSubTypes": [
+             "Slap",
+            "Single",
+            "Double",
+            "Full face"
         ],
-        "mdsSpecVersions": null,
+		"segments" : [],
+		"exceptions" : [],
+        "mdsSpecVersions": ["0.9.5"],
         "validators": [
             {
                 "Name": "CoinTossValidator",
@@ -54,25 +62,26 @@
         ]
     },
     {
-        "testId": "stream input",
+        "testId": "Stream Input",
         "method": "stream",
-        "testDescription": null,
+        "testDescription": "Valid Streaming Request",
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
-            "REGISTRATION"
+            "Registration"
         ],
         "biometricTypes": [
-            "FINGERPRINT", "FACE", "IRIS"
+            "Finger", "Face", "Iris"
         ],
-        "deviceTypes": [
-            "SLAP",
-            "FINGER",
-            "MONOCULAR",
-            "BINOCULAR",
-            "CAMERA"
+		"deviceSubTypes": [
+           "Slap",
+            "Single",
+            "Double",
+            "Full face"			
         ],
-        "mdsSpecVersions": null,
+		"segments" : [],
+		"exceptions" : [],
+        "mdsSpecVersions": ["0.9.5"],
         "validators": [
             {
                 "Name": "CoinTossValidator",
@@ -81,23 +90,23 @@
         ]
     },
     {
-        "testId": "registration capture",
+        "testId": "Registration capture - All Slap",
         "method": "rcapture",
-        "testDescription": null,
+        "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
-            "REGISTRATION"
+            "Registration"
         ],
         "biometricTypes": [
-            "FINGERPRINT", "FACE", "IRIS"
+            "Finger"
         ],
-        "deviceTypes": [
-            "SLAP",
-            "CAMERA",
-            "BINOCULAR"
+        "deviceSubTypes": [
+            "Slap"
         ],
-        "mdsSpecVersions": null,
+		"segments" : ["LEFT_SLAP", "RIGHT_SLAP", "TWO_THUMBS"],
+		"exceptions" : [],
+        "mdsSpecVersions": ["0.9.5"],
         "validators": [
             {
                 "Name": "AlwaysPassValidator",
@@ -105,54 +114,152 @@
             }
         ]
     },
-    {
-        "testId": "registration capture fail case",
+	{
+        "testId": "Registration capture - Single",
         "method": "rcapture",
-        "testDescription": null,
+        "testDescription": "Valid Registration capture Request for Single finger scanner type (Right Ring)",
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
-            "REGISTRATION"
+            "Registration"
         ],
         "biometricTypes": [
-            "FINGERPRINT", "FACE", "IRIS"
+            "Finger"
         ],
-        "deviceTypes": [
-            "SLAP",
-            "CAMERA",
-            "BINOCULAR"
+        "deviceSubTypes": [
+            "Single"
         ],
-        "mdsSpecVersions": null,
+		"segments" : ["RIGHT_SLAP"],
+		"exceptions" : ["RightIndex", "RightMiddle", "RightLittle"],
+        "mdsSpecVersions": ["0.9.5"],
         "validators": [
             {
-                "Name": "CoinTossValidator",
-                "Description": "Randomly succeeding or failing validator"
-            },
-            {
-                "Name": "AlwaysFailValidator",
-                "Description": "Always failing validator"
+                "Name": "AlwaysPassValidator",
+                "Description": "Always passing validator"
             }
         ]
     },
-    {
-        "testId": "capture",
-        "method": "capture",
-        "testDescription": null,
+	{
+        "testId": "Registration capture - Single Iris",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request",
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
-            "AUTHENTICATION"
+            "Registration"
         ],
         "biometricTypes": [
-            "FINGERPRINT", "FACE", "IRIS"
+            "Iris"
         ],
-        "deviceTypes": [
-			"SLAP",
-			"MONOCULAR",
-            "FINGER",
-            "CAMERA"
+        "deviceSubTypes": [
+            "Single"
         ],
-        "mdsSpecVersions": null,
+		"segments" : ["LEFT_IRIS", "RIGHT_IRIS"],
+		"exceptions" : [],
+        "mdsSpecVersions": ["0.9.5"],
+        "validators": [
+            {
+                "Name": "AlwaysPassValidator",
+                "Description": "Always passing validator"
+            }
+        ]
+    },
+	{
+        "testId": "Registration capture - Double Iris",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request for Double iris and explictly passing each iris",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Iris"
+        ],
+        "deviceSubTypes": [
+            "Double"
+        ],
+		"segments" : ["LEFT_IRIS", "TWO_IRIS", "RIGHT_IRIS"],
+		"exceptions" : [],
+        "mdsSpecVersions": ["0.9.5"],
+        "validators": [
+            {
+                "Name": "AlwaysPassValidator",
+                "Description": "Always passing validator"
+            }
+        ]
+    },
+	{
+        "testId": "Registration capture - All",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Face", "Finger", "Iris"
+        ],
+        "deviceSubTypes": [
+             "Full face", "Slap", "Single", "Double"
+        ],
+		"segments" : ["LEFT_IRIS", "TWO_IRIS", "RIGHT_IRIS", "FULL_FACE", "RIGHT_SLAP", "LEFT_SLAP", "TWO_THUMBS"],
+		"exceptions" : [],
+        "mdsSpecVersions": ["0.9.5"],
+        "validators": [
+            {
+                "Name": "AlwaysPassValidator",
+                "Description": "Always passing validator"
+            }
+        ]
+    }, 
+	{
+        "testId": "Registration capture - Face",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request only for Face",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Face"
+        ],
+        "deviceSubTypes": [
+             "Full face"
+        ],
+		"segments" : ["FULL_FACE"],
+		"exceptions" : [],
+        "mdsSpecVersions": ["0.9.5"],
+        "validators": [
+            {
+                "Name": "AlwaysPassValidator",
+                "Description": "Always passing validator"
+            }
+        ]
+    },   
+    {
+        "testId": "Capture",
+        "method": "capture",
+        "testDescription": "Valid Auth Capture Request",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Finger", "Face", "Iris"
+        ],
+        "deviceSubTypes": [
+			"Slap",
+            "Single",
+            "Double",
+            "Full face"
+        ],
+		"segments" : [],
+		"exceptions" : [],
+        "mdsSpecVersions": ["0.9.5"],
         "validators": [
             {
                 "Name": "CoinTossValidator",
