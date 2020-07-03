@@ -7,8 +7,8 @@ import org.springframework.util.ObjectUtils;
 
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
-import io.mosip.mds.entitiy.Validator;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.entitiy.Validator;
 
 public class ValidValueCaptureResponseValidator extends Validator {
 
@@ -62,6 +62,9 @@ public class ValidValueCaptureResponseValidator extends Validator {
 			errors.add("Capture response biometrics-dataDecoded purpose is invalid");
 			return errors;
 		}
+
+		//TODO Check for digitalId dataDecoded.digitalId
+
 		return errors;
 	}
 
@@ -87,8 +90,18 @@ public class ValidValueCaptureResponseValidator extends Validator {
 			errors.add("Capture response biometrics bioSubType is invalid for Face");
 			return errors;
 		}
+
+		errors=validateDigitalId(dataDecoded, errors);
+				return errors;
+	}
+
+	private List<String> validateDigitalId(CaptureBiometricData dataDecoded,List<String> errors) {
+		CommonValidator commonValidator=new CommonValidator();
+		errors = commonValidator.validateSignedDigitalID(dataDecoded.digitalId);
 		return errors;
 	}
+
+
 	private List<String> getBioSubTypeIris() {
 		List<String> bioSubTypeIrisList = new ArrayList<String>();
 		bioSubTypeIrisList.add("Left");

@@ -51,10 +51,6 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 				}
 		}
 
-		//TODO Check for digital id
-		//		deviceInfo.digitalId - As defined under the digital id section. 
-		//		The digital id will be unsigned if the device is L0 and the the status of the device is "Not Registered".
-
 
 		// TODO Check for env (if not registered conditions check need to do)
 		//deviceInfo.env - "None" if not registered. If registered, 
@@ -77,6 +73,25 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 
 		//TODO check array of spec versions
 		//TODO validate errors
+
+		//---------------------------------------------------
+		//TODO Check for digital id
+		errors=validateDigitalId(deviceInfoResponse,errors);
+
+
+
+		return errors;
+	}
+
+	private List<String> validateDigitalId(DeviceInfoResponse deviceInfoResponse,List<String> errors) {
+		//		deviceInfo.digitalId - As defined under the digital id section. 
+		//		The digital id will be unsigned if the device is L0 and the the status of the device is "Not Registered".
+
+		CommonValidator commonValidator=new CommonValidator();
+		if(deviceInfoResponse.certification == L0 && deviceInfoResponse.deviceStatus == NOT_REGISTERED)
+		errors = commonValidator.validateUnSignedDigitalID(deviceInfoResponse.digitalId);
+		else
+			errors = commonValidator.validateSignedDigitalID(deviceInfoResponse.digitalId);
 		return errors;
 	}
 

@@ -48,9 +48,6 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 				}
 		}
 
-		//TODO Check for digital id
-		//digitalId - Digital ID as per the Digital ID definition but it will not be signed.
-
 		//Check for purpose
 		if(discoverResponse.purpose != AUTH && discoverResponse.purpose != REGISTRATION)
 		{
@@ -58,11 +55,20 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 			return errors;
 		}
 
+		//TODO Check for digital id
+		//digitalId - Digital ID as per the Digital ID definition but it will not be signed.
+		errors=validateDigitalId(discoverResponse,errors);
 
 		//TODO check array of spec versions
 		//TODO validate errors
 		return errors;
 	}
 
+	private List<String> validateDigitalId(DiscoverResponse discoverResponse, List<String> errors) {
+		//digitalId - Digital ID as per the Digital ID definition but it will not be signed.
 
+		CommonValidator commonValidator=new CommonValidator();
+		errors = commonValidator.validateUnSignedDigitalID(discoverResponse.digitalId);
+		return errors;
+	}
 }
