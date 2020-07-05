@@ -22,6 +22,12 @@ public class TestManagerDto {
 	@ApiModelProperty(value = "deviceSubType", required = true, dataType = "java.lang.String")
 	public String deviceSubType;
 	
+	@ApiModelProperty(value = "deviceSubId", required = true, dataType = "java.lang.Integer")
+	public int deviceSubId;
+	
+	@ApiModelProperty(value = "bioCount", required = true, dataType = "java.lang.Integer")
+	public int bioCount;
+	
 	@ApiModelProperty(value = "runName", required = true, dataType = "java.lang.String")
 	public String runName;
 

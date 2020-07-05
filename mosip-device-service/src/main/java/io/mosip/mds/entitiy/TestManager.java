@@ -169,8 +169,9 @@ public class TestManager {
 
 	private void saveRun(RunExtnDto newRun, TestManagerDto targetProfile)
 	{
-		if(testRuns.keySet().contains(newRun.runId))
+		if(testRuns.containsKey(newRun.runId))
 			return;
+
 		TestRun newTestRun = new TestRun();
 		newTestRun.targetProfile = targetProfile;
 		newTestRun.runId = newRun.runId;
@@ -212,7 +213,7 @@ public class TestManager {
 		Boolean notFound = false;
 		for(String testName:runInfo.tests)
 		{
-			if(!allTests.keySet().contains(testName))
+			if(!allTests.containsKey(testName))
 			{
 				notFound = true;
 				break;
@@ -235,14 +236,14 @@ public class TestManager {
 
 	public TestReport getReport(String runId)
 	{
-		if(!testRuns.keySet().contains(runId))
+		if(!testRuns.containsKey(runId))
 			return null;
 		return new TestReport(testRuns.get(runId));
 	}
 
 
 	//GENERATING REPORT IN PDF FORMAT
-	public HttpEntity<byte[]> GetPdfReport(String runId,String fileName) throws Exception {
+	public HttpEntity<byte[]> getPdfReport(String runId,String fileName) throws Exception {
 
 //		return ;
 		VelocityEngine ve = new VelocityEngine();
@@ -351,15 +352,42 @@ public class TestManager {
 		if(run == null || !run.tests.contains(requestParams.testId))
 			return null;
 
-		run.deviceInfo = response;
-		// Overwrites the device info for every call
+		run.deviceInfo = response; // Overwrites the device info for every call
 
 		persistRun(run);
 
 		TestExtnDto test = allTests.get(requestParams.testId);
-		
+
 		return builder.buildRequest(run, test, requestParams.deviceInfo, getIntent(test.method));
 		
+	}
+
+	public TestRun composeRequestForAllTests(ComposeRequestDto composeRequestDto) {
+		DeviceInfoResponse  deviceInfo = composeRequestDto.deviceInfo.getDeviceInfo();
+		String specVersion = deviceInfo.specVersion[0];
+		IMDSRequestBuilder builder = getRequestBuilder(Arrays.asList(specVersion));
+
+		TestRun run = testRuns.get(composeRequestDto.runId);
+		if(deviceInfo != null && run != null && run.tests != null) {
+			run.deviceInfo = deviceInfo;
+			for(String testId : run.tests) {
+				TestExtnDto test = allTests.get(testId);
+				TestResult testResult = new TestResult(run.runId, test.testId, test.testDescription);
+				try {
+					ComposeRequestResponseDto requestDTO = builder.buildRequest(run, test, composeRequestDto.deviceInfo,
+							getIntent(test.method));
+					testResult.requestData = mapper.writeValueAsString(requestDTO.requestInfoDto);
+					testResult.streamUrl = requestDTO.streamUrl;
+					testResult.currentState = "MDM request composed";
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					testResult.currentState = "Failed to compose MDM request";
+				}
+				run.testReport.put(testId, testResult);
+			}
+			persistRun(run);
+		}
+		return run;
 	}
 
 	public ComposeRequestResponseDto composeRequest(ComposeRequestDto composeRequestDto) {
@@ -368,18 +396,20 @@ public class TestManager {
 		return buildRequest(composeRequestDto);
 	}
 
-	public TestResult validateResponse(ValidateResponseRequestDto validateRequestDto) {
-		if(!testRuns.keySet().contains(validateRequestDto.runId) || !allTests.keySet().contains(validateRequestDto.testId))
+	public TestRun validateResponse(ValidateResponseRequestDto validateRequestDto) {
+		if(!testRuns.containsKey(validateRequestDto.runId) || !allTests.containsKey(validateRequestDto.testId))
 			return null;
+
 		TestRun run = testRuns.get(validateRequestDto.runId);
 		TestExtnDto test = allTests.get(validateRequestDto.testId);
-		TestResult testResult = new TestResult();
+		TestResult testResult = run.testReport.get(test.testId);
+		//TestResult testResult = new TestResult();
 		testResult.executedOn = new Date();
-		testResult.requestData = validateRequestDto.mdsRequest;
+		//testResult.requestData = validateRequestDto.mdsRequest;
 		testResult.responseData = validateRequestDto.mdsResponse;
-		testResult.runId = run.runId;
-		testResult.testId = test.testId;
-		testResult.summary = test.testDescription;
+		//testResult.runId = run.runId;
+		//testResult.testId = test.testId;
+		//testResult.summary = test.testDescription;
 		
 		Intent intent = getIntent(test.method);
 		
@@ -393,11 +423,12 @@ public class TestManager {
 		}
 		
 		testResult.renderContent = responseProcessor.getRenderContent(intent, testResult.responseData);
+		testResult.currentState = "MDM Response Validations Completed";
 		run.runStatus = RunStatus.InProgress;
 		// TODO when should this status be Done
 		run.testReport.put(test.testId, testResult);
 		persistRun(run);
-		return testResult; 
+		return run;
 	}
 	
 	private IMDSResponseProcessor getResponseProcessor(String version)

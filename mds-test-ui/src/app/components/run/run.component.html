@@ -1,5 +1,8 @@
-<div *ngIf="!testReportObject || Object.keys(testReportObject.testReport).length === 0">
+<div *ngIf="!testReportObject || Object.keys(testReportObject.testReport).length === 0" style="padding: 1%;">
   <app-discover-devices></app-discover-devices>
+
+  <br/>
+
   <mat-form-field appearance="fill">
     <mat-label>Available Ports</mat-label>
     <mat-select (selectionChange)='OnPortSelect($event.value)'>
@@ -8,6 +11,7 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+
   <mat-form-field appearance="fill">
     <mat-label>Device</mat-label>
     <mat-select [(ngModel)]="selectedDevice">
@@ -20,8 +24,10 @@
   </button>
 </div>
 <br/>
-<!--Form Ends-->
 
+
+<!--Form Ends-->
+<div style="padding: 1%;">
 <mat-accordion *ngIf="testReportObject">
   <mat-expansion-panel *ngFor="let key of objectKeys(testReportObject.testReport)">
     <mat-expansion-panel-header>
@@ -29,7 +35,8 @@
         {{key}}
       </mat-panel-title>
       <mat-panel-description>
-        {{ getPassedValidators(testReportObject.testReport[key].validationResults) }}
+        {{testReportObject.testReport[key].currentState}}
+       <!-- {{ getPassedValidators(testReportObject.testReport[key].validationResults) }}-->
       </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-tab-group dynamicHeight>
@@ -39,7 +46,27 @@
         </p>
         <br/>
         <p><b>ExecutedOn</b> : {{testReportObject.testReport[key].executedOn | date: 'full'}}</p>
-        <br/>        
+      </mat-tab>
+
+      <mat-tab label="Request">
+
+          <div class="centereddiv" *ngIf="getStreamUrl(key)">
+            <img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
+                 style="background-color: #000000;" border="1">
+          </div>
+
+          <div class="centereddiv">
+            <button *ngIf="getStreamUrl(key)" mat-raised-button (click)="startStreaming(key)">Start Streaming</button>
+
+            <button mat-raised-button (click)="getMDMResponse(testReportObject.testReport[key].requestData,
+            testReportObject.testReport[key].runId, key)">Initiate Request</button>
+          </div>
+
+        <pre>{{JSON.parse(testReportObject.testReport[key].requestData) | json}}</pre>
+
+      </mat-tab>
+      <mat-tab label="Response">
+           <pre>{{JSON.parse(testReportObject.testReport[key].responseData) | json}}</pre>
       </mat-tab>
       <mat-tab label="Validation Result">
         <mat-accordion>
@@ -59,15 +86,10 @@
           </mat-expansion-panel>
         </mat-accordion>
       </mat-tab>
-      <mat-tab label="Request">
-        <pre>{{JSON.parse(testReportObject.testReport[key].requestData) | json}}</pre>
-      </mat-tab>
-      <mat-tab label="Response">
-        <pre>{{JSON.parse(testReportObject.testReport[key].responseData) | json}}</pre>
-      </mat-tab>
       <mat-tab label="Result">
         <div [innerHTML]="testReportObject.testReport[key].renderContent"></div>
       </mat-tab>
     </mat-tab-group>
   </mat-expansion-panel>
 </mat-accordion>
+</div>

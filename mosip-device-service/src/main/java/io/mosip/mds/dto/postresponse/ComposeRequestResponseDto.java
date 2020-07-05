@@ -14,6 +14,8 @@ public class ComposeRequestResponseDto {
 	
 
 	public RequestInfoDto requestInfoDto;
+	
+	public String streamUrl;
 
 	public ComposeRequestResponseDto(String run, String test)
 	{

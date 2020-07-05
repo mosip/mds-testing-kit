@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.mosip.mds.dto.postresponse.RequestInfoDto;
 import io.mosip.mds.dto.postresponse.ValidationResult;
+import org.springframework.format.annotation.DateTimeFormat;
 
 
 public class TestResult {
@@ -24,6 +26,15 @@ public class TestResult {
         );
     }
 
+    public TestResult() {  }
+
+    public TestResult(String runId, String testId, String description) {
+        this.runId = runId;
+        this.testId = testId;
+        this.summary = description;
+        this.startedOn = new Date();
+        this.currentState = "Execution initiated";
+    }
 
     public String runId;
 
@@ -41,4 +52,9 @@ public class TestResult {
 
     public String renderContent;
 
+    public Date startedOn;
+
+    public String currentState;
+    
+    public String streamUrl;
 }

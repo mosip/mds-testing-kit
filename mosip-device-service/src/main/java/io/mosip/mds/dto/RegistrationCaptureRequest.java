@@ -7,11 +7,11 @@ public class RegistrationCaptureRequest {
     public class RegistrationCaptureBioRequest
     {
         public String type; //type of the biometric data,
-        public Integer count; //fingerprint/Iris count, in case of face max is set to 1
+        public int count; //fingerprint/Iris count, in case of face max is set to 1
         public String[] exception; //finger or iris to be excluded
         public Integer requestedScore; //expected quality score that should match to complete a successful capture
         public String deviceId; //internal Id
-        public Integer deviceSubId; //specific device Id
+        public int deviceSubId; //specific device Id
         public String previousHash; //hash of the previous block
         public String[] bioSubType;
     };
@@ -19,7 +19,7 @@ public class RegistrationCaptureRequest {
     public String env; //target environment
     public String purpose;
     public String specVersion; //expected MDS spec version
-    public Integer timeout; //timeout for registration capture
+    public int timeout; //timeout for registration capture
     public String captureTime; //time of capture request in ISO format including timezone
     public String transactionId; //registration Id for the current capture
     public RegistrationCaptureBioRequest[] bio;

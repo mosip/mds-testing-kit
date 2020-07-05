@@ -14,6 +14,10 @@ import io.mosip.mds.dto.postresponse.RequestInfoDto;
 import io.mosip.mds.util.BioSubType;
 import io.mosip.mds.util.Intent;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,7 +32,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
 
 	 private static ObjectMapper mapper;
-
+	
     static {
     	mapper = new ObjectMapper();
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -52,8 +56,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
     {
         ComposeRequestResponseDto composeRequestResponseDto=new ComposeRequestResponseDto(run.runId, test.testId);
 		RequestInfoDto requestInfoDto=new RequestInfoDto();
-		
-		
+
         try
         {
             switch(op)
@@ -77,6 +80,9 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
                     requestInfoDto.verb = "RCAPTURE";
                     requestInfoDto.body = getRegistrationCaptureRequest(run.targetProfile, test, device);
                     requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/capture";
+                    String streamUrl = "http://127.0.0.1:" + getPort(device) + "/stream?deviceId=%s&deviceSubId=%s";                    
+                    composeRequestResponseDto.streamUrl = String.format(streamUrl, device.deviceInfo.deviceId, test.deviceSubId);
+                    
                 break;
                 case DeviceInfo:
                     requestInfoDto.verb = "MOSIPDINFO";
@@ -96,7 +102,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
     private String getDiscoverRequest(TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
         DiscoverRequest requestBody = new DiscoverRequest();
-        requestBody.type = "BIOMETRIC DEVICE";
+        requestBody.type = "Biometric Device";
         return mapper.writeValueAsString(requestBody);
     }
 
@@ -109,9 +115,8 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
     private String getStreamRequest(TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
         StreamRequest requestBody = new StreamRequest();
-        requestBody.deviceId = device.discoverInfo;
-        requestBody.deviceSubId = 1;
-        // TODO extract discoverinfo into device dto
+        requestBody.deviceId = device.deviceInfo.deviceId;
+        requestBody.deviceSubId = test.deviceSubId;
         return mapper.writeValueAsString(requestBody);
     }
 
@@ -123,24 +128,21 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         requestBody.env = "Developer";
         requestBody.purpose = "AUTHENTICATION";
         requestBody.specVersion = "0.9.5";
-        requestBody.timeout = 30;
+        requestBody.timeout = 10000;
         requestBody.transactionId = "" + System.currentTimeMillis();
         
-        requestBody.bio = new CaptureRequest.CaptureBioRequest[test.segments.size()];
+        requestBody.bio = new CaptureRequest.CaptureBioRequest[1];
         
-        int i=0;
-        for(String segment : test.segments) {
-        	CaptureRequest.CaptureBioRequest bio = requestBody.new CaptureBioRequest();
-            bio.count = 1;
-            bio.deviceId = device.deviceInfo.deviceId;
-            bio.deviceSubId = getDeviceSubId(targetProfile.deviceSubType, segment);
-            bio.previousHash = "";
-            bio.requestedScore = 80;            
-            bio.bioSubType = getBioSubTypes(segment, test.exceptions).toArray(new String[0]);            
-            bio.type = targetProfile.biometricType;
-            requestBody.bio[i++] = bio;
-        }
-
+        CaptureRequest.CaptureBioRequest bio = requestBody.new CaptureBioRequest();
+        bio.count = test.bioCount;
+        bio.deviceId = device.deviceInfo.deviceId;
+        bio.deviceSubId = test.deviceSubId;
+        bio.previousHash = "";
+        bio.requestedScore = 80;            
+        bio.bioSubType = test.segments == null ? null : 
+        	BioSubType.convertTo095(test.segments).toArray(new String[0]);            
+        bio.type = targetProfile.biometricType;
+        requestBody.bio[0] = bio;
         return mapper.writeValueAsString(requestBody);
     }
 
@@ -148,125 +150,37 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
     		throws JsonProcessingException
     {
         RegistrationCaptureRequest requestBody = new RegistrationCaptureRequest();
-        requestBody.captureTime = (new Date()).toString();
+        requestBody.captureTime = getTimestamp();
         //requestBody.domainUri = "default";
         requestBody.env = "Developer";
         requestBody.purpose = "Registration";
         requestBody.specVersion = "0.9.5";
-        requestBody.timeout = 30;
+        requestBody.timeout = 10000;
         requestBody.transactionId = "" + System.currentTimeMillis();
         
-        requestBody.bio = new RegistrationCaptureRequest.RegistrationCaptureBioRequest[test.segments.size()];
-       
-        int i=0;
-        for(String segment : test.segments) {
-        	RegistrationCaptureRequest.RegistrationCaptureBioRequest bio = requestBody.new RegistrationCaptureBioRequest();
-            
-        	bio.type = targetProfile.biometricType;
-        	bio.previousHash = "";
-            bio.deviceId = device.deviceInfo.deviceId;
-            bio.requestedScore = 80;
-            
-            bio.deviceSubId = getDeviceSubId(targetProfile.deviceSubType, segment);         
-            
-            bio.exception = test.exceptions == null ? new String[0] : 
-            	BioSubType.convertTo095(test.exceptions).toArray(new String[0]);
-            
-            bio.bioSubType = null; 
-            bio.count = getCount(segment, bio.exception);
-
-            requestBody.bio[i++] = bio;
-        }
+        requestBody.bio = new RegistrationCaptureRequest.RegistrationCaptureBioRequest[1];
+        
+        RegistrationCaptureRequest.RegistrationCaptureBioRequest bio = requestBody.new RegistrationCaptureBioRequest();        
+    	bio.type = targetProfile.biometricType;
+    	bio.previousHash = "";
+        bio.deviceId = device.deviceInfo.deviceId;
+        bio.requestedScore = 80;            
+        bio.deviceSubId = test.deviceSubId;
+        bio.count = test.bioCount;
+        
+        bio.exception = test.exceptions == null ? new String[0] : 
+        	BioSubType.convertTo095(test.exceptions).toArray(new String[0]);
+        
+        bio.bioSubType = test.segments == null ? null : 
+        	BioSubType.convertTo095(test.segments).toArray(new String[0]);
+        
+        requestBody.bio[0] = bio;        
         return mapper.writeValueAsString(requestBody);
     }
 
-    
-    /*private String getBioType(String biometricType) {
-    	switch (biometricType) {
-		case "Finger":	return "Finger";		
-		case "Iris": return "Iris";			
-		case "Face": return "Face";
-		}
-    	return null;
-    }*/
-    
-    private List<String> getBioSubTypes(String segment, List<String> exceptions) {
-    	if("FULL_FACE".equals(segment))
-    		return new ArrayList<>();
-    	
-    	List<String> subTypes = BioSubType.get095BioSubTypes(segment);
-
-    	if(exceptions != null)
-    		subTypes.removeAll(BioSubType.convertTo095(exceptions));
-
-    	return subTypes;
-    }
-
-    private int getCount(String segment, String[] exceptions) {
-    	switch (segment) {
-		case "LEFT_SLAP":
-			return 4 - exceptions.length;
-
-		case "RIGHT_SLAP":
-			return 4 - exceptions.length;
-
-		case "TWO_THUMBS":
-			return 2 - exceptions.length;
-			
-		case "LEFT_IRIS":			
-			return 1 - exceptions.length;
-
-		case "RIGHT_IRIS":			
-			return 1 - exceptions.length;
-			
-		case "TWO_IRIS":			
-			return 2 - exceptions.length;
-			
-		case "FULL_FACE":			
-			return 1;
-		}
-    	return 0;
-    }
-
-    private int getDeviceSubId(String deviceType, String segment) {
-    	switch (deviceType) {
-		case "Slap": 
-			if(segment.equals("LEFT_SLAP"))
-				return 1;
-
-			if(segment.equals("RIGHT_SLAP"))
-				return 2;
-
-			if(segment.equals("TWO_THUMBS"))
-				return 3;
-
-			break;
-
-		
-		case "Double":
-			if(segment.equals("LEFT_IRIS"))
-				return 1;
-			
-			if(segment.equals("RIGHT_IRIS"))
-				return 2;
-			
-			if(segment.equals("TWO_IRIS"))
-				return 3;
-			
-		case "Single": 
-			if(segment.equals("LEFT_IRIS"))
-				return 1;
-			
-			if(segment.equals("RIGHT_IRIS"))
-				return 2;
-						
-			break;
-		case "Full face":
-			if(segment.equals("FULL_FACE"))
-				return 0;
-			break;
-		}
-    	return 0;
+     public static String getTimestamp() {
+    	DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    	return formatter.format(ZonedDateTime.now());
     }
 
 }

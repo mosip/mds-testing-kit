@@ -1,12 +1,8 @@
 package io.mosip.mds.controller;
 
+import io.mosip.mds.dto.*;
 import org.springframework.web.bind.annotation.*;
 
-import io.mosip.mds.dto.ComposeRequestDto;
-import io.mosip.mds.dto.DeviceInfoResponse;
-import io.mosip.mds.dto.DiscoverResponse;
-import io.mosip.mds.dto.TestResult;
-import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.entitiy.TestManager;
 import io.swagger.annotations.Api;
@@ -32,12 +28,22 @@ public class TestRunnerController {
 		
 	}
 
+	@PostMapping("/getallrequests")
+	@ApiOperation(value = "Service to save MDM requests for all test cases", notes = "Saves composeRequest and json")
+	@ApiResponses({ @ApiResponse(code = 201, message = "When MDM request Details successfully created"),
+			@ApiResponse(code = 400, message = "When Request body passed  is null or invalid"),
+			@ApiResponse(code = 500, message = "While creating MDM request any error occured") })
+	public TestRun getAllRequests(@RequestBody ComposeRequestDto composeRequestDto) {
+		TestManager testManager = new TestManager();
+		return testManager.composeRequestForAllTests(composeRequestDto);
+	}
+
 	@PostMapping("/validateresponse")
 	@ApiOperation(value = "Service to save validateResponse", notes = "Saves validateResponse and return run id")
 	@ApiResponses({ @ApiResponse(code = 201, message = "When validateResponse Details successfully created"),
 			@ApiResponse(code = 400, message = "When Request body passed  is null or invalid"),
 			@ApiResponse(code = 500, message = "While creating validateResponse any error occured") })
-	public TestResult validateResponse(@RequestBody ValidateResponseRequestDto validateRequestDto) {
+	public TestRun validateResponse(@RequestBody ValidateResponseRequestDto validateRequestDto) {
 		// TODO handle null return for invalid runId and testId
 		TestManager testManager = new TestManager();
 		return testManager.validateResponse(validateRequestDto);	

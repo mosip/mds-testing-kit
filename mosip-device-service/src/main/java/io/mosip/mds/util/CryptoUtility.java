@@ -33,7 +33,6 @@ public class CryptoUtility {
 	private static final String SYMMETRIC_ALGORITHM = "AES/GCM/PKCS5Padding";
 	private static final int GCM_TAG_LENGTH = 128;
 	private static final String RSA_ECB_NO_PADDING = "RSA/ECB/NoPadding";
-	private static final String UTC_DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";	
 	private static final String MGF1 = "MGF1";
 	private static final String HASH_ALGO = "SHA-256";
 	private static final int asymmetricKeyLength = 2048;
@@ -47,20 +46,16 @@ public class CryptoUtility {
 		Security.addProvider(provider);
 		return provider;
 	}
-	
-	
-	//TODO - cross check on which ISO format ?
+
 	public static String getTimestamp() {
 		LocalDateTime localDateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
-		return localDateTime.format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
+		return localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 	}
 	
 	public static Map<String, String>  encrypt(PublicKey publicKey, String data) {
 		Map<String, String> result = new HashMap<>();
 		try {	
-			
-			LocalDateTime localDateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
-			String timestamp = localDateTime.format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
+			String timestamp = getTimestamp();
 			
 			byte[] aadBytes = timestamp.substring(timestamp.length() - 16).getBytes();
 			byte[] ivBytes = timestamp.substring(timestamp.length() - 12).getBytes();
@@ -187,8 +182,7 @@ public class CryptoUtility {
 		gen.initialize(2048);
 		KeyPair pair = gen.generateKeyPair();
 			
-		LocalDateTime localDateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
-		String timestamp = localDateTime.format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
+		String timestamp = getTimestamp();
 		
 		byte[] aadBytes = timestamp.substring(timestamp.length() - 16).getBytes();
 		byte[] ivBytes = timestamp.substring(timestamp.length() - 12).getBytes();

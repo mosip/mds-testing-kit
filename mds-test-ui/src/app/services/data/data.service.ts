@@ -59,7 +59,7 @@ export class DataService {
     } else {
 
       console.error('An error occurred >>> ', JSON.stringify(error));
-      
+
       if(error.status === 0 || error.status === 404)
         return throwError('Not Connected to Server');
 
@@ -85,6 +85,16 @@ export class DataService {
         catchError(this.handleError)
       );
   }
+
+  composeAllRequests(runId: string, deviceDto: { port: any; deviceInfo: any }) {
+      return this.httpClient.post(environment.base_url + 'testrunner/getallrequests', {
+        runId,
+        deviceInfo: deviceDto
+      })
+        .pipe(
+          catchError(this.handleError)
+        );
+    }
 
   validateResponse(runId: any, testId: string, request: any, response: any) {
     return this.httpClient.post(environment.base_url + 'testrunner/validateresponse', {

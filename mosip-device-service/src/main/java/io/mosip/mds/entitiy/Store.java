@@ -89,7 +89,7 @@ public class Store {
         return run;
     }
 
-    private static String getStorePath()
+    public static String getStorePath()
     {
         String storePath = System.getProperty("user.dir");
         if(!storePath.endsWith(File.separator))
@@ -101,7 +101,7 @@ public class Store {
         return storePath;
     }
     
-    private static File getOrCreateDirectory(String path)
+    public static File getOrCreateDirectory(String path)
     {
         File f = new File(path);
         if(f.isDirectory())
