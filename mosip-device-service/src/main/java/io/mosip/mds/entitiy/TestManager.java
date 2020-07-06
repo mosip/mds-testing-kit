@@ -1,22 +1,48 @@
 package io.mosip.mds.entitiy;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
+import io.mosip.mds.dto.*;
+import io.mosip.mds.dto.TestRun.RunStatus;
+import io.mosip.mds.dto.getresponse.BiometricTypeDto;
+import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
+import io.mosip.mds.dto.getresponse.TestExtnDto;
+import io.mosip.mds.dto.getresponse.UIInput;
+import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
+import io.mosip.mds.dto.postresponse.RunExtnDto;
+import io.mosip.mds.service.IMDSRequestBuilder;
+import io.mosip.mds.service.MDS_0_9_2_RequestBuilder;
+import io.mosip.mds.service.MDS_0_9_5_RequestBuilder;
+import io.mosip.mds.service.MDS_0_9_5_ResponseProcessor;
+import io.mosip.mds.service.IMDSResponseProcessor;
+import io.mosip.mds.util.Intent;
+import io.mosip.mds.util.SecurityUtil;
+
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.Data;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -25,39 +51,6 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.XMLWorkerHelper;
-
-import io.mosip.mds.dto.ComposeRequestDto;
-import io.mosip.mds.dto.DeviceInfoResponse;
-import io.mosip.mds.dto.DiscoverResponse;
-import io.mosip.mds.dto.TestManagerDto;
-import io.mosip.mds.dto.TestManagerGetDto;
-import io.mosip.mds.dto.TestReport;
-import io.mosip.mds.dto.TestResult;
-import io.mosip.mds.dto.TestRun;
-import io.mosip.mds.dto.TestRun.RunStatus;
-import io.mosip.mds.dto.ValidateResponseRequestDto;
-import io.mosip.mds.dto.getresponse.BiometricTypeDto;
-import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
-import io.mosip.mds.dto.getresponse.TestExtnDto;
-import io.mosip.mds.dto.getresponse.UIInput;
-import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
-import io.mosip.mds.dto.postresponse.RunExtnDto;
-import io.mosip.mds.service.IMDSRequestBuilder;
-import io.mosip.mds.service.IMDSResponseProcessor;
-import io.mosip.mds.service.MDS_0_9_2_RequestBuilder;
-import io.mosip.mds.service.MDS_0_9_5_RequestBuilder;
-import io.mosip.mds.service.MDS_0_9_5_ResponseProcessor;
-import io.mosip.mds.util.Intent;
-import io.mosip.mds.validator.CoinTossValidator;
-import io.mosip.mds.validator.Validator;
-import lombok.Data;
 
 @Entity
 @Data

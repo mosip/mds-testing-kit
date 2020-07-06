@@ -1,4 +1,4 @@
-package io.mosip.mds.validator;
+package io.mosip.mds.entitiy;
 
 import java.util.ArrayList;
 import java.util.List;

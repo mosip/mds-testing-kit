@@ -13,6 +13,8 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { TestRunsComponent } from './components/test-runs/test-runs.component';
 import { DiscoverDevicesComponent } from './components/discover-devices/discover-devices.component';
 import { RunComponent } from './components/run/run.component';
+import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 
 
@@ -23,7 +25,9 @@ import { RunComponent } from './components/run/run.component';
     MainNavComponent,
     TestRunsComponent,
     DiscoverDevicesComponent,
-    RunComponent
+    RunComponent,
+    HeaderComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

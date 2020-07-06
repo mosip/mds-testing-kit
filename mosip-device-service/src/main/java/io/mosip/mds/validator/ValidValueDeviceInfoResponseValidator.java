@@ -5,13 +5,9 @@ import java.util.List;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.entitiy.Validator;
 
 public class ValidValueDeviceInfoResponseValidator extends Validator {
-
-	public ValidValueDeviceInfoResponseValidator() {
-		super("ValidValueDeviceInfoResponseValidator", "Valid Value Device Info Response Validator");
-	}
-
 	private static final String L1 = "L1";
 	private static final String L0 = "L0";
 	private static final String REGISTRATION = "Registration";
