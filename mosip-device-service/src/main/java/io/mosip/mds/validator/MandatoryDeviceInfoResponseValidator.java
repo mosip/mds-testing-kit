@@ -5,12 +5,9 @@ import java.util.List;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.entitiy.Validator;
 
 public class MandatoryDeviceInfoResponseValidator extends Validator {
-
-	public MandatoryDeviceInfoResponseValidator() {
-	     super("MandatoryDeviceInfoResponseValidator", "Mandatory DeviceInfo Response Validator");   
-	}
 
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {

@@ -57,6 +57,12 @@ export class DataService {
       // A client-side or network error occurred. Handle it accordingly.
       console.error('An error occurred:', error.error.message);
     } else {
+
+      console.error('An error occurred >>> ', JSON.stringify(error));
+      
+      if(error.status === 0 || error.status === 404)
+        return throwError('Not Connected to Server');
+
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
       console.error(
@@ -64,8 +70,7 @@ export class DataService {
         `body was: ${error.error}`);
     }
     // return an observable with a user-facing error message
-    return throwError(
-      'Something bad happened; please try again later.');
+    return throwError(error.error.message);
   }
 
   composeRequest(runId: string, test: string, deviceDto: { port: any; deviceInfo: any }) {

@@ -7,19 +7,12 @@ import org.springframework.util.ObjectUtils;
 
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
+import io.mosip.mds.entitiy.Validator;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 
 public class MandatoryCaptureResponseValidator extends Validator {
 	private static final String IRIS = "Iris";
 	private static final String FINGER = "Finger";
-
-	 public MandatoryCaptureResponseValidator()
-	    {
-	        super("MandatoryCaptureResponseValidator", "Mandatory Capture Response validator");
-	    }
-
-	@Override
-	public String toString() {return String.format("MandatoryCaptureResponseValidator");}
 
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {

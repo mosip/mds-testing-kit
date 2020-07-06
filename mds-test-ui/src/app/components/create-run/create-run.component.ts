@@ -12,12 +12,9 @@ export class CreateRunComponent implements OnInit {
   tests: any;
   masterData: any;
   deviceTypes: [];
-  segments:[];
-  exceptionList: string[] = ['LeftIndex', 'LeftMiddle', 'LeftLittle', 'LeftRing', 'RightIndex', 'RightMiddle', 'RightLittle', 'RightRing', 'LeftThumb', 'RightThumb', 'LeftEye', 'RightEye']; 
   selectedTests = [];
   selectedBiometricType: any;
   selectedDeviceType: any;
-  selectedSegments: [];
   selectedMdsVersion: any;
   selectedProcess: any;
   email = '';
@@ -37,15 +34,12 @@ export class CreateRunComponent implements OnInit {
 
   OnBiometricSelect(event) {
     this.deviceTypes = event.value.deviceType;
-    this.segments = event.value.segments;
   }
 
   OnGetTestsClicked() {
     const requestBody = {
       biometricType: this.selectedBiometricType.type,
-      deviceType: this.selectedDeviceType,
-      segmentsToCapture: this.selectedSegments,
-      exceptions: this.selectedExceptions,
+      deviceSubType: this.selectedDeviceType,
       mdsSpecificationVersion: this.selectedMdsVersion,
       process: this.selectedProcess
     };
@@ -60,16 +54,14 @@ export class CreateRunComponent implements OnInit {
   OnCreateRunClicked() {
     const requestBody = {
       biometricType: this.selectedBiometricType.type,
-      deviceType: this.selectedDeviceType,
-      segmentsToCapture: this.selectedSegments,
-      exceptions: this.selectedExceptions,
+      deviceSubType: this.selectedDeviceType,
       mdsSpecificationVersion: this.selectedMdsVersion,
       process: this.selectedProcess,
       tests: this.selectedTests,
       email: this.email,
       runName: this.runName
     };
-    console.log(this.selectedTests);
+    //console.log(this.selectedTests);
     this.dataService.createRun(requestBody)
       .pipe(
         map((body: any) => {

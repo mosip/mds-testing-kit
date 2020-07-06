@@ -29,14 +29,17 @@
         {{key}}
       </mat-panel-title>
       <mat-panel-description>
-        {{testReportObject.testReport[key].validationResults[0].status}}
+        {{ getPassedValidators(testReportObject.testReport[key].validationResults) }}
       </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-tab-group dynamicHeight>
       <mat-tab label="Description">
-        <p>Executed On: {{testReportObject.testReport[key].executedOn | date: 'full'}}</p>
+        <p *ngIf="testReportObject.testReport[key].summary">
+         <b>Summary</b> : {{testReportObject.testReport[key].summary}}
+        </p>
         <br/>
-        <p *ngIf="testReportObject.testReport[key].summary">{{testReportObject.testReport[key].summary}}</p>
+        <p><b>ExecutedOn</b> : {{testReportObject.testReport[key].executedOn | date: 'full'}}</p>
+        <br/>        
       </mat-tab>
       <mat-tab label="Validation Result">
         <mat-accordion>

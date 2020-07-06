@@ -10,14 +10,13 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DigitalId;
+import io.mosip.mds.entitiy.Validator;
 import io.mosip.mds.util.SecurityUtil;
 
-public class CommonValidator {
-
+public class CommonValidator extends Validator {
 	private static final String FACE = "Face";
 	private static final String IRIS = "Iris";
 	private static final String FINGER = "Finger";
-	private static final String ISO_FORMATE = "^(?:[1-9]\\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:Z|[+-][01]\\d:[0-5]\\d)$";
 
 	private static ObjectMapper mapper;
 
@@ -47,7 +46,7 @@ public class CommonValidator {
 		}
 
 		return errors;
-
+	
 	}
 
 	public List<String> validateUnSignedDigitalID(String digitalId) {
@@ -57,7 +56,7 @@ public class CommonValidator {
 			errors.add("Invalid Unsigned Digital Id");				
 			return errors; 
 		}
-
+		
 		try {
 			DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(Base64.getUrlDecoder().decode(digitalId),
 					DigitalId.class));
@@ -75,24 +74,24 @@ public class CommonValidator {
 
 	}
 
-	//	public List<String> validateDigitalId(String digitalId) {
-	//
-	//		List<String> errors = new ArrayList<>();
-	//		try {
-	//			DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
-	//					DigitalId.class));
-	//			errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
-	//			errors=validValueDigitalIdPayload(decodedDigitalId,errors);
-	//
-	//			return errors;
-	//		} 
-	//		catch(Exception dex)
-	//		{
-	//			errors.add("Error interpreting digital id: " + dex.getMessage());		
-	//		}
-	//
-	//		return errors;
-	//	}
+//	public List<String> validateDigitalId(String digitalId) {
+//
+//		List<String> errors = new ArrayList<>();
+//		try {
+//			DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
+//					DigitalId.class));
+//			errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
+//			errors=validValueDigitalIdPayload(decodedDigitalId,errors);
+//
+//			return errors;
+//		} 
+//		catch(Exception dex)
+//		{
+//			errors.add("Error interpreting digital id: " + dex.getMessage());		
+//		}
+//
+//		return errors;
+//	}
 
 	private List<String> mandatoryParamDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<String> errors) {
 
@@ -189,15 +188,6 @@ public class CommonValidator {
 				&& decodedDigitalIdPayload.deviceSubType != "Single" )
 		{
 			errors.add("Response DigitalId DeviceSubType is invalid for Iris");
-		}
-		return errors;
-	}
-
-	// "2025-01-01T00:00:00+05:30"
-	public List<String> validateTimeStamp(String timeStamp,List<String> errors) {
-		if(!(timeStamp.matches(ISO_FORMATE)))
-		{
-			errors.add("Response timeStamp is not in -ISO Format date time with timezone");
 		}
 		return errors;
 	}

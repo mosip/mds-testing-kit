@@ -8,12 +8,10 @@ import org.springframework.util.ObjectUtils;
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.entitiy.Validator;
 
 public class ValidValueCaptureResponseValidator extends Validator {
 
-	public ValidValueCaptureResponseValidator() {
-	     super("ValidValueCaptureResponseValidator", "Valid Value Capture Response Validator");
-	}
 	private static final String REGISTRATION = "Registration";
 	private static final String AUTH = "Auth";
 	private static final String FACE = "Face";
@@ -25,23 +23,16 @@ public class ValidValueCaptureResponseValidator extends Validator {
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 		List<String> errors = new ArrayList<>();
-		CommonValidator commonValidator=new CommonValidator();
-
 		CaptureResponse cr = response.captureResponse;
 		for(CaptureResponse.CaptureBiometric bb:cr.biometrics)
 		{
 			CaptureBiometricData dataDecoded = bb.dataDecoded;
 			errors=validateActualValueDatadecoded(errors, dataDecoded);
-			if(errors.size()!=0) {
-				return errors;
-			}
+
 			//TODO check for env
 
 			//TODO check time stamp for ISO Format date time with timezone
-//			errors = commonValidator.validateTimeStamp(dataDecoded.timestamp,errors);
-//			if(errors.size()!=0) {
-//				return errors;
-//			}
+
 			//TODO check for requestedScore
 
 			//TODO check for quality score
