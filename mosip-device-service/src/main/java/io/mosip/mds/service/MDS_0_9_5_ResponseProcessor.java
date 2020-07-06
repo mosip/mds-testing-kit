@@ -94,7 +94,7 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 		String renderContent = "<p><u>Capture Info</u></p>";
 		renderContent += "<b>Images Captured:</b>" + images.size() + "<br/>";
 		for (File file : images) {
-			renderContent += "<img src=\"data/renders/" + file.getName() + "\"/>";
+			renderContent += "<img src=\"data/renders/" + file.getName()+ "\"/>";
 		}
 		return renderContent;
     }

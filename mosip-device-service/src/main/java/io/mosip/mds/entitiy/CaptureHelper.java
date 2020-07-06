@@ -168,7 +168,9 @@ public class CaptureHelper {
 		// strip iso header
 		byte[] imageData = extractJPGfromISO(decodedData, bioType);
 		// save image to file
-		String fileName = "data/renders/" + UUID.randomUUID() + ".jp2";
+		
+		File path = Store.getOrCreateDirectory(Store.getStorePath() + File.separator + "renders");
+		String fileName = path.getAbsolutePath()  + File.separator + UUID.randomUUID() + ".jp2";
 
 		File file = new File(fileName);
 		try {
@@ -178,7 +180,7 @@ public class CaptureHelper {
 				writer.close();
 			}
 		} catch (Exception ex) {
-			file = null;
+			ex.printStackTrace();
 		}
 		return file;
 	}

@@ -34,8 +34,7 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When No MasterData found"),
 			@ApiResponse(code = 500, message = "While retrieving MasterData any error occured") })
 	public MasterDataResponseDto getMasterData() {
-		// TODO Add try catch here to handle 500 cases
-		return testManager.getMasterData();			
+		return testManager.getMasterData();
 	}
 
 	@PostMapping("/test")
@@ -45,7 +44,6 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When No Test found"),
 			@ApiResponse(code = 500, message = "While retrieving Test any error occured") })
 	public TestExtnDto[] getTest(@RequestBody TestManagerGetDto testManagerGetDto) {
-		// TODO Add try catch to handle 404 and 500 cases.
 		return testManager.GetTests(testManagerGetDto);
 	}
 
@@ -56,7 +54,6 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When No Test found"),
 			@ApiResponse(code = 500, message = "While retrieving Test any error occured") })
 	public List<TestRun> getRuns(@PathVariable("email")String email) {
-		// TODO Add try catch to handle 404 and 500 cases 
 		return testManager.getRuns(email);
 	}
 
@@ -67,8 +64,6 @@ public class TestManagerController {
 			@ApiResponse(code = 400, message = "When Request body passed  is null or invalid"),
 			@ApiResponse(code = 500, message = "While creating test any error occured") })
 	public RunExtnDto createRun(@RequestBody TestManagerDto testManagerDto) {
-	
-		// TODO Add try catch tp handle 500 cases
 		return testManager.createRun(testManagerDto);
 		
 	}
@@ -80,7 +75,6 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When Test Report found"),
 			@ApiResponse(code = 500, message = "While retrieving Test Report any error occured") })
 	public TestReport getTestReport(@PathVariable("runId")String runId, @PathVariable String format) {
-		// TODO Add try catch as well as return handler for 404 and 500 cases
 		return testManager.getReport(runId);
 	}
 
@@ -91,7 +85,7 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When Test Report found"),
 			@ApiResponse(code = 500, message = "While retrieving Test Report any error occured") })
 	public HttpEntity<byte[]> getpdfTestReport(@PathVariable("runId")String runId) throws Exception {
-			return testManager.GetPdfReport(runId,"report.pdf");
+			return testManager.getPdfReport(runId,"report.pdf");
 
 	}
 

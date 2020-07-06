@@ -7,9 +7,9 @@
   
 
 <form class="example-form">
-  <mat-form-field class="example-full-width">
+  <mat-form-field class="example-full-width invisible">
     <mat-label>MDS Host URL</mat-label>
-    <input #host matInput placeholder="http://localhost">
+    <input #host matInput placeholder="http://127.0.0.1" value="http://127.0.0.1">
   </mat-form-field>
 
 <br/>
@@ -34,6 +34,20 @@
   </mat-select>
 </mat-form-field>
 <br/>
-<div *ngIf="devices.length">
+
+<mat-accordion *ngIf="devices.length">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-description>Output</mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-tab-group dynamicHeight>
+      <mat-tab>
+        <pre>{{devices | json}}</pre>      
+      </mat-tab>
+    </mat-tab-group>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<!-- <div *ngIf="devices.length">
   <pre>{{devices | json}}</pre>
-</div>
+</div> -->

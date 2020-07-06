@@ -12,19 +12,18 @@
         "biometricTypes": [
             "Finger", "Face", "Iris"
         ],
-        "deviceSubTypes": [
-            "Slap",
-            "Single",
-            "Double",
-            "Full face"
-        ],
+        "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
 		"segments" : [],
 		"exceptions" : [],
         "mdsSpecVersions":["0.9.5"],
         "validators": [
             {
-                "Name": "CoinTossValidator",
-                "Description": "Randomly succeeding or failing validator"
+                "Name": "MandatoryDiscoverResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueDiscoverResponseValidator",
+                "Description": "valid value validations"
             }
         ]
     },
@@ -41,56 +40,23 @@
         "biometricTypes": [
             "Finger", "Face", "Iris"
         ],
-        "deviceSubTypes": [
-             "Slap",
-            "Single",
-            "Double",
-            "Full face"
-        ],
+        "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
 		"segments" : [],
 		"exceptions" : [],
         "mdsSpecVersions": ["0.9.5"],
         "validators": [
             {
-                "Name": "CoinTossValidator",
-                "Description": "Randomly succeeding or failing validator"
+                "Name": "MandatoryDeviceInfoResponseValidator",
+                "Description": "Mandatory fields check"
             },
             {
-                "Name": "AlwaysPassValidator",
-                "Description": "Always passing validator"
+                "Name": "ValidValueDeviceInfoResponseValidator",
+                "Description": "valid value validations"
             }
         ]
     },
     {
-        "testId": "Stream Input",
-        "method": "stream",
-        "testDescription": "Valid Streaming Request",
-        "requestGenerator": null,
-        "uiInput": null,
-        "processes": [
-            "Registration"
-        ],
-        "biometricTypes": [
-            "Finger", "Face", "Iris"
-        ],
-		"deviceSubTypes": [
-           "Slap",
-            "Single",
-            "Double",
-            "Full face"			
-        ],
-		"segments" : [],
-		"exceptions" : [],
-        "mdsSpecVersions": ["0.9.5"],
-        "validators": [
-            {
-                "Name": "CoinTossValidator",
-                "Description": "Randomly succeeding or failing validator"
-            }
-        ]
-    },
-    {
-        "testId": "Registration capture - All Slap",
+        "testId": "Registration capture - Left Slab",
         "method": "rcapture",
         "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
@@ -104,20 +70,26 @@
         "deviceSubTypes": [
             "Slap"
         ],
-		"segments" : ["LEFT_SLAP", "RIGHT_SLAP", "TWO_THUMBS"],
+		"segments" : ["LeftIndex", "LeftMiddle", "LeftRing", "LeftLittle"],
+		"deviceSubId" : 1,
+		"bioCount" : 4,
 		"exceptions" : [],
         "mdsSpecVersions": ["0.9.5"],
         "validators": [
             {
-                "Name": "AlwaysPassValidator",
-                "Description": "Always passing validator"
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
             }
         ]
     },
 	{
-        "testId": "Registration capture - Single",
+        "testId": "Registration capture - Right Slab",
         "method": "rcapture",
-        "testDescription": "Valid Registration capture Request for Single finger scanner type (Right Ring)",
+        "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
@@ -127,47 +99,59 @@
             "Finger"
         ],
         "deviceSubTypes": [
-            "Single"
+            "Slap"
         ],
-		"segments" : ["RIGHT_SLAP"],
-		"exceptions" : ["RightIndex", "RightMiddle", "RightLittle"],
+		"segments" : ["RightIndex", "RightMiddle", "RightRing", "RightLittle"],
+		"deviceSubId" : 2,
+		"bioCount" : 4,
+		"exceptions" : [],
         "mdsSpecVersions": ["0.9.5"],
         "validators": [
             {
-                "Name": "AlwaysPassValidator",
-                "Description": "Always passing validator"
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
             }
         ]
     },
 	{
-        "testId": "Registration capture - Single Iris",
+        "testId": "Registration capture - Two Thumbs",
         "method": "rcapture",
-        "testDescription": "Valid Registration capture Request",
+        "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
             "Registration"
         ],
         "biometricTypes": [
-            "Iris"
+            "Finger"
         ],
         "deviceSubTypes": [
-            "Single"
+            "Slap"
         ],
-		"segments" : ["LEFT_IRIS", "RIGHT_IRIS"],
+		"segments" : ["RightThumb", "LeftThumb"],
 		"exceptions" : [],
+		"deviceSubId" : 3,
+		"bioCount" : 2,
         "mdsSpecVersions": ["0.9.5"],
         "validators": [
             {
-                "Name": "AlwaysPassValidator",
-                "Description": "Always passing validator"
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
             }
         ]
     },
 	{
         "testId": "Registration capture - Double Iris",
         "method": "rcapture",
-        "testDescription": "Valid Registration capture Request for Double iris and explictly passing each iris",
+        "testDescription": "Valid Registration capture Request",
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
@@ -177,40 +161,83 @@
             "Iris"
         ],
         "deviceSubTypes": [
-            "Double"
+            "Single"
         ],
-		"segments" : ["LEFT_IRIS", "TWO_IRIS", "RIGHT_IRIS"],
+		"segments" : ["LeftEye", "RightEye"],
 		"exceptions" : [],
+		"deviceSubId" : 3,
+		"bioCount" : 2,
         "mdsSpecVersions": ["0.9.5"],
         "validators": [
-            {
-                "Name": "AlwaysPassValidator",
-                "Description": "Always passing validator"
+             {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
             }
         ]
     },
 	{
-        "testId": "Registration capture - All",
+        "testId": "Registration capture - Left Iris",
         "method": "rcapture",
-        "testDescription": "Valid Registration capture Request",
+        "testDescription": "Valid Registration capture Request for left iris",
         "requestGenerator": null,
         "uiInput": null,
         "processes": [
             "Registration"
         ],
         "biometricTypes": [
-            "Face", "Finger", "Iris"
+            "Iris"
         ],
         "deviceSubTypes": [
-             "Full face", "Slap", "Single", "Double"
+            "Single"
         ],
-		"segments" : ["LEFT_IRIS", "TWO_IRIS", "RIGHT_IRIS", "FULL_FACE", "RIGHT_SLAP", "LEFT_SLAP", "TWO_THUMBS"],
+		"segments" : ["LeftEye"],
 		"exceptions" : [],
+		"deviceSubId" : 1,
+		"bioCount" : 1,
         "mdsSpecVersions": ["0.9.5"],
         "validators": [
-            {
-                "Name": "AlwaysPassValidator",
-                "Description": "Always passing validator"
+             {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+	{
+        "testId": "Registration capture - Right Iris",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request for right iris",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Iris"
+        ],
+        "deviceSubTypes": [
+            "Single"
+        ],
+		"segments" : ["RightEye"],
+		"exceptions" : [],
+		"deviceSubId" : 2,
+		"bioCount" : 1,
+        "mdsSpecVersions": ["0.9.5"],
+        "validators": [
+             {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
             }
         ]
     }, 
@@ -229,41 +256,19 @@
         "deviceSubTypes": [
              "Full face"
         ],
-		"segments" : ["FULL_FACE"],
-		"exceptions" : [],
-        "mdsSpecVersions": ["0.9.5"],
-        "validators": [
-            {
-                "Name": "AlwaysPassValidator",
-                "Description": "Always passing validator"
-            }
-        ]
-    },   
-    {
-        "testId": "Capture",
-        "method": "capture",
-        "testDescription": "Valid Auth Capture Request",
-        "requestGenerator": null,
-        "uiInput": null,
-        "processes": [
-            "Auth"
-        ],
-        "biometricTypes": [
-            "Finger", "Face", "Iris"
-        ],
-        "deviceSubTypes": [
-			"Slap",
-            "Single",
-            "Double",
-            "Full face"
-        ],
 		"segments" : [],
 		"exceptions" : [],
+		"deviceSubId" : 0,
+		"bioCount" : 1,
         "mdsSpecVersions": ["0.9.5"],
         "validators": [
-            {
-                "Name": "CoinTossValidator",
-                "Description": "Randomly succeeding or failing validator"
+             {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
             }
         ]
     }

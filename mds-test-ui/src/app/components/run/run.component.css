@@ -28,3 +28,14 @@
 
 .Passed{color: green;}
 .Failed{color: red;}
+
+.centereddiv {
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+}
+
+#video {
+    border: 5px solid transparent;
+    background-color: #000000;
+}

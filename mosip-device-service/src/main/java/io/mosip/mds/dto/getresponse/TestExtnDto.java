@@ -32,6 +32,10 @@ public class TestExtnDto {
 	public List<String> segments;
 	
 	public List<String> exceptions;
+	
+	public int deviceSubId;
+	
+	public int bioCount;
 
 	public List<String> mdsSpecVersions;
 
