@@ -402,14 +402,14 @@ public class TestManager {
 
 		TestRun run = testRuns.get(validateRequestDto.runId);
 		TestExtnDto test = allTests.get(validateRequestDto.testId);
-	//	TestResult testResult = run.testReport.get(test.testId);
-		TestResult testResult = new TestResult();
+		TestResult testResult = run.testReport.get(test.testId);
+		//TestResult testResult = new TestResult();
 		testResult.executedOn = new Date();
-		testResult.requestData = validateRequestDto.mdsRequest;
+		//testResult.requestData = validateRequestDto.mdsRequest;
 		testResult.responseData = validateRequestDto.mdsResponse;
-		testResult.runId = run.runId;
-		testResult.testId = test.testId;
-		testResult.summary = test.testDescription;
+		//testResult.runId = run.runId;
+		//testResult.testId = test.testId;
+		//testResult.summary = test.testDescription;
 		
 		Intent intent = getIntent(test.method);
 		
