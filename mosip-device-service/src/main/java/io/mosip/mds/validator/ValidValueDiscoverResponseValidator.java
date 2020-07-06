@@ -18,21 +18,23 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 	private static final String NOT_READY = "Not Ready";
 	private static final String BUSY = "Busy";
 	private static final String READY = "Ready";
-
+	public ValidValueDiscoverResponseValidator() {
+		super("ValidValueDiscoverResponseValidator", "Valid Value Discover Response Validator");
+	}
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 		List<String> errors = new ArrayList<>();
 		DiscoverResponse discoverResponse = response.discoverResponse;
 
 		//Check for device status
-		if(discoverResponse.deviceStatus != READY && discoverResponse.deviceStatus != BUSY
-				&& discoverResponse.deviceStatus != NOT_READY && discoverResponse.deviceStatus != NOT_REGISTERED)
+		if(!discoverResponse.deviceStatus.equals(READY) && !discoverResponse.deviceStatus.equals(BUSY)
+				&& !discoverResponse.deviceStatus.equals(NOT_READY) && !discoverResponse.deviceStatus.equals(NOT_REGISTERED))
 		{
 			errors.add("Device discover response device status is invalid");
 			return errors;
 		}
 		//Check for device certification
-		if(discoverResponse.certification != L0  && discoverResponse.certification != L1 && discoverResponse.certification != L2 )
+		if(!discoverResponse.certification.equals(L0)  && !discoverResponse.certification.equals(L1) && !discoverResponse.certification.equals(L2))
 		{
 			errors.add("Device discover response certification is invalid");
 			return errors;
@@ -49,7 +51,7 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 		}
 
 		//Check for purpose
-		if(discoverResponse.purpose != AUTH && discoverResponse.purpose != REGISTRATION)
+		if(!discoverResponse.purpose.equals(AUTH) && !discoverResponse.purpose.equals(REGISTRATION))
 		{
 			errors.add("Device discover response purpose is invalid");
 			return errors;

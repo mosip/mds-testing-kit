@@ -10,8 +10,15 @@ import javax.imageio.stream.FileImageInputStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.TestRun;
+import io.mosip.mds.dto.ValidatorDef;
 import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
+import io.mosip.mds.validator.MandatoryCaptureResponseValidator;
+import io.mosip.mds.validator.MandatoryDeviceInfoResponseValidator;
+import io.mosip.mds.validator.MandatoryDiscoverResponseValidator;
+import io.mosip.mds.validator.ValidValueCaptureResponseValidator;
+import io.mosip.mds.validator.ValidValueDeviceInfoResponseValidator;
+import io.mosip.mds.validator.ValidValueDiscoverResponseValidator;
 
 public class Store {
 
@@ -137,7 +144,9 @@ public class Store {
         	try
             {
             ObjectMapper mapper = new ObjectMapper();
-            return (TestExtnDto[])mapper.readValue(new FileImageInputStream(testDeinitionsFile), TestExtnDto[].class); 
+            TestExtnDto[] testExtnDtos=(TestExtnDto[])mapper.readValue(new FileImageInputStream(testDeinitionsFile), TestExtnDto[].class);
+            testExtnDtos=addValidators(testExtnDtos);
+            return  testExtnDtos; 
             }
             catch(Exception ex)
             {
@@ -147,5 +156,43 @@ public class Store {
         return null; 
     }
 
-
+    private static TestExtnDto[] addValidators(TestExtnDto[] testExtnDtos) {
+		for(TestExtnDto testExtnDto :testExtnDtos) {
+			for(ValidatorDef validatorDef:testExtnDto.validatorDefs) {
+				//testExtnDto.validators.add(validatorDef.Name.);
+				switch(validatorDef.Name) {
+				case "MandatoryCaptureResponseValidator":
+					testExtnDto.addValidator(new MandatoryCaptureResponseValidator());
+					break;
+				case "MandatoryDeviceInfoResponseValidator":
+					testExtnDto.addValidator(new MandatoryDeviceInfoResponseValidator());
+					break;
+				case "MandatoryDiscoverResponseValidator":
+					testExtnDto.addValidator(new MandatoryDiscoverResponseValidator());
+					break;
+				case "AlwaysFailValidator":
+					testExtnDto.addValidator(new AlwaysFailValidator());
+					break;
+				case "AlwaysPassValidator":
+					testExtnDto.addValidator(new AlwaysPassValidator());
+					break;
+				case "CoinTossValidator":
+					testExtnDto.addValidator(new CoinTossValidator());
+					break;
+				case "ValidValueCaptureResponseValidator":
+					testExtnDto.addValidator(new ValidValueCaptureResponseValidator());
+					break;
+				case "ValidValueDeviceInfoResponseValidator":
+					testExtnDto.addValidator(new ValidValueDeviceInfoResponseValidator());
+					break;
+				case "ValidValueDiscoverResponseValidator":
+					testExtnDto.addValidator(new ValidValueDiscoverResponseValidator());
+					break;
+				default :
+					testExtnDto.addValidator(null);
+				}
+			}
+		}
+		return testExtnDtos;
+	}
 }
