@@ -17,10 +17,14 @@
             "FINGER"
         ],
         "mdsSpecVersions": null,
-        "validators": [
+        "validatorDefs": [
             {
                 "Name": "CoinTossValidator",
                 "Description": "Randomly succeeding or failing validator"
+            },
+             {
+                "Name": "MandatoryDiscoverResponseValidator",
+                "Description": "ValidValue CaptureResponse Validator"
             }
         ]
     },
@@ -42,14 +46,18 @@
             "FINGER"
         ],
         "mdsSpecVersions": null,
-        "validators": [
-            {
+        "validatorDefs": [
+         	{
                 "Name": "CoinTossValidator",
                 "Description": "Randomly succeeding or failing validator"
             },
             {
                 "Name": "AlwaysPassValidator",
                 "Description": "Always passing validator"
+            },
+            {
+                "Name": "MandatoryDeviceInfoResponseValidator",
+                "Description": "Mandatory CaptureResponse Validator"
             }
         ]
     },
@@ -73,8 +81,8 @@
             "CAMERA"
         ],
         "mdsSpecVersions": null,
-        "validators": [
-            {
+        "validatorDefs": [
+             {
                 "Name": "CoinTossValidator",
                 "Description": "Randomly succeeding or failing validator"
             }
@@ -98,10 +106,14 @@
             "BINOCULAR"
         ],
         "mdsSpecVersions": null,
-        "validators": [
+        "validatorDefs": [
             {
                 "Name": "AlwaysPassValidator",
                 "Description": "Always passing validator"
+            },
+             {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory CaptureResponse Validator"
             }
         ]
     },
@@ -123,14 +135,18 @@
             "BINOCULAR"
         ],
         "mdsSpecVersions": null,
-        "validators": [
+        "validatorDefs": [
             {
                 "Name": "CoinTossValidator",
                 "Description": "Randomly succeeding or failing validator"
             },
-            {
+             {
                 "Name": "AlwaysFailValidator",
                 "Description": "Always failing validator"
+            },
+             {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory CaptureResponse Validator"
             }
         ]
     },
@@ -153,10 +169,14 @@
             "CAMERA"
         ],
         "mdsSpecVersions": null,
-        "validators": [
+        "validatorDefs": [
             {
                 "Name": "CoinTossValidator",
                 "Description": "Randomly succeeding or failing validator"
+            },
+             {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory CaptureResponse Validator"
             }
         ]
     }

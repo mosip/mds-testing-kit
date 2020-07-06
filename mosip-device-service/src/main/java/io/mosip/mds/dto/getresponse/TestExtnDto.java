@@ -1,8 +1,10 @@
 package io.mosip.mds.dto.getresponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import io.mosip.mds.entitiy.Validator;
+import io.mosip.mds.validator.Validator;
+import io.mosip.mds.validator.ValidatorDef;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -31,8 +33,13 @@ public class TestExtnDto {
 
 	public List<String> mdsSpecVersions;
 
+	public List<ValidatorDef> validatorDefs;
+
 	public List<Validator> validators;
-
-
-
+	public void addValidator( Validator validator) {
+		if(validators == null) {
+			validators=new ArrayList<Validator>();
+		}
+		validators.add(validator);
+	}
 }
