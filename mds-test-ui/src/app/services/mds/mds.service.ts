@@ -10,7 +10,6 @@ import {LocalStorageService} from '../local-storage/local-storage.service';
   providedIn: 'root'
 })
 export class MdsService {
-  private mdsHost: string
   private mdsUrl: string;
 
   constructor(
@@ -19,9 +18,8 @@ export class MdsService {
     private localStorageService: LocalStorageService
   ) { }
 
-  discover(host:string, port: string) {
-    this.mdsHost = host;
-    this.mdsUrl = this.mdsHost + ':' + port + '/device';
+  discover(port: string) {
+    this.mdsUrl = environment.mds_url + port + '/device';
     return this.httpClient.request('MOSIPDISC', this.mdsUrl, {
       body: {
         type: 'Biometric Device'
@@ -31,8 +29,8 @@ export class MdsService {
       );
   }
 
-  getInfo(host:string, port: string) {
-    this.mdsUrl = this.mdsHost + ':' + port + '/info';
+  getInfo(port: string) {
+    this.mdsUrl = environment.mds_url + port + '/info';
     return this.httpClient.request('MOSIPDINFO', this.mdsUrl)
       .pipe(
         catchError(this.handleError)
@@ -60,7 +58,7 @@ export class MdsService {
     return new Observable(
       subscriber => {
         for (let i = 4501; i <= 4600; i++) {
-          this.getInfo(this.mdsHost, i.toString()).subscribe(
+          this.getInfo(i.toString()).subscribe(
             value => {
               this.dataService.decodeDeviceInfo(value).subscribe(
                 decodedDeviceInfo => this.localStorageService.addDeviceInfos(i.toString(), decodedDeviceInfo),
@@ -75,13 +73,13 @@ export class MdsService {
     );
   }
 
-  scan(host:string) {
+  scan() {
     // const ports = [];
     return new Observable(
       subscriber => {
         for (let i = 4501; i <= 4600; i++) {
           // if (i == 4501) {
-            this.discover(host, i.toString()).subscribe(
+            this.discover(i.toString()).subscribe(
               value => {
                 console.log('run' + value);
                 this.localStorageService.addDeviceDiscover(i.toString(), value);

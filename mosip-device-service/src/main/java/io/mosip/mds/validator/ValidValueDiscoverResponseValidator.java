@@ -5,9 +5,12 @@ import java.util.List;
 
 import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
-import io.mosip.mds.entitiy.Validator;
 
 public class ValidValueDiscoverResponseValidator extends Validator {
+
+	public ValidValueDiscoverResponseValidator() {
+		super("ValidValueDiscoverResponseValidator", "Valid Value Discover Response Validator");
+	}
 
 	private static final String L2 = "L2";
 	private static final String L1 = "L1";

@@ -11,7 +11,7 @@
 <div class="table">
   <mat-form-field >
     <mat-label>Filter</mat-label>
-    <input matInput (keyup)="applyFilter($event.target.value)">
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia">
   </mat-form-field>
 
   <div class="mat-elevation-z8">
@@ -51,6 +51,6 @@
       </tr>
     </table>
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" ></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
   </div>
 </div>

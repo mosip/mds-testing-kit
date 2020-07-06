@@ -12,6 +12,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
+import io.mosip.mds.validator.AlwaysFailValidator;
+import io.mosip.mds.validator.AlwaysPassValidator;
+import io.mosip.mds.validator.CoinTossValidator;
+import io.mosip.mds.validator.MandatoryCaptureResponseValidator;
+import io.mosip.mds.validator.MandatoryDeviceInfoResponseValidator;
+import io.mosip.mds.validator.MandatoryDiscoverResponseValidator;
+import io.mosip.mds.validator.ValidValueCaptureResponseValidator;
+import io.mosip.mds.validator.ValidValueDeviceInfoResponseValidator;
+import io.mosip.mds.validator.ValidValueDiscoverResponseValidator;
+import io.mosip.mds.validator.ValidatorDef;
 
 public class Store {
 
@@ -89,29 +99,29 @@ public class Store {
         return run;
     }
 
-    private static String getStorePath()
-    {
-        String storePath = System.getProperty("user.dir");
-        if(!storePath.endsWith(File.separator))
-            storePath += File.separator;
-        File dataDir = getOrCreateDirectory(storePath + "data/");
-        storePath = dataDir.getAbsolutePath();
-        if(!storePath.endsWith(File.separator))
-            storePath += File.separator;
-        return storePath;
-    }
-    
-    private static File getOrCreateDirectory(String path)
-    {
-        File f = new File(path);
-        if(f.isDirectory())
-            return f;
-        if(f.exists())
-            return null;
-        if(f.mkdirs())
-            return f;
-        return null;
-    }
+	private static String getStorePath()
+	{
+		String storePath = System.getProperty("user.dir");
+		if(!storePath.endsWith(File.separator))
+			storePath += File.separator;
+		File dataDir = getOrCreateDirectory(storePath + "data/");
+		storePath = dataDir.getAbsolutePath();
+		if(!storePath.endsWith(File.separator))
+			storePath += File.separator;
+		return storePath;
+	}
+
+	private static File getOrCreateDirectory(String path)
+	{
+		File f = new File(path);
+		if(f.isDirectory())
+			return f;
+		if(f.exists())
+			return null;
+		if(f.mkdirs())
+			return f;
+		return null;
+	}
 
     public static MasterDataResponseDto getMasterData()
     {
@@ -120,7 +130,7 @@ public class Store {
         	try
             {
             ObjectMapper mapper = new ObjectMapper();
-            return (MasterDataResponseDto)mapper.readValue(new FileImageInputStream(masterDataFile), MasterDataResponseDto.class); 
+            return (MasterDataResponseDto)mapper.readValue(new FileImageInputStream(masterDataFile), MasterDataResponseDto.class);
             }
             catch(Exception ex)
             {
@@ -137,15 +147,55 @@ public class Store {
         	try
             {
             ObjectMapper mapper = new ObjectMapper();
-            return (TestExtnDto[])mapper.readValue(new FileImageInputStream(testDeinitionsFile), TestExtnDto[].class); 
-            }
+                TestExtnDto[] testExtnDtos=(TestExtnDto[])mapper.readValue(new FileImageInputStream(testDeinitionsFile), TestExtnDto[].class);
+
+                testExtnDtos=addValidators(testExtnDtos);
+                return  testExtnDtos; }
             catch(Exception ex)
             {
-            	ex.printStackTrace();                
+            	ex.printStackTrace();
             }
         }
-        return null; 
+        return null;
     }
 
-
+	private static TestExtnDto[] addValidators(TestExtnDto[] testExtnDtos) {
+		for(TestExtnDto testExtnDto :testExtnDtos) {
+			for(ValidatorDef validatorDef:testExtnDto.validatorDefs) {
+				//testExtnDto.validators.add(validatorDef.Name.);
+				switch(validatorDef.Name) {
+				case "MandatoryCaptureResponseValidator":
+					testExtnDto.addValidator(new MandatoryCaptureResponseValidator());
+					break;
+				case "MandatoryDeviceInfoResponseValidator":
+					testExtnDto.addValidator(new MandatoryDeviceInfoResponseValidator());
+					break;
+				case "MandatoryDiscoverResponseValidator":
+					testExtnDto.addValidator(new MandatoryDiscoverResponseValidator());
+					break;
+				case "AlwaysFailValidator":
+					testExtnDto.addValidator(new AlwaysFailValidator());
+					break;
+				case "AlwaysPassValidator":
+					testExtnDto.addValidator(new AlwaysPassValidator());
+					break;
+				case "CoinTossValidator":
+					testExtnDto.addValidator(new CoinTossValidator());
+					break;
+				case "ValidValueCaptureResponseValidator":
+					testExtnDto.addValidator(new ValidValueCaptureResponseValidator());
+					break;
+				case "ValidValueDeviceInfoResponseValidator":
+					testExtnDto.addValidator(new ValidValueDeviceInfoResponseValidator());
+					break;
+				case "ValidValueDiscoverResponseValidator":
+					testExtnDto.addValidator(new ValidValueDiscoverResponseValidator());
+					break;
+				default :
+					testExtnDto.addValidator(null);
+				}
+			}
+		}
+		return testExtnDtos;
+	}
 }

@@ -4,28 +4,17 @@
 <!--</mat-form-field>-->
 <!--<button mat-stroked-button color="primary" (click)="discover(port.value)">Discover</button>-->
 <!--<button mat-stroked-button color="primary" (click)="getInfo(port.value)">Get Info</button>-->
-  
+<button mat-stroked-button color="primary" (click)="scan()">Scan
+  <mat-icon *ngIf="scanning"><mat-spinner color="accent" diameter="20">
+  </mat-spinner></mat-icon></button>
 
-<form class="example-form">
-  <mat-form-field class="example-full-width">
-    <mat-label>MDS Host URL</mat-label>
-    <input #host matInput placeholder="http://localhost">
-  </mat-form-field>
 
-<br/>
-
-  	<button mat-stroked-button color="primary" (click)="scan(host.value)">Scan
-	<mat-icon *ngIf="scanning"><mat-spinner color="accent" diameter="20">
- 	</mat-spinner></mat-icon></button>
-</form>
-
-<br/>
 
 
 <!--<pre>{{discoveryResponse | json}}</pre>-->
 <!--<pre>{{infoResponse | json}}</pre>-->
-
-<mat-form-field appearance="fill">
+<br/>
+<mat-form-field>
   <mat-label>Available Ports</mat-label>
   <mat-select (selectionChange)='OnPortSelect($event.value)'>
     <mat-option *ngFor="let port of availablePorts" [value]="port">

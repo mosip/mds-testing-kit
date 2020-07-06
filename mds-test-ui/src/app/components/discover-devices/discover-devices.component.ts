@@ -16,8 +16,6 @@ export class DiscoverDevicesComponent implements OnInit {
   availablePorts: string[];
   devices = [];
   scanning: boolean;
-  mdshost: string;
-
   constructor(
     private mdsService: MdsService,
     private dataService: DataService,
@@ -28,18 +26,17 @@ export class DiscoverDevicesComponent implements OnInit {
   ngOnInit(): void {
     this.scanning = false;
     this.availablePorts = this.localStorageService.getAvailablePorts();
-    this.mdshost = '';
   }
 
   discover(port: string) {
-    this.mdsService.discover(this.mdshost, port).subscribe(
+    this.mdsService.discover(port).subscribe(
       response => this.discoveryResponse = response,
       error => window.alert(error)
     );
   }
 
   getInfo(port: string) {
-    this.mdsService.getInfo(this.mdshost, port).subscribe(
+    this.mdsService.getInfo(port).subscribe(
       response => {
         this.infoResponse = response;
         this.dataService.decodeDeviceInfo(response).subscribe(
@@ -55,15 +52,9 @@ export class DiscoverDevicesComponent implements OnInit {
     this.devices = this.localStorageService.getDevicesByPortNumber(port);
   }
 
-  scan(host) {
-
-    if(host === '') {
-      window.alert("Please enter MDS host")
-    }
-
-    this.mdshost = host;
+  scan() {
     this.scanning = true;
-    this.mdsService.scan(this.mdshost).subscribe(
+    this.mdsService.scan().subscribe(
       value => {},
       error => {},
       () => {
