@@ -21,21 +21,23 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 	private static final String NOT_READY = "Not Ready";
 	private static final String BUSY = "Busy";
 	private static final String READY = "Ready";
-
+	public ValidValueDeviceInfoResponseValidator() {
+		super("ValidValueDeviceInfoResponseValidator", "Valid Value Device Info Response Validator");
+	}
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 		List<String> errors = new ArrayList<>();
 		DeviceInfoResponse deviceInfoResponse = response.deviceInfoResponse;
 
 		//Check for device status
-		if(deviceInfoResponse.deviceStatus != READY && deviceInfoResponse.deviceStatus != BUSY
-				&& deviceInfoResponse.deviceStatus != NOT_READY && deviceInfoResponse.deviceStatus != NOT_REGISTERED)
+		if(!deviceInfoResponse.deviceStatus.equals(READY) && !deviceInfoResponse.deviceStatus.equals(BUSY)
+				&& !deviceInfoResponse.deviceStatus.equals(NOT_READY) && !deviceInfoResponse.deviceStatus.equals(NOT_REGISTERED))
 		{
 			errors.add("Device info response device status is invalid");
 			return errors;
 		}
 		//Check for device certification
-		if(deviceInfoResponse.certification != L0 && deviceInfoResponse.certification != L1)
+		if(!deviceInfoResponse.certification.equals(L0) && !deviceInfoResponse.certification.equals(L1))
 		{
 			errors.add("Device info response certification is invalid");
 			return errors;
@@ -56,15 +58,15 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		//deviceInfo.env - "None" if not registered. If registered, 
 		//then send the registered enviornment "Staging" | "Developer" | "Pre-Production" | "Production".
 
-		if(deviceInfoResponse.env != NONE && deviceInfoResponse.env != STAGING && deviceInfoResponse.env != DEVELOPER
-				&& deviceInfoResponse.env != PRE_PRODUCTION && deviceInfoResponse.env != PRODUCTION)
+		if(!deviceInfoResponse.env.equals(NONE) && !deviceInfoResponse.env.equals(STAGING) && !deviceInfoResponse.env.equals(DEVELOPER)
+				&& !deviceInfoResponse.env.equals(PRE_PRODUCTION) && !deviceInfoResponse.env.equals(PRODUCTION))
 		{
 			errors.add("Device info response env is invalid");
 			return errors;
 		}
 
 		//Check for purpose
-		if(deviceInfoResponse.purpose != AUTH && deviceInfoResponse.purpose != REGISTRATION)
+		if(!deviceInfoResponse.purpose.equals(AUTH) && !deviceInfoResponse.purpose.equals(REGISTRATION))
 		{
 			errors.add("Device info response purpose is invalid");
 			return errors;
@@ -88,7 +90,7 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		//		The digital id will be unsigned if the device is L0 and the the status of the device is "Not Registered".
 
 		CommonValidator commonValidator=new CommonValidator();
-		if(deviceInfoResponse.certification == L0 && deviceInfoResponse.deviceStatus == NOT_REGISTERED)
+		if(deviceInfoResponse.certification.equals(L0) && deviceInfoResponse.deviceStatus.equals(NOT_REGISTERED))
 		errors = commonValidator.validateUnSignedDigitalID(deviceInfoResponse.digitalId);
 		else
 			errors = commonValidator.validateSignedDigitalID(deviceInfoResponse.digitalId);

@@ -156,8 +156,8 @@ public class CommonValidator extends Validator {
 	private List<String> validValueDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<String> errors) {
 
 
-		if(decodedDigitalIdPayload.type == FINGER || decodedDigitalIdPayload.type == IRIS 
-				|| decodedDigitalIdPayload.type == FACE)
+		if(decodedDigitalIdPayload.type.equals(FINGER) || decodedDigitalIdPayload.type.equals(IRIS) 
+				|| decodedDigitalIdPayload.type.equals(FACE))
 		{
 			errors.add("Response DigitalId type is invalid");
 			return errors;
@@ -173,19 +173,19 @@ public class CommonValidator extends Validator {
 	}
 
 	private List<String> validateDeviceSubType(List<String> errors, DigitalId decodedDigitalIdPayload) {
-		if(decodedDigitalIdPayload.deviceSubType == FINGER && decodedDigitalIdPayload.deviceSubType != "Slap" 
-				&& decodedDigitalIdPayload.deviceSubType != "Single" && decodedDigitalIdPayload.deviceSubType != "Touchless")
+		if(decodedDigitalIdPayload.deviceSubType.equals(FINGER) && !decodedDigitalIdPayload.deviceSubType.equals("Slap") 
+				&& !decodedDigitalIdPayload.deviceSubType.equals("Single") && !decodedDigitalIdPayload.deviceSubType.equals("Touchless"))
 		{
 			errors.add("Response DigitalId DeviceSubType is invalid for Finger");
 		}
 
-		if(decodedDigitalIdPayload.deviceSubType == FACE && decodedDigitalIdPayload.deviceSubType != "Full face")
+		if(decodedDigitalIdPayload.deviceSubType.equals(FACE) && !decodedDigitalIdPayload.deviceSubType.equals("Full face"))
 		{
 			errors.add("Response DigitalId DeviceSubType is invalid for Face");
 		}
 
-		if(decodedDigitalIdPayload.deviceSubType == IRIS && decodedDigitalIdPayload.deviceSubType != "Double" 
-				&& decodedDigitalIdPayload.deviceSubType != "Single" )
+		if(decodedDigitalIdPayload.deviceSubType.equals(IRIS) && !decodedDigitalIdPayload.deviceSubType.equals("Double") 
+				&& !decodedDigitalIdPayload.deviceSubType.equals("Single"))
 		{
 			errors.add("Response DigitalId DeviceSubType is invalid for Iris");
 		}

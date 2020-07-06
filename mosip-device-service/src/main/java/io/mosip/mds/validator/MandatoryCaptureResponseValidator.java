@@ -13,7 +13,10 @@ import io.mosip.mds.dto.ValidateResponseRequestDto;
 public class MandatoryCaptureResponseValidator extends Validator {
 	private static final String IRIS = "Iris";
 	private static final String FINGER = "Finger";
-
+	public MandatoryCaptureResponseValidator()
+    {
+        super("MandatoryCaptureResponseValidator", "Mandatory Capture Response validator");
+    }
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 		List<String> errors = new ArrayList<>();
