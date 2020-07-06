@@ -53,11 +53,12 @@
           <div class="centereddiv" *ngIf="getStreamUrl(key)">
             <img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
                  style="background-color: #000000;" border="1">
-
-            <button *ngIf="getStreamUrl(key)" mat-raised-button (click)="startStreaming(key)">Start Streaming</button>
           </div>
 
-          <div class="centereddiv" *ngIf="!getStreamUrl(key)">
+          <div class="centereddiv" >
+
+            <button *ngIf="getStreamUrl(key)" mat-raised-button (click)="startStreaming(key)">Start Streaming</button>
+
             <button mat-raised-button (click)="getMDSResponse(testReportObject.testReport[key].requestData,
             testReportObject.testReport[key].runId, key)">{{getButtonName(testReportObject.testReport[key].requestData)}}</button>
           </div>
