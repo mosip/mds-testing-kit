@@ -125,19 +125,19 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         requestBody.specVersion = "0.9.5";
         requestBody.timeout = 30;
         requestBody.transactionId = "" + System.currentTimeMillis();
-
-        requestBody.bio = new CaptureRequest.CaptureBioRequest[targetProfile.segmentsToCapture.size()];
-
+        
+        requestBody.bio = new CaptureRequest.CaptureBioRequest[test.segments.size()];
+        
         int i=0;
-        for(String segment : targetProfile.segmentsToCapture) {
+        for(String segment : test.segments) {
         	CaptureRequest.CaptureBioRequest bio = requestBody.new CaptureBioRequest();
             bio.count = 1;
             bio.deviceId = device.deviceInfo.deviceId;
-            bio.deviceSubId = getDeviceSubId(targetProfile.deviceType, segment);
+            bio.deviceSubId = getDeviceSubId(targetProfile.deviceSubType, segment);
             bio.previousHash = "";
-            bio.requestedScore = 80;
-            bio.bioSubType = getBioSubTypes(segment, targetProfile.exceptions).toArray(new String[0]);
-            bio.type = getBioType(targetProfile.biometricType);
+            bio.requestedScore = 80;            
+            bio.bioSubType = getBioSubTypes(segment, test.exceptions).toArray(new String[0]);            
+            bio.type = targetProfile.biometricType;
             requestBody.bio[i++] = bio;
         }
 
@@ -155,24 +155,24 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         requestBody.specVersion = "0.9.5";
         requestBody.timeout = 30;
         requestBody.transactionId = "" + System.currentTimeMillis();
-
-        requestBody.bio = new RegistrationCaptureRequest.RegistrationCaptureBioRequest[targetProfile.segmentsToCapture.size()];
-
+        
+        requestBody.bio = new RegistrationCaptureRequest.RegistrationCaptureBioRequest[test.segments.size()];
+       
         int i=0;
-        for(String segment : targetProfile.segmentsToCapture) {
+        for(String segment : test.segments) {
         	RegistrationCaptureRequest.RegistrationCaptureBioRequest bio = requestBody.new RegistrationCaptureBioRequest();
-
-        	bio.type = getBioType(targetProfile.biometricType);
+            
+        	bio.type = targetProfile.biometricType;
         	bio.previousHash = "";
             bio.deviceId = device.deviceInfo.deviceId;
             bio.requestedScore = 80;
-
-            bio.deviceSubId = getDeviceSubId(targetProfile.deviceType, segment);
-
-            bio.exception = targetProfile.exceptions == null ? new String[0] :
-            	BioSubType.convertTo095(targetProfile.exceptions).toArray(new String[0]);
-
-            bio.bioSubType = null;
+            
+            bio.deviceSubId = getDeviceSubId(targetProfile.deviceSubType, segment);         
+            
+            bio.exception = test.exceptions == null ? new String[0] : 
+            	BioSubType.convertTo095(test.exceptions).toArray(new String[0]);
+            
+            bio.bioSubType = null; 
             bio.count = getCount(segment, bio.exception);
 
             requestBody.bio[i++] = bio;
@@ -180,17 +180,20 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         return mapper.writeValueAsString(requestBody);
     }
 
-
-    private String getBioType(String biometricType) {
+    
+    /*private String getBioType(String biometricType) {
     	switch (biometricType) {
-		case "FINGERPRINT":	return "Finger";
-		case "IRIS": return "Iris";
-		case "FACE": return "Face";
+		case "Finger":	return "Finger";		
+		case "Iris": return "Iris";			
+		case "Face": return "Face";
 		}
     	return null;
-    }
-
+    }*/
+    
     private List<String> getBioSubTypes(String segment, List<String> exceptions) {
+    	if("FULL_FACE".equals(segment))
+    		return new ArrayList<>();
+    	
     	List<String> subTypes = BioSubType.get095BioSubTypes(segment);
 
     	if(exceptions != null)
@@ -209,22 +212,25 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
 
 		case "TWO_THUMBS":
 			return 2 - exceptions.length;
-
-		case "LEFT_EYE":
+			
+		case "LEFT_IRIS":			
 			return 1 - exceptions.length;
 
-		case "RIGHT_EYE":
+		case "RIGHT_IRIS":			
 			return 1 - exceptions.length;
-
-		case "LEFT_RIGHT_EYE":
+			
+		case "TWO_IRIS":			
 			return 2 - exceptions.length;
+			
+		case "FULL_FACE":			
+			return 1;
 		}
     	return 0;
     }
 
     private int getDeviceSubId(String deviceType, String segment) {
     	switch (deviceType) {
-		case "SLAP":
+		case "Slap": 
 			if(segment.equals("LEFT_SLAP"))
 				return 1;
 
@@ -236,17 +242,28 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
 
 			break;
 
-		case "BINOCULAR":
-		case "MONOCULAR":
-			if(segment.equals("LEFT_EYE"))
+		
+		case "Double":
+			if(segment.equals("LEFT_IRIS"))
 				return 1;
-
-			if(segment.equals("RIGHT_EYE"))
+			
+			if(segment.equals("RIGHT_IRIS"))
 				return 2;
-
-			if(segment.equals("LEFT_RIGHT_EYE"))
+			
+			if(segment.equals("TWO_IRIS"))
 				return 3;
-
+			
+		case "Single": 
+			if(segment.equals("LEFT_IRIS"))
+				return 1;
+			
+			if(segment.equals("RIGHT_IRIS"))
+				return 2;
+						
+			break;
+		case "Full face":
+			if(segment.equals("FULL_FACE"))
+				return 0;
 			break;
 		}
     	return 0;

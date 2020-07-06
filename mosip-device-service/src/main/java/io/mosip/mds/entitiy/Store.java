@@ -25,80 +25,79 @@ import io.mosip.mds.validator.ValidatorDef;
 
 public class Store {
 
-	public static List<String> GetRunIds(String email)
-	{
-		List<String> files = new ArrayList<>();
-		File f = new File(getStorePath() + "runs/" + email);
-		try
-		{
-			for(File sub:f.listFiles())
-			{
-				if(sub.isFile())
-					files.add(sub.getName());
-			}
-		}
-		catch(Exception ex)
-		{
+    public static List<String> GetRunIds(String email)
+    {
+        List<String> files = new ArrayList<>();
+        File f = new File(getStorePath() + "runs/" + email);
+        try
+        {
+            for(File sub:f.listFiles())
+            {
+                if(sub.isFile())
+                    files.add(sub.getName());
+            }
+        }
+        catch(Exception ex)
+        {
+        	ex.printStackTrace();
+        }
+        return files;
+    }
 
-		}
-		return files;
-	}
-
-	public static List<String> GetUsers()
-	{
-		List<String> files = new ArrayList<>();
-		File f = new File(getStorePath() + "runs");
-		try
-		{
-			for(File sub:f.listFiles())
-			{
-				if(sub.isDirectory())
-					files.add(sub.getName());
-			}
-		}
-		catch(Exception ex)
-		{
-
-		}
-		return files;
-	}
+    public static List<String> GetUsers()
+    {
+        List<String> files = new ArrayList<>();
+        File f = new File(getStorePath() + "runs");
+        try
+        {
+            for(File sub:f.listFiles())
+            {
+                if(sub.isDirectory())
+                    files.add(sub.getName());
+            }
+        }
+        catch(Exception ex)
+        {
+        	ex.printStackTrace();
+        }
+        return files;
+    }
 
 
-	public static TestRun GetRun(String email, String runId)
-	{
-		TestRun result = null;
-		File runFile = new File(getStorePath() + "runs/" + email + File.separator + runId );
-		if(!runFile.exists())
-			return null;
-		ObjectMapper mapper = new ObjectMapper();
-		try
-		{
-			result = mapper.readValue(new FileInputStream(runFile.getAbsolutePath()), TestRun.class);
-		}
-		catch(Exception ex)
-		{
-			// TODO write to log
-		}
-		return result;
-	}
+    public static TestRun GetRun(String email, String runId)
+    {
+        TestRun result = null;
+        File runFile = new File(getStorePath() + "runs/" + email + File.separator + runId );
+        if(!runFile.exists())
+            return null;
+        ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            result = mapper.readValue(new FileInputStream(runFile.getAbsolutePath()), TestRun.class);
+        }
+        catch(Exception ex)
+        {
+        	ex.printStackTrace();
+        }
+        return result;
+    }
 
-	public static TestRun saveTestRun(String email, TestRun run)
-	{
-		File dir = getOrCreateDirectory(getStorePath() + "runs/" + email);
-		File runFile = new File(dir.getAbsolutePath() + File.separator + run.runId);
-		ObjectMapper mapper = new ObjectMapper();
-		// Constructs a FileWriter given a file name, using the platform's default charset
-		try
-		{
-			mapper.writeValue(runFile, run);
-		}
-		catch(Exception ex)
-		{
-			// TODO write to log
-			return null;
-		}
-		return run;
-	}
+    public static TestRun saveTestRun(String email, TestRun run)
+    {
+        File dir = getOrCreateDirectory(getStorePath() + "runs/" + email);
+        File runFile = new File(dir.getAbsolutePath() + File.separator + run.runId);
+        ObjectMapper mapper = new ObjectMapper();
+            // Constructs a FileWriter given a file name, using the platform's default charset
+        try
+        {
+            mapper.writeValue(runFile, run);
+        }
+        catch(Exception ex)
+        {
+        	ex.printStackTrace();
+        }
+        return run;
+    }
 
 	private static String getStorePath()
 	{
@@ -124,42 +123,41 @@ public class Store {
 		return null;
 	}
 
-	public static MasterDataResponseDto GetMasterData()
-	{
-		File masterDataFile = new File(getStorePath() + "config/masterdata.json");
-		if(!masterDataFile.exists())
-			return null;
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			return (MasterDataResponseDto)mapper.readValue(new FileImageInputStream(masterDataFile), MasterDataResponseDto.class); 
-		}
-		catch(Exception ex)
-		{
-			return null;
-		}
-	}
+    public static MasterDataResponseDto getMasterData()
+    {
+        File masterDataFile = new File(getStorePath() + "config/masterdata.json");
+        if(masterDataFile.exists()) {
+        	try
+            {
+            ObjectMapper mapper = new ObjectMapper();
+            return (MasterDataResponseDto)mapper.readValue(new FileImageInputStream(masterDataFile), MasterDataResponseDto.class);
+            }
+            catch(Exception ex)
+            {
+            	ex.printStackTrace();
+            }
+        }
+        return null;
+    }
 
-	public static TestExtnDto[] GetTestDefinitions()
-	{
-		File testDeinitionsFile = new File(getStorePath() + "config/test-definitions.json");
-		if(!testDeinitionsFile.exists())
-			return null;
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			//TestDefPross
-			TestExtnDto[] testExtnDtos=(TestExtnDto[])mapper.readValue(new FileImageInputStream(testDeinitionsFile), TestExtnDto[].class);
+    public static TestExtnDto[] getTestDefinitions()
+    {
+        File testDeinitionsFile = new File(getStorePath() + "config/test-definitions.json");
+        if(testDeinitionsFile.exists()) {
+        	try
+            {
+            ObjectMapper mapper = new ObjectMapper();
+                TestExtnDto[] testExtnDtos=(TestExtnDto[])mapper.readValue(new FileImageInputStream(testDeinitionsFile), TestExtnDto[].class);
 
-			testExtnDtos=addValidators(testExtnDtos);
-			return  testExtnDtos;
-		}
-		catch(Exception ex)
-		{
-
-			return null;
-		}
-	}
+                testExtnDtos=addValidators(testExtnDtos);
+                return  testExtnDtos; }
+            catch(Exception ex)
+            {
+            	ex.printStackTrace();
+            }
+        }
+        return null;
+    }
 
 	private static TestExtnDto[] addValidators(TestExtnDto[] testExtnDtos) {
 		for(TestExtnDto testExtnDto :testExtnDtos) {

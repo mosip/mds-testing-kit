@@ -85,7 +85,7 @@ public class TestManager {
 	public String biometricType;
 
 	@Column(name = "device_type")
-	public String deviceType;
+	public String deviceSubType;
 
 	public List<String> tests;
 
@@ -105,19 +105,13 @@ public class TestManager {
 
 	private static List<String> mdsSpecVersions = new ArrayList<String>();
 
-	public TestManager()
-	{
-		InitStaticData();
-	}
-
-	private static void InitStaticData()
-	{
+	static {
 		SetupMasterData();
-		LoadTests();
-		LoadRuns();
+		loadTests();
+		loadRuns();
 	}
 
-	private static void LoadRuns()
+	private static void loadRuns()
 	{
 		if(areRunsLoaded)
 			return;
@@ -135,19 +129,17 @@ public class TestManager {
 	}
 
 
-	private static void LoadTests()
+	private static void loadTests()
 	{
-		// TODO Load Tests from file or db and comment out the below lines
 		if(!areTestsLoaded)
 		{
-			TestExtnDto[] tests = Store.GetTestDefinitions();
-			if(tests == null)
+			TestExtnDto[] tests = Store.getTestDefinitions();
+			if(tests != null)
 			{
-				tests = LoadTestsFromMemory();
-			}
-			for(TestExtnDto test:tests)
-			{
-				allTests.put(test.testId, test);
+				for(TestExtnDto test:tests)
+				{
+					allTests.put(test.testId, test);
+				}
 			}
 		}
 		areTestsLoaded = true;
@@ -157,7 +149,7 @@ public class TestManager {
 	{
 		if(!isMasterDataLoaded)
 		{
-			MasterDataResponseDto masterData = Store.GetMasterData();
+			MasterDataResponseDto masterData = Store.getMasterData();
 			processList = masterData.process;
 			mdsSpecVersions = masterData.mdsSpecificationVersion;
 			biometricTypes = masterData.biometricType;
@@ -165,61 +157,16 @@ public class TestManager {
 		}
 	}
 
-	private static TestExtnDto[] LoadTestsFromMemory()
-	{
-		// Add test 1
-		List<TestExtnDto> memTests = new ArrayList<TestExtnDto>();
-		TestExtnDto test1 = new TestExtnDto();
-		test1.testId = "discover";
-		test1.processes = Arrays.asList("REGISTRATION", "AUTHENTICATION");
-		test1.biometricTypes = Arrays.asList("FINGERPRINT");
-		test1.deviceTypes = Arrays.asList("SLAP", "FINGER");
-		test1.uiInput = Arrays.asList(new UIInput("port","numeric"));
-		test1.validators = Arrays.asList(new CoinTossValidator());
-		memTests.add(test1);
-
-		// Add test 2
-		TestExtnDto test2 = new TestExtnDto();
-		test2.testId = "deviceinfo";
-		test2.processes = Arrays.asList("REGISTRATION");
-		test2.biometricTypes = Arrays.asList("FINGERPRINT");
-		test2.deviceTypes = Arrays.asList("SLAP");
-		test2.validators = Arrays.asList(new CoinTossValidator());
-		memTests.add(test2);
-
-		// Add test 3
-		TestExtnDto test3 = new TestExtnDto();
-		test3.testId = "capture";
-		test3.processes = Arrays.asList("REGISTRATION", "AUTHENTICATION");
-		test3.biometricTypes = Arrays.asList("FINGERPRINT");
-		test3.deviceTypes = Arrays.asList("SLAP", "FINGER");
-		test3.validators = Arrays.asList(new CoinTossValidator());
-		memTests.add(test3);
-		
-		// Add test 4
-//		TestExtnDto test4 = new TestExtnDto();
-//		test4.testId = "stream";
-//		memTests.add(test4);
-//
-//		// Add test 5
-//		TestExtnDto test5 = new TestExtnDto();
-//		test5.testId = "rcapture";
-//		memTests.add(test5);
-
-		return memTests.toArray(new TestExtnDto[memTests.size()]);
-	}
-
-
-
-	private static List<TestExtnDto> FilterTests(TestManagerGetDto filter)
+	
+	private static List<TestExtnDto> filterTests(TestManagerGetDto filter)
 	{
 		List<TestExtnDto> results =  allTests.values().stream().filter(test -> 
 				(isValid(test.processes) && test.processes.contains(filter.process)) && 
 				(isValid(test.biometricTypes) && test.biometricTypes.contains(filter.biometricType)) &&
-				(isValid(test.deviceTypes) && test.deviceTypes.contains(filter.deviceType)) && 
+				(isValid(test.deviceSubTypes) && test.deviceSubTypes.contains(filter.deviceSubType)) && 
 				( !isValid(test.mdsSpecVersions) || test.mdsSpecVersions.contains(filter.mdsSpecificationVersion ) ))
 		.collect(Collectors.toList());
-
+		
 		return results;	
 	}
 	
@@ -229,7 +176,6 @@ public class TestManager {
 
 	private void saveRun(RunExtnDto newRun, TestManagerDto targetProfile)
 	{
-		// TODO save the Run to file as well as memory
 		if(testRuns.keySet().contains(newRun.runId))
 			return;
 		TestRun newTestRun = new TestRun();
@@ -262,8 +208,8 @@ public class TestManager {
 
 	public TestExtnDto[] GetTests(TestManagerGetDto filter)
 	{
-		LoadTests();
-		return FilterTests(filter).toArray(new TestExtnDto[0]);
+		loadTests();
+		return filterTests(filter).toArray(new TestExtnDto[0]);
 	}
 
 	public RunExtnDto createRun(TestManagerDto runInfo)
@@ -289,12 +235,12 @@ public class TestManager {
 		if(!runInfo.email.isEmpty())
 			newRun.email = runInfo.email;
 		else
-		newRun.email = "misc";
+			newRun.email = "misc";
 		saveRun(newRun, runInfo);
 		return newRun;
 	}
 
-	public TestReport GetReport(String runId)
+	public TestReport getReport(String runId)
 	{
 		if(!testRuns.keySet().contains(runId))
 			return null;
@@ -380,6 +326,8 @@ public class TestManager {
 		if(runs == null)
 			runs = new ArrayList<>();
 		
+		runs.sort((run1, run2) -> run1.createdOn.compareTo(run2.createdOn));
+		
 		return runs;
 	}
 
@@ -438,6 +386,7 @@ public class TestManager {
 		testResult.responseData = validateRequestDto.mdsResponse;
 		testResult.runId = run.runId;
 		testResult.testId = test.testId;
+		testResult.summary = test.testDescription;
 		
 		Intent intent = getIntent(test.method);
 		

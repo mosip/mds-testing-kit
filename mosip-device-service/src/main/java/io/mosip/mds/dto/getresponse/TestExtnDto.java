@@ -29,7 +29,11 @@ public class TestExtnDto {
 
 	public List<String> biometricTypes;
 
-	public List<String> deviceTypes;
+	public List<String> deviceSubTypes;
+	
+	public List<String> segments;
+	
+	public List<String> exceptions;
 
 	public List<String> mdsSpecVersions;
 

@@ -5,8 +5,8 @@ import java.util.List;
 
 public enum BioSubType {
 	
-	LEFT_IRIS("LeftEye", "LEFT_EYE,LEFT_RIGHT_EYE", "", "Left"),
-	RIGHT_IRIS("RightEye", "RIGHT_EYE,LEFT_RIGHT_EYE", "", "Right"),
+	LEFT_IRIS("LeftEye", "LEFT_IRIS,TWO_IRIS", "", "Left"),
+	RIGHT_IRIS("RightEye", "RIGHT_IRIS,TWO_IRIS", "", "Right"),
 	
 	RIGHT_INDEX("RightIndex", "RIGHT_SLAP", "", "Right IndexFinger"),
 	RIGHT_MIDDLE("RightMiddle", "RIGHT_SLAP", "", "Right MiddleFinger"),
@@ -19,7 +19,9 @@ public enum BioSubType {
 	LEFT_LITTLE("LeftLittle", "LEFT_SLAP", "", "Left LittleFinger"),
 	
 	LEFT_THUMB("LeftThumb", "TWO_THUMBS", "", "Left Thumb"),
-	RIGHT_THUMB("RightThumb", "TWO_THUMBS", "", "Right Thumb");
+	RIGHT_THUMB("RightThumb", "TWO_THUMBS", "", "Right Thumb"),
+	
+	FACE("Face", "FULL_FACE", "", null);
 	
 	BioSubType(String commonName, String deviceSubType, String name_092, String name_095) {
 		this.commonName = commonName;
