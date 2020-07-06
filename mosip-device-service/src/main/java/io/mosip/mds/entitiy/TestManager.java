@@ -378,10 +378,10 @@ public class TestManager {
 							getIntent(test.method));
 					testResult.requestData = mapper.writeValueAsString(requestDTO.requestInfoDto);
 					testResult.streamUrl = requestDTO.streamUrl;
-					testResult.currentState = "MDM request composed";
+					testResult.currentState = "MDS request composed";
 				} catch (Exception ex) {
 					ex.printStackTrace();
-					testResult.currentState = "Failed to compose MDM request";
+					testResult.currentState = "Failed to compose MDS request";
 				}
 				run.testReport.put(testId, testResult);
 			}
@@ -423,7 +423,7 @@ public class TestManager {
 		}
 		
 		testResult.renderContent = responseProcessor.getRenderContent(intent, testResult.responseData);
-		testResult.currentState = "MDM Response Validations Completed";
+		testResult.currentState = "MDS Response Validations Completed";
 		run.runStatus = RunStatus.InProgress;
 		// TODO when should this status be Done
 		run.testReport.put(test.testId, testResult);

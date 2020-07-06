@@ -12,7 +12,7 @@
         "biometricTypes": [
             "Finger", "Face", "Iris"
         ],
-        "deviceSubTypes": [],
+        "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
 		"segments" : [],
 		"exceptions" : [],
         "mdsSpecVersions":["0.9.5"],
@@ -40,7 +40,7 @@
         "biometricTypes": [
             "Finger", "Face", "Iris"
         ],
-        "deviceSubTypes": [],
+        "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
 		"segments" : [],
 		"exceptions" : [],
         "mdsSpecVersions": ["0.9.5"],

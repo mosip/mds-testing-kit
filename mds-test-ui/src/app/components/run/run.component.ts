@@ -94,7 +94,7 @@ export class RunComponent implements OnInit {
         },
         error => window.alert(error)
       );
-      console.log("Finished capturing MDM requests");
+      console.log("Finished capturing MDS requests");
       /* this.run.tests.forEach(
       test => {
           let testresult = this.testReportObject.testReport[test];
@@ -108,10 +108,10 @@ export class RunComponent implements OnInit {
   }
 
 
-  getMDMResponse(request, runId, testId) {
+  getMDSResponse(request, runId, testId) {
       let mdmResponse = this.testReportObject.testReport[testId].responseData;
-      if(this.isMDMResponseCaptured(testId) || this.testReportObject.testReport[testId].responseData) {
-       console.log("Nothing to do as MDM response is already captured");
+      if(this.isMDSResponseCaptured(testId) || this.testReportObject.testReport[testId].responseData) {
+       console.log("Nothing to do as MDS response is already captured");
       }
       else if(this.mdmInitiated === true) {
        console.log("MDM request is currently going on .....");
@@ -135,7 +135,7 @@ export class RunComponent implements OnInit {
                   },
                 error => window.alert(error)
               );
-              console.log("Finished capturing MDM Responses >>>>> " + testId);
+              console.log("Finished capturing MDS Responses >>>>> " + testId);
               this.mdmInitiated = false;
       }
     }
@@ -159,61 +159,12 @@ export class RunComponent implements OnInit {
       }
     }
 
-  /* getMDSResponse1(request, runId, testId) {
-    let mdmResponse = this.testReportObject.testReport[testId].responseData;
-    if(this.isMDMResponseCaptured(testId) || this.testReportObject.testReport[testId].responseData) {
-     console.log("Nothing to do as MDM response is already captured");
-    }
-    else if(this.mdmInitiated === true) {
-     console.log("MDM request is currently going on .....");
-    }
-    else {
-      let self = this;
-
-      console.log("Initiating request to Device >>>> " + testId);
-      this.requests.push(testId);
-      this.mdmInitiated = true;
-      this.startStream(JSON.parse(request));
-      this.mdsService.request(JSON.parse(request)).subscribe(
-                response => {
-                  console.log(response);
-                  this.dataService.validateResponse(runId, testId, request, response).subscribe(
-                    result => {
-                      this.testReportObject = result;
-                      console.log('result:' + result);
-                      setTimeout(()=> {    //<<<---    using ()=> syntax
-                            self.streamingInitiated = false;
-                            self.streamURL = "";
-                       }, 3000);
-                    },
-                    error => window.alert(error)
-                  );
-                },
-              error => window.alert(error)
-            );
-            console.log("Finished capturing MDM Responses >>>>> " + testId);
-            this.mdmInitiated = false;
-            //this.streamingInitiated = false;
-            //this.streamURL = "";
-    }
-  } */
-
- /*  startStream(request) {
-    if(request.verb.toLowerCase() === "rcapture") {
-        console.log("Starting stream for rcapture test case");
-        this.streamURL = "http://127.0.0.1:" + this.currentPort + "/stream?deviceId=" +this.selectedDevice.deviceId + "&deviceSubId=3";
-        this.streamingInitiated = true;
-        console.log("Streaming response >>>>>> stream src : " + this.streamURL);
-        //this.video.nativeElement.src = streamSrc;
-        //this.video.nativeElement.play();
-    }
-  } */
 
   getStreamUrl(testId) {
     return this.testReportObject.testReport[testId].streamUrl;
   }
 
-  isMDMResponseCaptured(testId) {
+  isMDSResponseCaptured(testId) {
       let mdmCaptured = false;
       for(let i=0; i<this.requests.length;i++) {
         if(this.requests[i] === testId) {
@@ -223,7 +174,7 @@ export class RunComponent implements OnInit {
       return mdmCaptured;
   }
 
-  getMDSResponse(request, runId, testId) {
+  /* getMDSResponse(request, runId, testId) {
       this.mdsService.request(request.requestInfoDto).subscribe(
           response => {
             console.log(response);
@@ -236,9 +187,9 @@ export class RunComponent implements OnInit {
           },
         error => window.alert(error)
       );
-    }
+    } */
 
-  requestMds(request, runId, testId) {
+  /* requestMds(request, runId, testId) {
     this.mdsService.request(request.requestInfoDto).subscribe(
         response => {
           console.log(response);
@@ -251,6 +202,21 @@ export class RunComponent implements OnInit {
         },
       error => window.alert(error)
     );
+  } */
+
+  getButtonName(request) {
+     let method = JSON.parse(request).verb;
+     switch(method.toUpperCase()) {
+      case "MOSIPDISC":
+        return "Discover Devices";
+      case "MOSIPDINFO":
+        return "Get Device Info";
+      case "CAPTURE":
+        return "Initiate Capture";
+      case "RCAPTURE":
+        return "Initiate RCapture";
+     }
+     return "Initiate Request";
   }
 
   OnPortSelect(value: any) {
