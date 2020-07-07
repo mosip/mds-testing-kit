@@ -2,6 +2,7 @@ package io.mosip.mds.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
@@ -15,8 +16,17 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 		List<String> errors = new ArrayList<>();
+		if(Objects.isNull(response))
+		{
+			errors.add("Response is empty");
+			return errors;
+		}
 		DiscoverResponse discoverResponse = response.discoverResponse;
-
+		if(Objects.isNull(discoverResponse))
+		{
+			errors.add("Discover response is empty");
+			return errors;
+		}
 		//Check for device status
 		if(!discoverResponse.deviceStatus.equals(CommonConstant.READY) && !discoverResponse.deviceStatus.equals(CommonConstant.BUSY)
 				&& !discoverResponse.deviceStatus.equals(CommonConstant.NOT_READY) && !discoverResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))

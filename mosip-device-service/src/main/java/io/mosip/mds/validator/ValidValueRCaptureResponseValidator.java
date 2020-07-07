@@ -2,6 +2,7 @@ package io.mosip.mds.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.util.ObjectUtils;
 
@@ -23,7 +24,19 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 		List<String> errors = new ArrayList<>();
+		if(Objects.isNull(response))
+		{
+			errors.add("Response is empty");
+			return errors;
+		}
+		// Check for Biometrics block
 		RegistrationCaptureResponse registrationCaptureResponse = response.registrationCaptureResponse;
+
+		if(Objects.isNull(registrationCaptureResponse))
+		{
+			errors.add("RegistrationCapture response is empty");
+			return errors;
+		}
 		for(RegistrationCaptureBiometric bb:registrationCaptureResponse.biometrics)
 		{
 			CaptureBiometricData dataDecoded = bb.dataDecoded;

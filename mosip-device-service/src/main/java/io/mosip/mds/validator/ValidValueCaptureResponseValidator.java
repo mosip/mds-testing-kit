@@ -28,9 +28,22 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		}
 		CaptureResponse cr = response.captureResponse;
 
+		if(Objects.isNull(cr))
+		{
+			errors.add("Capture Response is empty");
+			return errors;
+		}
+		if(cr.biometrics == null || cr.biometrics.length == 0)
+		{
+			errors.add("Capture response does not contain biometrics block");
+			return errors;
+		}
+		
+		//
 		for(CaptureResponse.CaptureBiometric bb:cr.biometrics)
 		{
 			CaptureBiometricData dataDecoded = bb.dataDecoded;
+			if(Objects.nonNull(dataDecoded))
 			errors=validateActualValueDatadecoded(errors, dataDecoded);
 
 			//TODO check for env
