@@ -27,4 +27,6 @@ public class ValidateResponseRequestDto {
 	
 	public DiscoverResponse discoverResponse;
 	
+	public RegistrationCaptureResponse registrationCaptureResponse; 
+	
 }

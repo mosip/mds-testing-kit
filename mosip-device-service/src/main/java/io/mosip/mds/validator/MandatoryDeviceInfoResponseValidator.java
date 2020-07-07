@@ -2,6 +2,7 @@ package io.mosip.mds.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
@@ -9,13 +10,22 @@ import io.mosip.mds.entitiy.Validator;
 
 public class MandatoryDeviceInfoResponseValidator extends Validator {
 	public MandatoryDeviceInfoResponseValidator() {
-	     super("MandatoryDeviceInfoResponseValidator", "Mandatory DeviceInfo Response Validator");   
+		super("MandatoryDeviceInfoResponseValidator", "Mandatory DeviceInfo Response Validator");   
 	}
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 		List<String> errors = new ArrayList<>();
+		if(Objects.isNull(response))
+		{
+			errors.add("Response is empty");
+			return errors;
+		}
 		DeviceInfoResponse deviceInfoResponse = response.deviceInfoResponse;
-
+		if(Objects.isNull(deviceInfoResponse))
+		{
+			errors.add("DeviceInfo response is empty");
+			return errors;
+		}
 		// Check for callbackId block
 		if(deviceInfoResponse.callbackId == null || deviceInfoResponse.callbackId.isEmpty())
 		{

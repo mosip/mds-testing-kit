@@ -1,8 +1,10 @@
 package io.mosip.mds.validator;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.util.ObjectUtils;
 
@@ -14,10 +16,8 @@ import io.mosip.mds.entitiy.Validator;
 import io.mosip.mds.util.SecurityUtil;
 
 public class CommonValidator extends Validator {
-	private static final String FACE = "Face";
-	private static final String IRIS = "Iris";
-	private static final String FINGER = "Finger";
-
+	//2020-07-07T01:18:58.804+05:30
+	private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 	private static ObjectMapper mapper;
 
 	static {
@@ -42,11 +42,11 @@ public class CommonValidator extends Validator {
 		} 
 		catch(Exception dex)
 		{
-			errors.add("Error interpreting digital id: " + dex.getMessage());		
+			errors.add("(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage());		
 		}
 
 		return errors;
-	
+
 	}
 
 	public List<String> validateUnSignedDigitalID(String digitalId) {
@@ -56,7 +56,7 @@ public class CommonValidator extends Validator {
 			errors.add("Invalid Unsigned Digital Id");				
 			return errors; 
 		}
-		
+
 		try {
 			DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(Base64.getUrlDecoder().decode(digitalId),
 					DigitalId.class));
@@ -67,31 +67,31 @@ public class CommonValidator extends Validator {
 		} 
 		catch(Exception dex)
 		{
-			errors.add("Error interpreting digital id: " + dex.getMessage());		
+			errors.add("(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage());		
 		}
 
 		return errors;
 
 	}
 
-//	public List<String> validateDigitalId(String digitalId) {
-//
-//		List<String> errors = new ArrayList<>();
-//		try {
-//			DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
-//					DigitalId.class));
-//			errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
-//			errors=validValueDigitalIdPayload(decodedDigitalId,errors);
-//
-//			return errors;
-//		} 
-//		catch(Exception dex)
-//		{
-//			errors.add("Error interpreting digital id: " + dex.getMessage());		
-//		}
-//
-//		return errors;
-//	}
+	//	public List<String> validateDigitalId(String digitalId) {
+	//
+	//		List<String> errors = new ArrayList<>();
+	//		try {
+	//			DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
+	//					DigitalId.class));
+	//			errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
+	//			errors=validValueDigitalIdPayload(decodedDigitalId,errors);
+	//
+	//			return errors;
+	//		} 
+	//		catch(Exception dex)
+	//		{
+	//			errors.add("Error interpreting digital id: " + dex.getMessage());		
+	//		}
+	//
+	//		return errors;
+	//	}
 
 	private List<String> mandatoryParamDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<String> errors) {
 
@@ -156,8 +156,8 @@ public class CommonValidator extends Validator {
 	private List<String> validValueDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<String> errors) {
 
 
-		if(decodedDigitalIdPayload.type.equals(FINGER) || decodedDigitalIdPayload.type.equals(IRIS) 
-				|| decodedDigitalIdPayload.type.equals(FACE))
+		if(!decodedDigitalIdPayload.type.equals(CommonConstant.FINGER) && !decodedDigitalIdPayload.type.equals(CommonConstant.IRIS) 
+				&& !decodedDigitalIdPayload.type.equals(CommonConstant.FACE))
 		{
 			errors.add("Response DigitalId type is invalid");
 			return errors;
@@ -169,23 +169,25 @@ public class CommonValidator extends Validator {
 				return errors;
 		}
 
+		//		errors=validateTimeStamp(decodedDigitalIdPayload.dateTime.toString(),errors);
+
 		return errors;
 	}
 
 	private List<String> validateDeviceSubType(List<String> errors, DigitalId decodedDigitalIdPayload) {
-		if(decodedDigitalIdPayload.deviceSubType.equals(FINGER) && !decodedDigitalIdPayload.deviceSubType.equals("Slap") 
-				&& !decodedDigitalIdPayload.deviceSubType.equals("Single") && !decodedDigitalIdPayload.deviceSubType.equals("Touchless"))
+		if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FINGER) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SLAP) 
+				&& !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SINGLE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.TOUCHLESS))
 		{
 			errors.add("Response DigitalId DeviceSubType is invalid for Finger");
 		}
 
-		if(decodedDigitalIdPayload.deviceSubType.equals(FACE) && !decodedDigitalIdPayload.deviceSubType.equals("Full face"))
+		if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FACE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FULL_FACE))
 		{
 			errors.add("Response DigitalId DeviceSubType is invalid for Face");
 		}
 
-		if(decodedDigitalIdPayload.deviceSubType.equals(IRIS) && !decodedDigitalIdPayload.deviceSubType.equals("Double") 
-				&& !decodedDigitalIdPayload.deviceSubType.equals("Single"))
+		if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.IRIS) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.DOUBLE) 
+				&& !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SINGLE))
 		{
 			errors.add("Response DigitalId DeviceSubType is invalid for Iris");
 		}
@@ -197,5 +199,22 @@ public class CommonValidator extends Validator {
 
 		return errors;
 	}
+	//Date and Time Validation
+	public static List<String> validateTimeStamp(String dateString,List<String> errors) {
+		if (Objects.isNull(dateString)) {
+			errors.add("TimeStamp is empty");
 
+		}
+		try {
+
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PATTERN);
+			//simpleDateFormat.setLenient(false); // Don't automatically convert invalid date.
+			System.out.println(simpleDateFormat.parse(dateString));
+
+		} catch (Exception e) {
+			errors.add("TimeStamp formatte is invalid as per ISO Date formate");
+		}
+		return errors;
+	}
 }
+
