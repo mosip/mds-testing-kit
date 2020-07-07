@@ -2,42 +2,41 @@ package io.mosip.mds.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.entitiy.Validator;
 
 public class ValidValueDeviceInfoResponseValidator extends Validator {
-	private static final String L1 = "L1";
-	private static final String L0 = "L0";
-	private static final String REGISTRATION = "Registration";
-	private static final String AUTH = "Auth";
-	private static final String PRODUCTION = "Production";
-	private static final String PRE_PRODUCTION = "Pre-Production";
-	private static final String DEVELOPER = "Developer";
-	private static final String STAGING = "Staging";
-	private static final String NONE = "None";
-	private static final String NOT_REGISTERED = "Not Registered";
-	private static final String NOT_READY = "Not Ready";
-	private static final String BUSY = "Busy";
-	private static final String READY = "Ready";
 	public ValidValueDeviceInfoResponseValidator() {
 		super("ValidValueDeviceInfoResponseValidator", "Valid Value Device Info Response Validator");
 	}
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 		List<String> errors = new ArrayList<>();
+		
+		if(Objects.isNull(response))
+		{
+			errors.add("Response is empty");
+			return errors;
+		}
 		DeviceInfoResponse deviceInfoResponse = response.deviceInfoResponse;
-
+		if(Objects.isNull(deviceInfoResponse))
+		{
+			errors.add("DeviceInfo response is empty");
+			return errors;
+		}
+		
 		//Check for device status
-		if(!deviceInfoResponse.deviceStatus.equals(READY) && !deviceInfoResponse.deviceStatus.equals(BUSY)
-				&& !deviceInfoResponse.deviceStatus.equals(NOT_READY) && !deviceInfoResponse.deviceStatus.equals(NOT_REGISTERED))
+		if(!deviceInfoResponse.deviceStatus.equals(CommonConstant.READY) && !deviceInfoResponse.deviceStatus.equals(CommonConstant.BUSY)
+				&& !deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_READY) && !deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
 		{
 			errors.add("Device info response device status is invalid");
 			return errors;
 		}
 		//Check for device certification
-		if(!deviceInfoResponse.certification.equals(L0) && !deviceInfoResponse.certification.equals(L1))
+		if(!deviceInfoResponse.certification.equals(CommonConstant.L0) && !deviceInfoResponse.certification.equals(CommonConstant.L1))
 		{
 			errors.add("Device info response certification is invalid");
 			return errors;
@@ -58,15 +57,15 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		//deviceInfo.env - "None" if not registered. If registered, 
 		//then send the registered enviornment "Staging" | "Developer" | "Pre-Production" | "Production".
 
-		if(!deviceInfoResponse.env.equals(NONE) && !deviceInfoResponse.env.equals(STAGING) && !deviceInfoResponse.env.equals(DEVELOPER)
-				&& !deviceInfoResponse.env.equals(PRE_PRODUCTION) && !deviceInfoResponse.env.equals(PRODUCTION))
+		if(!deviceInfoResponse.env.equals(CommonConstant.NONE) && !deviceInfoResponse.env.equals(CommonConstant.STAGING) && !deviceInfoResponse.env.equals(CommonConstant.DEVELOPER)
+				&& !deviceInfoResponse.env.equals(CommonConstant.PRE_PRODUCTION) && !deviceInfoResponse.env.equals(CommonConstant.PRODUCTION))
 		{
 			errors.add("Device info response env is invalid");
 			return errors;
 		}
 
 		//Check for purpose
-		if(!deviceInfoResponse.purpose.equals(AUTH) && !deviceInfoResponse.purpose.equals(REGISTRATION))
+		if(!deviceInfoResponse.purpose.equals(CommonConstant.AUTH) && !deviceInfoResponse.purpose.equals(CommonConstant.REGISTRATION))
 		{
 			errors.add("Device info response purpose is invalid");
 			return errors;
@@ -90,8 +89,8 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		//		The digital id will be unsigned if the device is L0 and the the status of the device is "Not Registered".
 
 		CommonValidator commonValidator=new CommonValidator();
-		if(deviceInfoResponse.certification.equals(L0) && deviceInfoResponse.deviceStatus.equals(NOT_REGISTERED))
-		errors = commonValidator.validateUnSignedDigitalID(deviceInfoResponse.digitalId);
+		if(deviceInfoResponse.certification.equals(CommonConstant.L0) && deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
+			errors = commonValidator.validateUnSignedDigitalID(deviceInfoResponse.digitalId);
 		else
 			errors = commonValidator.validateSignedDigitalID(deviceInfoResponse.digitalId);
 		return errors;

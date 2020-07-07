@@ -6,18 +6,21 @@ import java.util.Objects;
 
 import org.springframework.util.ObjectUtils;
 
-import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
+import io.mosip.mds.dto.RegistrationCaptureResponse;
+import io.mosip.mds.dto.RegistrationCaptureResponse.RegistrationCaptureBiometric;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.entitiy.Validator;
 
-public class ValidValueCaptureResponseValidator extends Validator {
+public class ValidValueRCaptureResponseValidator extends Validator{
 
 	private final List<String> bioSubTypeFingerList= getBioSubTypeFinger();
 	private final List<String> bioSubTypeIrisList = getBioSubTypeIris();
-	public ValidValueCaptureResponseValidator() {
-		super("ValidValueCaptureResponseValidator", "Valid Value Capture Response Validator");
+
+	public ValidValueRCaptureResponseValidator() {
+		super("ValidValueRCaptureResponseValidator", "Valid Value Registration Capture Response Validator");
 	}
+
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 		List<String> errors = new ArrayList<>();
@@ -26,24 +29,17 @@ public class ValidValueCaptureResponseValidator extends Validator {
 			errors.add("Response is empty");
 			return errors;
 		}
-		CaptureResponse cr = response.captureResponse;
+		// Check for Biometrics block
+		RegistrationCaptureResponse registrationCaptureResponse = response.registrationCaptureResponse;
 
-		if(Objects.isNull(cr))
+		if(Objects.isNull(registrationCaptureResponse))
 		{
-			errors.add("Capture Response is empty");
+			errors.add("RegistrationCapture response is empty");
 			return errors;
 		}
-		if(cr.biometrics == null || cr.biometrics.length == 0)
-		{
-			errors.add("Capture response does not contain biometrics block");
-			return errors;
-		}
-		
-		//
-		for(CaptureResponse.CaptureBiometric bb:cr.biometrics)
+		for(RegistrationCaptureBiometric bb:registrationCaptureResponse.biometrics)
 		{
 			CaptureBiometricData dataDecoded = bb.dataDecoded;
-			if(Objects.nonNull(dataDecoded))
 			errors=validateActualValueDatadecoded(errors, dataDecoded);
 
 			//TODO check for env
@@ -64,7 +60,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		// Check for bioType elements
 		if(!dataDecoded.bioType.equals(CommonConstant.FINGER) && !dataDecoded.bioType.equals(CommonConstant.IRIS) && !dataDecoded.bioType.equals(CommonConstant.FACE))
 		{
-			errors.add("Capture response biometrics-dataDecoded bioType is invalid");
+			errors.add("Registration Capture response biometrics-dataDecoded bioType is invalid");
 			return errors;
 		}else {
 
@@ -76,7 +72,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		//Check for purpose elements
 		if(!dataDecoded.purpose.equals(CommonConstant.AUTH) && !dataDecoded.purpose.equals(CommonConstant.REGISTRATION) )
 		{
-			errors.add("Capture response biometrics-dataDecoded purpose is invalid");
+			errors.add("Registration Capture response biometrics-dataDecoded purpose is invalid");
 			return errors;
 		}
 
@@ -90,21 +86,21 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		if(dataDecoded.bioType.equals(CommonConstant.FINGER) &&
 				!bioSubTypeFingerList.contains(dataDecoded.bioSubType))
 		{
-			errors.add("Capture response biometrics bioSubType is invalid for Finger");
+			errors.add("Registration Capture response bioSubType is invalid for Finger");
 			return errors;
 		}
 		// Check for bioSubType of Iris elements
 		if(dataDecoded.bioType.equals(CommonConstant.IRIS) &&
 				!bioSubTypeIrisList.contains(dataDecoded.bioSubType))
 		{
-			errors.add("Capture response biometrics bioSubType is invalid for Iris");
+			errors.add("Registration Capture response bioSubType is invalid for Iris");
 			return errors;
 		}
 		// Check for bioSubType of Face elements
 		if(dataDecoded.bioType.equals(CommonConstant.FACE) &&
 				!(dataDecoded.bioSubType == null || dataDecoded.bioSubType.isEmpty()))
 		{
-			errors.add("Capture response biometrics bioSubType is invalid for Face");
+			errors.add("Registration Capture response bioSubType is invalid for Face");
 			return errors;
 		}
 
@@ -142,4 +138,5 @@ public class ValidValueCaptureResponseValidator extends Validator {
 
 		return bioSubTypeFingerList;
 	}
+
 }

@@ -2,6 +2,7 @@ package io.mosip.mds.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
@@ -15,8 +16,17 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 
 		List<String> errors = new ArrayList<>();
+		if(Objects.isNull(response))
+		{
+			errors.add("Response is empty");
+			return errors;
+		}
 		DiscoverResponse discoverResponse = response.discoverResponse;
-
+		if(Objects.isNull(discoverResponse))
+		{
+			errors.add("Discover response is empty");
+			return errors;
+		}
 		// Check for callbackId block
 		if(discoverResponse.callbackId == null || discoverResponse.callbackId.isEmpty())
 		{
@@ -78,9 +88,6 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 			errors.add("DeviceInfo response does not contain specVersion");
 			return errors;
 		}
-
 		return errors;
-
 	}
-
 }
