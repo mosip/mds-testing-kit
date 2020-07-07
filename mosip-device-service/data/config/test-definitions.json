@@ -161,7 +161,7 @@
             "Iris"
         ],
         "deviceSubTypes": [
-            "Single"
+            "Double"
         ],
 		"segments" : ["LeftEye", "RightEye"],
 		"exceptions" : [],
@@ -267,6 +267,99 @@
                 "Description": "Mandatory fields check"
             },
 			{
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Auth capture - Face",
+        "method": "capture",
+        "testDescription": "Valid Auth capture Request only for Face",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Face"
+        ],
+        "deviceSubTypes": [
+            "Full face"
+        ],
+        "segments" : [],
+        "exceptions" : [],
+        "deviceSubId" : 0,
+        "bioCount" : 1,
+        "mdsSpecVersions": ["0.9.5"],
+        "validatorDefs": [
+            {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+            {
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Auth capture - Unknown Iris",
+        "method": "capture",
+        "testDescription": "Valid Auth capture Request for Unknown iris",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Iris"
+        ],
+        "deviceSubTypes": [
+            "Single"
+        ],
+        "segments" : ["UNKNOWN"],
+        "exceptions" : [],
+        "deviceSubId" : 2,
+        "bioCount" : 1,
+        "mdsSpecVersions": ["0.9.5"],
+        "validatorDefs": [
+            {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+            {
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Auth capture - Unknown Finger",
+        "method": "capture",
+        "testDescription": "Valid Auth capture Request for Unknown Finger",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Finger"
+        ],
+        "deviceSubTypes": [
+            "Single"
+        ],
+        "segments" : ["UNKNOWN"],
+        "exceptions" : [],
+        "deviceSubId" : 1,
+        "bioCount" : 1,
+        "mdsSpecVersions": ["0.9.5"],
+        "validatorDefs": [
+            {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+            {
                 "Name": "ValidValueCaptureResponseValidator",
                 "Description": "valid values check"
             }

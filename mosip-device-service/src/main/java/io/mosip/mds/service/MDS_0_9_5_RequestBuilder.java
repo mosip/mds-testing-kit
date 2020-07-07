@@ -123,10 +123,10 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
     private String getCaptureRequest(TestManagerDto targetProfile, TestExtnDto test, DeviceDto device) throws JsonProcessingException
     {
         CaptureRequest requestBody = new CaptureRequest();
-        requestBody.captureTime = (new Date()).toString();
+        requestBody.captureTime = getTimestamp();
         requestBody.domainUri = "default";
         requestBody.env = "Developer";
-        requestBody.purpose = "AUTHENTICATION";
+        requestBody.purpose = "Auth";
         requestBody.specVersion = "0.9.5";
         requestBody.timeout = 10000;
         requestBody.transactionId = "" + System.currentTimeMillis();
