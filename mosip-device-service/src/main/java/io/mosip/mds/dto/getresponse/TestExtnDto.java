@@ -50,5 +50,5 @@ public class TestExtnDto {
 		validators.add(validator);
 	}
 
-
+	public int requestedScore;
 }

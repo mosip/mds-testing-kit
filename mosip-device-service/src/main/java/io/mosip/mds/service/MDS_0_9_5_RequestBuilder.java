@@ -138,7 +138,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         bio.deviceId = device.deviceInfo.deviceId;
         bio.deviceSubId = test.deviceSubId;
         bio.previousHash = "";
-        bio.requestedScore = 80;            
+        bio.requestedScore = test.requestedScore;
         bio.bioSubType = test.segments == null ? null : 
         	BioSubType.convertTo095(test.segments).toArray(new String[0]);            
         bio.type = targetProfile.biometricType;
@@ -164,7 +164,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
     	bio.type = targetProfile.biometricType;
     	bio.previousHash = "";
         bio.deviceId = device.deviceInfo.deviceId;
-        bio.requestedScore = 80;            
+        bio.requestedScore = test.requestedScore;;
         bio.deviceSubId = test.deviceSubId;
         bio.count = test.bioCount;
         

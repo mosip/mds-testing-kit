@@ -75,13 +75,14 @@
 		"bioCount" : 4,
 		"exceptions" : [],
         "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
         "validatorDefs": [
             {
-                "Name": "MandatoryCaptureResponseValidator",
+                "Name": "MandatoryRCaptureResponseValidator",
                 "Description": "Mandatory fields check"
             },
 			{
-                "Name": "ValidValueCaptureResponseValidator",
+                "Name": "ValidValueRCaptureResponseValidator",
                 "Description": "valid values check"
             }
         ]
@@ -105,14 +106,15 @@
 		"deviceSubId" : 2,
 		"bioCount" : 4,
 		"exceptions" : [],
+        "requestedScore" : 40,
         "mdsSpecVersions": ["0.9.5"],
         "validatorDefs": [
             {
-                "Name": "MandatoryCaptureResponseValidator",
+                "Name": "MandatoryRCaptureResponseValidator",
                 "Description": "Mandatory fields check"
             },
 			{
-                "Name": "ValidValueCaptureResponseValidator",
+                "Name": "ValidValueRCaptureResponseValidator",
                 "Description": "valid values check"
             }
         ]
@@ -137,13 +139,14 @@
 		"deviceSubId" : 3,
 		"bioCount" : 2,
         "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
         "validatorDefs": [
             {
-                "Name": "MandatoryCaptureResponseValidator",
+                "Name": "MandatoryRCaptureResponseValidator",
                 "Description": "Mandatory fields check"
             },
 			{
-                "Name": "ValidValueCaptureResponseValidator",
+                "Name": "ValidValueRCaptureResponseValidator",
                 "Description": "valid values check"
             }
         ]
@@ -168,13 +171,14 @@
 		"deviceSubId" : 3,
 		"bioCount" : 2,
         "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
         "validatorDefs": [
              {
-                "Name": "MandatoryCaptureResponseValidator",
+                "Name": "MandatoryRCaptureResponseValidator",
                 "Description": "Mandatory fields check"
             },
 			{
-                "Name": "ValidValueCaptureResponseValidator",
+                "Name": "ValidValueRCaptureResponseValidator",
                 "Description": "valid values check"
             }
         ]
@@ -199,13 +203,14 @@
 		"deviceSubId" : 1,
 		"bioCount" : 1,
         "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
         "validatorDefs": [
              {
-                "Name": "MandatoryCaptureResponseValidator",
+                "Name": "MandatoryRCaptureResponseValidator",
                 "Description": "Mandatory fields check"
             },
 			{
-                "Name": "ValidValueCaptureResponseValidator",
+                "Name": "ValidValueRCaptureResponseValidator",
                 "Description": "valid values check"
             }
         ]
@@ -230,13 +235,14 @@
 		"deviceSubId" : 2,
 		"bioCount" : 1,
         "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
         "validatorDefs": [
              {
-                "Name": "MandatoryCaptureResponseValidator",
+                "Name": "MandatoryRCaptureResponseValidator",
                 "Description": "Mandatory fields check"
             },
 			{
-                "Name": "ValidValueCaptureResponseValidator",
+                "Name": "ValidValueRCaptureResponseValidator",
                 "Description": "valid values check"
             }
         ]
@@ -261,13 +267,14 @@
 		"deviceSubId" : 0,
 		"bioCount" : 1,
         "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
         "validatorDefs": [
              {
-                "Name": "MandatoryCaptureResponseValidator",
+                "Name": "MandatoryRCaptureResponseValidator",
                 "Description": "Mandatory fields check"
             },
 			{
-                "Name": "ValidValueCaptureResponseValidator",
+                "Name": "ValidValueRCaptureResponseValidator",
                 "Description": "valid values check"
             }
         ]
@@ -292,6 +299,7 @@
         "deviceSubId" : 0,
         "bioCount" : 1,
         "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
         "validatorDefs": [
             {
                 "Name": "MandatoryCaptureResponseValidator",
@@ -323,6 +331,7 @@
         "deviceSubId" : 2,
         "bioCount" : 1,
         "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
         "validatorDefs": [
             {
                 "Name": "MandatoryCaptureResponseValidator",
@@ -353,6 +362,7 @@
         "exceptions" : [],
         "deviceSubId" : 1,
         "bioCount" : 1,
+        "requestedScore" : 40,
         "mdsSpecVersions": ["0.9.5"],
         "validatorDefs": [
             {
