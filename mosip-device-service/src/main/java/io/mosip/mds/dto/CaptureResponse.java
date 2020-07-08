@@ -3,7 +3,7 @@ package io.mosip.mds.dto;
 import lombok.Data;
 
 @Data
-public class CaptureResponse {
+public class CaptureResponse extends MdsResponse{
 	@Data
 	public static class CaptureBiometricData {
 		public String digitalId;

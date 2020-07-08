@@ -12,6 +12,7 @@ import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.dto.getresponse.UIInput;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.dto.postresponse.RunExtnDto;
+import io.mosip.mds.dto.postresponse.ValidationResult;
 import io.mosip.mds.service.IMDSRequestBuilder;
 import io.mosip.mds.service.MDS_0_9_2_RequestBuilder;
 import io.mosip.mds.service.MDS_0_9_5_RequestBuilder;
@@ -418,11 +419,14 @@ public class TestManager {
 
 			Intent intent = getIntent(test.method);
 			IMDSResponseProcessor responseProcessor = getResponseProcessor(run.targetProfile.mdsSpecVersion);
-			validateRequestDto.captureResponse = responseProcessor.getCaptureResponse(intent, testResult.responseData);
-
+			validateRequestDto.setMdsDecodedResponse(responseProcessor.getMdsDecodedResponse(intent, testResult.responseData));
 			for(Validator v:test.validators)
 			{
-				testResult.validationResults.add(v.Validate(validateRequestDto));
+				ValidationResult vr = v.Validate(validateRequestDto);
+				testResult.validationResults.add(vr);
+				if(vr.errors.size()!=0) {
+					break;
+				}
 			}
 
 			testResult.renderContent = responseProcessor.getRenderContent(intent, testResult.responseData);

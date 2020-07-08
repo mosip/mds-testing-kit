@@ -20,7 +20,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 			errors.add("Response is empty");
 			return errors;
 		}
-		DeviceInfoResponse deviceInfoResponse = response.deviceInfoResponse;
+		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(deviceInfoResponse))
 		{
 			errors.add("DeviceInfo response is empty");

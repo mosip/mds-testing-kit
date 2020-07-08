@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import org.springframework.util.ObjectUtils;
 
+import io.mosip.mds.dto.CaptureResponse;
+import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import io.mosip.mds.dto.RegistrationCaptureResponse;
 import io.mosip.mds.dto.RegistrationCaptureResponse.RegistrationCaptureBiometric;
@@ -30,14 +32,14 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 			return errors;
 		}
 		// Check for Biometrics block
-		RegistrationCaptureResponse registrationCaptureResponse = response.registrationCaptureResponse;
+		CaptureResponse registrationCaptureResponse = (CaptureResponse) response.getMdsDecodedResponse();
 
 		if(Objects.isNull(registrationCaptureResponse))
 		{
 			errors.add("RegistrationCapture response is empty");
 			return errors;
 		}
-		for(RegistrationCaptureBiometric bb:registrationCaptureResponse.biometrics)
+		for(CaptureBiometric bb:registrationCaptureResponse.biometrics)
 		{
 			CaptureBiometricData dataDecoded = bb.dataDecoded;
 			if(Objects.nonNull(dataDecoded)) {

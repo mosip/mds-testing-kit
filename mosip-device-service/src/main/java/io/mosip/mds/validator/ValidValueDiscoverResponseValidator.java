@@ -21,7 +21,7 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 			errors.add("Response is empty");
 			return errors;
 		}
-		DiscoverResponse discoverResponse = response.discoverResponse;
+		DiscoverResponse discoverResponse = (DiscoverResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(discoverResponse))
 		{
 			errors.add("Discover response is empty");

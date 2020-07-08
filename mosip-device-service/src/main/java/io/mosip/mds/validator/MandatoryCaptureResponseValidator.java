@@ -25,7 +25,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 			errors.add("Response is empty");
 			return errors;
 		}
-		CaptureResponse cr = response.captureResponse;
+		CaptureResponse cr = (CaptureResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(cr))
 		{
 			errors.add("Capture Response is empty");

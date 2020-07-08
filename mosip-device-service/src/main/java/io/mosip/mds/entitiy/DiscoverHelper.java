@@ -53,5 +53,33 @@ public class DiscoverHelper {
 		}
 		return response;
 	}
+    
+    public static DiscoverResponse decodeDiscoverInfo(String discoverInfo) {
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		DiscoverResponse resp;
+		try {
+			 resp = (DiscoverResponse) (mapper.readValue(discoverInfo.getBytes(), DiscoverResponse.class));
+			
+				try {
+					if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
+						resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
+					else
+						resp.digitalIdDecoded = (DigitalId) (mapper.readValue(SecurityUtil.getPayload(resp.digitalId),	DigitalId.class));
+				}
+				catch(Exception dex)
+				{
+					resp.analysisError = "Error interpreting digital id: " + dex.getMessage();		
+				}
+			
+		}
+		catch(Exception ex)
+		{
+			resp = new DiscoverResponse();
+			resp.analysisError = "Error parsing discover info: " + ex.getMessage();
+		}
+		return resp;
+	}
 
 }

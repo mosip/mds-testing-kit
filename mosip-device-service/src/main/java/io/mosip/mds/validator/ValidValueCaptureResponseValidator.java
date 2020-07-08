@@ -26,7 +26,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 			errors.add("Response is empty");
 			return errors;
 		}
-		CaptureResponse cr = response.captureResponse;
+		CaptureResponse cr = (CaptureResponse) response.getMdsDecodedResponse();
 
 		if(Objects.isNull(cr))
 		{
