@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import org.springframework.util.ObjectUtils;
 
+import io.mosip.mds.dto.CaptureResponse;
+import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import io.mosip.mds.dto.RegistrationCaptureResponse;
 import io.mosip.mds.dto.RegistrationCaptureResponse.RegistrationCaptureBiometric;
@@ -30,26 +32,30 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 			return errors;
 		}
 		// Check for Biometrics block
-		RegistrationCaptureResponse registrationCaptureResponse = response.registrationCaptureResponse;
+		CaptureResponse registrationCaptureResponse = (CaptureResponse) response.getMdsDecodedResponse();
 
 		if(Objects.isNull(registrationCaptureResponse))
 		{
 			errors.add("RegistrationCapture response is empty");
 			return errors;
 		}
-		for(RegistrationCaptureBiometric bb:registrationCaptureResponse.biometrics)
+		for(CaptureBiometric bb:registrationCaptureResponse.biometrics)
 		{
 			CaptureBiometricData dataDecoded = bb.dataDecoded;
-			errors=validateActualValueDatadecoded(errors, dataDecoded);
+			if(Objects.nonNull(dataDecoded)) {
 
-			//TODO check for env
+				errors=validateActualValueDatadecoded(errors, dataDecoded);
+				if(errors.size()!=0)return errors;
+				//TODO check for env
 
-			//TODO check time stamp for ISO Format date time with timezone
+				//TODO check time stamp for ISO Format date time with timezone
+				errors=CommonValidator.validateTimeStamp(dataDecoded.timestamp,errors);
+				if(errors.size()!=0)return errors;
 
-			//TODO check for requestedScore
+				//TODO check for requestedScore
 
-			//TODO check for quality score
-
+				//TODO check for quality score
+			}
 
 		}
 

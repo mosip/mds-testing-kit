@@ -1,6 +1,6 @@
 package io.mosip.mds.dto;
 
-public class DiscoverResponse {
+public class DiscoverResponse extends MdsResponse{
  
     public String deviceId;
 

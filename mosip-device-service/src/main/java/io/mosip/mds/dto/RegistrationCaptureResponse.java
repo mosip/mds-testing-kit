@@ -3,7 +3,7 @@ package io.mosip.mds.dto;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import lombok.Data;
 @Data
-public class RegistrationCaptureResponse {
+public class RegistrationCaptureResponse extends MdsResponse{
 
 	@Data
 	public static class RegistrationCaptureBiometric {

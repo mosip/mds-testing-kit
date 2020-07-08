@@ -21,12 +21,6 @@ public class ValidateResponseRequestDto {
 	@ApiModelProperty(value = "resultVerbosity", required = true, dataType = "java.lang.String")
 	public String resultVerbosity;
 
-	public CaptureResponse captureResponse; 
-	
-	public DeviceInfoResponse deviceInfoResponse;
-	
-	public DiscoverResponse discoverResponse;
-	
-	public RegistrationCaptureResponse registrationCaptureResponse; 
-	
+	private MdsResponse mdsDecodedResponse; 
+
 }

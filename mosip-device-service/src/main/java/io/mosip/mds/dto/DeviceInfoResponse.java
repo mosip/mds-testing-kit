@@ -1,6 +1,6 @@
 package io.mosip.mds.dto;
 
-public class DeviceInfoResponse {
+public class DeviceInfoResponse extends MdsResponse{
 
     public String callbackId;
     public String certification;

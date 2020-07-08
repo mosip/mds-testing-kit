@@ -13,6 +13,7 @@ import io.mosip.mds.dto.DeviceDto;
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.DigitalId;
 import io.mosip.mds.dto.DiscoverResponse;
+import io.mosip.mds.dto.MdsResponse;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.entitiy.CaptureHelper;
@@ -192,6 +193,24 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 			response.setAnalysisError(RCAPTURE_DECODE_ERROR + exception.getMessage());
 		}
 		return response;
+	}
+
+	@Override
+	public MdsResponse getMdsDecodedResponse(Intent method, String encodedValue) {
+		
+    	switch(method) {
+		case Capture:
+			return CaptureHelper.decode(encodedValue,false);
+		case RegistrationCapture:
+			return CaptureHelper.decode(encodedValue,true);
+		case DeviceInfo:
+			return DeviceInfoHelper.decodeDeviceInfo(encodedValue);
+		case Discover:
+			return DiscoverHelper.decodeDiscoverInfo(encodedValue);
+		}
+		return null;
+		
+    
 	}
     
 }
