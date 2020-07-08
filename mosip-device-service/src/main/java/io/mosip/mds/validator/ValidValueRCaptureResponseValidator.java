@@ -40,16 +40,20 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 		for(RegistrationCaptureBiometric bb:registrationCaptureResponse.biometrics)
 		{
 			CaptureBiometricData dataDecoded = bb.dataDecoded;
-			errors=validateActualValueDatadecoded(errors, dataDecoded);
+			if(Objects.nonNull(dataDecoded)) {
 
-			//TODO check for env
+				errors=validateActualValueDatadecoded(errors, dataDecoded);
+				if(errors.size()!=0)return errors;
+				//TODO check for env
 
-			//TODO check time stamp for ISO Format date time with timezone
+				//TODO check time stamp for ISO Format date time with timezone
+				errors=CommonValidator.validateTimeStamp(dataDecoded.timestamp,errors);
+				if(errors.size()!=0)return errors;
 
-			//TODO check for requestedScore
+				//TODO check for requestedScore
 
-			//TODO check for quality score
-
+				//TODO check for quality score
+			}
 
 		}
 

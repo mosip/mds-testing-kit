@@ -38,22 +38,26 @@ public class ValidValueCaptureResponseValidator extends Validator {
 			errors.add("Capture response does not contain biometrics block");
 			return errors;
 		}
-		
+
 		//
 		for(CaptureResponse.CaptureBiometric bb:cr.biometrics)
 		{
 			CaptureBiometricData dataDecoded = bb.dataDecoded;
-			if(Objects.nonNull(dataDecoded))
-			errors=validateActualValueDatadecoded(errors, dataDecoded);
+			if(Objects.nonNull(dataDecoded)) {
+				errors=validateActualValueDatadecoded(errors, dataDecoded);
+				if(errors.size()!=0)return errors;
 
-			//TODO check for env
+				//TODO check for env
 
-			//TODO check time stamp for ISO Format date time with timezone
+				//TODO check time stamp for ISO Format date time with timezone
+				errors=CommonValidator.validateTimeStamp(dataDecoded.timestamp,errors);
+				if(errors.size()!=0)return errors;
 
-			//TODO check for requestedScore
 
-			//TODO check for quality score
+				//TODO check for requestedScore
 
+				//TODO check for quality score
+			}
 
 		}
 
