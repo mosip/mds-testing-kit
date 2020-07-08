@@ -187,6 +187,12 @@ public class TestManager {
 
 	private TestRun persistRun(TestRun run)
 	{
+		boolean isAllInResponseValidationStage = run.testReport.values().stream()
+				.allMatch( result -> result.currentState.startsWith("MDS Response Validations"));
+
+		if(isAllInResponseValidationStage)
+			run.runStatus = RunStatus.Done;
+
 		return Store.saveTestRun(run.user, run);
 	}
 
@@ -378,13 +384,15 @@ public class TestManager {
 							getIntent(test.method));
 					testResult.requestData = mapper.writeValueAsString(requestDTO.requestInfoDto);
 					testResult.streamUrl = requestDTO.streamUrl;
-					testResult.currentState = "MDS request composed";
+					testResult.currentState = "Compose MDS request : Completed";
 				} catch (Exception ex) {
 					ex.printStackTrace();
-					testResult.currentState = "Failed to compose MDS request";
+					testResult.currentState = "Compose MDS request : Failed";
 				}
 				run.testReport.put(testId, testResult);
 			}
+
+			run.runStatus = RunStatus.InProgress;
 			persistRun(run);
 		}
 		return run;
@@ -402,30 +410,29 @@ public class TestManager {
 
 		TestRun run = testRuns.get(validateRequestDto.runId);
 		TestExtnDto test = allTests.get(validateRequestDto.testId);
-	//	TestResult testResult = run.testReport.get(test.testId);
-		TestResult testResult = new TestResult();
+		TestResult testResult = run.testReport.get(test.testId);
 		testResult.executedOn = new Date();
-		testResult.requestData = validateRequestDto.mdsRequest;
 		testResult.responseData = validateRequestDto.mdsResponse;
-		testResult.runId = run.runId;
-		testResult.testId = test.testId;
-		testResult.summary = test.testDescription;
-		
-		Intent intent = getIntent(test.method);
-		
-		IMDSResponseProcessor responseProcessor = getResponseProcessor(run.targetProfile.mdsSpecVersion);
-		
-		validateRequestDto.captureResponse = responseProcessor.getCaptureResponse(intent, testResult.responseData);
-		
-		for(Validator v:test.validators)
-		{
-			testResult.validationResults.add(v.Validate(validateRequestDto));
+
+		try {
+
+			Intent intent = getIntent(test.method);
+			IMDSResponseProcessor responseProcessor = getResponseProcessor(run.targetProfile.mdsSpecVersion);
+			validateRequestDto.captureResponse = responseProcessor.getCaptureResponse(intent, testResult.responseData);
+
+			for(Validator v:test.validators)
+			{
+				testResult.validationResults.add(v.Validate(validateRequestDto));
+			}
+
+			testResult.renderContent = responseProcessor.getRenderContent(intent, testResult.responseData);
+			testResult.currentState = "MDS Response Validations : Completed";
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			testResult.currentState = "MDS Response Validations : Failed";
 		}
-		
-		testResult.renderContent = responseProcessor.getRenderContent(intent, testResult.responseData);
-		testResult.currentState = "MDS Response Validations Completed";
-		run.runStatus = RunStatus.InProgress;
-		// TODO when should this status be Done
+
 		run.testReport.put(test.testId, testResult);
 		persistRun(run);
 		return run;

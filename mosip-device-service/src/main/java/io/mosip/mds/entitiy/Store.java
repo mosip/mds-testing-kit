@@ -24,6 +24,8 @@ import io.mosip.mds.validator.ValidValueRCaptureResponseValidator;
 
 public class Store {
 
+    public static String STORAGE_PATH = null;
+
     public static List<String> GetRunIds(String email)
     {
         List<String> files = new ArrayList<>();
@@ -100,7 +102,8 @@ public class Store {
 
     public static String getStorePath()
     {
-        String storePath = System.getProperty("user.dir");
+        String storePath = STORAGE_PATH == null ? System.getProperty("user.dir") :
+                STORAGE_PATH;
         if(!storePath.endsWith(File.separator))
             storePath += File.separator;
         File dataDir = getOrCreateDirectory(storePath + "data/");

@@ -20,8 +20,10 @@ public enum BioSubType {
 	
 	LEFT_THUMB("LeftThumb", "TWO_THUMBS", "", "Left Thumb"),
 	RIGHT_THUMB("RightThumb", "TWO_THUMBS", "", "Right Thumb"),
-	
-	FACE("Face", "FULL_FACE", "", null);
+
+	FACE("Face", "FULL_FACE", "", null),
+
+	UNKNOWN("UNKNOWN", "ALL", "", "UNKNOWN");
 	
 	BioSubType(String commonName, String deviceSubType, String name_092, String name_095) {
 		this.commonName = commonName;
@@ -63,12 +65,12 @@ public enum BioSubType {
 		return names_095;
 	}
 	
-	public static List<String> get095BioSubTypes(String deviceSubType) {
+	/*public static List<String> get095BioSubTypes(String deviceSubType) {
 		List<String> names_095 = new ArrayList<>();		
 		for(BioSubType bioSubType : BioSubType.values()) {
 			if(bioSubType.deviceSubType.contains(deviceSubType))
 				names_095.add(bioSubType.name_095);
 		}		
 		return names_095;
-	}
+	}*/
 }
