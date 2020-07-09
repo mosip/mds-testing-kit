@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {Observable, of, throwError} from 'rxjs';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
-import {catchError} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import {DataService} from '../data/data.service';
 import {LocalStorageService} from '../local-storage/local-storage.service';
 
@@ -98,4 +98,16 @@ export class MdsService {
   request(requestInfoDto: any) {
     return this.httpClient.request(requestInfoDto.verb, requestInfoDto.url, {body: requestInfoDto.body});
   }
+
+  /* getMDSStream(imageUrl: string) {
+      return this.httpClient.request("STREAM", "http://127.0.0.1:4501/stream",
+          { body : {deviceId:"1", deviceSubId:1}})
+          .pipe(map(res=>res));
+  } */
+
+    getMDSStream(imageUrl: string) {
+        return this.httpClient.request("STREAM", "http://127.0.0.1:4501/stream",
+            { body : {deviceId:"1", deviceSubId:1}});
+    }
+
 }

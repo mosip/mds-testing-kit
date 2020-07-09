@@ -33,9 +33,9 @@ export class LocalStorageService {
     // const devices = {};
     // devices[port] = decodedDeviceInfo;
     let discover = {};
-    if (!localStorage.getItem('discover')) {
+    //if (!localStorage.getItem('discover')) {
       localStorage.setItem('discover', JSON.stringify(discover));
-    }
+    //}
     discover = JSON.parse(localStorage.getItem('discover'));
     discover[port] = deviceDiscover;
     localStorage.setItem('discover', JSON.stringify(discover));
