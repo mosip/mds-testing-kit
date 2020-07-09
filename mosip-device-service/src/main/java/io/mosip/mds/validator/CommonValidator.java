@@ -1,16 +1,33 @@
 package io.mosip.mds.validator;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.security.PublicKey;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.spec.EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
+import org.bouncycastle.util.io.pem.PemReader;
+import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.lang.JoseException;
 import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.mds.dto.DataHeader;
 import io.mosip.mds.dto.DigitalId;
 import io.mosip.mds.entitiy.Validator;
 import io.mosip.mds.util.SecurityUtil;
@@ -32,10 +49,25 @@ public class CommonValidator extends Validator {
 			errors.add("Digital Id is not signed,Missing header|payload|signature");				
 			return errors; 
 		}
+		errors=mandatoryParamDigitalIdHeader(parts[0],errors);
+		if(errors.size()!=0)return errors;
+		
+		try {
+			if(!validateSignature(digitalId)) {
+				errors.add("signature verification failed");
+				return errors;
+			}
+		} catch (CertificateException | JoseException | IOException e) {
+			errors.add("Invalid Signature");
+			//e.printStackTrace();
+		}
+		
+		
 		try {
 			DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
 					DigitalId.class));
 			errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
+			if(errors.size()!=0)return errors;
 			errors=validValueDigitalIdPayload(decodedDigitalId,errors);
 
 			return errors;
@@ -195,10 +227,38 @@ public class CommonValidator extends Validator {
 	}
 
 	//TODO check header validation as per spec
-	private List<String> mandatoryParamDigitalIdHeader(List<String> errors){
-
+	private List<String> mandatoryParamDigitalIdHeader(String header, List<String> errors){
+		 try {
+			DataHeader decodedHeader = (DataHeader) (mapper.readValue(Base64.getUrlDecoder().decode(header),
+					DataHeader.class));
+			
+			if(decodedHeader.alg == null || decodedHeader.alg.isEmpty())
+			{
+				errors.add("Response DigitalId does not contain alg block in header");
+				return errors;
+			}
+			if(decodedHeader.typ == null || decodedHeader.typ.isEmpty())
+			{
+				errors.add("Response DigitalId does not contain typ block in header");
+				return errors;
+			}
+			if(decodedHeader.x5c == null || decodedHeader.x5c.size()==0)
+			{
+				errors.add("Response DigitalId does not contain x5c block in header");
+				return errors;
+			}
+		} catch (Exception e) {
+			errors.add("(Invalid Digital Id) Error interpreting digital id");		
+			
+		//	errors.add("(Invalid Digital Id) Error interpreting digital id: " + e.getMessage());		
+		}
+		
 		return errors;
 	}
+	
+	//TODO validate signature 
+	
+	
 	//Date and Time Validation
 	public static List<String> validateTimeStamp(String dateString,List<String> errors) {
 		if (Objects.isNull(dateString)) {
@@ -215,6 +275,28 @@ public class CommonValidator extends Validator {
 			errors.add("TimeStamp formatte is invalid as per ISO Date formate");
 		}
 		return errors;
+	}
+	
+	public static boolean validateSignature(String signature) throws JoseException, IOException, CertificateException {
+	
+		JsonWebSignature jws = new JsonWebSignature();
+		
+		FileReader certreader = new FileReader("MosipTestCert.pem");
+		PemReader certpemReader = new PemReader(certreader);
+		final byte[] certpemContent = certpemReader.readPemObject().getContent();
+		certpemReader.close();	   
+	    EncodedKeySpec certspec = new X509EncodedKeySpec(certpemContent);
+	    CertificateFactory cf = CertificateFactory.getInstance("X.509");
+	    X509Certificate certificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certspec.getEncoded()));
+	    PublicKey  publicKey = certificate.getPublicKey();
+	    
+	    jws.setAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST,   AlgorithmIdentifiers.RSA_USING_SHA256));
+	    jws.setCompactSerialization(signature);		    
+	    jws.setKey(publicKey);
+	    
+	  //  System.out.println("JWS validation >>> " + jws.verifySignature());
+		return jws.verifySignature();
+		
 	}
 }
 

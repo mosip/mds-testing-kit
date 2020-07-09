@@ -1,8 +1,12 @@
 package io.mosip.mds.validator;
 
+import java.io.IOException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import org.jose4j.lang.JoseException;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
@@ -21,6 +25,18 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 			errors.add("Response is empty");
 			return errors;
 		}
+		
+		try {
+			if(CommonValidator.validateSignature(response.getMdsResponse())) {
+				errors.add("signature verification failed");
+				return errors;
+			}
+		} catch (CertificateException | JoseException | IOException e) {
+			errors.add("mdsResponse with Invalid Signature");
+			return errors;
+			//e.printStackTrace();
+		}
+		
 		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(deviceInfoResponse))
 		{
@@ -52,7 +68,6 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 				}
 		}
 
-
 		// TODO Check for env (if not registered conditions check need to do)
 		//deviceInfo.env - "None" if not registered. If registered, 
 		//then send the registered enviornment "Staging" | "Developer" | "Pre-Production" | "Production".
@@ -71,15 +86,11 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 			return errors;
 		}
 
-
 		//TODO check array of spec versions
 		//TODO validate errors
 
-		//---------------------------------------------------
 		//TODO Check for digital id
 		errors=validateDigitalId(deviceInfoResponse,errors);
-
-
 
 		return errors;
 	}
@@ -95,5 +106,4 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 			errors = commonValidator.validateSignedDigitalID(deviceInfoResponse.digitalId);
 		return errors;
 	}
-
 }
