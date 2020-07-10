@@ -27,8 +27,8 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		}
 		
 		try {
-			if(CommonValidator.validateSignature(response.getMdsResponse())) {
-				errors.add("signature verification failed");
+			if(!CommonValidator.validateSignature(response.getMdsResponse())) {
+				errors.add("MdsResponse signature verification failed");
 				return errors;
 			}
 		} catch (CertificateException | JoseException | IOException e) {

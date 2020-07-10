@@ -164,8 +164,8 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 
 			if (biometric.getData() != null) {
 				try {
-					if(CommonValidator.validateSignature(biometric.getData())) {
-						errors.add("signature verification failed");
+					if(!CommonValidator.validateSignature(biometric.getData())) {
+						errors.add("MdsResponse signature verification failed");
 						return errors;
 					}
 				} catch (CertificateException | JoseException | IOException e) {
