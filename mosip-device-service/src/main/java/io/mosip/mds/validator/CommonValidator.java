@@ -54,11 +54,11 @@ public class CommonValidator extends Validator {
 		
 		try {
 			if(!validateSignature(digitalId)) {
-				errors.add("signature verification failed");
+				errors.add(" digitalId signature verification failed");
 				return errors;
 			}
 		} catch (CertificateException | JoseException | IOException e) {
-			errors.add("Invalid Signature");
+			errors.add("Invalid Signature - digitalId");
 			//e.printStackTrace();
 		}
 		

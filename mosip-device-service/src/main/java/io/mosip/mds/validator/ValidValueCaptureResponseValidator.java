@@ -93,7 +93,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 			if (biometric.getData() != null) {
 				try {
 					if(CommonValidator.validateSignature(biometric.getData())) {
-						errors.add("signature verification failed");
+						errors.add("mdsResponse signature verification failed");
 						return errors;
 					}
 				} catch (CertificateException | JoseException | IOException e) {
