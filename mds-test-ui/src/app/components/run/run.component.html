@@ -53,9 +53,16 @@
           <div class="centereddiv" *ngIf="isStreamRequired(key)">
             <!--<img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
                  style="background-color: #000000;" border="1">-->
-            <!--<mat-video [src]="mdsStream" width="200" height="200" ></mat-video>-->
-            <img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
-                 style="background-color: #000000;" border="1" >
+            <!--<mat-video [id]="getStreamImgTagId(key)" width="200" height="200" ></mat-video>-->
+            <!--<img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
+                 style="background-color: #000000;" border="1" >-->
+            <!--<video #stream id="test-id" width="200" height="200" ></video>-->
+            <img [id]="getStreamImgTagId(key)" [src]="imageToShow"
+                 alt="STREAMING ..."
+                 *ngIf="!isImageLoading; else noImageFound">
+            <ng-template #noImageFound>
+              <img src="fallbackImage.png" alt="Fallbackimage">
+            </ng-template>
           </div>
 
           <div class="centereddiv" >

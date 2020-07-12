@@ -7,6 +7,7 @@ import { DOCUMENT } from '@angular/common';
 import * as jwt_decode from 'jwt-decode';
 import { DomSanitizer } from '@angular/platform-browser';
 
+
 @Component({
   selector: 'app-run',
   templateUrl: './run.component.html',
@@ -31,6 +32,12 @@ export class RunComponent implements OnInit {
 
   mdsStream: any;
   @ViewChild('stream') stream: ElementRef;
+
+  videoSourceBuffer;
+
+  imgUrl: string = 'http://127.0.0.1:4501/stream?deviceId=1&deviceSubId=1';
+  imageToShow: any;
+  isImageLoading: boolean;
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -124,21 +131,24 @@ export class RunComponent implements OnInit {
         this.mdmInitiated = true;
         this.stopStreaming(testId);
         this.mdsService.request(JSON.parse(request)).subscribe(
-                  response => {
-                    console.log(response);
-                    this.dataService.validateResponse(runId, testId, request, response).subscribe(
+                response => {
+                  this.validateMDSResponse(runId, testId, request, response);
+                },
+                error => { this.validateMDSResponse(runId, testId, request, error); }
+              );
+              console.log("Finished capturing MDS Responses >>>>> " + testId);
+              this.mdmInitiated = false;
+      }
+    }
+
+    validateMDSResponse(runId, testId, request, response) {
+          this.dataService.validateResponse(runId, testId, request, response).subscribe(
                       result => {
                         this.testReportObject = result;
                         console.log('result:' + result);
                       },
                       error => window.alert(error)
                     );
-                  },
-                error => window.alert(error)
-              );
-              console.log("Finished capturing MDS Responses >>>>> " + testId);
-              this.mdmInitiated = false;
-      }
     }
 
     getStreamImgTagId(testId) {
@@ -160,33 +170,38 @@ export class RunComponent implements OnInit {
       }
     } */
 
-    startStreaming(testId) {
+    /* startStreaming(testId) {
        console.log("startStreaming invoked.... >>> " + testId);
-       //this.mdsStream = window.URL.createObjectURL(this.mdsService.getMDSStream(""));
-       //this.mdsStream = "http://127.0.0.1:4501/stream?deviceId=1&deviceSubId=1"
-       let self = this;
-       /* this.mdsService.getMDSStream("test").subscribe(
-               (data) => self.mdsStream = self._sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,'
-                                                                  + self.uint8ToBase64(data)),
-               (err) => console.log(err),
-               ()=>console.log("service call completed")
-           ); */
+        var self = this;
+        var element = document.getElementById("test-id");
+        if(element) {
+          var mediaSource = new MediaSource();
+          var url = URL.createObjectURL(myMediaSource);
+          mediaSource.addEventListener('sourceopen', this.sourceOpen);
 
-       /* this.mdsService.getMDSStream("test").subscribe(
-            (data) => console.log("received data >>>>>" + data),
-            (err) => console.log(err),
-            ()=>console.log("service call completed")
-        ); */
+          self.mdsService.startMDSStream('http://127.0.0.1:4501/stream?deviceId=1&devideSubId=1');
 
-        this.mdsService.getMDSStream("test").subscribe(
-           value => {
-            console.log("inside test >>>> " + testId);
-            let element = document.getElementById(self.getStreamImgTagId(testId));
-            if(element) {
-              (<HTMLImageElement>element).setAttribute("src", 'data:image/jpg;base64,'+ self.uint8ToBase64(value));
-            }
-        });
+          console.log("after startMDSStream>>>>>>>>>>.");
+
+          myMediaSource.addEventListener('sourceopen', function () {
+                console.log(myMediaSource.readyState);
+                var sourceBuffer = myMediaSource.addSourceBuffer('video/mp4; codecs="avc1.64001e"');
+                console.log(myMediaSource.readyState);
+
+                self.mdsService.messages.subscribe(msg => {
+                      console.log("i got a message");
+                      sourceBuffer.appendBuffer(msg);
+                    });
+           });
+        }
     }
+
+    sourceOpen() {
+        console.log("source open received");
+        var mediaSource = this;
+        var sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+    }
+
 
     uint8ToBase64(buffer) {
          var binary = '';
@@ -203,9 +218,9 @@ export class RunComponent implements OnInit {
       this.mdsStream = "";
       let element = document.getElementById(this.getStreamImgTagId(testId));
       if(element) {
-        (<HTMLImageElement>element).setAttribute("src", "");
+        (<HTMLVideoElement>element).setAttribute("src", "");
       }
-    }
+    } */
 
 
   getStreamUrl(testId) {
@@ -291,4 +306,37 @@ export class RunComponent implements OnInit {
   getJWTDecoded(token){
     return jwt_decode(token);
   }
+
+  createImageFromBlob(image: Blob) {
+     let reader = new FileReader();
+     reader.addEventListener("load", () => {
+        this.imageToShow = reader.result;
+     }, false);
+
+     if (image) {
+        reader.readAsDataURL(image);
+     }
+    }
+
+    getImageFromService() {
+        this.isImageLoading = true;
+        this.mdsService.getImage(this.imgUrl).subscribe(data => {
+          this.createImageFromBlob(data);
+          this.isImageLoading = false;
+        }, error => {
+          this.isImageLoading = false;
+          console.log(error);
+        });
+    }
+
+    startStreaming(testId) {
+       this.getImageFromService();
+    }
+
+    stopStreaming(testId) {
+      let element = document.getElementById(this.getStreamImgTagId(testId));
+      if(element) {
+        (<HTMLImageElement>element).setAttribute("src", "");
+      }
+    }
 }
