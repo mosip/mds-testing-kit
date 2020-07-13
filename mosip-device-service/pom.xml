@@ -80,8 +80,15 @@
 		    <groupId>org.bitbucket.b_c</groupId>
 		    <artifactId>jose4j</artifactId>
 		    <version>0.7.1</version>
-		</dependency>		
-       
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.13.1</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -89,7 +96,8 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			
+
+
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.0.1</version>
@@ -106,9 +114,16 @@
 							<resources>
 								<resource>
 									<directory>${basedir}/data</directory>
-									<filtering>true</filtering>
+									<filtering>false</filtering>
 								</resource>
 							</resources>
+							<delimiters>
+								<delimiter>@</delimiter>
+							</delimiters>
+							<useDefaultDelimiters>false</useDefaultDelimiters>
+							<nonFilteredFileExtensions>
+								<nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+							</nonFilteredFileExtensions>
 						</configuration>
 					</execution>
 				</executions>

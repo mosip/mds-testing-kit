@@ -339,4 +339,8 @@ export class RunComponent implements OnInit {
         (<HTMLImageElement>element).setAttribute("src", "");
       }
     }
+
+    getSanitizedSafeURLResource(data) {
+      return this._sanitizer.bypassSecurityTrustHtml(data);
+    }
 }

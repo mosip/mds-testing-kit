@@ -98,7 +98,7 @@
         </mat-accordion>
       </mat-tab>
       <mat-tab label="Result">
-        <div [innerHTML]="testReportObject.testReport[key].renderContent"></div>
+        <div [innerHTML]="getSanitizedSafeURLResource(testReportObject.testReport[key].renderContent)"></div>
       </mat-tab>
     </mat-tab-group>
   </mat-expansion-panel>
