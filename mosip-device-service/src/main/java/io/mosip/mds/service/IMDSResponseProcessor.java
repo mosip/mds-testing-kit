@@ -17,6 +17,6 @@ public interface IMDSResponseProcessor {
     
     public CaptureResponse getCaptureResponse(Intent intent, String responseData);
 
-	public MdsResponse getMdsDecodedResponse(Intent intent, String responseData);
+	public MdsResponse[] getMdsDecodedResponse(Intent intent, String responseData);
 
 }

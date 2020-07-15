@@ -130,13 +130,6 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 			return errors;
 		}
 
-		// Check for domainUri in Decoded biometrics data
-		if(dataDecoded.domainUri == null || dataDecoded.domainUri.isEmpty())
-		{
-			errors.add("RegistrationCapture response biometrics dataDecoded does not contain domainUri");
-			return errors;
-		}
-
 		// Check for env in Decoded biometrics data
 		if(dataDecoded.env == null || dataDecoded.env.isEmpty())
 		{

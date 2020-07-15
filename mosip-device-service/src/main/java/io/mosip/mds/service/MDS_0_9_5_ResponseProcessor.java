@@ -123,7 +123,7 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 				renderContent += getCaptureRenderContent(responseData, true);
 				break;
 			case DeviceInfo:
-				DeviceInfoResponse[] diResponse = DeviceInfoHelper.decode(responseData);;
+				DeviceInfoResponse[] diResponse = DeviceInfoHelper.decode(responseData);
 				for (DeviceInfoResponse deviceInfoResponse : diResponse) {
 					renderContent += DeviceInfoHelper.getRenderContent(deviceInfoResponse) + "<BR/>";
 				} 
@@ -196,17 +196,20 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 	}
 
 	@Override
-	public MdsResponse getMdsDecodedResponse(Intent method, String encodedValue) {
-		
+	public MdsResponse[] getMdsDecodedResponse(Intent method, String encodedValue) {
+		MdsResponse[] mdsResponses=new MdsResponse[1];
     	switch(method) {
 		case Capture:
-			return CaptureHelper.decode(encodedValue,false);
+			mdsResponses[0]=CaptureHelper.decode(encodedValue,false);
+			return mdsResponses;
 		case RegistrationCapture:
-			return CaptureHelper.decode(encodedValue,true);
+			mdsResponses[0]=CaptureHelper.decode(encodedValue,true);
+			return mdsResponses;
 		case DeviceInfo:
-			return DeviceInfoHelper.decodeDeviceInfo(encodedValue);
+			mdsResponses[0]=DeviceInfoHelper.decodeDeviceInfo(encodedValue);
+			return mdsResponses; 
 		case Discover:
-			return DiscoverHelper.decodeDiscoverInfo(encodedValue);
+			return DiscoverHelper.decode(encodedValue);
 		}
 		return null;
 		

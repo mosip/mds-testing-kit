@@ -419,13 +419,17 @@ public class TestManager {
 
 			Intent intent = getIntent(test.method);
 			IMDSResponseProcessor responseProcessor = getResponseProcessor(run.targetProfile.mdsSpecVersion);
-			validateRequestDto.setMdsDecodedResponse(responseProcessor.getMdsDecodedResponse(intent, testResult.responseData));
-			for(Validator v:test.validators)
+			MdsResponse[] mdsDecodedResponse = responseProcessor.getMdsDecodedResponse(intent, testResult.responseData);
+			for(MdsResponse mdsResponse:mdsDecodedResponse)
 			{
-				ValidationResult vr = v.Validate(validateRequestDto);
-				testResult.validationResults.add(vr);
-				if(vr.errors.size()!=0) {
-					break;
+				validateRequestDto.setMdsDecodedResponse(mdsResponse);
+				for(Validator v:test.validators)
+				{
+					ValidationResult vr = v.Validate(validateRequestDto);
+					testResult.validationResults.add(vr);
+					if(vr.errors.size()!=0) {
+						break;
+					}
 				}
 			}
 
