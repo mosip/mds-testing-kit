@@ -7,6 +7,8 @@ import { DOCUMENT } from '@angular/common';
 import * as jwt_decode from 'jwt-decode';
 import { DomSanitizer } from '@angular/platform-browser';
 
+declare const start_streaming: any;
+declare const stop_streaming: any;
 
 @Component({
   selector: 'app-run',
@@ -29,15 +31,6 @@ export class RunComponent implements OnInit {
   mdmInitiated = false;
   streamingInitiated = false;
   currentTestId: string;
-
-  mdsStream: any;
-  @ViewChild('stream') stream: ElementRef;
-
-  videoSourceBuffer;
-
-  imgUrl: string = 'http://127.0.0.1:4501/stream?deviceId=1&deviceSubId=1';
-  imageToShow: any;
-  isImageLoading: boolean;
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -82,18 +75,7 @@ export class RunComponent implements OnInit {
         port: this.currentPort,
         deviceInfo: this.selectedDevice
       };
-      /* this.run.tests.forEach(
-        test => {
-            this.dataService.composeRequest(this.run.runId, test, deviceDto).subscribe(
-              body => {
-                console.log(body);
-                this.requests.push(body);
-                this.requestMds(body, this.run.runId, test);
-              },
-              error => window.alert(error)
-            );
-        }
-      ); */
+
       this.dataService.composeAllRequests(this.run.runId, deviceDto).subscribe(
         body => {
           this.requests = [];
@@ -103,25 +85,12 @@ export class RunComponent implements OnInit {
         error => window.alert(error)
       );
       console.log("Finished capturing MDS requests");
-      /* this.run.tests.forEach(
-      test => {
-          let testresult = this.testReportObject.testReport[test];
-          if(testresult && testresult.requestData) {
-              this.testReportObject.testReport[test].currentState = "Initiating request to Device";
-              let mdsRequest = JSON.parse(testresult.requestData);
-              let mdsResponse = this.mdsService.request(mdsRequest);
-              this.testReportObject.testReport[test].currentState = "Request to Device completed";
-          }
-      }); */
   }
 
 
   getMDSResponse(request, runId, testId) {
       let mdmResponse = this.testReportObject.testReport[testId].responseData;
-      /* if(this.isMDSResponseCaptured(testId) || this.testReportObject.testReport[testId].responseData) {
-       console.log("Nothing to do as MDS response is already captured");
-      }
-      else */ if(this.mdmInitiated === true) {
+      if(this.mdmInitiated === true) {
        console.log("MDM request is currently going on .....");
       }
       else {
@@ -303,44 +272,19 @@ export class RunComponent implements OnInit {
     return '0 out of 0 Passed';
   }
 
-  getJWTDecoded(token){
-    return jwt_decode(token);
-  }
-
-  createImageFromBlob(image: Blob) {
-     let reader = new FileReader();
-     reader.addEventListener("load", () => {
-        this.imageToShow = reader.result;
-     }, false);
-
-     if (image) {
-        reader.readAsDataURL(image);
-     }
-    }
-
-    getImageFromService() {
-        this.isImageLoading = true;
-        this.mdsService.getImage(this.imgUrl).subscribe(data => {
-          this.createImageFromBlob(data);
-          this.isImageLoading = false;
-        }, error => {
-          this.isImageLoading = false;
-          console.log(error);
-        });
+    getSanitizedSafeURLResource(data) {
+      return this._sanitizer.bypassSecurityTrustHtml(data);
     }
 
     startStreaming(testId) {
-       this.getImageFromService();
+      let url = this.getStreamUrl(testId);
+      var parts = url.split("?");
+      var args = parts[1].split("&");
+      start_streaming(parts[0], args[0].replace("deviceId=", ""), args[1].replace("deviceSubId=", ""),
+      this.getStreamImgTagId(testId))
     }
 
     stopStreaming(testId) {
-      let element = document.getElementById(this.getStreamImgTagId(testId));
-      if(element) {
-        (<HTMLImageElement>element).setAttribute("src", "");
-      }
-    }
-
-    getSanitizedSafeURLResource(data) {
-      return this._sanitizer.bypassSecurityTrustHtml(data);
+      stop_streaming();
     }
 }

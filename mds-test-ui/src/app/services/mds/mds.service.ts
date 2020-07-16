@@ -6,8 +6,6 @@ import {catchError, map} from 'rxjs/operators';
 import {DataService} from '../data/data.service';
 import {LocalStorageService} from '../local-storage/local-storage.service';
 
-import { WebsocketService } from './websocket.service';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -16,13 +14,10 @@ export class MdsService {
   private mdsHost: string
   private mdsUrl: string;
 
-  messages: Subject<any>;
-
   constructor(
     private httpClient: HttpClient,
     private dataService: DataService,
-    private localStorageService: LocalStorageService,
-    private wsService: WebsocketService
+    private localStorageService: LocalStorageService
   ) { }
 
   discover(host:string, port: string) {
@@ -104,20 +99,5 @@ export class MdsService {
   request(requestInfoDto: any) {
     return this.httpClient.request(requestInfoDto.verb, requestInfoDto.url, {body: requestInfoDto.body});
   }
-
-  /* getMDSStream(imageUrl: string) {
-      return this.httpClient.request("STREAM", "http://127.0.0.1:4501/stream",
-          { body : {deviceId:"1", deviceSubId:1}})
-          .pipe(map(res=>res));
-  } */
-
-    /* startMDSStream(imageUrl: string) {
-        return this.httpClient.request<ArrayBuffer>("STREAM", "http://127.0.0.1:4501/stream",
-            { body : {deviceId:"1", deviceSubId:1}, responseType : 'arraybuffer' as 'json'});
-    } */
-
-    getImage(imageUrl: string): Observable<Blob> {
-      return this.httpClient.get(imageUrl, { responseType: 'blob' });
-    }
 
 }

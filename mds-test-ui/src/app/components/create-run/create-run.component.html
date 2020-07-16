@@ -1,4 +1,12 @@
 <div class="body">
+
+  <mat-form-field appearance="fill">
+    <mat-label>Process</mat-label>
+    <mat-select [(ngModel)]="selectedProcess">
+      <mat-option class="option" *ngFor="let obj of masterData.process;" [value]="obj ">{{obj}}</mat-option>
+    </mat-select>
+  </mat-form-field><br/>
+
   <mat-form-field appearance="fill">
     <mat-label>Biometric type</mat-label>
     <mat-select [(ngModel)]="selectedBiometricType" (selectionChange)='OnBiometricSelect($event)' name="sel2">
@@ -29,12 +37,7 @@
   </mat-form-field>
   <br/>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Process</mat-label>
-    <mat-select [(ngModel)]="selectedProcess">
-      <mat-option class="option" *ngFor="let obj of masterData.process;" [value]="obj ">{{obj}}</mat-option>
-    </mat-select>
-  </mat-form-field><br/>
+
   <br/>
   <button mat-raised-button
           (click)="OnGetTestsClicked()">

@@ -28,7 +28,7 @@
               "./node_modules/bulma/css/bulma.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [ "src/assets/js/custom.js" ]
           },
           "configurations": {
             "production": {
