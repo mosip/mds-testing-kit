@@ -6,7 +6,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -297,6 +299,37 @@ public class CommonValidator extends Validator {
 	  //  System.out.println("JWS validation >>> " + jws.verifySignature());
 		return jws.verifySignature();
 		
+	}
+	
+	public static List<String> validateSignatureValidity(String signature,List<String> errors) throws JoseException, IOException, CertificateException {
+		JsonWebSignature jws = new JsonWebSignature();
+		
+		FileReader certreader = new FileReader("MosipTestCert.pem");
+		PemReader certpemReader = new PemReader(certreader);
+		final byte[] certpemContent = certpemReader.readPemObject().getContent();
+		certpemReader.close();	   
+	    EncodedKeySpec certspec = new X509EncodedKeySpec(certpemContent);
+	    CertificateFactory cf = CertificateFactory.getInstance("X.509");
+	    X509Certificate certificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certspec.getEncoded()));
+	    PublicKey  publicKey = certificate.getPublicKey();
+	    
+	    jws.setAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST,   AlgorithmIdentifiers.RSA_USING_SHA256));
+	    jws.setCompactSerialization(signature);		    
+	    jws.setKey(publicKey);
+	 
+	    try {
+	    jws.getLeafCertificateHeaderValue().checkValidity();
+	    }catch (CertificateExpiredException e) {
+	    
+			 errors.add(" CertificateExpiredException - " + "with Message - "+ e.getMessage() );
+			 return errors;
+		}
+	    catch (CertificateNotYetValidException e) {
+			errors.add(" CertificateNotYetValidException - " + "with Message - "+e.getMessage() );
+			 return errors;
+		}
+		return errors;
+	    
 	}
 }
 
