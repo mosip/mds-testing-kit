@@ -206,8 +206,7 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 			mdsResponses[0]=CaptureHelper.decode(encodedValue,true);
 			return mdsResponses;
 		case DeviceInfo:
-			mdsResponses[0]=DeviceInfoHelper.decodeDeviceInfo(encodedValue);
-			return mdsResponses; 
+			return DeviceInfoHelper.decode(encodedValue); 
 		case Discover:
 			return DiscoverHelper.decode(encodedValue);
 		}

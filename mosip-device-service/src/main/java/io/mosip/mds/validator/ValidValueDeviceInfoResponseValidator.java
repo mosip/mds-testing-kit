@@ -8,11 +8,23 @@ import java.util.Objects;
 
 import org.jose4j.lang.JoseException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.entitiy.DeviceInfoMinimal;
 import io.mosip.mds.entitiy.Validator;
 
 public class ValidValueDeviceInfoResponseValidator extends Validator {
+private static ObjectMapper mapper;
+	
+	static {
+		mapper = new ObjectMapper();
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
 	public ValidValueDeviceInfoResponseValidator() {
 		super("ValidValueDeviceInfoResponseValidator", "Valid Value Device Info Response Validator");
 	}
@@ -25,17 +37,33 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 			errors.add("Response is empty");
 			return errors;
 		}
-		
+		DeviceInfoMinimal[] input;
 		try {
-			if(!CommonValidator.validateSignature(response.getMdsResponse())) {
-				errors.add("MdsResponse signature verification failed");
-				return errors;
+			input = (DeviceInfoMinimal[])(mapper.readValue(response.getMdsResponse().getBytes(), DeviceInfoMinimal[].class));
+			for(DeviceInfoMinimal respMin:input)
+			{
+				try {
+					
+					errors = CommonValidator.validateSignatureValidity(respMin.deviceInfo,errors);
+					if(errors.size() != 0) {
+						return errors;
+					}
+					
+					if(!CommonValidator.validateSignature(respMin.deviceInfo)) {
+						errors.add("MdsResponse signature verification failed");
+						return errors;
+					}
+				} catch (CertificateException | JoseException | IOException e) {
+					errors.add("mdsResponse with Invalid Signature");
+					return errors;
+					//e.printStackTrace();
+				}
 			}
-		} catch (CertificateException | JoseException | IOException e) {
-			errors.add("mdsResponse with Invalid Signature");
-			return errors;
-			//e.printStackTrace();
-		}
+		} catch (Exception exception) {
+			errors.add("Error parsing request input" + exception.getMessage());
+			}
+		
+
 		
 		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(deviceInfoResponse))

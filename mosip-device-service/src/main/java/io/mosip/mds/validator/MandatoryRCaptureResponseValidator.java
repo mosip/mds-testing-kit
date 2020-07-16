@@ -37,7 +37,10 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 			errors.add("RegistrationCapture response is empty");
 			return errors;
 		}
-
+		if(!registrationCaptureResponse.analysisError.isEmpty()) {
+			errors.add(registrationCaptureResponse.analysisError);
+			return errors;
+		}
 		if(registrationCaptureResponse.biometrics == null || registrationCaptureResponse.biometrics.length == 0)
 		{
 			errors.add("RegistrationCapture response does not contain biometrics block");
