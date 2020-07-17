@@ -4,6 +4,11 @@ import {ComposeRequest} from '../../dto/compose-request';
 import {DataService} from '../../services/data/data.service';
 import {MdsService} from '../../services/mds/mds.service';
 import { DOCUMENT } from '@angular/common';
+import * as jwt_decode from 'jwt-decode';
+import { DomSanitizer } from '@angular/platform-browser';
+
+declare const start_streaming: any;
+declare const stop_streaming: any;
 
 @Component({
   selector: 'app-run',
@@ -25,17 +30,13 @@ export class RunComponent implements OnInit {
   Object: any;
   mdmInitiated = false;
   streamingInitiated = false;
-  streamURL: string;
   currentTestId: string;
-
-  @ViewChild('stream') stream: ElementRef;
-
-
 
   constructor(
     private localStorageService: LocalStorageService,
     private dataService: DataService,
-    private mdsService: MdsService
+    private mdsService: MdsService,
+    private _sanitizer: DomSanitizer
   ) {
     this.JSON = JSON;
     this.Object = Object;
@@ -74,18 +75,7 @@ export class RunComponent implements OnInit {
         port: this.currentPort,
         deviceInfo: this.selectedDevice
       };
-      /* this.run.tests.forEach(
-        test => {
-            this.dataService.composeRequest(this.run.runId, test, deviceDto).subscribe(
-              body => {
-                console.log(body);
-                this.requests.push(body);
-                this.requestMds(body, this.run.runId, test);
-              },
-              error => window.alert(error)
-            );
-        }
-      ); */
+
       this.dataService.composeAllRequests(this.run.runId, deviceDto).subscribe(
         body => {
           this.requests = [];
@@ -95,25 +85,12 @@ export class RunComponent implements OnInit {
         error => window.alert(error)
       );
       console.log("Finished capturing MDS requests");
-      /* this.run.tests.forEach(
-      test => {
-          let testresult = this.testReportObject.testReport[test];
-          if(testresult && testresult.requestData) {
-              this.testReportObject.testReport[test].currentState = "Initiating request to Device";
-              let mdsRequest = JSON.parse(testresult.requestData);
-              let mdsResponse = this.mdsService.request(mdsRequest);
-              this.testReportObject.testReport[test].currentState = "Request to Device completed";
-          }
-      }); */
   }
 
 
   getMDSResponse(request, runId, testId) {
       let mdmResponse = this.testReportObject.testReport[testId].responseData;
-      if(this.isMDSResponseCaptured(testId) || this.testReportObject.testReport[testId].responseData) {
-       console.log("Nothing to do as MDS response is already captured");
-      }
-      else if(this.mdmInitiated === true) {
+      if(this.mdmInitiated === true) {
        console.log("MDM request is currently going on .....");
       }
       else {
@@ -123,21 +100,24 @@ export class RunComponent implements OnInit {
         this.mdmInitiated = true;
         this.stopStreaming(testId);
         this.mdsService.request(JSON.parse(request)).subscribe(
-                  response => {
-                    console.log(response);
-                    this.dataService.validateResponse(runId, testId, request, response).subscribe(
+                response => {
+                  this.validateMDSResponse(runId, testId, request, response);
+                },
+                error => { this.validateMDSResponse(runId, testId, request, error); }
+              );
+              console.log("Finished capturing MDS Responses >>>>> " + testId);
+              this.mdmInitiated = false;
+      }
+    }
+
+    validateMDSResponse(runId, testId, request, response) {
+          this.dataService.validateResponse(runId, testId, request, response).subscribe(
                       result => {
                         this.testReportObject = result;
                         console.log('result:' + result);
                       },
                       error => window.alert(error)
                     );
-                  },
-                error => window.alert(error)
-              );
-              console.log("Finished capturing MDS Responses >>>>> " + testId);
-              this.mdmInitiated = false;
-      }
     }
 
     getStreamImgTagId(testId) {
@@ -145,7 +125,7 @@ export class RunComponent implements OnInit {
       return id;
     }
 
-    startStreaming(testId) {
+    /* startStreaming(testId) {
        let element = document.getElementById(this.getStreamImgTagId(testId));
        if(element) {
          (<HTMLImageElement>element).setAttribute("src", this.getStreamUrl(testId));
@@ -157,14 +137,70 @@ export class RunComponent implements OnInit {
       if(element) {
         (<HTMLImageElement>element).setAttribute("src", "");
       }
+    } */
+
+    /* startStreaming(testId) {
+       console.log("startStreaming invoked.... >>> " + testId);
+        var self = this;
+        var element = document.getElementById("test-id");
+        if(element) {
+          var mediaSource = new MediaSource();
+          var url = URL.createObjectURL(myMediaSource);
+          mediaSource.addEventListener('sourceopen', this.sourceOpen);
+
+          self.mdsService.startMDSStream('http://127.0.0.1:4501/stream?deviceId=1&devideSubId=1');
+
+          console.log("after startMDSStream>>>>>>>>>>.");
+
+          myMediaSource.addEventListener('sourceopen', function () {
+                console.log(myMediaSource.readyState);
+                var sourceBuffer = myMediaSource.addSourceBuffer('video/mp4; codecs="avc1.64001e"');
+                console.log(myMediaSource.readyState);
+
+                self.mdsService.messages.subscribe(msg => {
+                      console.log("i got a message");
+                      sourceBuffer.appendBuffer(msg);
+                    });
+           });
+        }
     }
+
+    sourceOpen() {
+        console.log("source open received");
+        var mediaSource = this;
+        var sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+    }
+
+
+    uint8ToBase64(buffer) {
+         var binary = '';
+         var len = buffer.byteLength;
+         for (var i = 0; i < len; i++) {
+             binary += String.fromCharCode(buffer[i]);
+         }
+         var result = window.btoa( binary );
+         console.log("window.btoa result >>>>>>>>>>>>>>>>>>");
+         return result;
+    }
+
+    stopStreaming(testId) {
+      this.mdsStream = "";
+      let element = document.getElementById(this.getStreamImgTagId(testId));
+      if(element) {
+        (<HTMLVideoElement>element).setAttribute("src", "");
+      }
+    } */
 
 
   getStreamUrl(testId) {
     return this.testReportObject.testReport[testId].streamUrl;
   }
 
-  isMDSResponseCaptured(testId) {
+  isStreamRequired(testId) {
+     return this.testReportObject.testReport[testId].streamUrl ? true : false;
+  }
+
+  /* isMDSResponseCaptured(testId) {
       let mdmCaptured = false;
       for(let i=0; i<this.requests.length;i++) {
         if(this.requests[i] === testId) {
@@ -172,7 +208,7 @@ export class RunComponent implements OnInit {
         }
       }
       return mdmCaptured;
-  }
+  } */
 
   /* getMDSResponse(request, runId, testId) {
       this.mdsService.request(request.requestInfoDto).subscribe(
@@ -235,4 +271,20 @@ export class RunComponent implements OnInit {
     }
     return '0 out of 0 Passed';
   }
+
+    getSanitizedSafeURLResource(data) {
+      return this._sanitizer.bypassSecurityTrustHtml(data);
+    }
+
+    startStreaming(testId) {
+      let url = this.getStreamUrl(testId);
+      var parts = url.split("?");
+      var args = parts[1].split("&");
+      start_streaming(parts[0], args[0].replace("deviceId=", ""), args[1].replace("deviceSubId=", ""),
+      this.getStreamImgTagId(testId))
+    }
+
+    stopStreaming(testId) {
+      stop_streaming();
+    }
 }

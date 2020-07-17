@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {Observable, of, throwError} from 'rxjs';
+import {Observable, of, throwError, Subject} from 'rxjs';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
-import {catchError} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import {DataService} from '../data/data.service';
 import {LocalStorageService} from '../local-storage/local-storage.service';
 
@@ -10,6 +10,7 @@ import {LocalStorageService} from '../local-storage/local-storage.service';
   providedIn: 'root'
 })
 export class MdsService {
+
   private mdsHost: string
   private mdsUrl: string;
 
@@ -98,4 +99,5 @@ export class MdsService {
   request(requestInfoDto: any) {
     return this.httpClient.request(requestInfoDto.verb, requestInfoDto.url, {body: requestInfoDto.body});
   }
+
 }

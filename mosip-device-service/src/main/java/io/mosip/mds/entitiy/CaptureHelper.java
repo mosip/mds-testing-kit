@@ -38,9 +38,16 @@ import javax.crypto.spec.SecretKeySpec;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.*;
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.DigitalId;
+import io.mosip.mds.helper.ExtractDTO;
+import io.mosip.mds.helper.FaceImageExtractor;
+import io.mosip.mds.helper.FingerPrintImageExtractor;
+import io.mosip.mds.helper.IrisImageExtractor;
 import io.mosip.mds.util.CryptoUtility;
 import io.mosip.mds.util.SecurityUtil;;
 
@@ -162,13 +169,13 @@ public class CaptureHelper {
 		return pKey;
 	}	
 
-	public static File extractImage(String bioValue, String bioType) {
+	/*public static File extractImage(String bioValue, String bioType) {
 		// do base64 url decoding
 		byte[] decodedData = Base64.getUrlDecoder().decode(bioValue);
 		// strip iso header
-		byte[] imageData = extractJPGfromISO(decodedData, bioType);
+		//byte[] imageData = extractJPGfromISO(decodedData, bioType);
 		// save image to file
-		
+
 		File path = Store.getOrCreateDirectory(Store.getStorePath() + File.separator + "renders");
 		String fileName = path.getAbsolutePath()  + File.separator + UUID.randomUUID() + ".jp2";
 
@@ -183,9 +190,50 @@ public class CaptureHelper {
 			ex.printStackTrace();
 		}
 		return file;
+	}*/
+
+	public static void createImageFile(byte[] image, String randomFilename, String format, String segment) {
+		File path = Store.getOrCreateDirectory(Store.getStorePath() + File.separator + "renders");
+		String fileName = path.getAbsolutePath()  + File.separator + randomFilename + "." + format;
+
+		try(FileOutputStream fos = new FileOutputStream(new File(fileName))) {
+			fos.write(image);
+			fos.flush();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
+		try {
+			String pdfFileName = path.getAbsolutePath()  + File.separator + randomFilename + ".pdf";
+			File pdfFile = new File(pdfFileName);
+			pdfFile.createNewFile();
+
+			Document document = new Document();
+			PdfWriter.getInstance(document, new FileOutputStream(pdfFileName));
+			document.open();
+			Image imageObj = Image.getInstance(fileName);
+			PdfImage stream = new PdfImage(imageObj, segment, null);
+			document.add(imageObj);
+			document.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	private static byte[] extractJPGfromISO(byte[] isoValue, String bioType) {
+	public static List<ExtractDTO> extractJPGfromISO(byte[] isoValue, String bioType) {
+		List<ExtractDTO> extracts = null;
+		if (bioType.equalsIgnoreCase("Finger")) {
+			extracts = new FingerPrintImageExtractor().extractFingerImageData(isoValue);
+		} else if (bioType.equalsIgnoreCase("Face")) {
+			extracts = new FaceImageExtractor().extractFaceImageData(isoValue);
+		} else if (bioType.equalsIgnoreCase("Iris")) {
+			extracts = new IrisImageExtractor().extractIrisImageData(isoValue);
+		}
+		return extracts;
+	}
+
+	/*private static byte[] extractJPGfromISO(byte[] isoValue, String bioType) {
 		// TODO set the correct iso handling technique here
 		try {
 			int isoHeaderSize = 0;
@@ -228,5 +276,5 @@ public class CaptureHelper {
 			t.printStackTrace();
 		}
 		return new byte[0];
-	}
+	}*/
 }

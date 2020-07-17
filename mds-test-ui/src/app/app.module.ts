@@ -16,7 +16,7 @@ import { RunComponent } from './components/run/run.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 
-
+import { MatVideoModule } from 'mat-video';
 
 @NgModule({
   declarations: [
@@ -39,8 +39,8 @@ import { FooterComponent } from './components/footer/footer.component';
     HttpClientModule,
     LayoutModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule
-
+    BrowserAnimationsModule,
+    MatVideoModule
 
   ],
   providers: [],

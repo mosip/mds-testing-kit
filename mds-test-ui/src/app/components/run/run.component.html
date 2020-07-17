@@ -50,14 +50,25 @@
 
       <mat-tab label="Request">
 
-          <div class="centereddiv" *ngIf="getStreamUrl(key)">
-            <img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
-                 style="background-color: #000000;" border="1">
+          <div class="centereddiv" *ngIf="isStreamRequired(key)">
+            <!--<img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
+                 style="background-color: #000000;" border="1">-->
+            <!--<mat-video [id]="getStreamImgTagId(key)" width="200" height="200" ></mat-video>-->
+            <!--<img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
+                 style="background-color: #000000;" border="1" >-->
+            <!--<video #stream id="test-id" width="200" height="200" ></video>-->
+           <!-- <img [id]="getStreamImgTagId(key)" [src]="imageToShow"
+                 alt="STREAMING ..."
+                 *ngIf="!isImageLoading; else noImageFound">
+            <ng-template #noImageFound>
+              <img src="fallbackImage.png" alt="Fallbackimage">
+            </ng-template>-->
+            <img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="Start Streaming to Display" border="1">
           </div>
 
           <div class="centereddiv" >
 
-            <button *ngIf="getStreamUrl(key)" mat-raised-button (click)="startStreaming(key)">Start Streaming</button>
+            <button *ngIf="isStreamRequired(key)" mat-raised-button (click)="startStreaming(key)">Start Streaming</button>
 
             <button mat-raised-button (click)="getMDSResponse(testReportObject.testReport[key].requestData,
             testReportObject.testReport[key].runId, key)">{{getButtonName(testReportObject.testReport[key].requestData)}}</button>
@@ -88,7 +99,7 @@
         </mat-accordion>
       </mat-tab>
       <mat-tab label="Result">
-        <div [innerHTML]="testReportObject.testReport[key].renderContent"></div>
+        <div [innerHTML]="getSanitizedSafeURLResource(testReportObject.testReport[key].renderContent)"></div>
       </mat-tab>
     </mat-tab-group>
   </mat-expansion-panel>

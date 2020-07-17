@@ -19,8 +19,11 @@ import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.entitiy.CaptureHelper;
 import io.mosip.mds.entitiy.DeviceInfoHelper;
 import io.mosip.mds.entitiy.DiscoverHelper;
+import io.mosip.mds.helper.ExtractDTO;
 import io.mosip.mds.util.Intent;
 import io.mosip.mds.util.SecurityUtil;
+
+import javax.xml.bind.DatatypeConverter;
 
 public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 	
@@ -82,22 +85,28 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
     private String getCaptureRenderContent(String responseData, boolean isRCapture)
     {
     	CaptureResponse captureResponse = decode(responseData,isRCapture);
-    	List<File> images = new ArrayList<>();
-    	
+    	StringBuilder builder = new StringBuilder("<p><u>Capture Info</u></p>");
+		//builder.append("<b>Images Captured:</b>" + images.size() + "<br/>");
+
     	if(captureResponse.biometrics != null) {
     		for (CaptureResponse.CaptureBiometric biometric : captureResponse.biometrics) {
-    			File imageFile = CaptureHelper.extractImage(biometric.dataDecoded.bioValue, 
-    					biometric.dataDecoded.bioSubType);
-    			images.add(imageFile);
+				byte[] decodedData = Base64.getUrlDecoder().decode(biometric.dataDecoded.bioValue);
+				List<ExtractDTO> extractDTOS = CaptureHelper.extractJPGfromISO(decodedData,
+						biometric.dataDecoded.bioType);
+				if(extractDTOS != null) {
+					for(ExtractDTO extract : extractDTOS) {
+						String filename = java.util.UUID.randomUUID().toString();
+						CaptureHelper.createImageFile(extract.getImage(), filename, extract.getFormat(),
+								extract.getName());
+						//data:image/jp2;base64,UklGRkoAAABXRUJQVlA4WAoAAAAQAAAAAAAAAAAAQUxQSAwAAAABBxAR/Q9ERP8DAABWUDggGAAAADABAJ0BKgEAAQADADQlpAADcAD++/1QAA==
+						//builder.append("<img src=\""+filename+".pdf\"/><br/>");
+						builder.append("<h3> "+extract.getName().toUpperCase()+" : </h3> <object data=\""+ filename+".pdf\" width=\"200\" height=\"200\" type=\"application/pdf\" style=\"display: 'block';\" ></object></br>");
+						//builder.append("<img src=\"data:image/png;base64," + DatatypeConverter.printBase64Binary(extract.getImage()) +"\"/><br/>");
+					}
+				}
     		}
     	}
-
-		String renderContent = "<p><u>Capture Info</u></p>";
-		renderContent += "<b>Images Captured:</b>" + images.size() + "<br/>";
-		for (File file : images) {
-			renderContent += "<img src=\"data/renders/" + file.getName()+ "\"/>";
-		}
-		return renderContent;
+		return builder.toString();
     }
     
     @Override
