@@ -10,6 +10,7 @@ import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.entitiy.Validator;
+import io.mosip.mds.service.MDS_0_9_5_ResponseProcessor;
 
 public class MandatoryCaptureResponseValidator extends Validator {
 	public MandatoryCaptureResponseValidator()
@@ -173,6 +174,19 @@ public class MandatoryCaptureResponseValidator extends Validator {
 		}
 
 		return errors;
+	}
+	@Override
+	protected boolean checkVersionSupport(String version) {
+		//TODO
+		if(version.equals("0.9.5"))
+			return true;
+		
+		return false;
+	}
+	@Override
+	protected String supportedVersion() {
+		// TODO return type of mds spec version supported
+		return "0.9.5";
 	}
 
 }

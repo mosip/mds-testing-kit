@@ -17,4 +17,16 @@ public class AlwaysPassValidator extends Validator {
         List<String> errors = new ArrayList<>();
         return errors;
     }
+
+	@Override
+	protected boolean checkVersionSupport(String version) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected String supportedVersion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -19,4 +19,18 @@ public class AlwaysFailValidator extends Validator {
         errors.add("Validation failed due to error!");
         return errors;
     }
+
+
+	@Override
+	protected boolean checkVersionSupport(String version) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	protected String supportedVersion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

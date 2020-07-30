@@ -448,7 +448,7 @@ public class TestManager {
 	
 	private IMDSResponseProcessor getResponseProcessor(String version)
 	{
-		if(version.contains("0.9.5"))
+		if(version.equals("0.9.5"))
 			return new MDS_0_9_5_ResponseProcessor();
 		
 		return new MDS_0_9_5_ResponseProcessor();
