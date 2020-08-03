@@ -5,7 +5,7 @@ import java.util.List;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.postresponse.ValidationResult;
 
-public class Validator {
+public abstract class Validator {
 
     public enum ValidationStatus
     {
@@ -51,9 +51,9 @@ public class Validator {
         return validationResult;
     }
 
-    protected List<String> DoValidate(ValidateResponseRequestDto response)
-    {
-        return null;
-    }
+    protected abstract List<String> DoValidate(ValidateResponseRequestDto response);
 
+    protected abstract boolean checkVersionSupport(String version);
+    
+    protected abstract String supportedVersion();
 }

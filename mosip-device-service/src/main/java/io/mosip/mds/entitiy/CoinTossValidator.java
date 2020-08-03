@@ -12,7 +12,6 @@ public class CoinTossValidator extends Validator {
         super("CoinTossValidator", "Randomly succeeding or failing validator");
     }
 
-
     @Override
     protected List<String> DoValidate(ValidateResponseRequestDto response) {
         List<String> errors = new ArrayList<>();
@@ -23,4 +22,16 @@ public class CoinTossValidator extends Validator {
         }
         return errors;
     }
+
+	@Override
+	protected boolean checkVersionSupport(String version) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected String supportedVersion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

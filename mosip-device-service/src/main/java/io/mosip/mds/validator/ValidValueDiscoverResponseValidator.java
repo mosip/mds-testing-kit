@@ -74,4 +74,18 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 		errors = commonValidator.validateUnSignedDigitalID(discoverResponse.digitalId);
 		return errors;
 	}
+	
+	@Override
+	protected boolean checkVersionSupport(String version) {
+		//TODO
+		if(version.equals("0.9.5"))
+			return true;
+		
+		return false;
+	}
+	@Override
+	protected String supportedVersion() {
+		// TODO return type of mds spec version supported
+		return "0.9.5";
+	}
 }

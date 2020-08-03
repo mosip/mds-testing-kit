@@ -1,7 +1,6 @@
 package io.mosip.mds.validator;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.PublicKey;
@@ -31,10 +30,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DataHeader;
 import io.mosip.mds.dto.DigitalId;
-import io.mosip.mds.entitiy.Validator;
 import io.mosip.mds.util.SecurityUtil;
 
-public class CommonValidator extends Validator {
+public class CommonValidator{
 	//2020-07-07T01:18:58.804+05:30
 	private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 	private static ObjectMapper mapper;
