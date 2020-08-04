@@ -1,0 +1,67 @@
+2020-08-03@23:00:54: INFO    Endpoint :/v1/authmanager/authenticate/useridPwd
+2020-08-03@23:00:54: INFO    Request  :{"request":{"password":"mosip","appId":"admin","userName":"110005"},"metadata":"{}","requesttime":"2020-08-03T17:30:51.481Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-03@23:00:54: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-03T17:30:34.769Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-03@23:00:54: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJJVEY3Nlg2ZVYyODJaYjlLVHY0TXJ3MkF3S01ZVU9qZF91N1hFQTN6MTM0In0.eyJqdGkiOiI2OGE1YjJlNi0xYjIzLTRlMTEtOGM3ZS1iNzU1ZDBkM2NmMDMiLCJleHAiOjE1OTY1MTE4MzQsIm5iZiI6MCwiaWF0IjoxNTk2NDc1ODM0LCJpc3MiOiJodHRwczovL2Rldi5tb3NpcC5uZXQva2V5Y2xvYWsvYXV0aC9yZWFsbXMvbW9zaXAiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZWNmM2RkNTgtYjJhOS00MDA4LTg0MzEtZWJiOWQ4N2VlN2MzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoibW9zaXAtYWRtaW4tY2xpZW50IiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiMGQ2ZjdiY2MtZDExYy00MTRlLTk5MmYtMjMzM2Q1NTkyODJjIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJSRUdJU1RSQVRJT05fQURNSU4iLCJSRUdJU1RSQVRJT05fT0ZGSUNFUiIsIlpPTkFMX0FETUlOIiwiSURfQVVUSEVOVElDQVRJT04iLCJSRUdJU1RSQVRJT05fU1VQRVJWSVNPUiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJHTE9CQUxfQURNSU4iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJUZXN0MTEwMDA1IEF1dG8xMTAwMDUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiIxMTAwMDUiLCJnaXZlbl9uYW1lIjoiVGVzdDExMDAwNSIsImZhbWlseV9uYW1lIjoiQXV0bzExMDAwNSIsImVtYWlsIjoiMTEwMDA1QHh5ei5jb20ifQ.I8iAoTMZRshx8xRy1IfLhkoDqPUI_gV9llBClSwC-saF8hDrMCFl9Vc1H-SdsF5rgZxaHj0iCrlUetW_QM_Mx6G0Bc5-7m-sgBpRasku1ERm4PHpTi5fQoIcKKNCo_c20159RH-FcxPbMf2pYklTkIft0t8WpJPjgQXxf834d7_Fl-Xmz9Np6fMf79wBOw6nnq1O_R-4flAlw1M0ojomUbanNzXpaduXQMeyRc-KQyGT0pxZ1XRPdY8e3JYZzmippeeN_A-0OLZEmkYQUO9yqDrOkMRDMo_VbLCY3yjSMKDBqDAFMrbkbO4Bcg37WOSy8nAepMS6zgDIUNqB7fbzYw
+2020-08-03@23:02:14: INFO    Endpoint :/v1/masterdata/devicespecifications
+2020-08-03@23:02:14: INFO    Request  :{ id=string, metadata={}, request={ brand=EYECOOL, description=To capture photo, deviceTypeCode=CMR, id=455, isActive=true, langCode=eng, minDriverversion=string, model=TCI322, name=Camera}, requesttime=2020-08-03T17:32:14.675Z, version=string}
+2020-08-03@23:02:14: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-03T17:31:55.343Z",
+    "metadata": null,
+    "response": {
+        "id": "455",
+        "langCode": "eng"
+    },
+    "errors": null
+}
+2020-08-03@23:02:15: INFO    Endpoint :/v1/masterdata/devicespecifications
+2020-08-03@23:02:15: INFO    Request  :{ id=string, metadata={}, request={ brand=EYECOOL, description=To capture photo, deviceTypeCode=CMR, id=455, isActive=true, langCode=ara, minDriverversion=string, model=TCI322, name=Camera}, requesttime=2020-08-03T17:32:15.031Z, version=string}
+2020-08-03@23:02:15: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-03T17:31:55.666Z",
+    "metadata": null,
+    "response": {
+        "id": "455",
+        "langCode": "ara"
+    },
+    "errors": null
+}
+2020-08-03@23:02:15: INFO    Endpoint :/v1/masterdata/devices
+2020-08-03@23:02:15: INFO    Request  :{ id=string, metadata={}, request={ deviceSpecId=455, id=, ipAddress=127.0.0.0, isActive=true, langCode=eng, macAddress=3C-2C-30-B4-00-C0, name=Camera, serialNum=9149769, validityDateTime=2020-12-31T06:12:52.994Z, zoneCode=CST}, requesttime=2020-08-03T17:32:15.298Z, version=string}
+2020-08-03@23:02:15: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-03T17:31:55.912Z",
+    "metadata": null,
+    "response": {
+        "isActive": false,
+        "createdBy": "110005",
+        "createdDateTime": "2020-08-03T17:31:55.935Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "af77022a-d071-44cd-be4e-b44b6d48be2f",
+        "name": "Camera",
+        "serialNum": "9149769",
+        "deviceSpecId": "455",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "eng",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "CST"
+    },
+    "errors": null
+}
