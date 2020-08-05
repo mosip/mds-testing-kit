@@ -3,15 +3,17 @@ package io.mosip.mds.validator;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.entitiy.Validator;
 
 public class AuthRequestResponseValidator extends Validator{
 
-	@Autowired
-	CreateAuthRequest createAuthRequest;
+	public AuthRequestResponseValidator()
+	{
+		super("AuthRequestResponseValidator", "Auth Request Response Validator");
+	}
+
+	CreateAuthRequest createAuthRequest = new CreateAuthRequest();
 	
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
@@ -24,7 +26,7 @@ public class AuthRequestResponseValidator extends Validator{
 	private List<String> validateAuthResponse(ValidateResponseRequestDto response, List<String> errors) {
 		//AuthResponseDTO authResponseDTO = new AuthResponseDTO();
 		try {
-			 Object authResponse = createAuthRequest.authenticateResponse(response.mdsResponse);
+			 Object authResponse = createAuthRequest.authenticateResponse(response);
 			 errors.add(authResponse.toString());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

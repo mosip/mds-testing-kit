@@ -20,6 +20,8 @@ public class AuthRequestDTO extends BaseAuthRequestDTO {
 	/** The value for requestTime*/
 	private String requestTime;
 
+	private RequestDTO request;
+	
 	/** The value for consentObtained*/
 	private boolean consentObtained;
 

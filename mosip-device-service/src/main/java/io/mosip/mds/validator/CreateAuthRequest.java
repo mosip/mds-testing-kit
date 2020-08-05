@@ -2,14 +2,18 @@ package io.mosip.mds.validator;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.cert.CertificateException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.crypto.SecretKey;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -39,20 +43,19 @@ import io.mosip.authentication.demo.dto.AuthRequestDTO;
 import io.mosip.authentication.demo.dto.AuthTypeDTO;
 import io.mosip.authentication.demo.dto.CryptoUtility;
 import io.mosip.authentication.demo.dto.CryptomanagerRequestDto;
+import io.mosip.authentication.demo.dto.EncryptionRequestDto;
+import io.mosip.authentication.demo.dto.EncryptionResponseDto;
+import io.mosip.authentication.demo.dto.RequestDTO;
 import io.mosip.kernel.core.http.RequestWrapper;
+import io.mosip.kernel.core.util.CryptoUtil;
 import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.kernel.core.util.HMACUtils;
+import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.dto.getresponse.TestExtnDto;
+import io.mosip.mds.entitiy.Store;
 
 @Component
 public class CreateAuthRequest {
-
-	//TODO set proper url get all detais from test json
-	private static final String BASE_URL = "https://extint.technoforte.co.in";
-
-	private static final String IDA_AUTHMANAGER_URL = BASE_URL+"/v1/authmanager/authenticate/clientidsecretkey";
-
-	private static final String IDA_PUBLICKEY_URL = BASE_URL+"/idauthentication/v1/internal/publickey/IDA";
-
-	private static final String URL = BASE_URL+"/idauthentication/v1/auth/UmjbDSra8pzOGd5rVtKekTb9D6VdvOQg4Kmw5TzBdw18mbzzME/748757/9418294";
 
 	private static final String VERSION = "1.0";
 
@@ -62,17 +65,42 @@ public class CreateAuthRequest {
 
 	private static final String UIN = "UIN";
 
-	private static final String UIN_NUMBER = "123456789";
-
+	private static final String ASYMMETRIC_ALGORITHM_NAME = "RSA";
+	
 	ObjectMapper mapper = new ObjectMapper();
 
 	private static final String SSL = "SSL";
 
-	@Autowired
-	public CryptoUtility cryptoUtil;
+	public CryptoUtility cryptoUtil=new CryptoUtility();
 
-	public Object authenticateResponse(String capture) throws Exception {
+	TestExtnDto testExtnDto;
+	
+	private static Boolean areTestsLoaded = false;
+
+	private static HashMap<String, TestExtnDto> allTests = new HashMap<>();
+
+	private static void loadTests()
+	{
+		if(!areTestsLoaded)
+		{
+			TestExtnDto[] tests = Store.getTestDefinitions();
+			if(tests != null)
+			{
+				for(TestExtnDto test:tests)
+				{
+					allTests.put(test.testId, test);
+				}
+			}
+		}
+		areTestsLoaded = true;
+	}
+
+	static{
+		loadTests();
+	}
+	public Object authenticateResponse(ValidateResponseRequestDto response) throws Exception {
 		AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+		testExtnDto = allTests.get(response.testId);
 
 		// Set Auth Type
 		AuthTypeDTO authTypeDTO = new AuthTypeDTO();
@@ -86,10 +114,33 @@ public class CreateAuthRequest {
 		authRequestDTO.setRequestedAuth(authTypeDTO);
 
 		// TODO set UIN or ref get from test json
-		authRequestDTO.setIndividualId(UIN_NUMBER);
+		authRequestDTO.setIndividualId(testExtnDto.uinNumber);
 
 		// TODO Set Individual Id type uin or VID
 		authRequestDTO.setIndividualIdType(UIN);
+
+		RequestDTO requestDTO = new RequestDTO();
+		//TODO setting from kernal
+		requestDTO.setTimestamp(getUTCCurrentDateTimeISOString());
+
+		Map<String, Object> identityBlock = mapper.convertValue(requestDTO, Map.class);
+
+		// TODO if bio type true always true
+		identityBlock.put("biometrics", mapper.readValue(response.mdsResponse, Map.class).get("biometrics"));
+
+		System.out.println("******* Request before encryption ************ \n\n");
+		System.out.println(mapper.writeValueAsString(identityBlock));
+		EncryptionRequestDto encryptionRequestDto = new EncryptionRequestDto();
+		encryptionRequestDto.setIdentityRequest(identityBlock);
+		EncryptionResponseDto kernelEncrypt = null;
+		try {
+			kernelEncrypt = kernelEncrypt(encryptionRequestDto, false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// Set request block
+		authRequestDTO.setRequest(requestDTO);
 
 		//TODO set transaction id 
 		authRequestDTO.setTransactionID(TRANSACTION_ID);
@@ -103,10 +154,14 @@ public class CreateAuthRequest {
 
 		Map<String, Object> authRequestMap = mapper.convertValue(authRequestDTO, Map.class);
 
+		authRequestMap.replace("request", kernelEncrypt.getEncryptedIdentity());
+		authRequestMap.replace("requestSessionKey", kernelEncrypt.getEncryptedSessionKey());
+		authRequestMap.replace("requestHMAC", kernelEncrypt.getRequestHMAC());
+		
 		RestTemplate restTemplate = createTemplate();
 		HttpEntity<Map> httpEntity = new HttpEntity<>(authRequestMap);
 		ResponseEntity<Map> authResponse = null;
-		String url = URL;
+		String url = testExtnDto.baseUrl+testExtnDto.authUrl+testExtnDto.mispLicenseKey+"/"+testExtnDto.partnerId+"/"+testExtnDto.partnerApiKey;
 		System.out.println("Auth URL: " + url);
 		System.out.println("Auth Request : \n" + new ObjectMapper().writeValueAsString(authRequestMap));
 		try {
@@ -116,9 +171,28 @@ public class CreateAuthRequest {
 			System.out.println(authResponse.getBody());
 		} catch (Exception e) {
 			e.printStackTrace();
-			return authResponse.getBody();
 		}
 		return authResponse.getBody();
+	}
+
+	private EncryptionResponseDto kernelEncrypt(EncryptionRequestDto encryptionRequestDto, boolean isInternal)
+			throws Exception {
+		EncryptionResponseDto encryptionResponseDto = new EncryptionResponseDto();
+		String identityBlock = mapper.writeValueAsString(encryptionRequestDto.getIdentityRequest());
+
+		SecretKey secretKey = cryptoUtil.genSecKey();
+
+		byte[] encryptedIdentityBlock = cryptoUtil.symmetricEncrypt(identityBlock.getBytes(), secretKey);
+		encryptionResponseDto.setEncryptedIdentity(Base64.encodeBase64URLSafeString(encryptedIdentityBlock));
+		String publicKeyStr = getPublicKey(identityBlock, isInternal);
+		PublicKey publicKey = KeyFactory.getInstance(ASYMMETRIC_ALGORITHM_NAME)
+				.generatePublic(new X509EncodedKeySpec(CryptoUtil.decodeBase64(publicKeyStr)));
+		byte[] encryptedSessionKeyByte = cryptoUtil.asymmetricEncrypt((secretKey.getEncoded()), publicKey);
+		encryptionResponseDto.setEncryptedSessionKey(Base64.encodeBase64URLSafeString(encryptedSessionKeyByte));
+		byte[] byteArr = cryptoUtil.symmetricEncrypt(
+				HMACUtils.digestAsPlainText(HMACUtils.generateHash(identityBlock.getBytes())).getBytes(), secretKey);
+		encryptionResponseDto.setRequestHMAC(Base64.encodeBase64URLSafeString(byteArr));
+		return encryptionResponseDto;
 	}
 
 	private RestTemplate createTemplate() throws KeyManagementException, NoSuchAlgorithmException {
@@ -178,7 +252,7 @@ public class CreateAuthRequest {
 		uriParams.put("appId", "IDA");
 
 		UriComponentsBuilder builder = UriComponentsBuilder
-				.fromUriString(IDA_PUBLICKEY_URL)
+				.fromUriString(testExtnDto.baseUrl+testExtnDto.idaPublicKeyUrl)
 				.queryParam("timeStamp", getUTCCurrentDateTimeISOString())
 				.queryParam("referenceId", publicKeyId);
 		ResponseEntity<Map> response = restTemplate.exchange(builder.build(uriParams), HttpMethod.GET, null, Map.class);
@@ -198,7 +272,7 @@ public class CreateAuthRequest {
 		request.setRequesttime(DateUtils.getUTCCurrentDateTime());
 		request.setRequest(requestBody);
 		ClientResponse response = WebClient
-				.create(IDA_AUTHMANAGER_URL)
+				.create(testExtnDto.baseUrl+testExtnDto.idaAuthManagerUrl)
 				.post().syncBody(request).exchange().block();
 		List<ResponseCookie> list = response.cookies().get("Authorization");
 		if (list != null && !list.isEmpty()) {
