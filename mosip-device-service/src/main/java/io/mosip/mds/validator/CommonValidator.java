@@ -28,7 +28,6 @@ import org.springframework.util.ObjectUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.mosip.mds.dto.DataHeader;
 import io.mosip.mds.dto.DigitalId;
 import io.mosip.mds.util.SecurityUtil;
 
@@ -42,88 +41,49 @@ public class CommonValidator{
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
 
-	public List<String> validateSignedDigitalID(String digitalId) {
+	public List<String> validateDecodedSignedDigitalID(String digitalId) {
 		List<String> errors= new ArrayList<>();
 		String [] parts = digitalId.split("\\.");
-		if(parts.length != 3) {
-			errors.add("Digital Id is not signed,Missing header|payload|signature");				
-			return errors; 
-		}
-		errors=mandatoryParamDigitalIdHeader(parts[0],errors);
-		if(errors.size()!=0)return errors;
-		
-		try {
-			if(!validateSignature(digitalId)) {
-				errors.add(" digitalId signature verification failed");
+		if(parts.length == 3) {
+			try {
+				DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
+						DigitalId.class));
+				errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
+				if(errors.size()!=0)return errors;
+				errors=validValueDigitalIdPayload(decodedDigitalId,errors);
+
 				return errors;
+			} 
+			catch(Exception dex)
+			{
+				errors.add("(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage());		
 			}
-		} catch (CertificateException | JoseException | IOException e) {
-			errors.add("Invalid Signature - digitalId");
-			//e.printStackTrace();
 		}
-		
-		
-		try {
-			DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
-					DigitalId.class));
-			errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
-			if(errors.size()!=0)return errors;
-			errors=validValueDigitalIdPayload(decodedDigitalId,errors);
-
-			return errors;
-		} 
-		catch(Exception dex)
-		{
-			errors.add("(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage());		
-		}
-
 		return errors;
-
 	}
 
-	public List<String> validateUnSignedDigitalID(String digitalId) {
+	public List<String> validateDecodedUnSignedDigitalID(String digitalId) {
 		List<String> errors= new ArrayList<>();
 		String [] parts = digitalId.split("\\.");
-		if(parts.length != 1) {
+		if(parts.length == 1) {
+			try {
+				DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(Base64.getUrlDecoder().decode(digitalId),
+						DigitalId.class));
+				errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
+				errors=validValueDigitalIdPayload(decodedDigitalId,errors);
+
+				return errors;
+			} 
+			catch(Exception dex)
+			{
+				errors.add("(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage());		
+			}
+		}else {
 			errors.add("Invalid Unsigned Digital Id");				
 			return errors; 
 		}
-
-		try {
-			DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(Base64.getUrlDecoder().decode(digitalId),
-					DigitalId.class));
-			errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
-			errors=validValueDigitalIdPayload(decodedDigitalId,errors);
-
-			return errors;
-		} 
-		catch(Exception dex)
-		{
-			errors.add("(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage());		
-		}
-
 		return errors;
-
 	}
-
-	//	public List<String> validateDigitalId(String digitalId) {
-	//
-	//		List<String> errors = new ArrayList<>();
-	//		try {
-	//			DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
-	//					DigitalId.class));
-	//			errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
-	//			errors=validValueDigitalIdPayload(decodedDigitalId,errors);
-	//
-	//			return errors;
-	//		} 
-	//		catch(Exception dex)
-	//		{
-	//			errors.add("Error interpreting digital id: " + dex.getMessage());		
-	//		}
-	//
-	//		return errors;
-	//	}
 
 	private List<String> mandatoryParamDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<String> errors) {
 
@@ -226,39 +186,6 @@ public class CommonValidator{
 		return errors;
 	}
 
-	//TODO check header validation as per spec
-	private List<String> mandatoryParamDigitalIdHeader(String header, List<String> errors){
-		 try {
-			DataHeader decodedHeader = (DataHeader) (mapper.readValue(Base64.getUrlDecoder().decode(header),
-					DataHeader.class));
-			
-			if(decodedHeader.alg == null || decodedHeader.alg.isEmpty())
-			{
-				errors.add("Response DigitalId does not contain alg block in header");
-				return errors;
-			}
-			if(decodedHeader.typ == null || decodedHeader.typ.isEmpty())
-			{
-				errors.add("Response DigitalId does not contain typ block in header");
-				return errors;
-			}
-			if(decodedHeader.x5c == null || decodedHeader.x5c.size()==0)
-			{
-				errors.add("Response DigitalId does not contain x5c block in header");
-				return errors;
-			}
-		} catch (Exception e) {
-			errors.add("(Invalid Digital Id) Error interpreting digital id");		
-			
-		//	errors.add("(Invalid Digital Id) Error interpreting digital id: " + e.getMessage());		
-		}
-		
-		return errors;
-	}
-	
-	//TODO validate signature 
-	
-	
 	//Date and Time Validation
 	public static List<String> validateTimeStamp(String dateString,List<String> errors) {
 		if (Objects.isNull(dateString)) {
@@ -275,60 +202,6 @@ public class CommonValidator{
 			errors.add("TimeStamp formatte is invalid as per ISO Date formate");
 		}
 		return errors;
-	}
-	
-	public static boolean validateSignature(String signature) throws JoseException, IOException, CertificateException {
-	
-		JsonWebSignature jws = new JsonWebSignature();
-		
-		FileReader certreader = new FileReader("MosipTestCert.pem");
-		PemReader certpemReader = new PemReader(certreader);
-		final byte[] certpemContent = certpemReader.readPemObject().getContent();
-		certpemReader.close();	   
-	    EncodedKeySpec certspec = new X509EncodedKeySpec(certpemContent);
-	    CertificateFactory cf = CertificateFactory.getInstance("X.509");
-	    X509Certificate certificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certspec.getEncoded()));
-	    PublicKey  publicKey = certificate.getPublicKey();
-	    
-	    jws.setAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST,   AlgorithmIdentifiers.RSA_USING_SHA256));
-	    jws.setCompactSerialization(signature);		    
-	    jws.setKey(publicKey);
-	    
-	  //  System.out.println("JWS validation >>> " + jws.verifySignature());
-		//return jws.verifySignature();
-	    // TODO handle signature
-		return true;
-	}
-	
-	public static List<String> validateSignatureValidity(String signature,List<String> errors) throws JoseException, IOException, CertificateException {
-		JsonWebSignature jws = new JsonWebSignature();
-		
-		FileReader certreader = new FileReader("MosipTestCert.pem");
-		PemReader certpemReader = new PemReader(certreader);
-		final byte[] certpemContent = certpemReader.readPemObject().getContent();
-		certpemReader.close();	   
-	    EncodedKeySpec certspec = new X509EncodedKeySpec(certpemContent);
-	    CertificateFactory cf = CertificateFactory.getInstance("X.509");
-	    X509Certificate certificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certspec.getEncoded()));
-	    PublicKey  publicKey = certificate.getPublicKey();
-	    
-	    jws.setAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST,   AlgorithmIdentifiers.RSA_USING_SHA256));
-	    jws.setCompactSerialization(signature);		    
-	    jws.setKey(publicKey);
-	 
-	    try {
-	    jws.getLeafCertificateHeaderValue().checkValidity();
-	    }catch (CertificateExpiredException e) {
-	    
-			 errors.add(" CertificateExpiredException - " + "with Message - "+ e.getMessage() );
-			 return errors;
-		}
-	    catch (CertificateNotYetValidException e) {
-			errors.add(" CertificateNotYetValidException - " + "with Message - "+e.getMessage() );
-			 return errors;
-		}
-		return errors;
-	    
 	}
 }
 

@@ -19,8 +19,8 @@ import io.mosip.mds.entitiy.DeviceInfoMinimal;
 import io.mosip.mds.entitiy.Validator;
 
 public class ValidValueDeviceInfoResponseValidator extends Validator {
-private static ObjectMapper mapper;
-	
+	private static ObjectMapper mapper;
+
 	static {
 		mapper = new ObjectMapper();
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -31,47 +31,21 @@ private static ObjectMapper mapper;
 	@Override
 	protected List<String> DoValidate(ValidateResponseRequestDto response) {
 		List<String> errors = new ArrayList<>();
-		
+
 		if(Objects.isNull(response))
 		{
 			errors.add("Response is empty");
 			return errors;
 		}
-		DeviceInfoMinimal[] input;
-		try {
-			input = (DeviceInfoMinimal[])(mapper.readValue(response.getMdsResponse().getBytes(), DeviceInfoMinimal[].class));
-			for(DeviceInfoMinimal respMin:input)
-			{
-				try {
-					
-					errors = CommonValidator.validateSignatureValidity(respMin.deviceInfo,errors);
-					if(errors.size() != 0) {
-						return errors;
-					}
-					
-					if(!CommonValidator.validateSignature(respMin.deviceInfo)) {
-						errors.add("MdsResponse signature verification failed");
-						return errors;
-					}
-				} catch (CertificateException | JoseException | IOException e) {
-					errors.add("mdsResponse with Invalid Signature");
-					return errors;
-					//e.printStackTrace();
-				}
-			}
-		} catch (Exception exception) {
-			errors.add("Error parsing request input" + exception.getMessage());
-			}
-		
 
-		
+
 		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(deviceInfoResponse))
 		{
 			errors.add("DeviceInfo response is empty");
 			return errors;
 		}
-		
+
 		//Check for device status
 		if(!deviceInfoResponse.deviceStatus.equals(CommonConstant.READY) && !deviceInfoResponse.deviceStatus.equals(CommonConstant.BUSY)
 				&& !deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_READY) && !deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
@@ -129,18 +103,18 @@ private static ObjectMapper mapper;
 
 		CommonValidator commonValidator=new CommonValidator();
 		if(deviceInfoResponse.certification.equals(CommonConstant.L0) && deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
-			errors = commonValidator.validateUnSignedDigitalID(deviceInfoResponse.digitalId);
+			errors = commonValidator.validateDecodedUnSignedDigitalID(deviceInfoResponse.digitalId);
 		else
-			errors = commonValidator.validateSignedDigitalID(deviceInfoResponse.digitalId);
+			errors = commonValidator.validateDecodedSignedDigitalID(deviceInfoResponse.digitalId);
 		return errors;
 	}
-	
+
 	@Override
 	protected boolean checkVersionSupport(String version) {
 		//TODO
 		if(version.equals("0.9.5"))
 			return true;
-		
+
 		return false;
 	}
 	@Override

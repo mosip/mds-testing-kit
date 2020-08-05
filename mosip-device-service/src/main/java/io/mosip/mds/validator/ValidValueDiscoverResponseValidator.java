@@ -71,7 +71,7 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 		//digitalId - Digital ID as per the Digital ID definition but it will not be signed.
 
 		CommonValidator commonValidator=new CommonValidator();
-		errors = commonValidator.validateUnSignedDigitalID(discoverResponse.digitalId);
+		errors = commonValidator.validateDecodedUnSignedDigitalID(discoverResponse.digitalId);
 		return errors;
 	}
 	

@@ -34,9 +34,6 @@ public class ValidValueCaptureResponseValidator extends Validator {
 			return errors;
 		}
 		
-		errors=validateCaptureSignatureTampered(response, errors);
-		if(errors.size()!=0)return errors;
-
 		CaptureResponse cr = (CaptureResponse) response.getMdsDecodedResponse();
 
 		if(Objects.isNull(cr))
@@ -79,32 +76,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		}
 		return errors;
 	}
-	private List<String> validateCaptureSignatureTampered(ValidateResponseRequestDto response, List<String> errors) {
-		CaptureResponse mdsResponse = null;
-		try {
-			mdsResponse = (CaptureResponse) (mapper.readValue(response.mdsResponse.getBytes(), CaptureResponse.class));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		for (CaptureResponse.CaptureBiometric biometric : mdsResponse.biometrics) {
-
-			if (biometric.getData() != null) {
-				try {
-					if(CommonValidator.validateSignature(biometric.getData())) {
-						errors.add("mdsResponse signature verification failed");
-						return errors;
-					}
-				} catch (CertificateException | JoseException | IOException e) {
-					errors.add("mdsResponse with Invalid Signature");
-					return errors;
-					//e.printStackTrace();
-				}
-			}
-		}
-		return errors;
-	}
+	
 	private List<String> validateActualValueDatadecoded(List<String> errors, CaptureBiometricData dataDecoded) {
 		// Check for bioType elements
 		if(!dataDecoded.bioType.equals(CommonConstant.FINGER) && !dataDecoded.bioType.equals(CommonConstant.IRIS) && !dataDecoded.bioType.equals(CommonConstant.FACE))
@@ -159,7 +131,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 
 	private List<String> validateDigitalId(CaptureBiometricData dataDecoded,List<String> errors) {
 		CommonValidator commonValidator=new CommonValidator();
-		errors = commonValidator.validateSignedDigitalID(dataDecoded.digitalId);
+		errors = commonValidator.validateDecodedSignedDigitalID(dataDecoded.digitalId);
 		return errors;
 	}
 

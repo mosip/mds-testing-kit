@@ -34,9 +34,6 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 			errors.add("Response is empty");
 			return errors;
 		}
-		
-		errors=validateCaptureSignatureTampered(response, errors);
-		if(errors.size()!=0)return errors;
 
 		// Check for Biometrics block
 		CaptureResponse registrationCaptureResponse = (CaptureResponse) response.getMdsDecodedResponse();
@@ -124,7 +121,7 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 
 	private List<String> validateDigitalId(CaptureBiometricData dataDecoded,List<String> errors) {
 		CommonValidator commonValidator=new CommonValidator();
-		errors = commonValidator.validateSignedDigitalID(dataDecoded.digitalId);
+		errors = commonValidator.validateDecodedSignedDigitalID(dataDecoded.digitalId);
 		return errors;
 	}
 
@@ -150,32 +147,6 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 		bioSubTypeFingerList.add(CommonConstant.UNKNOWN);
 
 		return bioSubTypeFingerList;
-	}
-	private List<String> validateCaptureSignatureTampered(ValidateResponseRequestDto response, List<String> errors) {
-		CaptureResponse mdsResponse = null;
-		try {
-			mdsResponse = (CaptureResponse) (mapper.readValue(response.mdsResponse.getBytes(), CaptureResponse.class));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		for (CaptureResponse.CaptureBiometric biometric : mdsResponse.biometrics) {
-
-			if (biometric.getData() != null) {
-				try {
-					if(!CommonValidator.validateSignature(biometric.getData())) {
-						errors.add("MdsResponse signature verification failed");
-						return errors;
-					}
-				} catch (CertificateException | JoseException | IOException e) {
-					errors.add("mdsResponse with Invalid Signature");
-					return errors;
-					//e.printStackTrace();
-				}
-			}
-		}
-		return errors;
 	}
 
 	@Override

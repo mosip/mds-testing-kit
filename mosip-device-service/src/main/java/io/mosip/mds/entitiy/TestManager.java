@@ -420,6 +420,7 @@ public class TestManager {
 			Intent intent = getIntent(test.method);
 			IMDSResponseProcessor responseProcessor = getResponseProcessor(run.targetProfile.mdsSpecVersion);
 			MdsResponse[] mdsDecodedResponse = responseProcessor.getMdsDecodedResponse(intent, testResult.responseData);
+			validateRequestDto.setIntent(intent);
 			for(MdsResponse mdsResponse:mdsDecodedResponse)
 			{
 				validateRequestDto.setMdsDecodedResponse(mdsResponse);
