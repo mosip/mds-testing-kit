@@ -12,6 +12,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.mosip.io.db.DataBaseAccess;
 import com.mosip.io.pojo.CreateDeviceSpecDTO;
+import com.mosip.io.util.ServiceUrl;
 import com.mosip.io.util.Util;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -35,14 +36,6 @@ public class CreateDeviceSpecification extends Util {
 					  Random random = new Random(); int newDeviceSpecId =
 					  Integer.valueOf(deviceSpecId).intValue()+10+random.nextInt(300);
 					  deviceSpecDTO.getRequest().setId(String.valueOf(newDeviceSpecId));
-					 
-					/*
-					 * if (db.executeQuery("delete from master.device_master where  dspec_id=" + "'"
-					 * + deviceSpecId + "'", "masterdata") &&
-					 * db.executeQuery("delete from master.device_spec where  id=" + "'" +
-					 * deviceSpecId + "'", "masterdata")) {
-					 * auditLog.info("already exist in Db so, deleting...."); }
-					 */
 				}
 			}
 			deviceSpecDTO.getRequest().setLangCode(langCode);
@@ -60,7 +53,7 @@ public class CreateDeviceSpecification extends Util {
 			e.printStackTrace();
 		
 		}
-		String url = "/v1/masterdata/devicespecifications";
+		String url = ServiceUrl.CREATE_DEVICE_SPECIFICATIONS;
         RestAssured.baseURI = System.getProperty("baseUrl");
         Response api_response =
                 given()

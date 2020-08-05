@@ -11,6 +11,7 @@ import com.mosip.io.db.DataBaseAccess;
 import com.mosip.io.pojo.Metadata;
 import com.mosip.io.pojo.MosipDeviceServiceDTO;
 import com.mosip.io.pojo.MosipDeviceServiceRequest;
+import com.mosip.io.util.ServiceUrl;
 import com.mosip.io.util.Util;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -19,7 +20,7 @@ public class MosipDeviceService extends Util {
 	
 	public List<String> registerMDS(String deviceProviderId) {
 		MosipDeviceServiceDTO dto=createDTO(deviceProviderId);
-		String url = "/v1/masterdata/mosipdeviceservice";
+		String url = ServiceUrl.MOSIP_DEVICE_SERVICE;
         RestAssured.baseURI = System.getProperty("baseUrl");
         Response api_response =
                 given()
@@ -42,7 +43,8 @@ public class MosipDeviceService extends Util {
 	    	providerList.add(make);
 	    	providerList.add(model);
 	    }else {
-	    	throw new RuntimeException("Please check "+System.getProperty("type")+".properties file");
+	    	String errorMessage =(String)ctx.read("$.errors[0].message");
+	    	throw new RuntimeException(errorMessage);
 	    }
 		return providerList;
 	}

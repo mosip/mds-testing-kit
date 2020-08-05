@@ -10,6 +10,7 @@ import com.jayway.jsonpath.ReadContext;
 import com.mosip.io.pojo.ValidateHistoryDTO;
 import com.mosip.io.pojo.ValidateHistoryRequest;
 import com.mosip.io.pojo.ValidateHistory_DigitalId;
+import com.mosip.io.util.ServiceUrl;
 import com.mosip.io.util.Util;
 
 import io.restassured.RestAssured;
@@ -30,7 +31,7 @@ public void validateDeviceHistory() {
 	} catch (JsonProcessingException e) {
 		e.printStackTrace();
 	}
-	String url = "/v1/masterdata/deviceprovidermanagement/validate";
+	String url = ServiceUrl.VALIDATE_DEVICE_HISTORY;
     RestAssured.baseURI = System.getProperty("baseUrl");
     Response api_response =
             given()

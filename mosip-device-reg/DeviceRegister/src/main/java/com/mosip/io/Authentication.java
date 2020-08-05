@@ -2,6 +2,8 @@ package com.mosip.io;
 
 import static io.restassured.RestAssured.given;
 import org.json.simple.JSONObject;
+
+import com.mosip.io.util.ServiceUrl;
 import com.mosip.io.util.Util;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -13,7 +15,7 @@ public class Authentication extends Util{
 	public void login() {
 		JSONObject request = loginRequestBuilder();
 	    
-	    String url = "/v1/authmanager/authenticate/useridPwd";
+	    String url = ServiceUrl.USER_AUTHENTICATE;
 	    RestAssured.baseURI = System.getProperty("baseUrl");
 	    Response api_response = given()
 	            .contentType(ContentType.JSON).body(request).post(url);

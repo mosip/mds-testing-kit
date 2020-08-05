@@ -10,13 +10,13 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.mosip.io.db.DataBaseAccess;
 import com.mosip.io.pojo.DeviceRegistrationCenterMappingDTO;
+import com.mosip.io.util.ServiceUrl;
 import com.mosip.io.util.Util;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 public class DeviceRegistrationCenterMapping  extends Util{
-	//Map<String,String> prop=Util.loadProperty("/"+System.getProperty("type")+".properties");
 	String regCenterId=commonDataProp.get("regCenterId");
 	public String deviceRegCenterMapping(String createdDeviceId) {
 		
@@ -47,7 +47,7 @@ public class DeviceRegistrationCenterMapping  extends Util{
 				e.printStackTrace();
 			}
 			
-			String url = "/v1/masterdata/registrationcenterdevice";
+			String url = ServiceUrl.REGISTRATION_CENTER_DEVICE_MAPPING;
 	        RestAssured.baseURI = System.getProperty("baseUrl");
 	        Response api_response =
 	                given()

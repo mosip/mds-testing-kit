@@ -8,6 +8,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.mosip.io.db.DataBaseAccess;
 import com.mosip.io.pojo.CreateDeviceDTO;
+import com.mosip.io.util.ServiceUrl;
 import com.mosip.io.util.Util;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -36,7 +37,7 @@ public class CreateDevice extends Util{
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		String url = "/v1/masterdata/devices";
+		String url = ServiceUrl.CREATE_DEVICE;
         RestAssured.baseURI = System.getProperty("baseUrl");
         Response api_response =
                 given()
