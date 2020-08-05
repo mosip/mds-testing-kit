@@ -16,7 +16,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 public class DeviceRegistrationCenterMapping  extends Util{
-	Map<String,String> prop=Util.loadProperty("/"+System.getProperty("type")+".properties");
+	//Map<String,String> prop=Util.loadProperty("/"+System.getProperty("type")+".properties");
 	String regCenterId=commonDataProp.get("regCenterId");
 	public String deviceRegCenterMapping(String createdDeviceId) {
 		

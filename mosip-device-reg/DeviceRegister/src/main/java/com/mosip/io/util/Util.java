@@ -6,12 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.ConsoleHandler;
@@ -21,6 +26,8 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -37,7 +44,8 @@ public class Util {
 	public static Map<String,String> configProp=Util.loadProperty("/config.properties");
 	public static Map<String,String> commonDataProp=Util.loadProperty("/commonData.properties");
 	public static String type=System.getProperty("type");
-	public static Map<String,String> prop=Util.loadProperty("/"+type+".properties");
+	//public static Map<String,String> prop=Util.loadProperty("/"+type+".properties");
+	public static Map<String,String> prop=Util.loadDataFromCsv(type);
 
 	public static Map<String, String> loadProperty(String fileName) {
 		String deviceType=System.getProperty("type");
@@ -104,5 +112,63 @@ public class Util {
 		return prop.get("deviceProviderId");
 		 
 	} 
+	
+	public static Map<String,String> loadDataFromCsv(String dType){
+		String deviceType=dType;
+		if(deviceType==null || deviceType.isEmpty())
+			throw new RuntimeException("Unable to load csv file with type :"+dType);
+		final String CSVFILEPATH = "./dataFolder/testData.csv";
+		File file = new File(CSVFILEPATH);
+		byte[] bytes=null;
+		try {
+			bytes = FileUtils.readFileToByteArray(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String data = new String(bytes);
+		data = StringUtils.replace(data, "\r", "");
+		String[] dataArray = data.split("\n");
+
+		String keys = dataArray[0];
+		Map<String, Map<String, String>> outerMap = new HashMap<>();
+		List<String> keysFromFile = new ArrayList<>();
+		String[] keyArr = keys.split(",");
+
+		keysFromFile.addAll(Arrays.asList(keyArr));
+		keysFromFile.remove(0);
+
+		for (int d = 1; d < dataArray.length; d++) {
+			Map<String, String> mp = new HashMap<>();
+			List<String> row = new ArrayList<>();
+
+			String[] rowArr = dataArray[d].split(",");
+			row.addAll(Arrays.asList(rowArr));
+
+			String keyForTestCase = row.get(0);
+			// now reomving the first column all the data
+			row.remove(0);
+
+			for (int i = 0; i < keysFromFile.size(); i++) {
+				mp.put(keysFromFile.get(i).trim(), row.get(i).trim());
+			}
+			outerMap.put(keyForTestCase, mp);
+		}
+		Map<String, String> rowMap = outerMap.get(dType);
+		return rowMap;
+
+	}
+	
+	private  File getFileFromResources(String fileName) {
+
+        ClassLoader classLoader = getClass().getClassLoader();
+
+        URL resource = classLoader.getResource(fileName);
+        if (resource == null) {
+            throw new IllegalArgumentException("file is not found!");
+        } else {
+            return new File(resource.getFile());
+        }
+
+    }
 
 }

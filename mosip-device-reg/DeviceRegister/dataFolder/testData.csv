@@ -1,0 +1,2 @@
+dType,deviceId,deviceCode,purpose,serviceVersion,deviceSubId,firmware,deviceStatus,env,certification,callbackId,serialNo,make,model,type,deviceSubType,deviceProvider,deviceProviderId
+Iris,3,bc808c02-1a7d-4a5d-848f-1aa8590ca6ef,Registration,SB.WIN.001,[1-2-3],SB.WIN.001,READY,STAGING,L0,http://127.0.0.1:4501/,9149769,EYECOOL,TCI322,Iris,DoubleIris,SYNCBYTE,SYNCBYTE.TCI322

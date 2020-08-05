@@ -1,0 +1,17 @@
+2020-08-05@12:59:17: INFO    ****Authentication********
+2020-08-05@12:59:21: INFO          
+2020-08-05@12:59:21: INFO    Endpoint :/v1/authmanager/authenticate/useridPwd
+2020-08-05@12:59:21: INFO    Request  :{"request":{"password":"mosip","appId":"admin","userName":"110005"},"metadata":"{}","requesttime":"2020-08-05T07:29:17.556Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-05@12:59:21: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-05T07:29:00.873Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-05@12:59:21: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJJVEY3Nlg2ZVYyODJaYjlLVHY0TXJ3MkF3S01ZVU9qZF91N1hFQTN6MTM0In0.eyJqdGkiOiI0YmZkMTFhMS05OWMyLTRmYTgtYmIzYS03MDdhZjM0YzVmMWQiLCJleHAiOjE1OTY2NDg1NDAsIm5iZiI6MCwiaWF0IjoxNTk2NjEyNTQwLCJpc3MiOiJodHRwczovL2Rldi5tb3NpcC5uZXQva2V5Y2xvYWsvYXV0aC9yZWFsbXMvbW9zaXAiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZWNmM2RkNTgtYjJhOS00MDA4LTg0MzEtZWJiOWQ4N2VlN2MzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoibW9zaXAtYWRtaW4tY2xpZW50IiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiNDY3Y2Y2M2UtNTlkMy00ZWM0LThmZjAtYjFjZjFhYjcxYzkwIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJSRUdJU1RSQVRJT05fQURNSU4iLCJSRUdJU1RSQVRJT05fT0ZGSUNFUiIsIlpPTkFMX0FETUlOIiwiSURfQVVUSEVOVElDQVRJT04iLCJSRUdJU1RSQVRJT05fU1VQRVJWSVNPUiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJHTE9CQUxfQURNSU4iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJUZXN0MTEwMDA1IEF1dG8xMTAwMDUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiIxMTAwMDUiLCJnaXZlbl9uYW1lIjoiVGVzdDExMDAwNSIsImZhbWlseV9uYW1lIjoiQXV0bzExMDAwNSIsImVtYWlsIjoiMTEwMDA1QHh5ei5jb20ifQ.egwZnNK_res98B9NZDzdKOeK7tWXyG4YeJWuFZFEBiXoTgHQ5D8cY9B66KzaUGrtKtfdJvpWNx4svfSnnG4Nm_aXjCXwGgumWd3jALxX6dL0fM6PWvospQeApj9lzzMTQdH4-GTqVFXZfxVQ2tqgRlTJahuPZR9adamBoHn9MrXr9XwQhNWrYE2ImylBSSZkbNSWZwZxr1DCGpEqtFqWxJvL62yuvm9nnmZSI5vKEjDS4EPqfN9SEsF9hPXQsfXIKKdccogdB7kuGmvsvbMJXW7F8-2MI3Pit-ptdSkm1_FGy0jKHoPI2DJzGnGFzRYtpuRIuEVT4Tx-hJlCld0CsQ
+2020-08-05@12:59:21: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table********

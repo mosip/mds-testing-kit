@@ -31,9 +31,18 @@ public class CreateDeviceSpecification extends Util {
 				deviceSpecDTO.getRequest().setId(String.valueOf(deviceId));
 			}else {
 				if(db.validateDataInDb("select * from master.device_spec where id="+"'"+deviceSpecId+"'" +"and lang_code="+"'"+langCode+"'", "masterdata")) {
-					Random random = new Random();
-					int newDeviceSpecId = Integer.valueOf(deviceSpecId).intValue()+10+random.nextInt(90);
-					deviceSpecDTO.getRequest().setId(String.valueOf(newDeviceSpecId));
+					
+					  Random random = new Random(); int newDeviceSpecId =
+					  Integer.valueOf(deviceSpecId).intValue()+10+random.nextInt(300);
+					  deviceSpecDTO.getRequest().setId(String.valueOf(newDeviceSpecId));
+					 
+					/*
+					 * if (db.executeQuery("delete from master.device_master where  dspec_id=" + "'"
+					 * + deviceSpecId + "'", "masterdata") &&
+					 * db.executeQuery("delete from master.device_spec where  id=" + "'" +
+					 * deviceSpecId + "'", "masterdata")) {
+					 * auditLog.info("already exist in Db so, deleting...."); }
+					 */
 				}
 			}
 			deviceSpecDTO.getRequest().setLangCode(langCode);

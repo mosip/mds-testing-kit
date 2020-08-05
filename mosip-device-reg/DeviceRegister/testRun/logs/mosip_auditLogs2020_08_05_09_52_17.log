@@ -1,0 +1,157 @@
+2020-08-05@09:52:18: INFO    ****Authentication********
+2020-08-05@09:52:22: INFO          
+2020-08-05@09:52:22: INFO    Endpoint :/v1/authmanager/authenticate/useridPwd
+2020-08-05@09:52:22: INFO    Request  :{"request":{"password":"mosip","appId":"admin","userName":"110005"},"metadata":"{}","requesttime":"2020-08-05T04:22:18.162Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-05@09:52:22: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-05T04:22:02.206Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-05@09:52:22: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJJVEY3Nlg2ZVYyODJaYjlLVHY0TXJ3MkF3S01ZVU9qZF91N1hFQTN6MTM0In0.eyJqdGkiOiIyMzM1ZGMzYS1jY2I4LTRjYmYtOTlkZi05YmJkN2QxOTQ3MWIiLCJleHAiOjE1OTY2MzczMjIsIm5iZiI6MCwiaWF0IjoxNTk2NjAxMzIyLCJpc3MiOiJodHRwczovL2Rldi5tb3NpcC5uZXQva2V5Y2xvYWsvYXV0aC9yZWFsbXMvbW9zaXAiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZWNmM2RkNTgtYjJhOS00MDA4LTg0MzEtZWJiOWQ4N2VlN2MzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoibW9zaXAtYWRtaW4tY2xpZW50IiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiZGI1ZThhZWMtZDQ0ZC00NzNiLTgzMTgtOTQzYjExYjZlMzE5IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJSRUdJU1RSQVRJT05fQURNSU4iLCJSRUdJU1RSQVRJT05fT0ZGSUNFUiIsIlpPTkFMX0FETUlOIiwiSURfQVVUSEVOVElDQVRJT04iLCJSRUdJU1RSQVRJT05fU1VQRVJWSVNPUiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJHTE9CQUxfQURNSU4iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJUZXN0MTEwMDA1IEF1dG8xMTAwMDUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiIxMTAwMDUiLCJnaXZlbl9uYW1lIjoiVGVzdDExMDAwNSIsImZhbWlseV9uYW1lIjoiQXV0bzExMDAwNSIsImVtYWlsIjoiMTEwMDA1QHh5ei5jb20ifQ.Jup1C3fv4p9P9aGr-Ok1acmRBXj6MWOUuFWUKUzJU5QU1sP8c7GhgNsw4c2dfSDvSABpsGVU4a_FJLLWi7PjEH4A_Y6Y6qpWQamdwFzohVJClHaFwRr2xPGuI-tXG4WEVzumxf7_11orKuGULWJZhJzo4rgEV1_leqrTB9WcssqvEX9q-On1kJfSOiWVEjRPN7bZvr9WXkTuKM9IIEoeebQExvp1x2XJu2YZvkujLvNaRQnZdp4M4GjxQNNYj45UWDtN9uQYyV2z_5YL7JaBaGmNfSGVsLZuI74h4I6J2DsT50N25COMBBTXXbSfETg8qJxfNWNpeldR9aIrLhWsKA
+2020-08-05@09:52:22: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table********
+2020-08-05@09:53:09: INFO    ****DeviceProvider details is alReady Exist in DB*******
+2020-08-05@09:53:09: INFO    providerId :SYNCBYTE.TCI322 VendorName :DevTest
+2020-08-05@09:53:09: INFO    ****Checking providerID in  MosipDeviceService and mosip_device_service_History table********
+2020-08-05@09:53:48: INFO    **** MDS info Prsent in DB*****
+2020-08-05@09:53:48: INFO    MosipDeviceServiceId :SYNCBYTE.TCI322 make :EYECOOL  model: TCI322
+2020-08-05@09:53:48: INFO    ****Create Device Specification in eng and ara language********
+2020-08-05@09:53:48: INFO    Acutual Reqeust: {"request":{"deviceTypeCode":"CMR","langCode":"eng","name":"Camera","description":"To capture photo","model":"C615","id":"444","isActive":true,"minDriverversion":"string","brand":"Logitech"},"metadata":{},"requesttime":"2020-06-17T06:12:52.994Z","id":"string","version":"string"}
+2020-08-05@09:54:04: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"brand":"EYECOOL","description":"To capture photo","deviceTypeCode":"CMR","id":"457","isActive":true,"langCode":"eng","minDriverversion":"string","model":"TCI322","name":"Camera"},"requesttime":"2020-08-05T04:24:04.423Z","version":"string"}
+2020-08-05@09:54:04: INFO    Endpoint :/v1/masterdata/devicespecifications
+2020-08-05@09:54:04: INFO    Request  :{ id=string, metadata={}, request={ brand=EYECOOL, description=To capture photo, deviceTypeCode=CMR, id=457, isActive=true, langCode=eng, minDriverversion=string, model=TCI322, name=Camera}, requesttime=2020-08-05T04:24:04.423Z, version=string}
+2020-08-05@09:54:04: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-05T04:23:44.856Z",
+    "metadata": null,
+    "response": {
+        "id": "457",
+        "langCode": "eng"
+    },
+    "errors": null
+}
+2020-08-05@09:54:04: INFO    Device Specification Created in eng with Id: 457
+2020-08-05@09:54:04: INFO    Acutual Reqeust: {"request":{"deviceTypeCode":"CMR","langCode":"eng","name":"Camera","description":"To capture photo","model":"C615","id":"444","isActive":true,"minDriverversion":"string","brand":"Logitech"},"metadata":{},"requesttime":"2020-06-17T06:12:52.994Z","id":"string","version":"string"}
+2020-08-05@09:54:04: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"brand":"EYECOOL","description":"To capture photo","deviceTypeCode":"CMR","id":"457","isActive":true,"langCode":"ara","minDriverversion":"string","model":"TCI322","name":"Camera"},"requesttime":"2020-08-05T04:24:04.859Z","version":"string"}
+2020-08-05@09:54:05: INFO    Endpoint :/v1/masterdata/devicespecifications
+2020-08-05@09:54:05: INFO    Request  :{ id=string, metadata={}, request={ brand=EYECOOL, description=To capture photo, deviceTypeCode=CMR, id=457, isActive=true, langCode=ara, minDriverversion=string, model=TCI322, name=Camera}, requesttime=2020-08-05T04:24:04.859Z, version=string}
+2020-08-05@09:54:05: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-05T04:23:45.265Z",
+    "metadata": null,
+    "response": {
+        "id": "457",
+        "langCode": "ara"
+    },
+    "errors": null
+}
+2020-08-05@09:54:05: INFO    Device Specification Created in ara with Id: 457
+2020-08-05@09:54:05: INFO    ****create device in primary language********
+2020-08-05@09:54:05: INFO    Acutual Reqeust: {"request":{"macAddress":"3C-2C-30-B4-00-C0","serialNum":"535626446","langCode":"eng","ipAddress":"127.0.0.0","name":"Camera","validityDateTime":"2020-12-31T06:12:52.994Z","id":"","deviceSpecId":"444","isActive":true,"zoneCode":"NTH"},"metadata":{},"requesttime":"2020-07-14T11:00:41.536Z","id":"string","version":"string"}
+2020-08-05@09:54:05: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"457","id":"","ipAddress":"127.0.0.0","isActive":true,"langCode":"eng","macAddress":"3C-2C-30-B4-00-C0","name":"Camera","serialNum":"9149769","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"CST"},"requesttime":"2020-08-05T04:24:05.187Z","version":"string"}
+2020-08-05@09:54:05: INFO    Endpoint :/v1/masterdata/devices
+2020-08-05@09:54:05: INFO    Request  :{ id=string, metadata={}, request={ deviceSpecId=457, id=, ipAddress=127.0.0.0, isActive=true, langCode=eng, macAddress=3C-2C-30-B4-00-C0, name=Camera, serialNum=9149769, validityDateTime=2020-12-31T06:12:52.994Z, zoneCode=CST}, requesttime=2020-08-05T04:24:05.187Z, version=string}
+2020-08-05@09:54:05: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-05T04:23:45.519Z",
+    "metadata": null,
+    "response": {
+        "isActive": false,
+        "createdBy": "110005",
+        "createdDateTime": "2020-08-05T04:23:45.540Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "801be799-7437-4572-bb4f-72a1318372a1",
+        "name": "Camera",
+        "serialNum": "9149769",
+        "deviceSpecId": "457",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "eng",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "CST"
+    },
+    "errors": null
+}
+2020-08-05@09:54:05: INFO    Device Created in eng with deviceId: 801be799-7437-4572-bb4f-72a1318372a1
+2020-08-05@09:54:05: INFO    ****Update  the above deviceId with code from info file********
+2020-08-05@09:55:06: INFO    bc808c02-1a7d-4a5d-848f-1aa8590ca6ef alredy exit in DB  so, deleting..
+2020-08-05@09:55:27: INFO    bc808c02-1a7d-4a5d-848f-1aa8590ca6ef updated in DB
+2020-08-05@09:55:27: INFO    DeviceId updated with bc808c02-1a7d-4a5d-848f-1aa8590ca6ef
+2020-08-05@09:55:27: INFO    ****create device in secondary language********
+2020-08-05@09:55:27: INFO    Acutual Reqeust: {"request":{"macAddress":"3C-2C-30-B4-00-C0","serialNum":"535626446","langCode":"eng","ipAddress":"127.0.0.0","name":"Camera","validityDateTime":"2020-12-31T06:12:52.994Z","id":"","deviceSpecId":"444","isActive":true,"zoneCode":"NTH"},"metadata":{},"requesttime":"2020-07-14T11:00:41.536Z","id":"string","version":"string"}
+2020-08-05@09:55:27: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"457","id":"bc808c02-1a7d-4a5d-848f-1aa8590ca6ef","ipAddress":"127.0.0.0","isActive":true,"langCode":"ara","macAddress":"3C-2C-30-B4-00-C0","name":"Camera","serialNum":"9149769","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"CST"},"requesttime":"2020-08-05T04:25:27.870Z","version":"string"}
+2020-08-05@09:55:28: INFO    Endpoint :/v1/masterdata/devices
+2020-08-05@09:55:28: INFO    Request  :{ id=string, metadata={}, request={ deviceSpecId=457, id=bc808c02-1a7d-4a5d-848f-1aa8590ca6ef, ipAddress=127.0.0.0, isActive=true, langCode=ara, macAddress=3C-2C-30-B4-00-C0, name=Camera, serialNum=9149769, validityDateTime=2020-12-31T06:12:52.994Z, zoneCode=CST}, requesttime=2020-08-05T04:25:27.870Z, version=string}
+2020-08-05@09:55:28: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-05T04:25:08.205Z",
+    "metadata": null,
+    "response": {
+        "isActive": true,
+        "createdBy": "110005",
+        "createdDateTime": "2020-08-05T04:25:08.224Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "bc808c02-1a7d-4a5d-848f-1aa8590ca6ef",
+        "name": "Camera",
+        "serialNum": "9149769",
+        "deviceSpecId": "457",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "ara",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "CST"
+    },
+    "errors": null
+}
+2020-08-05@09:55:28: INFO    Device Created in ara with deviceId: bc808c02-1a7d-4a5d-848f-1aa8590ca6ef
+2020-08-05@09:55:28: INFO    ****Device and center mapping********
+2020-08-05@09:56:12: INFO     Device is Active in both the language
+2020-08-05@09:56:45: INFO    Acutual Reqeust: {"request":{"regCenterId":"10002","langCode":"eng","isActive":true,"deviceId":"79847aec-b87c-4692-9ae9-43ba203a3411"},"metadata":{},"requesttime":"2020-06-17T06:12:52.994Z","id":"string","version":"string"}
+2020-08-05@09:56:45: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"deviceId":"bc808c02-1a7d-4a5d-848f-1aa8590ca6ef","isActive":true,"langCode":"eng","regCenterId":"10002"},"requesttime":"2020-08-05T04:26:45.814Z","version":"string"}
+2020-08-05@09:56:46: INFO    Endpoint :/v1/masterdata/registrationcenterdevice
+2020-08-05@09:56:46: INFO    Request  :{ id=string, metadata={}, request={ deviceId=bc808c02-1a7d-4a5d-848f-1aa8590ca6ef, isActive=true, langCode=eng, regCenterId=10002}, requesttime=2020-08-05T04:26:45.814Z, version=string}
+2020-08-05@09:56:46: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-05T04:26:26.141Z",
+    "metadata": null,
+    "response": {
+        "regCenterId": "10002",
+        "deviceId": "bc808c02-1a7d-4a5d-848f-1aa8590ca6ef"
+    },
+    "errors": null
+}
+2020-08-05@09:56:46: INFO    Device Registration  center  mapped with deviceId: bc808c02-1a7d-4a5d-848f-1aa8590ca6ef and regcenerId :10002
+2020-08-05@09:56:46: INFO    device Mapped succesfully with devicId : bc808c02-1a7d-4a5d-848f-1aa8590ca6ef
+2020-08-05@09:56:46: INFO    ****Device Registration********
+2020-08-05@09:57:24: INFO    Serial number delete succesfully
+2020-08-05@09:57:24: INFO    Endpoint :/v1/masterdata/registereddevices
+2020-08-05@09:57:24: INFO    Request  :{ id=string, metadata={}, request={ deviceData=eyJkZXZpY2VJZCI6IjMiLCJwdXJwb3NlIjoiUmVnaXN0cmF0aW9uIiwiZGV2aWNlSW5mbyI6eyJkZXZpY2VTdWJJZCI6IlsxLTItM10iLCJjZXJ0aWZpY2F0aW9uIjoiTDAiLCJkaWdpdGFsSWQiOiJleUp6WlhKcFlXeE9ieUk2SWpreE5EazNOamtpTENKa1pYWnBZMlZRY205MmFXUmxjaUk2SWxOWlRrTkNXVlJGSWl3aVpHVjJhV05sVUhKdmRtbGtaWEpKWkNJNklsTlpUa05DV1ZSRkxsUkRTVE15TWlJc0ltMWhhMlVpT2lKRldVVkRUMDlNSWl3aWJXOWtaV3dpT2lKVVEwa3pNaklpTENKa1lYUmxWR2x0WlNJNklqSXdNakF0TURndE1EVlVNRFE2TWpjNk1qUXVPVEV4V2lJc0luUjVjR1VpT2lKSmNtbHpJaXdpWkdWMmFXTmxVM1ZpVkhsd1pTSTZJa1J2ZFdKc1pTSjkiLCJmaXJtd2FyZSI6IlNCLldJTi4wMDEiLCJkZXZpY2VFeHBpcnkiOiIyMDIwLTEyLTE2VDA5OjA2OjM4LjE2MVoiLCJ0aW1lU3RhbXAiOiIyMDIwLTA4LTA1VDA0OjI3OjI0LjkxMloifSwiZm91bmRhdGlvbmFsVHJ1c3RQcm92aWRlcklkIjoiIn0=}, requesttime=2020-08-05T04:27:24.911Z, version=version}
+2020-08-05@09:57:24: INFO    Response  :{
+    "id": "string",
+    "version": "version",
+    "responsetime": "2020-08-05T04:27:05.008Z",
+    "metadata": null,
+    "response": null,
+    "errors": [
+        {
+            "errorCode": "ADM-DPM-027",
+            "message": "Double Device Sub-Type does not exist"
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+2020-08-05@12:29:33: INFO    ****Authentication********
+2020-08-05@12:29:38: INFO          
+2020-08-05@12:29:38: INFO    Endpoint :/v1/authmanager/authenticate/useridPwd
+2020-08-05@12:29:38: INFO    Request  :{"request":{"password":"mosip","appId":"admin","userName":"110005"},"metadata":"{}","requesttime":"2020-08-05T06:59:33.710Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-05@12:29:38: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-05T06:59:18.123Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-05@12:29:38: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJJVEY3Nlg2ZVYyODJaYjlLVHY0TXJ3MkF3S01ZVU9qZF91N1hFQTN6MTM0In0.eyJqdGkiOiI4MGU0ZTJlOC02ODZkLTQwNGItOTU0OC1mMzdhNzI2M2YyZDkiLCJleHAiOjE1OTY2NDY3NTgsIm5iZiI6MCwiaWF0IjoxNTk2NjEwNzU4LCJpc3MiOiJodHRwczovL2Rldi5tb3NpcC5uZXQva2V5Y2xvYWsvYXV0aC9yZWFsbXMvbW9zaXAiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZWNmM2RkNTgtYjJhOS00MDA4LTg0MzEtZWJiOWQ4N2VlN2MzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoibW9zaXAtYWRtaW4tY2xpZW50IiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiMzc2Y2U4OGMtMjVkZi00YjZhLTk1ZjUtZDMwMmJkMGIwZmRhIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJSRUdJU1RSQVRJT05fQURNSU4iLCJSRUdJU1RSQVRJT05fT0ZGSUNFUiIsIlpPTkFMX0FETUlOIiwiSURfQVVUSEVOVElDQVRJT04iLCJSRUdJU1RSQVRJT05fU1VQRVJWSVNPUiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJHTE9CQUxfQURNSU4iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJUZXN0MTEwMDA1IEF1dG8xMTAwMDUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiIxMTAwMDUiLCJnaXZlbl9uYW1lIjoiVGVzdDExMDAwNSIsImZhbWlseV9uYW1lIjoiQXV0bzExMDAwNSIsImVtYWlsIjoiMTEwMDA1QHh5ei5jb20ifQ.hKr7A7w6N9p3aHLH8f95x-6XtohDwVI4T47wxc6usqPZJNshVrf425ygBE-8M3axFnsEp1UwTI0gnje5a3FwMt7yKKimNfQQ1QmvZWSx-IP14mHNtX2NYXel8FFVcElm_eXprGvYwkwjZPGbvZXXNdRVippGJrukJOHhlVoDekCIumz2UwgIfchJaTMxDuKqJADEd5BXZ1KzpRtYfnlvvlatZwqZLVXwDM9xi9aaky5GcJfbe8KavHvB0R51qLl2oJWV1I_AhWXujLYYo-7sGlPipa3xd_hsugVBtwQHglx7XWzxNQ-Rnzy6NpvVSbIC9tQdJr0s5yoq3LCcwtvVjg
+2020-08-05@12:29:38: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table********
+2020-08-05@12:32:16: INFO    ****DeviceProvider details is alReady Exist in DB*******
+2020-08-05@12:32:16: INFO    providerId :SYNCBYTE.TCI322 VendorName :DevTest
+2020-08-05@12:32:16: INFO    ****Checking providerID in  MosipDeviceService and mosip_device_service_History table********
