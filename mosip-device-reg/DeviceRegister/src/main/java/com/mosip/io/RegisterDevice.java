@@ -15,6 +15,7 @@ import com.mosip.io.pojo.RegisterDeviceDataDTO;
 import com.mosip.io.pojo.RegisterDeviceDataRequest;
 import com.mosip.io.pojo.RegisterDeviceInfoRequest;
 import com.mosip.io.pojo.RegisterDeviceInfo_DTO;
+import com.mosip.io.util.ServiceUrl;
 import com.mosip.io.util.Util;
 
 import io.restassured.RestAssured;
@@ -30,7 +31,7 @@ public class RegisterDevice extends Util{
 				auditLog.info("Serial number delete succesfully");
 			}
 		}			
-		String url = "/v1/masterdata/registereddevices";
+		String url = ServiceUrl.REGISTERED_DEVICES;
         RestAssured.baseURI = System.getProperty("baseUrl");
         Response api_response =
                 given()
