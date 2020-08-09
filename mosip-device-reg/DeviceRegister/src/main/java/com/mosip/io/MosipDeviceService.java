@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
@@ -18,8 +19,8 @@ import io.restassured.response.Response;
 
 public class MosipDeviceService extends Util {
 	
-	public List<String> registerMDS(String deviceProviderId) {
-		MosipDeviceServiceDTO dto=createDTO(deviceProviderId);
+	public List<String> registerMDS(String deviceProviderId,Map<String,String> prop) {
+		MosipDeviceServiceDTO dto=createDTO(deviceProviderId,prop);
 		String url = ServiceUrl.MOSIP_DEVICE_SERVICE;
         RestAssured.baseURI = System.getProperty("baseUrl");
         Response api_response =
@@ -83,13 +84,13 @@ public class MosipDeviceService extends Util {
 		return isPresent;
 	}
 	
-	private MosipDeviceServiceDTO createDTO(String deviceProviderId) {
-		MosipDeviceServiceDTO dto = new MosipDeviceServiceDTO("string", new Metadata(), createRequestBuilder(deviceProviderId),
+	private MosipDeviceServiceDTO createDTO(String deviceProviderId,Map<String,String> prop) {
+		MosipDeviceServiceDTO dto = new MosipDeviceServiceDTO("string", new Metadata(), createRequestBuilder(deviceProviderId,prop),
 				Util.getCurrentDateAndTimeForAPI(), "string");
 		return dto;
 	}
 
-	private MosipDeviceServiceRequest createRequestBuilder(String deviceProviderId) {
+	private MosipDeviceServiceRequest createRequestBuilder(String deviceProviderId,Map<String,String> prop) {
 		if(prop==null || prop.isEmpty())
 			throw new RuntimeException("prop value cannot be Null Or Empty");
 		MosipDeviceServiceRequest request= new MosipDeviceServiceRequest();

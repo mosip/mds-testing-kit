@@ -1,6 +1,9 @@
 package com.mosip.io;
 
 import static io.restassured.RestAssured.given;
+
+import java.util.Map;
+
 import org.json.simple.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +18,7 @@ import io.restassured.response.Response;
 
 public class CreateDevice extends Util{
 	
-	public String createDevice(String deviceSpecId,String id,String langCode) {
+	public String createDevice(String deviceSpecId,String id,String langCode,Map<String,String> prop) {
 		CreateDeviceDTO createDeviceDTO= new CreateDeviceDTO();
 		JSONObject jsonData = Util.readJsonData("/Request/createDevice.json");
 		auditLog.info("Acutual Reqeust: "+jsonData.toJSONString());
@@ -63,7 +66,7 @@ public class CreateDevice extends Util{
 		return deviceId;
 	}
 	
-	public String updateDeviceIdWithCode(String deviceId,String deviceSpecId) {
+	public String updateDeviceIdWithCode(String deviceId,String deviceSpecId,Map<String,String> prop) {
 		String deviceIdUpdatedValue=null;
 		String deviceIdValue=prop.get("deviceCode");
 		DataBaseAccess db= new DataBaseAccess();

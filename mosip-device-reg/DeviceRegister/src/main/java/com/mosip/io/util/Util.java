@@ -32,9 +32,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mosip.io.ProcessStep;
 
 public class Util {
 	private static String auditLogFileName = "mosip_auditLogs" + getCurrentDateAndTime().replace(":", "_") + ".log";
@@ -45,12 +43,28 @@ public class Util {
 	public static Map<String,String> commonDataProp=Util.loadProperty("/commonData.properties");
 	public static String type=System.getProperty("type");
 	//public static Map<String,String> prop=Util.loadProperty("/"+type+".properties");
-	public static Map<String,String> prop=Util.loadDataFromCsv(type);
+	/*
+	 * public static Map<String,String> prop=null;
+	 * 
+	 * public void run() { String type=System.getProperty("type"); ProcessStep
+	 * runner= new ProcessStep(); if(type!=null && !type.isEmpty()&&
+	 * type.equalsIgnoreCase("Face")||type.equalsIgnoreCase("Iris")||
+	 * type.equalsIgnoreCase("Finger")||type.equalsIgnoreCase("Auth")) {
+	 * prop=Util.loadDataFromCsv(type); auditLog.info("Registering Device :"+ type);
+	 * runner.process(type,prop); }else if(type.equalsIgnoreCase("All")) {
+	 * List<String> typeList= Arrays.asList("Face","Iris","Finger","Auth"); for (int
+	 * i = 0; i < typeList.size(); i++) {
+	 * prop=Util.loadDataFromCsv(typeList.get(i));
+	 * auditLog.info("Registering Device :"+ typeList.get(i));
+	 * runner.process(typeList.get(i),prop); } } }
+	 */
 
 	public static Map<String, String> loadProperty(String fileName) {
-		String deviceType=System.getProperty("type");
-		if(deviceType==null || deviceType.isEmpty())
-			throw new RuntimeException("Unable to load property file with type :"+type);
+		/*
+		 * String deviceType=System.getProperty("type"); if(deviceType==null ||
+		 * deviceType.isEmpty()) throw new
+		 * RuntimeException("Unable to load property file with type :"+type);
+		 */
 		Properties prop = new Properties();
 		try {
 			prop.load(Util.class.getResourceAsStream(fileName));
@@ -108,10 +122,6 @@ public class Util {
 		return jsonData;
 	}
 	
-	public static  String  getDeviceProviderId(){
-		return prop.get("deviceProviderId");
-		 
-	} 
 	
 	public static Map<String,String> loadDataFromCsv(String dType){
 		String deviceType=dType;
