@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.mosip.io.db.DataBaseAccess;
 import com.mosip.io.util.Util;
 
 public class ProcessStep  extends Util{
@@ -15,29 +16,36 @@ public class ProcessStep  extends Util{
 		Authentication auth = new Authentication();
 		auth.login();
 
-		// 1. checking DeviceProvider and DeviceProviderHistory table for providerID is
+		// 1.a checking DeviceProvider and DeviceProviderHistory table for providerID is
 		// present or not
 		auditLog.info("****Checking providerID in  DeviceProvider and DeviceProviderHistory table********");
 		List<String> providerList = new ArrayList<>();
 		Dprovider dprovider = new Dprovider();
-		if (!dprovider.dbCheck(type,  prop.get("deviceProviderId"))) {
+		if (!dprovider.dbCheck(type, prop.get("deviceProviderId"))) {
 			providerList = dprovider.registerVedorWithMosip();
 			auditLog.info("****DeviceProvider details is  Not Prsent in DB*******");
 			auditLog.info("providerId :" + providerList.get(0) + " VendorName :" + providerList.get(1));
+
+			// 1.b update DeviceProvider and DeviceProviderHistory table for providerID
+			updateDeviceProviderId(prop, providerList);
+
 		} else {
-			providerList.add( prop.get("deviceProviderId"));
+			providerList.add(prop.get("deviceProviderId"));
 			providerList.add(commonDataProp.get("vendorName"));
 			auditLog.info("****DeviceProvider details is alReady Exist in DB*******");
 			auditLog.info("providerId :" + providerList.get(0) + " VendorName :" + providerList.get(1));
 		}
 
+		
+		
 		// 2. checking mosip_device_service and mosip_device_service_History table for
 		// providerID is present or not
 		auditLog.info("****Checking providerID in  MosipDeviceService and mosip_device_service_History table********");
 		MosipDeviceService mds = new MosipDeviceService();
 		List<String> mosipDeviceServiceProviderList = new ArrayList<>();
 		if (!mds.dbCheck(type,  prop.get("deviceProviderId"))) {
-			mosipDeviceServiceProviderList = mds.registerMDS(providerList.get(0),prop);
+			//mosipDeviceServiceProviderList = mds.registerMDS(providerList.get(0),prop);
+			mosipDeviceServiceProviderList = mds.registerMDS(prop.get("deviceProviderId"),prop);
 			String mosipDeviceServiceId = mosipDeviceServiceProviderList.get(0);
 			String make = mosipDeviceServiceProviderList.get(1);
 			String model = mosipDeviceServiceProviderList.get(2);
@@ -59,9 +67,9 @@ public class ProcessStep  extends Util{
 		// 3. Create Device Specification in eng,ara language
 		auditLog.info("****Create Device Specification in eng and ara language********");
 		CreateDeviceSpecification deviceSpec = new CreateDeviceSpecification();
-		String deviceSpecIdIn_Eng = deviceSpec.createDeviceSpec("eng", mosipDeviceServiceProviderList, null);
+		String deviceSpecIdIn_Eng = deviceSpec.createDeviceSpec("eng", mosipDeviceServiceProviderList, null,prop);
 		String deviceSpecIdIn_Ara = deviceSpec.createDeviceSpec("ara", mosipDeviceServiceProviderList,
-				deviceSpecIdIn_Eng);
+				deviceSpecIdIn_Eng,prop);
 
 		// 4.a create device in primary language by passing the createdDeviceSpecId from
 		// step 3
@@ -104,5 +112,13 @@ public class ProcessStep  extends Util{
 		}
 		
 
+	}
+
+	private void updateDeviceProviderId(Map<String, String> prop, List<String> providerList) {
+		DataBaseAccess db= new DataBaseAccess();
+		if(db.executeQuery("update master.device_provider set id="+ "'" + prop.get("deviceProviderId") + "'"+" where id="+ "'" + providerList.get(0) + "'","masterdata") 
+				&& db.executeQuery("update master.device_provider_h set id="+ "'" + prop.get("deviceProviderId") + "'"+" where id="+ "'" + providerList.get(0) + "'","masterdata") ) {
+			System.out.println("DeviceProvider and DeviceProviderHistory updated with :"+prop.get("deviceProviderId"));
+		}
 	}
 }

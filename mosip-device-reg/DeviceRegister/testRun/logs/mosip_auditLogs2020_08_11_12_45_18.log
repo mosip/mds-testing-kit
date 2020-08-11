@@ -1,0 +1,19 @@
+2020-08-11@12:45:18: INFO    ****Authentication********
+2020-08-11@12:45:22: INFO          
+2020-08-11@12:45:22: INFO    Endpoint :/v1/authmanager/authenticate/useridPwd
+2020-08-11@12:45:22: INFO    Request  :{"request":{"password":"mosip","appId":"admin","userName":"110005"},"metadata":"{}","requesttime":"2020-08-11T07:15:18.531Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-11@12:45:22: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-11T07:15:00.480Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-11@12:45:22: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ3TndEaGFrSUYzdmkzWFBvbmdiVlpQR3FDaXZDVUV0MFRWTHh0ZGVMNFVzIn0.eyJqdGkiOiIxYTBjMTIyYi1hZjJhLTRmMGQtYjhjMS0xNjIxYWQxMTZlYmQiLCJleHAiOjE1OTcxNjYxMDAsIm5iZiI6MCwiaWF0IjoxNTk3MTMwMTAwLCJpc3MiOiJodHRwczovL2V4dGludC50ZWNobm9mb3J0ZS5jby5pbi9rZXljbG9hay9hdXRoL3JlYWxtcy9tb3NpcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI5NmRjZmY2Ny1hYzQ2LTQ2ODUtOTk4Yi0zODA4OTIzNzUzN2EiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtb3NpcC1hZG1pbi1jbGllbnQiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI2Njc2ODAwNi1lYThkLTQ3YTEtYThjNy0wMzQ4ZDdlNzU5YWQiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlJFR0lTVFJBVElPTl9BRE1JTiIsIlJFR0lTVFJBVElPTl9PRkZJQ0VSIiwiWk9OQUxfQURNSU4iLCJJRF9BVVRIRU5USUNBVElPTiIsIlJFR0lTVFJBVElPTl9TVVBFUlZJU09SIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsIkdMT0JBTF9BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlRlc3QxMTAwMDUgQXV0bzExMDAwNSIsInByZWZlcnJlZF91c2VybmFtZSI6IjExMDAwNSIsImdpdmVuX25hbWUiOiJUZXN0MTEwMDA1IiwiZmFtaWx5X25hbWUiOiJBdXRvMTEwMDA1IiwiZW1haWwiOiIxMTAwMDVAeHl6LmNvbSJ9.bzkml_hlgdG657VzhLR7BzF0CCLPfh19_bqPuLyMR6GHjjFe8VMUxyZIA8nFALPtskWsy20HUnG1aZGGIX0HXxDpF7DnTbTy43WoTcDpBforDLmK0iU-1rYaksjrLhoOvRMVINvzaoEG02nxKm_sa6ZvFezutqZcIpThDSKw5WwWssyzSd_7dVXDc6mu8YJOTn4dlJjW2Y7RY7FtXhuP5O0aVH7OWRYq3pQMSQrfEMbi8u7LJfRQEzI49ozXpW4GnHtlLBRpJGx316u14OwQms-mJY4qpHqZmxYZGe7dR5di5QXTKhz8-r5Yedgret1hf6JM7y7quRB7Fct3ZktrHg
+2020-08-11@12:45:22: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table********
+2020-08-11@12:47:14: INFO    ****DeviceProvider details is alReady Exist in DB*******
+2020-08-11@12:47:15: INFO    providerId :SYNCBYTE.LTC165 VendorName :SYNCBYTE

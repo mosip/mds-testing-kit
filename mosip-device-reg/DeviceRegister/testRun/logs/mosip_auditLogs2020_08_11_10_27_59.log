@@ -1,0 +1,34 @@
+2020-08-11@10:27:59: INFO    ****Authentication********
+2020-08-11@10:28:02: INFO          
+2020-08-11@10:28:02: INFO    Endpoint :/v1/authmanager/authenticate/useridPwd
+2020-08-11@10:28:02: INFO    Request  :{"request":{"password":"mosip","appId":"admin","userName":"110005"},"metadata":"{}","requesttime":"2020-08-11T04:57:59.878Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-11@10:28:02: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-11T04:57:40.895Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-11@10:28:02: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ3TndEaGFrSUYzdmkzWFBvbmdiVlpQR3FDaXZDVUV0MFRWTHh0ZGVMNFVzIn0.eyJqdGkiOiI5YTdlMGRmZS0yMzdjLTRiOTMtYjkwMi1mN2FkNmNjZjc2YzEiLCJleHAiOjE1OTcxNTc4NjEsIm5iZiI6MCwiaWF0IjoxNTk3MTIxODYxLCJpc3MiOiJodHRwczovL2V4dGludC50ZWNobm9mb3J0ZS5jby5pbi9rZXljbG9hay9hdXRoL3JlYWxtcy9tb3NpcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI5NmRjZmY2Ny1hYzQ2LTQ2ODUtOTk4Yi0zODA4OTIzNzUzN2EiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtb3NpcC1hZG1pbi1jbGllbnQiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiJkNzZlMTdhNi0xNjU3LTRjYWYtOTVlYS0wNzE2ZWE2N2QzMmQiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlJFR0lTVFJBVElPTl9BRE1JTiIsIlJFR0lTVFJBVElPTl9PRkZJQ0VSIiwiWk9OQUxfQURNSU4iLCJJRF9BVVRIRU5USUNBVElPTiIsIlJFR0lTVFJBVElPTl9TVVBFUlZJU09SIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsIkdMT0JBTF9BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlRlc3QxMTAwMDUgQXV0bzExMDAwNSIsInByZWZlcnJlZF91c2VybmFtZSI6IjExMDAwNSIsImdpdmVuX25hbWUiOiJUZXN0MTEwMDA1IiwiZmFtaWx5X25hbWUiOiJBdXRvMTEwMDA1IiwiZW1haWwiOiIxMTAwMDVAeHl6LmNvbSJ9.VqKsWAV5t8S4bSX90dhjiJS68TE9SRghUlNUd5L2O9CgJ2REqfanMQLaDXludezrQyM-mHl5oP-lIdRcrD1YtEJdARnL-tn434cmkfXGYeRnX6vxTs6LhTGgayJ9M_V4mvP6_l6Jp-Q-efQfNldO5LXbd236oWs4ApG8E8vWWxUPhVtRRf_3lPF9GBGpOoEWXj22tpaXeURuWG4aCdHYaSr4qu2V8k6WUNC1LDEIrNX-gA6F2eaXtVFq0JknM71EvAG92o8twixnYtwUvSL0G7CN70GubQBl9RpU3902-5Vo7HNfqHmV0bxPpqa_zFwAM6DgJcyYrq0Gs3Yiq18TRA
+2020-08-11@10:28:02: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table********
+2020-08-11@10:28:09: INFO    Acutual Reqeust: {"request":{"address":"Test","contactNumber":"8888888888","certificateAlias":"added","isActive":true,"vendorName":"DevTest","email":"alok.tiwari@technoforte.co.in"},"metadata":{},"requesttime":"2020-07-10T13:56:22.550Z","id":"string","version":"string"}
+2020-08-11@10:28:09: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"address":"Test","certificateAlias":"added","contactNumber":"8888888888","email":"piyush.singh@technoforte.co.in","isActive":true,"vendorName":"DevTest"},"requesttime":"2020-07-10T13:56:22.550Z","version":"string"}
+2020-08-11@10:28:09: INFO    Endpoint :/v1/masterdata/deviceprovider
+2020-08-11@10:28:09: INFO    Request  :{id=string, metadata={}, request={address=Test, certificateAlias=added, contactNumber=8888888888, email=piyush.singh@technoforte.co.in, isActive=true, vendorName=DevTest}, requesttime=2020-07-10T13:56:22.550Z, version=string}
+2020-08-11@10:28:09: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T04:57:48.184Z",
+    "metadata": null,
+    "response": null,
+    "errors": [
+        {
+            "errorCode": "ADM-DPM-011",
+            "message": "DevTest Device Provider already exist"
+        }
+    ]
+}

@@ -1,0 +1,170 @@
+2020-08-11@15:31:21: INFO    ****Authentication********
+2020-08-11@15:31:26: INFO          
+2020-08-11@15:31:26: INFO    Endpoint :/v1/authmanager/authenticate/useridPwd
+2020-08-11@15:31:26: INFO    Request  :{"request":{"password":"Techno@123","appId":"admin","userName":"110119"},"metadata":"{}","requesttime":"2020-08-11T10:01:21.055Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-11@15:31:26: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-11T10:01:04.003Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-11@15:31:26: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ3TndEaGFrSUYzdmkzWFBvbmdiVlpQR3FDaXZDVUV0MFRWTHh0ZGVMNFVzIn0.eyJqdGkiOiJiODRiOGFhMy1kZjUzLTRjYzYtOWUwZS1hYTkzMjExZTAzOTYiLCJleHAiOjE1OTcxNzYwNjQsIm5iZiI6MCwiaWF0IjoxNTk3MTQwMDY0LCJpc3MiOiJodHRwczovL2V4dGludC50ZWNobm9mb3J0ZS5jby5pbi9rZXljbG9hay9hdXRoL3JlYWxtcy9tb3NpcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIzNmQ5MjZmNS04MGQ1LTQ2ZWQtOTRlNy1hNDQ5ODQwZjExNzkiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtb3NpcC1hZG1pbi1jbGllbnQiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI2YjBhYTY2MS0zMTM5LTQxODUtOTNmNi1kMzczNjE3ODgyMWMiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlNVUEVSQURNSU4iLCJSRUdJU1RSQVRJT05fT0ZGSUNFUiIsIlJFU0lERU5UIiwiUkVHSVNUUkFUSU9OX09QRVJBVE9SIiwiREVWSUNFX1BST1ZJREVSIiwiQ0VOVFJBTF9BRE1JTiIsIlJFR0lTVFJBVElPTl9QUk9DRVNTT1IiLCJSRUdJU1RSQVRJT05fQURNSU4iLCJQUkVfUkVHSVNUUkFUSU9OIiwiWk9OQUxfQURNSU4iLCJJRF9BVVRIRU5USUNBVElPTiIsIlJFR0lTVFJBVElPTl9TVVBFUlZJU09SIiwiUFJFUkVHIiwiQ0VOVFJBTF9BUFBST1ZFUiIsIlpPTkFMX0FQUFJPVkVSIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsIkdMT0JBTF9BRE1JTiIsIk1JU1AiLCJQUkVfUkVHSVNUUkFUSU9OX0FETUlOIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiUGl5dXMgVGVzdCIsInByZWZlcnJlZF91c2VybmFtZSI6IjExMDExOSIsImdpdmVuX25hbWUiOiJQaXl1cyIsImZhbWlseV9uYW1lIjoiVGVzdCIsImVtYWlsIjoiMTEwMTE5QHh5ei5jb20ifQ.g6tKVs7gPNC1zavArZ6zQzO0ep69jMIEfgVb7tIsw-cnhzfrd-vV337wYed9hcZu8I9xuFC_sfSeXZ2MXjOsmLz6JhL0WDfUwlZZbAPEbfjC0z3Gkk_T79m4LkGUaiQPvgUsqfeQs6wrjbylRyK9gCyzLwdnNyRGMZrdVYoLbfz-EoWoxzxaOgCZt_JfxQiPS5Wpcdgp2Ze-ci6u4Ky1kyYvSTphXXodcAMiHApuCxWUb2hc08Jkq7CZ74x1YDm5UTw64kXXJ16AjwMw3Qmg1K2ogu1r6EBEzWjmi0KFaD-jPI2_EziVPqKT5kSBKZCu63D6hJG5loMJ7x-2p38uxw
+2020-08-11@15:31:26: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table********
+2020-08-11@15:32:50: INFO    ****DeviceProvider details is alReady Exist in DB*******
+2020-08-11@15:32:51: INFO    providerId :SYNCBYTE.TCI322 VendorName :SYNCBYTE
+2020-08-11@15:32:51: INFO    ****Checking providerID in  MosipDeviceService and mosip_device_service_History table********
+2020-08-11@15:33:12: INFO    **** MDS info Prsent in DB*****
+2020-08-11@15:33:13: INFO    MosipDeviceServiceId :SYNCBYTE.TCI322 make :SB  model: FRO900
+2020-08-11@15:33:13: INFO    ****Create Device Specification in eng and ara language********
+2020-08-11@15:33:15: INFO    Acutual Reqeust: {"request":{"deviceTypeCode":"CMR","langCode":"eng","name":"Camera","description":"To capture photo","model":"C615","id":"444","isActive":true,"minDriverversion":"string","brand":"Logitech"},"metadata":{},"requesttime":"2020-06-17T06:12:52.994Z","id":"string","version":"string"}
+2020-08-11@15:33:25: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"brand":"SB","description":"To capture FRS","deviceTypeCode":"FRS","id":"732","isActive":true,"langCode":"eng","minDriverversion":"string","model":"FRO900","name":"Camera"},"requesttime":"2020-08-11T10:03:25.700Z","version":"string"}
+2020-08-11@15:33:26: INFO    Endpoint :/v1/masterdata/devicespecifications
+2020-08-11@15:33:26: INFO    Request  :{ id=string, metadata={}, request={ brand=SB, description=To capture FRS, deviceTypeCode=FRS, id=732, isActive=true, langCode=eng, minDriverversion=string, model=FRO900, name=Camera}, requesttime=2020-08-11T10:03:25.700Z, version=string}
+2020-08-11@15:33:26: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T10:03:04.701Z",
+    "metadata": null,
+    "response": {
+        "id": "732",
+        "langCode": "eng"
+    },
+    "errors": null
+}
+2020-08-11@15:33:26: INFO    Device Specification Created in eng with Id: 732
+2020-08-11@15:33:29: INFO    Acutual Reqeust: {"request":{"deviceTypeCode":"CMR","langCode":"eng","name":"Camera","description":"To capture photo","model":"C615","id":"444","isActive":true,"minDriverversion":"string","brand":"Logitech"},"metadata":{},"requesttime":"2020-06-17T06:12:52.994Z","id":"string","version":"string"}
+2020-08-11@15:33:30: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"brand":"SB","description":"To capture FRS","deviceTypeCode":"FRS","id":"732","isActive":true,"langCode":"ara","minDriverversion":"string","model":"FRO900","name":"Camera"},"requesttime":"2020-08-11T10:03:30.059Z","version":"string"}
+2020-08-11@15:33:33: INFO    Endpoint :/v1/masterdata/devicespecifications
+2020-08-11@15:33:33: INFO    Request  :{ id=string, metadata={}, request={ brand=SB, description=To capture FRS, deviceTypeCode=FRS, id=732, isActive=true, langCode=ara, minDriverversion=string, model=FRO900, name=Camera}, requesttime=2020-08-11T10:03:30.059Z, version=string}
+2020-08-11@15:33:34: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T10:03:12.151Z",
+    "metadata": null,
+    "response": {
+        "id": "732",
+        "langCode": "ara"
+    },
+    "errors": null
+}
+2020-08-11@15:33:34: INFO    Device Specification Created in ara with Id: 732
+2020-08-11@15:33:36: INFO    ****create device in primary language********
+2020-08-11@15:33:37: INFO    Acutual Reqeust: {"request":{"macAddress":"3C-2C-30-B4-00-C0","serialNum":"535626446","langCode":"eng","ipAddress":"127.0.0.0","name":"Camera","validityDateTime":"2020-12-31T06:12:52.994Z","id":"","deviceSpecId":"444","isActive":true,"zoneCode":"NTH"},"metadata":{},"requesttime":"2020-07-14T11:00:41.536Z","id":"string","version":"string"}
+2020-08-11@15:33:37: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"732","id":"","ipAddress":"127.0.0.0","isActive":true,"langCode":"eng","macAddress":"3C-2C-30-B4-00-C0","name":"Finger Scanner","serialNum":"C8R1CP15256","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"NTH"},"requesttime":"2020-08-11T10:03:37.376Z","version":"string"}
+2020-08-11@15:33:41: INFO    Endpoint :/v1/masterdata/devices
+2020-08-11@15:33:41: INFO    Request  :{ id=string, metadata={}, request={ deviceSpecId=732, id=, ipAddress=127.0.0.0, isActive=true, langCode=eng, macAddress=3C-2C-30-B4-00-C0, name=Finger Scanner, serialNum=C8R1CP15256, validityDateTime=2020-12-31T06:12:52.994Z, zoneCode=NTH}, requesttime=2020-08-11T10:03:37.376Z, version=string}
+2020-08-11@15:33:41: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T10:03:19.696Z",
+    "metadata": null,
+    "response": {
+        "isActive": false,
+        "createdBy": "110119",
+        "createdDateTime": "2020-08-11T10:03:19.744Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "fb3ee5b7-24b4-4dd6-8cc8-b4f18a129894",
+        "name": "Finger Scanner",
+        "serialNum": "C8R1CP15256",
+        "deviceSpecId": "732",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "eng",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "NTH"
+    },
+    "errors": null
+}
+2020-08-11@15:33:41: INFO    Device Created in eng with deviceId: fb3ee5b7-24b4-4dd6-8cc8-b4f18a129894
+2020-08-11@15:33:43: INFO    ****Update  the above deviceId with code from info file********
+2020-08-11@15:33:59: INFO    e799e611-6ce5-468e-b442-886430955f5d updated in DB
+2020-08-11@15:34:02: INFO    DeviceId updated with e799e611-6ce5-468e-b442-886430955f5d
+2020-08-11@15:34:03: INFO    ****create device in secondary language********
+2020-08-11@15:34:03: INFO    Acutual Reqeust: {"request":{"macAddress":"3C-2C-30-B4-00-C0","serialNum":"535626446","langCode":"eng","ipAddress":"127.0.0.0","name":"Camera","validityDateTime":"2020-12-31T06:12:52.994Z","id":"","deviceSpecId":"444","isActive":true,"zoneCode":"NTH"},"metadata":{},"requesttime":"2020-07-14T11:00:41.536Z","id":"string","version":"string"}
+2020-08-11@15:34:04: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"732","id":"e799e611-6ce5-468e-b442-886430955f5d","ipAddress":"127.0.0.0","isActive":true,"langCode":"ara","macAddress":"3C-2C-30-B4-00-C0","name":"Finger Scanner","serialNum":"C8R1CP15256","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"NTH"},"requesttime":"2020-08-11T10:04:04.051Z","version":"string"}
+2020-08-11@15:34:08: INFO    Endpoint :/v1/masterdata/devices
+2020-08-11@15:34:08: INFO    Request  :{ id=string, metadata={}, request={ deviceSpecId=732, id=e799e611-6ce5-468e-b442-886430955f5d, ipAddress=127.0.0.0, isActive=true, langCode=ara, macAddress=3C-2C-30-B4-00-C0, name=Finger Scanner, serialNum=C8R1CP15256, validityDateTime=2020-12-31T06:12:52.994Z, zoneCode=NTH}, requesttime=2020-08-11T10:04:04.051Z, version=string}
+2020-08-11@15:34:08: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T10:03:46.335Z",
+    "metadata": null,
+    "response": {
+        "isActive": true,
+        "createdBy": "110119",
+        "createdDateTime": "2020-08-11T10:03:46.391Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "e799e611-6ce5-468e-b442-886430955f5d",
+        "name": "Finger Scanner",
+        "serialNum": "C8R1CP15256",
+        "deviceSpecId": "732",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "ara",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "NTH"
+    },
+    "errors": null
+}
+2020-08-11@15:34:08: INFO    Device Created in ara with deviceId: e799e611-6ce5-468e-b442-886430955f5d
+2020-08-11@15:34:10: INFO    ****Device and center mapping********
+2020-08-11@15:34:27: INFO     Device is Active in both the language
+2020-08-11@15:34:39: INFO    Acutual Reqeust: {"request":{"regCenterId":"10002","langCode":"eng","isActive":true,"deviceId":"79847aec-b87c-4692-9ae9-43ba203a3411"},"metadata":{},"requesttime":"2020-06-17T06:12:52.994Z","id":"string","version":"string"}
+2020-08-11@15:34:39: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"deviceId":"e799e611-6ce5-468e-b442-886430955f5d","isActive":true,"langCode":"eng","regCenterId":"10002"},"requesttime":"2020-08-11T10:04:39.485Z","version":"string"}
+2020-08-11@15:34:39: INFO    Endpoint :/v1/masterdata/registrationcenterdevice
+2020-08-11@15:34:39: INFO    Request  :{ id=string, metadata={}, request={ deviceId=e799e611-6ce5-468e-b442-886430955f5d, isActive=true, langCode=eng, regCenterId=10002}, requesttime=2020-08-11T10:04:39.485Z, version=string}
+2020-08-11@15:34:39: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T10:04:18.266Z",
+    "metadata": null,
+    "response": {
+        "regCenterId": "10002",
+        "deviceId": "e799e611-6ce5-468e-b442-886430955f5d"
+    },
+    "errors": null
+}
+2020-08-11@15:34:39: INFO    Device Registration  center  mapped with deviceId: e799e611-6ce5-468e-b442-886430955f5d and regcenerId :10002
+2020-08-11@15:34:42: INFO    device Mapped succesfully with devicId : e799e611-6ce5-468e-b442-886430955f5d
+2020-08-11@15:34:43: INFO    ****Device Registration********
+2020-08-11@15:34:55: INFO    Endpoint :/v1/masterdata/registereddevices
+2020-08-11@15:34:55: INFO    Request  :{ id=string, metadata={}, request={ deviceData=eyJkZXZpY2VJZCI6IjEiLCJwdXJwb3NlIjoiUmVnaXN0cmF0aW9uIiwiZGV2aWNlSW5mbyI6eyJkZXZpY2VTdWJJZCI6IlsxLTItM10iLCJjZXJ0aWZpY2F0aW9uIjoiTDAiLCJkaWdpdGFsSWQiOiJleUp6WlhKcFlXeE9ieUk2SWtNNFVqRkRVREUxTWpVMklpd2laR1YyYVdObFVISnZkbWxrWlhJaU9pSlRXVTVEUWxsVVJTSXNJbVJsZG1salpWQnliM1pwWkdWeVNXUWlPaUpUV1U1RFFsbFVSUzVVUTBrek1qSWlMQ0p0WVd0bElqb2lVMElpTENKdGIyUmxiQ0k2SWtaU1R6a3dNQ0lzSW1SaGRHVlVhVzFsSWpvaU1qQXlNQzB3T0MweE1WUXhNRG93TkRvMU5TNHlPRGhhSWl3aWRIbHdaU0k2SWtacGJtZGxjaUlzSW1SbGRtbGpaVk4xWWxSNWNHVWlPaUpUYkdGaUluMD0iLCJmaXJtd2FyZSI6IlNCLldJTi4wMDEiLCJkZXZpY2VFeHBpcnkiOiIyMDIwLTEyLTE2VDA5OjA2OjM4LjE2MVoiLCJ0aW1lU3RhbXAiOiIyMDIwLTA4LTExVDEwOjA0OjU1LjI5MloifSwiZm91bmRhdGlvbmFsVHJ1c3RQcm92aWRlcklkIjoiIn0=}, requesttime=2020-08-11T10:04:55.288Z, version=version}
+2020-08-11@15:34:55: INFO    Response  :{
+    "id": "string",
+    "version": "version",
+    "responsetime": "2020-08-11T10:04:33.391Z",
+    "metadata": null,
+    "response": "eyJhbGciOiJSUzI1NiIsInR5cGUiOiJKV1MifQ==.eyJzdGF0dXMiOiJSRUdJU1RFUkVEIiwiZGlnaXRhbElkIjoiZXlKelpYSnBZV3hPYnlJNklrTTRVakZEVURFMU1qVTJJaXdpWkdWMmFXTmxVSEp2ZG1sa1pYSWlPaUpUV1U1RFFsbFVSU0lzSW1SbGRtbGpaVkJ5YjNacFpHVnlTV1FpT2lKVFdVNURRbGxVUlM1VVEwa3pNaklpTENKdFlXdGxJam9pVTBJaUxDSnRiMlJsYkNJNklrWlNUemt3TUNJc0ltUmhkR1ZVYVcxbElqb2lNakF5TUMwd09DMHhNVlF4TURvd05EbzFOQzQwTXpOYUlpd2lkSGx3WlNJNklrWnBibWRsY2lJc0ltUmxkbWxqWlZOMVlsUjVjR1VpT2lKVGJHRmlJbjAiLCJkZXZpY2VDb2RlIjoiZTc5OWU2MTEtNmNlNS00NjhlLWI0NDItODg2NDMwOTU1ZjVkIiwiZW52IjoibXoiLCJ0aW1lU3RhbXAiOiIyMDIwLTA4LTExVDEwOjA0OjU0LjQzN1oifQ==.ZXlKaGJHY2lPaUpTVXpJMU5pSjkuLmE0eDVWelNjTGtuY1NlS3JFUWFIYmF1eWd5NEdCbWFMbkVqMTFFcGI1UXVEUnVhdUhZRTBNb0JUYl8wZ0p6dGhteXlfODEwLTlvQ3BnLTE5LVd5NHptMEhoNWlBVnlaeFNadGpXMVFFUzFhdml0RTVRVURLZjB4VjAyem1ib3NyU1FUQVJ5MWcxQ3lGbG1DUzRRb085MEg2cF94WkVXYS1CdnYxQndGaTJsX3hrSHhQVU9INTBnbmViZU85UWp1SXU0QnhkN1NqZmlxOVlTQU1SalRQT3RaTHVzcHpEOXJIWTlKRlg0MkM3bUdKZ1JHUTJ2ZTczUXQ4UzgxZ25mMHNqSS1XbkwyMjNMZDhST19QUUtOYkx1dzFXYWR6M0RwSjFHR3NrTlpDTFB0aVFMdEE5aGhHUzZMTkthbG1TMElPZ1F1VGVtdE5TMTFlUDNRcXdadG9CZw==",
+    "errors": null
+}
+2020-08-11@15:34:55: INFO    Device Registration center mapped: eyJhbGciOiJSUzI1NiIsInR5cGUiOiJKV1MifQ==.eyJzdGF0dXMiOiJSRUdJU1RFUkVEIiwiZGlnaXRhbElkIjoiZXlKelpYSnBZV3hPYnlJNklrTTRVakZEVURFMU1qVTJJaXdpWkdWMmFXTmxVSEp2ZG1sa1pYSWlPaUpUV1U1RFFsbFVSU0lzSW1SbGRtbGpaVkJ5YjNacFpHVnlTV1FpT2lKVFdVNURRbGxVUlM1VVEwa3pNaklpTENKdFlXdGxJam9pVTBJaUxDSnRiMlJsYkNJNklrWlNUemt3TUNJc0ltUmhkR1ZVYVcxbElqb2lNakF5TUMwd09DMHhNVlF4TURvd05EbzFOQzQwTXpOYUlpd2lkSGx3WlNJNklrWnBibWRsY2lJc0ltUmxkbWxqWlZOMVlsUjVjR1VpT2lKVGJHRmlJbjAiLCJkZXZpY2VDb2RlIjoiZTc5OWU2MTEtNmNlNS00NjhlLWI0NDItODg2NDMwOTU1ZjVkIiwiZW52IjoibXoiLCJ0aW1lU3RhbXAiOiIyMDIwLTA4LTExVDEwOjA0OjU0LjQzN1oifQ==.ZXlKaGJHY2lPaUpTVXpJMU5pSjkuLmE0eDVWelNjTGtuY1NlS3JFUWFIYmF1eWd5NEdCbWFMbkVqMTFFcGI1UXVEUnVhdUhZRTBNb0JUYl8wZ0p6dGhteXlfODEwLTlvQ3BnLTE5LVd5NHptMEhoNWlBVnlaeFNadGpXMVFFUzFhdml0RTVRVURLZjB4VjAyem1ib3NyU1FUQVJ5MWcxQ3lGbG1DUzRRb085MEg2cF94WkVXYS1CdnYxQndGaTJsX3hrSHhQVU9INTBnbmViZU85UWp1SXU0QnhkN1NqZmlxOVlTQU1SalRQT3RaTHVzcHpEOXJIWTlKRlg0MkM3bUdKZ1JHUTJ2ZTczUXQ4UzgxZ25mMHNqSS1XbkwyMjNMZDhST19QUUtOYkx1dzFXYWR6M0RwSjFHR3NrTlpDTFB0aVFMdEE5aGhHUzZMTkthbG1TMElPZ1F1VGVtdE5TMTFlUDNRcXdadG9CZw==
+2020-08-11@15:34:57: INFO    ****DeviceValidate History********
+2020-08-11@15:34:58: INFO    Acutual Reqeust: {"request":{"timeStamp":"2020-07-13T07:04:27.516Z","purpose":"REGISTRATION","deviceServiceVersion":"TD.TST.001","digitalId":{"dateTime":"2020-07-13T05:40:59.805Z","deviceSubType":"Slab","dpId":"62691635-73b7-4f29-bdb8-189b727d1ade","model":"FRO900","dp":"DevTest","type":"Finger","make":"abcd","serialNo":"Test98765"},"deviceCode":"7e24992e-c2a1-41f5-a907-636550b4c7f4"},"metadata":{},"requesttime":"2020-07-13T05:40:59.805Z","id":"string","version":"string"}
+2020-08-11@15:34:59: INFO    Update Request :{"id":"string","metadata":{"metadata":null},"request":{"deviceCode":"e799e611-6ce5-468e-b442-886430955f5d","deviceServiceVersion":"SB.WIN.001","digitalId":{"dateTime":"2020-08-11T10:04:59.051Z","deviceSubType":"Slab","dp":"SYNCBYTE","dpId":"SYNCBYTE.TCI322","make":"SB","model":"FRO900","serialNo":"C8R1CP15256","type":"Finger"},"purpose":"Registration","timeStamp":"2020-08-11T10:04:59.054Z"},"requesttime":"2020-07-13T05:40:59.805Z","version":"string"}
+2020-08-11@15:35:03: INFO    Endpoint :/v1/masterdata/deviceprovidermanagement/validate
+2020-08-11@15:35:03: INFO    Request  :{ id=string, metadata={}, request={ deviceCode=e799e611-6ce5-468e-b442-886430955f5d, deviceServiceVersion=SB.WIN.001, digitalId={ dateTime=2020-08-11T10:04:59.051Z, deviceSubType=Slab, dp=SYNCBYTE, dpId=SYNCBYTE.TCI322, make=SB, model=FRO900, serialNo=C8R1CP15256, type=Finger}, purpose=Registration, timeStamp=2020-08-11T10:04:59.054Z}, requesttime=2020-07-13T05:40:59.805Z, version=string}
+2020-08-11@15:35:03: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T10:04:41.519Z",
+    "metadata": null,
+    "response": null,
+    "errors": [
+        {
+            "errorCode": "ADM-DPM-007",
+            "message": "Software version does not match against the Device Details"
+        }
+    ]
+}
+2020-08-11@15:35:03: INFO    Software version does not match against the Device Details
