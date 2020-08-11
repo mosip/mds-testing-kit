@@ -1,0 +1,19 @@
+2020-08-11@14:50:33: INFO    ****Authentication********
+2020-08-11@14:50:38: INFO          
+2020-08-11@14:50:38: INFO    Endpoint :/v1/authmanager/authenticate/useridPwd
+2020-08-11@14:50:38: INFO    Request  :{"request":{"password":"mosip","appId":"admin","userName":"110119"},"metadata":"{}","requesttime":"2020-08-11T09:20:33.469Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-11@14:50:38: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-11T09:20:16.602Z",
+    "metadata": null,
+    "response": null,
+    "errors": [
+        {
+            "errorCode": "KER-ATH-023",
+            "message": "Invalid Credentials"
+        }
+    ]
+}
+2020-08-11@14:50:38: INFO    Authorization  :null
+2020-08-11@14:50:38: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table********

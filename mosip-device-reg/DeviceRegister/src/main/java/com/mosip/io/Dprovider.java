@@ -58,7 +58,7 @@ public class Dprovider extends Util{
 	    	providerList.add(deviceProderId);
 	    	providerList.add(vendorName);
 	    }else {
-	    	throw new RuntimeException("Please check "+System.getProperty("type")+".properties file");
+	    	throw new RuntimeException("Please check properties file");
 	    }
         return providerList;
 	}
@@ -89,8 +89,8 @@ public class Dprovider extends Util{
 	private boolean isProviderIdPresentInDB(String deviceProderId) {
 		boolean isPresent=false;
 		DataBaseAccess db= new DataBaseAccess();
-		String device_providerQuery = "Select * from master.device_provider where id="+"'"+deviceProderId+"'";
-		String device_providerHistoryQuery = "Select * from master.device_provider_h where id="+"'"+deviceProderId+"'";
+		String device_providerQuery = "Select * from master.device_provider where id="+"'"+deviceProderId+"' and vendor_name="+"'"+commonDataProp.get("vendorName")+"'";
+		String device_providerHistoryQuery = "Select * from master.device_provider_h where id="+"'"+deviceProderId+"' and vendor_name="+"'"+commonDataProp.get("vendorName")+"'";
 		if (db.getDbData(device_providerQuery, "masterdata").size()>0 && db.getDbData(device_providerHistoryQuery, "masterdata").size()>0)
 			isPresent = true;
 		return isPresent;

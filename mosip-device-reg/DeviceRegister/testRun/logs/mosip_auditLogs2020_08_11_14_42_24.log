@@ -1,0 +1,129 @@
+2020-08-11@14:42:24: INFO    ****Authentication********
+2020-08-11@14:42:30: INFO          
+2020-08-11@14:42:30: INFO    Endpoint :/v1/authmanager/authenticate/useridPwd
+2020-08-11@14:42:30: INFO    Request  :{"request":{"password":"mosip","appId":"admin","userName":"110005"},"metadata":"{}","requesttime":"2020-08-11T09:12:24.200Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-11@14:42:30: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-11T09:12:07.910Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-11@14:42:30: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ3TndEaGFrSUYzdmkzWFBvbmdiVlpQR3FDaXZDVUV0MFRWTHh0ZGVMNFVzIn0.eyJqdGkiOiI5MDFiNzVhNS0wODFiLTRiNjgtYTlhZS0wOGFkZTUxMzNlYjIiLCJleHAiOjE1OTcxNzMxMjgsIm5iZiI6MCwiaWF0IjoxNTk3MTM3MTI4LCJpc3MiOiJodHRwczovL2V4dGludC50ZWNobm9mb3J0ZS5jby5pbi9rZXljbG9hay9hdXRoL3JlYWxtcy9tb3NpcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI5NmRjZmY2Ny1hYzQ2LTQ2ODUtOTk4Yi0zODA4OTIzNzUzN2EiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtb3NpcC1hZG1pbi1jbGllbnQiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiJiNzhkYmM1Mi1mYzYwLTQxM2EtYmFkYi01M2IxZWIyMjU0M2QiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlJFR0lTVFJBVElPTl9BRE1JTiIsIlJFR0lTVFJBVElPTl9PRkZJQ0VSIiwiWk9OQUxfQURNSU4iLCJJRF9BVVRIRU5USUNBVElPTiIsIlJFR0lTVFJBVElPTl9TVVBFUlZJU09SIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsIkdMT0JBTF9BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlRlc3QxMTAwMDUgQXV0bzExMDAwNSIsInByZWZlcnJlZF91c2VybmFtZSI6IjExMDAwNSIsImdpdmVuX25hbWUiOiJUZXN0MTEwMDA1IiwiZmFtaWx5X25hbWUiOiJBdXRvMTEwMDA1IiwiZW1haWwiOiIxMTAwMDVAeHl6LmNvbSJ9.Abm1cVDjhtQuFVrfm_EWyCOG9-NkbIE6D052r4KY4-YvCVOt6jnf007f6USo_PWbHZIns50cBHhv2ImCm0-p9KeaKSugNgi-9wLPUXvOAs3_zHS_b6QVCEfTBoays0VZqifiVSAiKS_ZxQABM3esrTJxXjCl50CYj3B7HhPXCUqRnSCcqA6Fm3efEX7Y3o4QsILX3_Ef0TrWqX3_24NNE7kylIWowxeP2gNWOPw2jYrp8p9woJYmagddGcPMcPBlwnB2blCRoZ73Xrbif6GI81Vl8Z0OdgBfXt-QGItbgn68EIvDz7aRjOFj7CiJ9yiJnfUvDgYMkmO-mvM6qwt7Kg
+2020-08-11@14:42:30: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table********
+2020-08-11@14:43:54: INFO    Acutual Reqeust: {"request":{"address":"Test","contactNumber":"8888888888","certificateAlias":"added","isActive":true,"vendorName":"DevTest","email":"alok.tiwari@technoforte.co.in"},"metadata":{},"requesttime":"2020-07-10T13:56:22.550Z","id":"string","version":"string"}
+2020-08-11@14:43:57: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"address":"Test1","certificateAlias":"added1","contactNumber":"8888888888","email":"piyush.singh@technoforte.co.in","isActive":true,"vendorName":"SYNCBYTE"},"requesttime":"2020-07-10T13:56:22.550Z","version":"string"}
+2020-08-11@14:44:00: INFO    Endpoint :/v1/masterdata/deviceprovider
+2020-08-11@14:44:00: INFO    Request  :{id=string, metadata={}, request={address=Test1, certificateAlias=added1, contactNumber=8888888888, email=piyush.singh@technoforte.co.in, isActive=true, vendorName=SYNCBYTE}, requesttime=2020-07-10T13:56:22.550Z, version=string}
+2020-08-11@14:44:00: INFO    Response  :{
+    "id": null,
+    "version": null,
+    "responsetime": "2020-08-11T09:13:39.135Z",
+    "metadata": null,
+    "response": {
+        "isActive": true,
+        "createdBy": "110005",
+        "createdDateTime": "2020-08-11T09:13:39.155Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "5f628f9f-46bc-4bed-95ef-46611f366cf5",
+        "vendorName": "SYNCBYTE",
+        "address": "Test1",
+        "email": "piyush.singh@technoforte.co.in",
+        "contactNumber": "8888888888",
+        "certificateAlias": "added1"
+    },
+    "errors": [
+        
+    ]
+}
+2020-08-11@14:44:13: INFO    ****DeviceProvider details is  Not Prsent in DB*******
+2020-08-11@14:44:15: INFO    providerId :5f628f9f-46bc-4bed-95ef-46611f366cf5 VendorName :SYNCBYTE
+2020-08-11@14:44:45: INFO    ****Checking providerID in  MosipDeviceService and mosip_device_service_History table********
+2020-08-11@14:45:09: INFO    Endpoint :/v1/masterdata/mosipdeviceservice
+2020-08-11@14:45:09: INFO    Request  :{id=string, metadata={}, request={ deviceProviderId=SYNCBYTE.TCI322, isActive=true, make=EYECOOL, model=TCI322, regDeviceSubCode=DoubleIris, regDeviceTypeCode=Iris, swBinaryHash=0, swCreateDateTime=2020-08-11T09:15:05.857Z, swExpiryDateTime=2020-12-31T07:00:13.375Z, swVersion=SB.WIN.001}, requesttime=2020-08-11T09:15:05.859Z, version=string}
+2020-08-11@14:45:09: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T09:14:47.774Z",
+    "metadata": null,
+    "response": {
+        "isActive": true,
+        "createdBy": "110005",
+        "createdDateTime": "2020-08-11T09:14:47.798Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "2b9b7e78-ec95-4390-a75c-adb8309db0ae",
+        "swVersion": "SB.WIN.001",
+        "deviceProviderId": "SYNCBYTE.TCI322",
+        "regDeviceTypeCode": "Iris",
+        "regDeviceSubCode": "DoubleIris",
+        "make": "EYECOOL",
+        "model": "TCI322",
+        "swCreateDateTime": "2020-08-11T09:15:05.857Z",
+        "swExpiryDateTime": "2020-12-31T07:00:13.375Z",
+        "swBinaryHash": "0"
+    },
+    "errors": null
+}
+2020-08-11@14:45:12: INFO    **** MDS info Not Prsent in DB*****
+2020-08-11@14:45:14: INFO    mosipDeviceServiceId :2b9b7e78-ec95-4390-a75c-adb8309db0ae make :EYECOOL  model: TCI322
+2020-08-11@14:45:15: INFO    ****Create Device Specification in eng and ara language********
+2020-08-11@14:45:16: INFO    Acutual Reqeust: {"request":{"deviceTypeCode":"CMR","langCode":"eng","name":"Camera","description":"To capture photo","model":"C615","id":"444","isActive":true,"minDriverversion":"string","brand":"Logitech"},"metadata":{},"requesttime":"2020-06-17T06:12:52.994Z","id":"string","version":"string"}
+2020-08-11@14:45:26: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"brand":"EYECOOL","description":"To capture Iris","deviceTypeCode":"IRS","id":"489","isActive":true,"langCode":"eng","minDriverversion":"string","model":"TCI322","name":"Camera"},"requesttime":"2020-08-11T09:15:26.537Z","version":"string"}
+2020-08-11@14:45:27: INFO    Endpoint :/v1/masterdata/devicespecifications
+2020-08-11@14:45:27: INFO    Request  :{ id=string, metadata={}, request={ brand=EYECOOL, description=To capture Iris, deviceTypeCode=IRS, id=489, isActive=true, langCode=eng, minDriverversion=string, model=TCI322, name=Camera}, requesttime=2020-08-11T09:15:26.537Z, version=string}
+2020-08-11@14:45:27: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T09:15:05.383Z",
+    "metadata": null,
+    "response": {
+        "id": "489",
+        "langCode": "eng"
+    },
+    "errors": null
+}
+2020-08-11@14:45:27: INFO    Device Specification Created in eng with Id: 489
+2020-08-11@14:45:30: INFO    Acutual Reqeust: {"request":{"deviceTypeCode":"CMR","langCode":"eng","name":"Camera","description":"To capture photo","model":"C615","id":"444","isActive":true,"minDriverversion":"string","brand":"Logitech"},"metadata":{},"requesttime":"2020-06-17T06:12:52.994Z","id":"string","version":"string"}
+2020-08-11@14:45:30: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"brand":"EYECOOL","description":"To capture Iris","deviceTypeCode":"IRS","id":"489","isActive":true,"langCode":"ara","minDriverversion":"string","model":"TCI322","name":"Camera"},"requesttime":"2020-08-11T09:15:30.196Z","version":"string"}
+2020-08-11@14:45:33: INFO    Endpoint :/v1/masterdata/devicespecifications
+2020-08-11@14:45:33: INFO    Request  :{ id=string, metadata={}, request={ brand=EYECOOL, description=To capture Iris, deviceTypeCode=IRS, id=489, isActive=true, langCode=ara, minDriverversion=string, model=TCI322, name=Camera}, requesttime=2020-08-11T09:15:30.196Z, version=string}
+2020-08-11@14:45:33: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T09:15:11.731Z",
+    "metadata": null,
+    "response": {
+        "id": "489",
+        "langCode": "ara"
+    },
+    "errors": null
+}
+2020-08-11@14:45:33: INFO    Device Specification Created in ara with Id: 489
+2020-08-11@14:45:35: INFO    ****create device in primary language********
+2020-08-11@14:45:36: INFO    Acutual Reqeust: {"request":{"macAddress":"3C-2C-30-B4-00-C0","serialNum":"535626446","langCode":"eng","ipAddress":"127.0.0.0","name":"Camera","validityDateTime":"2020-12-31T06:12:52.994Z","id":"","deviceSpecId":"444","isActive":true,"zoneCode":"NTH"},"metadata":{},"requesttime":"2020-07-14T11:00:41.536Z","id":"string","version":"string"}
+2020-08-11@14:45:36: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"489","id":"","ipAddress":"127.0.0.0","isActive":true,"langCode":"eng","macAddress":"3C-2C-30-B4-00-C0","name":"Finger Scanner","serialNum":"9149769","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"NTH"},"requesttime":"2020-08-11T09:15:36.538Z","version":"string"}
+2020-08-11@14:45:39: INFO    Endpoint :/v1/masterdata/devices
+2020-08-11@14:45:39: INFO    Request  :{ id=string, metadata={}, request={ deviceSpecId=489, id=, ipAddress=127.0.0.0, isActive=true, langCode=eng, macAddress=3C-2C-30-B4-00-C0, name=Finger Scanner, serialNum=9149769, validityDateTime=2020-12-31T06:12:52.994Z, zoneCode=NTH}, requesttime=2020-08-11T09:15:36.538Z, version=string}
+2020-08-11@14:45:40: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-11T09:15:18.261Z",
+    "metadata": null,
+    "response": null,
+    "errors": [
+        {
+            "errorCode": "KER-MSD-439",
+            "message": "Admin not authorized to access this Device for this Zone"
+        }
+    ]
+}

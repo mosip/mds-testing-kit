@@ -3,6 +3,7 @@ package com.mosip.io;
 import static io.restassured.RestAssured.given;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.json.simple.JSONObject;
@@ -19,7 +20,7 @@ import io.restassured.response.Response;
 
 public class CreateDeviceSpecification extends Util {
 	
-	public String createDeviceSpec(String langCode,List<String> mosipDeviceServiceProviderList,String deviceId) {
+	public String createDeviceSpec(String langCode,List<String> mosipDeviceServiceProviderList,String deviceId,Map<String,String> prop) {
 		DataBaseAccess db= new DataBaseAccess();
 		CreateDeviceSpecDTO deviceSpecDTO =new CreateDeviceSpecDTO();
 		JSONObject jsonData =readJsonData("/Request/createDeviceSpe.json");
@@ -39,9 +40,15 @@ public class CreateDeviceSpecification extends Util {
 				}
 			}
 			deviceSpecDTO.getRequest().setLangCode(langCode);
-			deviceSpecDTO.getRequest().setBrand(commonDataProp.get("name"));
-			deviceSpecDTO.getRequest().setDescription(commonDataProp.get("description"));
-			deviceSpecDTO.getRequest().setDeviceTypeCode(commonDataProp.get("deviceTypeCode"));
+			/*
+			 * deviceSpecDTO.getRequest().setBrand(commonDataProp.get("name"));
+			 * deviceSpecDTO.getRequest().setDescription(commonDataProp.get("description"));
+			 * deviceSpecDTO.getRequest().setDeviceTypeCode(commonDataProp.get(
+			 * "deviceTypeCode"));
+			 */
+			deviceSpecDTO.getRequest().setBrand(prop.get("name"));
+			deviceSpecDTO.getRequest().setDescription(prop.get("description"));
+			deviceSpecDTO.getRequest().setDeviceTypeCode(prop.get("deviceTypeCode"));
 			if(mosipDeviceServiceProviderList.size()>0) {
 				deviceSpecDTO.getRequest().setBrand(mosipDeviceServiceProviderList.get(1));
 				deviceSpecDTO.getRequest().setModel(mosipDeviceServiceProviderList.get(2));	

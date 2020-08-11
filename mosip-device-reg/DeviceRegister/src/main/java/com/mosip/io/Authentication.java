@@ -1,8 +1,14 @@
 package com.mosip.io;
 
 import static io.restassured.RestAssured.given;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.simple.JSONObject;
 
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ReadContext;
 import com.mosip.io.util.ServiceUrl;
 import com.mosip.io.util.Util;
 import io.restassured.RestAssured;
@@ -20,6 +26,13 @@ public class Authentication extends Util{
 	    Response api_response = given()
 	            .contentType(ContentType.JSON).body(request).post(url);
 	    String response=api_response.getBody().jsonPath().prettify();
+	    
+	    ReadContext ctx = JsonPath.parse(api_response.getBody().asString());
+	    if(ctx.read("$.response") == null) {
+	    	auditLog.info("Request :"+ request);
+	    	throw new RuntimeException("Invalid Credentials");
+	    }
+	    
 	    cookies=api_response.getCookie("Authorization");
 	    logInfo(request, url, response);
 	}

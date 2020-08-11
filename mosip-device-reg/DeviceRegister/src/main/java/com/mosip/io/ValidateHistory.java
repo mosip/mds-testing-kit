@@ -2,6 +2,8 @@ package com.mosip.io;
 
 import static io.restassured.RestAssured.given;
 
+import java.util.Map;
+
 import org.json.simple.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,14 +20,14 @@ import io.restassured.response.Response;
 
 public class ValidateHistory extends Util{
 	
-public void validateDeviceHistory() {
+public void validateDeviceHistory(Map<String,String> prop) {
 	ValidateHistoryDTO deviceHistorycDTO =new ValidateHistoryDTO();
 	JSONObject jsonData =readJsonData("/Request/validateHistory.json");
 	auditLog.info("Acutual Reqeust: "+jsonData.toJSONString());
 	try {
 		ObjectMapper mapper = new ObjectMapper();
 		deviceHistorycDTO = mapper.readValue(jsonData.toJSONString(), ValidateHistoryDTO.class);
-		deviceHistorycDTO.setRequest(createRequest());
+		deviceHistorycDTO.setRequest(createRequest(prop));
 		String value=mapper.writeValueAsString(deviceHistorycDTO);
 		auditLog.info("Update Request :"+ value);
 	} catch (JsonProcessingException e) {
@@ -49,25 +51,26 @@ public void validateDeviceHistory() {
     	String status = (String)ctx.read("$.response.status");
     	String message = (String)ctx.read("$.response.message");
     	auditLog.info("**** Device Validate Success*****");
-    	auditLog.info("Status :" + status + "\nMessage :" + message );
+    	auditLog.info("Status :" + status + "  Message :" + message );
     }else {
     	String errorMessage =(String)ctx.read("$.errors[0].message");
-    	throw new RuntimeException(errorMessage);
+    	auditLog.info(errorMessage);
+    	//throw new RuntimeException(errorMessage);
     }
 	
 }
 
-private ValidateHistoryRequest createRequest() {
+private ValidateHistoryRequest createRequest(Map<String,String> prop) {
 	ValidateHistoryRequest request= new ValidateHistoryRequest();
 	request.setDeviceCode(prop.get("deviceCode"));
 	request.setDeviceServiceVersion(prop.get("serviceVersion"));
-	request.setDigitalId(createDititalId());
+	request.setDigitalId(createDititalId(prop));
 	request.setPurpose(prop.get("purpose"));
 	request.setTimeStamp(getCurrentDateAndTimeForAPI());
 	return request;
 }
 
-private ValidateHistory_DigitalId createDititalId() {
+private ValidateHistory_DigitalId createDititalId(Map<String,String> prop) {
 	ValidateHistory_DigitalId digitalId= new ValidateHistory_DigitalId();
 	digitalId.setDateTime(getCurrentDateAndTimeForAPI());
 	digitalId.setDeviceSubType(prop.get("deviceSubType"));

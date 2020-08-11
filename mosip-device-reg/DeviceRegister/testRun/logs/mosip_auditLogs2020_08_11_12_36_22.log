@@ -1,0 +1,47 @@
+2020-08-11@12:36:22: INFO    ****Authentication********
+2020-08-11@12:36:26: INFO          
+2020-08-11@12:36:26: INFO    Endpoint :/v1/authmanager/authenticate/useridPwd
+2020-08-11@12:36:26: INFO    Request  :{"request":{"password":"mosip","appId":"admin","userName":"110005"},"metadata":"{}","requesttime":"2020-08-11T07:06:22.466Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-11@12:36:26: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-11T07:06:04.684Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-11@12:36:26: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ3TndEaGFrSUYzdmkzWFBvbmdiVlpQR3FDaXZDVUV0MFRWTHh0ZGVMNFVzIn0.eyJqdGkiOiI5YWIxZTNjYy1jZGNkLTRkOGUtYjNmYS01YzdmMjdiMjRhZGYiLCJleHAiOjE1OTcxNjU1NjQsIm5iZiI6MCwiaWF0IjoxNTk3MTI5NTY0LCJpc3MiOiJodHRwczovL2V4dGludC50ZWNobm9mb3J0ZS5jby5pbi9rZXljbG9hay9hdXRoL3JlYWxtcy9tb3NpcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI5NmRjZmY2Ny1hYzQ2LTQ2ODUtOTk4Yi0zODA4OTIzNzUzN2EiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtb3NpcC1hZG1pbi1jbGllbnQiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiIyMWMyZWE1YS0xMWVmLTQ2ZWUtODk2MC0yNThmNjFjZTJiMWUiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlJFR0lTVFJBVElPTl9BRE1JTiIsIlJFR0lTVFJBVElPTl9PRkZJQ0VSIiwiWk9OQUxfQURNSU4iLCJJRF9BVVRIRU5USUNBVElPTiIsIlJFR0lTVFJBVElPTl9TVVBFUlZJU09SIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsIkdMT0JBTF9BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlRlc3QxMTAwMDUgQXV0bzExMDAwNSIsInByZWZlcnJlZF91c2VybmFtZSI6IjExMDAwNSIsImdpdmVuX25hbWUiOiJUZXN0MTEwMDA1IiwiZmFtaWx5X25hbWUiOiJBdXRvMTEwMDA1IiwiZW1haWwiOiIxMTAwMDVAeHl6LmNvbSJ9.B0s04U7Gfl2AgAz2xB3svTwYue7ixVARJaDyoB1Z6FjU6_iaAwI7Z9am3F3tyXzWtJjj3DNyN17j6DPfA1ShPEFst5S-fhLgPJlOhB2PoaNd6ecfoWoKcX9ytuk72YPF3SdMajTigtaaxEmrYw6fx8D3m67PsiKB8pmAZFVnSIudDUjYlBccKcgr1vWpZj2ZLnUI7d4U1PVMetH6_p8Sq6xF1C4MjTpW4rUGQ6RXkG1R9G3bt6070AYGD4MoD8upPHlQq09ooE_XiAZ9iULsGNdiUw5cJnh1iVS02aM0RHe4WeyYX0chpyit_-OcuFlmh8w3C80NiikJVizuzkwjcQ
+2020-08-11@12:36:26: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table********
+2020-08-11@12:39:00: INFO    Acutual Reqeust: {"request":{"address":"Test","contactNumber":"8888888888","certificateAlias":"added","isActive":true,"vendorName":"DevTest","email":"alok.tiwari@technoforte.co.in"},"metadata":{},"requesttime":"2020-07-10T13:56:22.550Z","id":"string","version":"string"}
+2020-08-11@12:39:02: INFO    Updated Reqeust: {"id":"string","metadata":{"metadata":null},"request":{"address":"Test","certificateAlias":"added","contactNumber":"8888888888","email":"piyush.singh@technoforte.co.in","isActive":true,"vendorName":"SYNCBYTE"},"requesttime":"2020-07-10T13:56:22.550Z","version":"string"}
+2020-08-11@12:39:06: INFO    Endpoint :/v1/masterdata/deviceprovider
+2020-08-11@12:39:06: INFO    Request  :{id=string, metadata={}, request={address=Test, certificateAlias=added, contactNumber=8888888888, email=piyush.singh@technoforte.co.in, isActive=true, vendorName=SYNCBYTE}, requesttime=2020-07-10T13:56:22.550Z, version=string}
+2020-08-11@12:39:06: INFO    Response  :{
+    "id": null,
+    "version": null,
+    "responsetime": "2020-08-11T07:08:44.624Z",
+    "metadata": null,
+    "response": {
+        "isActive": true,
+        "createdBy": "110005",
+        "createdDateTime": "2020-08-11T07:08:44.644Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "9670bc60-d950-4ff5-9a05-f2be9e979782",
+        "vendorName": "SYNCBYTE",
+        "address": "Test",
+        "email": "piyush.singh@technoforte.co.in",
+        "contactNumber": "8888888888",
+        "certificateAlias": "added"
+    },
+    "errors": [
+        
+    ]
+}
+2020-08-11@12:39:40: INFO    ****DeviceProvider details is  Not Prsent in DB*******
+2020-08-11@12:39:43: INFO    providerId :9670bc60-d950-4ff5-9a05-f2be9e979782 VendorName :SYNCBYTE
