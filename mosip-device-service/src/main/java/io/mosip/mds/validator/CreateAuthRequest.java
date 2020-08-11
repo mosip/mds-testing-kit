@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.crypto.SecretKey;
 import javax.net.ssl.HttpsURLConnection;
@@ -39,17 +40,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import io.mosip.authentication.demo.dto.AuthRequestDTO;
-import io.mosip.authentication.demo.dto.AuthTypeDTO;
-import io.mosip.authentication.demo.dto.CryptoUtility;
-import io.mosip.authentication.demo.dto.CryptomanagerRequestDto;
-import io.mosip.authentication.demo.dto.EncryptionRequestDto;
-import io.mosip.authentication.demo.dto.EncryptionResponseDto;
-import io.mosip.authentication.demo.dto.RequestDTO;
 import io.mosip.kernel.core.http.RequestWrapper;
 import io.mosip.kernel.core.util.CryptoUtil;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.HMACUtils;
+import io.mosip.mds.authentication.dto.AuthRequestDTO;
+import io.mosip.mds.authentication.dto.AuthTypeDTO;
+import io.mosip.mds.authentication.dto.CryptoUtility;
+import io.mosip.mds.authentication.dto.CryptomanagerRequestDto;
+import io.mosip.mds.authentication.dto.EncryptionRequestDto;
+import io.mosip.mds.authentication.dto.EncryptionResponseDto;
+import io.mosip.mds.authentication.dto.RequestDTO;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.entitiy.Store;
@@ -126,6 +127,7 @@ public class CreateAuthRequest {
 		Map<String, Object> identityBlock = mapper.convertValue(requestDTO, Map.class);
 
 		// TODO if bio type true always true
+		if(Objects.nonNull(response))
 		identityBlock.put("biometrics", mapper.readValue(response.mdsResponse, Map.class).get("biometrics"));
 
 		System.out.println("******* Request before encryption ************ \n\n");

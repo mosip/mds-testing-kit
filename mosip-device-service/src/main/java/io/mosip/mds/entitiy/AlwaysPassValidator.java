@@ -4,19 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.dto.Validation;
+import io.mosip.mds.validator.CommonConstant;
 
 public class AlwaysPassValidator extends Validator {
 
-    public AlwaysPassValidator()
-    {
-        super("AlwaysPassValidator", "Always succeeding validator");
-    }
+	public AlwaysPassValidator()
+	{
+		super("AlwaysPassValidator", "Always succeeding validator");
+	}
 
-    @Override
-    protected List<String> DoValidate(ValidateResponseRequestDto response) {
-        List<String> errors = new ArrayList<>();
-        return errors;
-    }
+	@Override
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+		List<Validation> validations = new ArrayList<>();
+		Validation validation = new Validation();
+		validation.setStatus(CommonConstant.SUCCESS);
+		validations.add(validation );
+		return validations;
+	}
 
 	@Override
 	protected boolean checkVersionSupport(String version) {

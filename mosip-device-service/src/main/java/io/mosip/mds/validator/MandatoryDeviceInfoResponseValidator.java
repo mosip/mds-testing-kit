@@ -6,103 +6,124 @@ import java.util.Objects;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
 
 public class MandatoryDeviceInfoResponseValidator extends Validator {
 	public MandatoryDeviceInfoResponseValidator() {
 		super("MandatoryDeviceInfoResponseValidator", "Mandatory DeviceInfo Response Validator");   
 	}
+
+	Validation validation = new Validation();
+
+	CommonValidator commonValidator = new CommonValidator();
+
 	@Override
-	protected List<String> DoValidate(ValidateResponseRequestDto response) {
-		List<String> errors = new ArrayList<>();
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+		List<Validation> validations = new ArrayList<>();
+
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",response.toString());		
 		if(Objects.isNull(response))
 		{
-			errors.add("Response is empty");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
 		}
+		validations.add(validation);
+
+		validation = commonValidator.setFieldExpected("response.getMdsDecodedResponse()","Expected whole divice info decoded Jsone Response",response.getMdsDecodedResponse().toString());		
 		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(deviceInfoResponse))
 		{
-			errors.add("DeviceInfo response is empty");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,"Found Divice info Decoded is null","DeviceInfo response is empty",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 		// Check for callbackId block
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.callbackId","Base URL to communicate",deviceInfoResponse.callbackId);
 		if(deviceInfoResponse.callbackId == null || deviceInfoResponse.callbackId.isEmpty())
 		{
-			errors.add("DeviceInfo response does not contain callbackId");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.callbackId,"Device info response callbackId is empty",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for certification block
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.certification","\"L0\", \"L1\"",deviceInfoResponse.certification);
 		if(deviceInfoResponse.certification == null || deviceInfoResponse.certification.isEmpty())
 		{
-			errors.add("DeviceInfo response does not contain certification");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.certification,"DeviceInfo response does not contain certification",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for deviceCode block
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceCode","A unique code given by MOSIP after successful registration",deviceInfoResponse.deviceCode);
 		if(deviceInfoResponse.deviceCode == null || deviceInfoResponse.deviceCode.isEmpty())
 		{
-			errors.add("DeviceInfo response does not contain deviceCode");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceCode,"DeviceInfo response does not contain deviceCode",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 		// Check for deviceId block
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceId","Internal ID",deviceInfoResponse.deviceId);
 		if(deviceInfoResponse.deviceId == null)
 		{
-			errors.add("DeviceInfo response does not contain deviceId");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceId,"DeviceInfo response does not contain deviceId",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for deviceStatus block
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceStatus","\"Ready\" | \"Busy\" | \"Not Ready\" | \"Not Registered\"",deviceInfoResponse.deviceStatus);
 		if(deviceInfoResponse.deviceStatus == null || deviceInfoResponse.deviceStatus.isEmpty())
 		{
-			errors.add("DeviceInfo response does not contain deviceStatus");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceStatus,"DeviceInfo response does not contain deviceStatus",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// TODO Check for deviceSubId block
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceSubId","[0,1,2,3]",deviceInfoResponse.deviceSubId.toString());
 		if(deviceInfoResponse.deviceSubId == null || deviceInfoResponse.deviceSubId.length == 0)
 		{
-			errors.add("DeviceInfo response does not contain deviceSubId");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceSubId.toString(),"DeviceInfo response does not contain deviceSubId",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for digitalId block
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.digitalId","As defined under the digital id section",deviceInfoResponse.digitalId);
 		if(deviceInfoResponse.digitalId == null || deviceInfoResponse.digitalId.isEmpty())
 		{
-			errors.add("DeviceInfo response does not contain digitalId");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.digitalId,"DeviceInfo response does not contain digitalId",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for env block
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.env","\"Staging\" | \"Developer\" | \"Pre-Production\" | \"Production\" | \"None\"",deviceInfoResponse.env);
 		if(deviceInfoResponse.env == null || deviceInfoResponse.env.isEmpty())
 		{
-			errors.add("DeviceInfo response does not contain env");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.env,"DeviceInfo response does not contain env",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for purpose block
-		if(deviceInfoResponse.purpose == null || deviceInfoResponse.purpose.isEmpty())
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.purpose"," \"Auth\" or \"Registration\" or empty in case the status is \"Not Registered\"",deviceInfoResponse.purpose);
+		if( (deviceInfoResponse.deviceStatus != CommonConstant.NOT_REGISTERED) && (deviceInfoResponse.purpose == null || deviceInfoResponse.purpose.isEmpty()))
 		{
-			errors.add("DeviceInfo response does not contain purpose");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.purpose,"DeviceInfo response does not contain purpose",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for serviceVersion block
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.serviceVersion","Device service version",deviceInfoResponse.serviceVersion);
 		if(deviceInfoResponse.serviceVersion == null || deviceInfoResponse.serviceVersion.isEmpty())
 		{
-			errors.add("DeviceInfo response does not contain serviceVersion");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.serviceVersion,"DeviceInfo response does not contain serviceVersion",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// TODO Check for specVersion block
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.specVersion","Array of supported MDS specification version",deviceInfoResponse.specVersion.toString());
 		if(deviceInfoResponse.specVersion == null || deviceInfoResponse.specVersion.length == 0)
 		{
-			errors.add("DeviceInfo response does not contain specVersion");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.specVersion.toString(),"DeviceInfo response does not contain specVersion",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
-		return errors;
+		return validations;
 	}
 
 	@Override
@@ -110,7 +131,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		//TODO
 		if(version.equals("0.9.5"))
 			return true;
-		
+
 		return false;
 	}
 	@Override

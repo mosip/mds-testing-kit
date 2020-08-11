@@ -428,9 +428,7 @@ public class TestManager {
 				{
 					ValidationResult vr = v.Validate(validateRequestDto);
 					testResult.validationResults.add(vr);
-					if(vr.errors.size()!=0) {
-						break;
-					}
+					
 				}
 			}
 

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.dto.Validation;
+import io.mosip.mds.validator.CommonConstant;
 
 public class CoinTossValidator extends Validator {
 
@@ -13,14 +15,17 @@ public class CoinTossValidator extends Validator {
     }
 
     @Override
-    protected List<String> DoValidate(ValidateResponseRequestDto response) {
-        List<String> errors = new ArrayList<>();
-        if(System.currentTimeMillis() % 2 == 1)
+    protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+    	List<Validation> validations = new ArrayList<>();
+		if(System.currentTimeMillis() % 2 == 1)
         {
-            errors.add("Validation failed due to odd time of run!");
-            return errors;
+			Validation validation = new Validation();
+        	validation.setStatus(CommonConstant.SUCCESS);
+        	validation.setMessage("Validation failed due to odd time of run!");
+    		validations.add(validation);
+    		return validations;
         }
-        return errors;
+        return validations;
     }
 
 	@Override

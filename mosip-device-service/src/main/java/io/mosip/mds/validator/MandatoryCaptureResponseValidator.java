@@ -9,178 +9,208 @@ import org.springframework.util.ObjectUtils;
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
-import io.mosip.mds.service.MDS_0_9_5_ResponseProcessor;
 
 public class MandatoryCaptureResponseValidator extends Validator {
 	public MandatoryCaptureResponseValidator()
 	{
 		super("MandatoryCaptureResponseValidator", "Mandatory Capture Response validator");
 	}
-	@Override
-	protected List<String> DoValidate(ValidateResponseRequestDto response) {
-		List<String> errors = new ArrayList<>();
-		// Check for Biometrics block
-		if(Objects.isNull(response))
-		{
-			errors.add("Response is empty");
-			return errors;
-		}
-		CaptureResponse cr = (CaptureResponse) response.getMdsDecodedResponse();
-		if(Objects.isNull(cr))
-		{
-			errors.add("Capture Response is empty");
-			return errors;
-		}
-		if(cr.biometrics == null || cr.biometrics.length == 0)
-		{
-			errors.add("Capture response does not contain biometrics block");
-			return errors;
-		}
-		for(CaptureResponse.CaptureBiometric bb:cr.biometrics)
-		{
-			if(!ObjectUtils.isEmpty(bb)) {
+	Validation validation = new Validation();
 
-				// Check for data elements
-				if(bb.data == null || bb.data.isEmpty())
+	CommonValidator commonValidator = new CommonValidator();
+	@Override
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+		List<Validation> validations = new ArrayList<>();
+		// Check for Biometrics block
+		if(Objects.nonNull(response))
+		{
+
+			CaptureResponse cr = (CaptureResponse) response.getMdsDecodedResponse();
+			if(Objects.isNull(cr))
+			{
+
+				validation = commonValidator.setFieldExpected("CaptureResponse.biometrics","Expected Array of biometric data",cr.biometrics.toString());
+				if(cr.biometrics == null || cr.biometrics.length == 0)
 				{
-					errors.add("Capture response does not contain data block in biometrics");
-					return errors;
+					commonValidator.setFoundMessageStatus(validation,cr.biometrics.toString(),"Capture response does not contain biometrics block",CommonConstant.FAILED);
 				}
-				// Check for specVersion
-				if(bb.specVersion == null || bb.specVersion.isEmpty())
+				validations.add(validation);
+
+				for(CaptureResponse.CaptureBiometric bb:cr.biometrics)
 				{
-					errors.add("Capture response biometrics does not contain specVersion");
-					return errors;
+					if(!ObjectUtils.isEmpty(bb)) {
+						// Check for data elements
+						validation = commonValidator.setFieldExpected("biometrics.data","Expected data block",bb.data);
+						if(bb.data == null || bb.data.isEmpty())
+						{
+							commonValidator.setFoundMessageStatus(validation,bb.data,"Capture response does not contain data in biometrics",CommonConstant.FAILED);
+						}
+						validations.add(validation);
+						// Check for specVersion
+						validation = commonValidator.setFieldExpected("biometrics.specVersion","Expected specVersion block",bb.specVersion);
+						if(bb.specVersion == null || bb.specVersion.isEmpty())
+						{
+							commonValidator.setFoundMessageStatus(validation,bb.specVersion,"Capture response biometrics does not contain specVersion",CommonConstant.FAILED);
+						}
+						validations.add(validation);
+						// Check for hash element
+						validation = commonValidator.setFieldExpected("biometrics.hash","Expected hash block",bb.hash);
+						if(bb.hash == null || bb.hash.isEmpty())
+						{
+							commonValidator.setFoundMessageStatus(validation,bb.hash,"Capture response biometrics does not contain hash value",CommonConstant.FAILED);
+						}
+						validations.add(validation);
+
+						// Check for sessionKey
+						validation = commonValidator.setFieldExpected("biometrics.sessionKey","Expected sessionKey block",bb.sessionKey);
+						if(bb.sessionKey == null || bb.sessionKey.isEmpty())
+						{
+							commonValidator.setFoundMessageStatus(validation,bb.sessionKey,"Capture response biometrics does not contain sessionKey value",CommonConstant.FAILED);
+						}
+						validations.add(validation);
+						// Check for Thumb Print
+						validation = commonValidator.setFieldExpected("biometrics.thumbprint","Expected thumbprint block",bb.thumbprint);
+						if(bb.thumbprint == null || bb.thumbprint.isEmpty())
+						{
+							commonValidator.setFoundMessageStatus(validation,bb.thumbprint,"Capture response biometrics does not contain thumbprint",CommonConstant.FAILED);
+						}
+						validations.add(validation);
+						// Check for Decoded biometrics data
+						validation = commonValidator.setFieldExpected("biometrics.dataDecoded","Expected dataDecoded block",bb.dataDecoded.toString());
+						if(bb.dataDecoded == null)
+						{
+							commonValidator.setFoundMessageStatus(validation,bb.dataDecoded.toString(),"Capture response biometrics does not contain dataDecoded",CommonConstant.FAILED);
+							validations.add(validation);
+						}
+
+						else {
+							validations = validateDataDecoded(bb.dataDecoded,validations);
+							return validations;
+						}
+					}else {
+						commonValidator.setFoundMessageStatus(validation,"Expected biometrics block","Capture response does not contain biometrics values",CommonConstant.FAILED);
+					}
+					validations.add(validation);
 				}
-				// Check for hash element
-				if(bb.hash == null || bb.hash.isEmpty())
-				{
-					errors.add("Capture response biometrics does not contain hash value");
-					return errors;
-				}
-				// Check for sessionKey
-				if(bb.sessionKey == null || bb.sessionKey.isEmpty())
-				{
-					errors.add("Capture response biometrics does not contain sessionKey value");
-					return errors;
-				}
-				// Check for Thumb Print
-				if(bb.thumbprint == null || bb.thumbprint.isEmpty())
-				{
-					errors.add("Capture response biometrics does not contain thumbprint");
-					return errors;
-				}
-				// Check for Decoded biometrics data
-				if(bb.dataDecoded == null)
-				{
-					errors.add("Capture response biometrics does not contain dataDecoded");
-					return errors;
-				}
-				else {
-					errors = validateDataDecoded(bb.dataDecoded,errors);
-					return errors;
-				}
-			}else {
-				errors.add("Capture response does not contain biometrics values");
-				return errors;
 			}
+			else
+			{
+				commonValidator.setFoundMessageStatus(validation,"Found Capture Decoded is null","Capture response is empty",CommonConstant.FAILED);
+			}
+			validations.add(validation);
+		}else
+		{
+			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
 		}
-		return errors;
+		validations.add(validation);
+		return validations;
 	}
 
-	private List<String> validateDataDecoded(CaptureBiometricData dataDecoded, List<String> errors) {
+	private List<Validation> validateDataDecoded(CaptureBiometricData dataDecoded, List<Validation> validations) {
 
 		// Check for bioType in Decoded biometrics data
+		validation = commonValidator.setFieldExpected("dataDecoded.bioType","\"Finger\" | \"Iris\"| \"Face\"",dataDecoded.bioType);		
 		if(dataDecoded.bioType == null || dataDecoded.bioType.isEmpty())
 		{
-			errors.add("Capture response biometrics dataDecoded does not contain bioType");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioType,"RegistrationCapture response biometrics dataDecoded does not contain bioType",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// TODO Check for bioSubType in Decoded biometrics data
 		//check may be empty for face
-		if(dataDecoded.bioType == CommonConstant.FINGER || dataDecoded.bioType == CommonConstant.IRIS)
-
+		if(dataDecoded.bioType == CommonConstant.FINGER || dataDecoded.bioType == CommonConstant.IRIS) {
+			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","expected bioSubType value",dataDecoded.bioSubType);		
 			if( dataDecoded.bioSubType == null || dataDecoded.bioSubType.isEmpty())
 			{
-				errors.add("Capture response biometrics dataDecoded does not contain bioSubType");
+				commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Capture response biometrics dataDecoded does not contain bioSubType",CommonConstant.FAILED);
 			}
-
+			validations.add(validation);
+		}
 		// Check for bioValue in Decoded biometrics data
+		validation = commonValidator.setFieldExpected("dataDecoded.bioValue","expected bioValue block",dataDecoded.bioValue);
 		if(dataDecoded.bioValue == null || dataDecoded.bioValue.isEmpty())
 		{
-			errors.add("Capture response biometrics dataDecoded does not contain bioValue");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioValue,"Capture response biometrics dataDecoded does not contain bioValue",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for deviceCode in Decoded biometrics data
+		validation = commonValidator.setFieldExpected("dataDecoded.deviceCode","expected deviceCode value",dataDecoded.deviceCode);
 		if(dataDecoded.deviceCode == null || dataDecoded.deviceCode.isEmpty())
 		{
-			errors.add("Capture response biometrics dataDecoded does not contain deviceCode");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,dataDecoded.deviceCode,"Capture response biometrics dataDecoded does not contain deviceCode",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for deviceServiceVersion in Decoded biometrics data
+		validation = commonValidator.setFieldExpected("dataDecoded.deviceServiceVersion","expected deviceServiceVersion value",dataDecoded.deviceServiceVersion);
 		if(dataDecoded.deviceServiceVersion == null || dataDecoded.deviceServiceVersion.isEmpty())
 		{
-			errors.add("Capture response biometrics dataDecoded does not contain deviceServiceVersion");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,dataDecoded.deviceServiceVersion,"Capture response biometrics dataDecoded does not contain deviceServiceVersion",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for digitalId in Decoded biometrics data
+		validation = commonValidator.setFieldExpected("dataDecoded.digitalId","expected digitalId value",dataDecoded.digitalId);
 		if(dataDecoded.digitalId == null || dataDecoded.digitalId.isEmpty())
 		{
-			errors.add("Capture response biometrics dataDecoded does not contain digitalId");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,dataDecoded.digitalId,"Capture response biometrics dataDecoded does not contain digitalId",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for domainUri in Decoded biometrics data
+		validation = commonValidator.setFieldExpected("dataDecoded.domainUri","expected domainUri block",dataDecoded.domainUri);
 		if(dataDecoded.domainUri == null || dataDecoded.domainUri.isEmpty())
 		{
-			errors.add("Capture response biometrics dataDecoded does not contain domainUri");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,dataDecoded.domainUri,"Capture response biometrics dataDecoded does not contain domainUri",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for env in Decoded biometrics data
+		validation = commonValidator.setFieldExpected("dataDecoded.env","\"Staging\" | \"Developer\" | \"Pre-Production\" | \"Production\"",dataDecoded.env);
 		if(dataDecoded.env == null || dataDecoded.env.isEmpty())
 		{
-			errors.add("Capture response biometrics dataDecoded does not contain env");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,dataDecoded.env,"Capture response biometrics dataDecoded does not contain env",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for purpose in Decoded biometrics data
+		validation = commonValidator.setFieldExpected("dataDecoded.purpose"," \"Auth\" or \"Registration\"",dataDecoded.purpose);
 		if(dataDecoded.purpose == null || dataDecoded.purpose.isEmpty())
 		{
-			errors.add("Capture response biometrics dataDecoded does not contain purpose");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,dataDecoded.purpose,"Capture response biometrics dataDecoded does not contain purpose",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// TODO Check for qualityScore in Decoded biometrics data
 		// TODO Check for requestedScore in Decoded biometrics data
 
 		// Check for timestamp in Decoded biometrics data
+		validation = commonValidator.setFieldExpected("dataDecoded.timestamp","ISO formate timestamp",dataDecoded.timestamp);
 		if(dataDecoded.timestamp == null || dataDecoded.timestamp.isEmpty())
 		{
-			errors.add("Capture response biometrics dataDecoded does not contain timestamp");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,dataDecoded.timestamp,"Capture response biometrics dataDecoded does not contain timestamp",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
 		// Check for transactionId in Decoded biometrics data
+		validation = commonValidator.setFieldExpected("dataDecoded.transactionId","expected transactionId value",dataDecoded.transactionId);
 		if(dataDecoded.transactionId == null || dataDecoded.transactionId.isEmpty())
 		{
-			errors.add("Capture response biometrics dataDecoded does not contain transactionId");
-			return errors;
+			commonValidator.setFoundMessageStatus(validation,dataDecoded.transactionId,"Capture response biometrics dataDecoded does not contain transactionId",CommonConstant.FAILED);
 		}
+		validations.add(validation);
 
-		return errors;
+		return validations;
 	}
 	@Override
 	protected boolean checkVersionSupport(String version) {
 		//TODO
 		if(version.equals("0.9.5"))
 			return true;
-		
+
 		return false;
 	}
 	@Override

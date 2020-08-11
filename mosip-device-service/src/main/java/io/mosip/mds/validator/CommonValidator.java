@@ -1,34 +1,18 @@
 package io.mosip.mds.validator;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.security.PublicKey;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.X509Certificate;
-import java.security.spec.EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
-import org.bouncycastle.util.io.pem.PemReader;
-import org.jose4j.jwa.AlgorithmConstraints;
-import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.lang.JoseException;
 import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DigitalId;
+import io.mosip.mds.dto.Validation;
 import io.mosip.mds.util.SecurityUtil;
 
 public class CommonValidator{
@@ -41,167 +25,196 @@ public class CommonValidator{
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
 
-	public List<String> validateDecodedSignedDigitalID(String digitalId) {
-		List<String> errors= new ArrayList<>();
+	Validation validation = new Validation();
+
+	public List<Validation> validateDecodedSignedDigitalID(String digitalId) {
+		List<Validation> validations= new ArrayList<>();
 		String [] parts = digitalId.split("\\.");
+		validation = setFieldExpected("digitalId","Signed DigitalId",digitalId);	
 		if(parts.length == 3) {
 			try {
 				DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
 						DigitalId.class));
-				errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
-				if(errors.size()!=0)return errors;
-				errors=validValueDigitalIdPayload(decodedDigitalId,errors);
-
-				return errors;
+				validations=mandatoryParamDigitalIdPayload(decodedDigitalId,validations);
+				validations=validValueDigitalIdPayload(decodedDigitalId,validations);
 			} 
 			catch(Exception dex)
 			{
-				errors.add("(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage());		
+				setFoundMessageStatus(validation,digitalId,"(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage()+ dex.getMessage(),CommonConstant.FAILED);						
+				validations.add(validation);
+				return validations;
 			}
 		}
-		return errors;
+		return validations;
 	}
 
-	public List<String> validateDecodedUnSignedDigitalID(String digitalId) {
-		List<String> errors= new ArrayList<>();
+	public List<Validation> validateDecodedUnSignedDigitalID(String digitalId) {
+		List<Validation> validations= new ArrayList<>();
 		String [] parts = digitalId.split("\\.");
+		validation = setFieldExpected("digitalId","UnSigned DigitalId",digitalId);	
 		if(parts.length == 1) {
 			try {
 				DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(Base64.getUrlDecoder().decode(digitalId),
 						DigitalId.class));
-				errors=mandatoryParamDigitalIdPayload(decodedDigitalId,errors);
-				errors=validValueDigitalIdPayload(decodedDigitalId,errors);
-
-				return errors;
+				validations=mandatoryParamDigitalIdPayload(decodedDigitalId,validations);
+				validations=validValueDigitalIdPayload(decodedDigitalId,validations);
+				return validations;
 			} 
 			catch(Exception dex)
 			{
-				errors.add("(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage());		
+				setFoundMessageStatus(validation,digitalId,"(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage(),CommonConstant.FAILED);					
+				validations.add(validation);
+				return validations;
 			}
 		}else {
-			errors.add("Invalid Unsigned Digital Id");				
-			return errors; 
+			setFoundMessageStatus(validation,digitalId,"Invalid Unsigned Digital Id",CommonConstant.FAILED);
+			validations.add(validation);
 		}
-		return errors;
+		return validations;
 	}
 
-	private List<String> mandatoryParamDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<String> errors) {
+	private List<Validation> mandatoryParamDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<Validation> validations) {
 
 		//Check for Date Time
+		validation = setFieldExpected("decodedDigitalIdPayload.dateTime","ISO format with timezone",decodedDigitalIdPayload.dateTime.toString());	
 		if(decodedDigitalIdPayload.dateTime == null)
-		{
-			errors.add("Response DigitalId does not contain date and Time");
-			return errors;
+		{	
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.dateTime.toString(),"Response DigitalId does not contain date and Time",CommonConstant.FAILED);
+			validations.add(validation);
 		}
 
 		//Check for deviceProvider
+		validation = setFieldExpected("decodedDigitalIdPayload.deviceProvider","Device provider name",decodedDigitalIdPayload.deviceProvider);	
 		if(decodedDigitalIdPayload.deviceProvider == null || decodedDigitalIdPayload.deviceProvider.isEmpty())
 		{
-			errors.add("Response DigitalId does not contain deviceProvider");
-			return errors;
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceProvider,"Response DigitalId does not contain deviceProvider",CommonConstant.FAILED);
 		}
-
+		validations.add(validation);
 		//Check for deviceProviderId
+		validation = setFieldExpected("decodedDigitalIdPayload.deviceProviderId","Device provider Id issued by MOSIP adopters",decodedDigitalIdPayload.deviceProviderId);	
 		if(decodedDigitalIdPayload.deviceProviderId == null || decodedDigitalIdPayload.deviceProviderId.isEmpty())
 		{
-			errors.add("Response DigitalId does not contain deviceProviderId");
-			return errors;
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceProviderId,"Response DigitalId does not contain deviceProviderId",CommonConstant.FAILED);
 		}
-
+		validations.add(validation);
 		//Check for type element
+		validation = setFieldExpected("decodedDigitalIdPayload.type","[\"Finger\", \"Iris\", \"Face\"]",decodedDigitalIdPayload.type);	
 		if(decodedDigitalIdPayload.type == null || decodedDigitalIdPayload.type.isEmpty())
 		{
-			errors.add("Response DigitalId does not contain type block");
-			return errors;
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.type,"Response DigitalId does not contain type block",CommonConstant.FAILED);
 		}
-
+		validations.add(validation);
 		//Check for deviceSubType
+		validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","For Finger - \"Slap\", \"Single\", \"Touchless\"\r\n" + 
+				"For Iris - \"Single\", \"Double\",\r\n" + 
+				"For Face - \"Full face\"",decodedDigitalIdPayload.deviceSubType);	
 		if(decodedDigitalIdPayload.deviceSubType == null || decodedDigitalIdPayload.deviceSubType.isEmpty())
 		{
-			errors.add("Response DigitalId does not contain deviceSubType");
-			return errors;
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId does not contain deviceSubType",CommonConstant.FAILED);
 		}
-
+		validations.add(validation);
 		//Check for make element
+		validation = setFieldExpected("decodedDigitalIdPayload.make","Brand name",decodedDigitalIdPayload.make);	
 		if(decodedDigitalIdPayload.make == null || decodedDigitalIdPayload.make.isEmpty())
 		{
-			errors.add("Response DigitalId does not contain make block");
-			return errors;
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.make,"Response DigitalId does not contain make block",CommonConstant.FAILED);
 		}
-
+		validations.add(validation);
 		//Check for model element
+		validation = setFieldExpected("decodedDigitalIdPayload.model","Model of the device",decodedDigitalIdPayload.model);	
 		if(decodedDigitalIdPayload.model == null || decodedDigitalIdPayload.model.isEmpty())
 		{
-			errors.add("Response DigitalId does not contain model block");
-			return errors;
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.model,"Response DigitalId does not contain model block",CommonConstant.FAILED);
 		}
-
+		validations.add(validation);
 		//Check for serialNo element
+		validation = setFieldExpected("decodedDigitalIdPayload.serialNo","Serial number of the device",decodedDigitalIdPayload.serialNo);	
 		if(decodedDigitalIdPayload.serialNo == null || decodedDigitalIdPayload.serialNo.isEmpty())
 		{
-			errors.add("Response DigitalId does not contain serialNo block");
-			return errors;
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.serialNo,"Response DigitalId does not contain serialNo block",CommonConstant.FAILED);
 		}
-		return errors;
+		validations.add(validation);
+		return validations;
 	}
 
-	private List<String> validValueDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<String> errors) {
-
-
+	private List<Validation> validValueDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<Validation> validations) {
+		validation = setFieldExpected("decodedDigitalIdPayload.type","[\"Finger\", \"Iris\", \"Face\"]",decodedDigitalIdPayload.type);	
 		if(!decodedDigitalIdPayload.type.equals(CommonConstant.FINGER) && !decodedDigitalIdPayload.type.equals(CommonConstant.IRIS) 
 				&& !decodedDigitalIdPayload.type.equals(CommonConstant.FACE))
 		{
-			errors.add("Response DigitalId type is invalid");
-			return errors;
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.type,"Response DigitalId type is invalid",CommonConstant.FAILED);
 		}else {
-
 			//Check for bioSubType
-			errors = validateDeviceSubType(errors, decodedDigitalIdPayload);
-			if(!ObjectUtils.isEmpty(errors))
-				return errors;
+			validations = validateDeviceSubType(validations, decodedDigitalIdPayload);
+			if(!ObjectUtils.isEmpty(validations))
+				return validations;
 		}
-
+		validations.add(validation);
 		//		errors=validateTimeStamp(decodedDigitalIdPayload.dateTime.toString(),errors);
-
-		return errors;
+		return validations;
 	}
 
-	private List<String> validateDeviceSubType(List<String> errors, DigitalId decodedDigitalIdPayload) {
+	private List<Validation> validateDeviceSubType(List<Validation> validations, DigitalId decodedDigitalIdPayload) {
+		validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","For Finger - \"Slap\", \"Single\", \"Touchless\"",decodedDigitalIdPayload.deviceSubType);	
 		if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FINGER) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SLAP) 
 				&& !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SINGLE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.TOUCHLESS))
 		{
-			errors.add("Response DigitalId DeviceSubType is invalid for Finger");
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Finger",CommonConstant.FAILED);
 		}
-
+		validations.add(validation);
+		validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType",
+				"For Face - \"Full face\"",decodedDigitalIdPayload.deviceSubType);
 		if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FACE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FULL_FACE))
 		{
-			errors.add("Response DigitalId DeviceSubType is invalid for Face");
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Face",CommonConstant.FAILED);
 		}
-
+		validations.add(validation);
+		validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","For Iris - \"Single\", \"Double\"",decodedDigitalIdPayload.deviceSubType);
 		if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.IRIS) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.DOUBLE) 
 				&& !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SINGLE))
 		{
-			errors.add("Response DigitalId DeviceSubType is invalid for Iris");
+			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Iris",CommonConstant.FAILED);
 		}
-		return errors;
+		validations.add(validation);
+		return validations;
 	}
 
 	//Date and Time Validation
-	public static List<String> validateTimeStamp(String dateString,List<String> errors) {
+	public List<Validation> validateTimeStamp(String dateString,List<Validation> validations) {
+		validation = setFieldExpected("date","ISO Date formate",dateString);
 		if (Objects.isNull(dateString)) {
-			errors.add("TimeStamp is empty");
-
+			setFoundMessageStatus(validation,"timeStamp in null","TimeStamp is empty",CommonConstant.FAILED);
 		}
+		validations.add(validation);
+
 		try {
 
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PATTERN);
-			//simpleDateFormat.setLenient(false); // Don't automatically convert invalid date.
 			System.out.println(simpleDateFormat.parse(dateString));
 
 		} catch (Exception e) {
-			errors.add("TimeStamp formatte is invalid as per ISO Date formate");
+			setFoundMessageStatus(validation,"TimeStamp formatte is invalid as per ISO Date formate",e.getMessage(),CommonConstant.FAILED);
+			validations.add(validation);
 		}
-		return errors;
+		return validations;
 	}
+
+	public void setFoundMessageStatus(Validation validation,String found,String message,String status) {
+		validation.setFound(found);
+		validation.setMessage(message);
+		validation.setStatus(status);
+	}
+	public Validation setFieldExpected(String field,String expected, String found){
+		Validation validation=new Validation();
+		validation.setField(field);
+		validation.setExpected(expected);
+		if(found != null) {
+			validation.setFound(found);
+		}
+		validation.setMessage(CommonConstant.MATCHED);
+		validation.setStatus(CommonConstant.SUCCESS);
+		return validation;
+	}
+
 }
 
