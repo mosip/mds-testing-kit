@@ -29,7 +29,7 @@ public class CreateDevice extends Util{
 			createDeviceDTO.getRequest().setId(id);
 			createDeviceDTO.getRequest().setLangCode(langCode);
 			createDeviceDTO.getRequest().setMacAddress(commonDataProp.get("macAddress"));
-			createDeviceDTO.getRequest().setName(commonDataProp.get("name"));
+			createDeviceDTO.getRequest().setName(prop.get("name"));
 			createDeviceDTO.getRequest().setSerialNum(prop.get("serialNo"));
 			createDeviceDTO.getRequest().setValidityDateTime(commonDataProp.get("validityDateTime"));
 			createDeviceDTO.getRequest().setZoneCode(commonDataProp.get("zoneCode"));
