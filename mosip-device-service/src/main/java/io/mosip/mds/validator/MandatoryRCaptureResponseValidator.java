@@ -112,7 +112,7 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 	private List<Validation> validateDataDecoded(CaptureBiometricData dataDecoded, List<Validation> validations) {
 
 		// Check for bioType in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.bioType","\"Finger\" | \"Iris\"| \"Face\"",dataDecoded.bioType);		
+		validation = commonValidator.setFieldExpected("dataDecoded.bioType","Finger | Iris| Face",dataDecoded.bioType);		
 		if(dataDecoded.bioType == null || dataDecoded.bioType.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioType,"RegistrationCapture response biometrics dataDecoded does not contain bioType",CommonConstant.FAILED);
@@ -162,7 +162,7 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for env in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.env","\"Staging\" | \"Developer\" | \"Pre-Production\" | \"Production\"",dataDecoded.env);
+		validation = commonValidator.setFieldExpected("dataDecoded.env","Staging | Developer | Pre-Production | Production",dataDecoded.env);
 		if(dataDecoded.env == null || dataDecoded.env.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.env,"RegistrationCapture response biometrics dataDecoded does not contain env",CommonConstant.FAILED);
@@ -170,7 +170,7 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for purpose in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.purpose"," \"Auth\" or \"Registration\"",dataDecoded.purpose);
+		validation = commonValidator.setFieldExpected("dataDecoded.purpose"," Auth or Registration",dataDecoded.purpose);
 		if(dataDecoded.purpose == null || dataDecoded.purpose.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.purpose,"RegistrationCapture response biometrics dataDecoded does not contain purpose",CommonConstant.FAILED);
