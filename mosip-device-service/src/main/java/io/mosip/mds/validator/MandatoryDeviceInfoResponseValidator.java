@@ -1,8 +1,12 @@
 package io.mosip.mds.validator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
@@ -17,19 +21,20 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 	Validation validation = new Validation();
 
 	CommonValidator commonValidator = new CommonValidator();
-
+	ObjectMapper jsonMapper = new ObjectMapper();
+	
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
 
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",response.toString());		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
 		if(Objects.isNull(response))
 		{
 			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 
-		validation = commonValidator.setFieldExpected("response.getMdsDecodedResponse()","Expected whole divice info decoded Jsone Response",response.getMdsDecodedResponse().toString());		
+		validation = commonValidator.setFieldExpected("response.getMdsDecodedResponse()","Expected whole divice info decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));		
 		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(deviceInfoResponse))
 		{
@@ -68,7 +73,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for deviceStatus block
-		validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceStatus","\"Ready\" | \"Busy\" | \"Not Ready\" | \"Not Registered\"",deviceInfoResponse.deviceStatus);
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceStatus","Ready | Busy | Not Ready | Not Registered",deviceInfoResponse.deviceStatus);
 		if(deviceInfoResponse.deviceStatus == null || deviceInfoResponse.deviceStatus.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceStatus,"DeviceInfo response does not contain deviceStatus",CommonConstant.FAILED);
@@ -76,10 +81,10 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		validations.add(validation);
 
 		// TODO Check for deviceSubId block
-		validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceSubId","[0,1,2,3]",deviceInfoResponse.deviceSubId.toString());
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceSubId","[0,1,2,3]",Arrays.toString(deviceInfoResponse.deviceSubId));
 		if(deviceInfoResponse.deviceSubId == null || deviceInfoResponse.deviceSubId.length == 0)
 		{
-			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceSubId.toString(),"DeviceInfo response does not contain deviceSubId",CommonConstant.FAILED);
+			commonValidator.setFoundMessageStatus(validation,Arrays.toString(deviceInfoResponse.deviceSubId),"DeviceInfo response does not contain deviceSubId",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 
@@ -92,7 +97,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for env block
-		validation = commonValidator.setFieldExpected("deviceInfoResponse.env","\"Staging\" | \"Developer\" | \"Pre-Production\" | \"Production\" | \"None\"",deviceInfoResponse.env);
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.env","Staging | Developer | Pre-Production | Production | None",deviceInfoResponse.env);
 		if(deviceInfoResponse.env == null || deviceInfoResponse.env.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.env,"DeviceInfo response does not contain env",CommonConstant.FAILED);
@@ -100,7 +105,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for purpose block
-		validation = commonValidator.setFieldExpected("deviceInfoResponse.purpose"," \"Auth\" or \"Registration\" or empty in case the status is \"Not Registered\"",deviceInfoResponse.purpose);
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.purpose"," Auth or Registration or empty in case the status is \"Not Registered\"",deviceInfoResponse.purpose);
 		if( (deviceInfoResponse.deviceStatus != CommonConstant.NOT_REGISTERED) && (deviceInfoResponse.purpose == null || deviceInfoResponse.purpose.isEmpty()))
 		{
 			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.purpose,"DeviceInfo response does not contain purpose",CommonConstant.FAILED);
@@ -116,10 +121,10 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		validations.add(validation);
 
 		// TODO Check for specVersion block
-		validation = commonValidator.setFieldExpected("deviceInfoResponse.specVersion","Array of supported MDS specification version",deviceInfoResponse.specVersion.toString());
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.specVersion","Array of supported MDS specification version",Arrays.toString(deviceInfoResponse.specVersion));
 		if(deviceInfoResponse.specVersion == null || deviceInfoResponse.specVersion.length == 0)
 		{
-			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.specVersion.toString(),"DeviceInfo response does not contain specVersion",CommonConstant.FAILED);
+			commonValidator.setFoundMessageStatus(validation,Arrays.toString(deviceInfoResponse.specVersion),"DeviceInfo response does not contain specVersion",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 

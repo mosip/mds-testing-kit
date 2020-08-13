@@ -6,11 +6,12 @@ import java.util.Objects;
 
 import org.springframework.util.ObjectUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
-import io.mosip.mds.dto.RegistrationCaptureResponse;
-import io.mosip.mds.dto.RegistrationCaptureResponse.RegistrationCaptureBiometric;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
@@ -24,16 +25,18 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 	Validation validation = new Validation();
 
 	CommonValidator commonValidator = new CommonValidator();
-
+	ObjectMapper jsonMapper = new ObjectMapper();
+	
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
-
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));
 		if(Objects.nonNull(response))
 		{
 			// Check for Biometrics block
 			CaptureResponse registrationCaptureResponse = (CaptureResponse) response.getMdsDecodedResponse();
-
+			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole Capture decoded Jsone Response",response.getMdsDecodedResponse().toString());
+			
 			if(Objects.nonNull(registrationCaptureResponse))
 			{
 				validation = commonValidator.setFieldExpected("registrationCaptureResponse.analysisError",

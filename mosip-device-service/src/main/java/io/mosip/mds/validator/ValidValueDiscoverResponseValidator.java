@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
@@ -18,11 +21,11 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 	Validation validation = new Validation();
 
 	CommonValidator commonValidator = new CommonValidator();
-
+	ObjectMapper jsonMapper = new ObjectMapper();
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations=new ArrayList<Validation>();
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",response.toString());		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
 		if(Objects.nonNull(response))
 		{
 			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole discover decoded Jsone Response",response.getMdsDecodedResponse().toString());		

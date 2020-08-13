@@ -1,8 +1,12 @@
 package io.mosip.mds.validator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
@@ -17,19 +21,19 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 	Validation validation = new Validation();
 
 	CommonValidator commonValidator = new CommonValidator();
-
+	ObjectMapper jsonMapper = new ObjectMapper();
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 
 		List<Validation> validations = new ArrayList<>();		
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",response.toString());		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
 		if(Objects.isNull(response))
 		{
 			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 		DiscoverResponse discoverResponse = (DiscoverResponse) response.getMdsDecodedResponse();
-		validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole discover decoded Jsone Response",response.getMdsDecodedResponse().toString());
+		validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole discover decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
 		if(Objects.isNull(discoverResponse))
 		{
 			commonValidator.setFoundMessageStatus(validation,"Found Discover Decoded is null","Discover response is empty",CommonConstant.FAILED);
@@ -75,10 +79,10 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 		validations.add(validation);
 
 		// TODO Check for deviceSubId block
-		validation = commonValidator.setFieldExpected("discoverResponse.deviceSubId","[0/1/2/3]",discoverResponse.toString());
+		validation = commonValidator.setFieldExpected("discoverResponse.deviceSubId","[0/1/2/3]",Arrays.toString(discoverResponse.deviceSubId));
 		if(discoverResponse.deviceSubId == null || discoverResponse.deviceSubId.length == 0)
 		{
-			commonValidator.setFoundMessageStatus(validation,discoverResponse.deviceSubId.toString(),"Device Discover response does not contain deviceSubId",CommonConstant.FAILED);
+			commonValidator.setFoundMessageStatus(validation,Arrays.toString(discoverResponse.deviceSubId),"Device Discover response does not contain deviceSubId",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 
@@ -99,10 +103,10 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 		validations.add(validation);
 
 		// TODO Check for specVersion block
-		validation = commonValidator.setFieldExpected("discoverResponse.specVersion","Array of supported MDS specification version",discoverResponse.specVersion.toString());
+		validation = commonValidator.setFieldExpected("discoverResponse.specVersion","Array of supported MDS specification version",Arrays.toString(discoverResponse.specVersion));
 		if(discoverResponse.specVersion == null || discoverResponse.specVersion.length == 0)
 		{
-			commonValidator.setFoundMessageStatus(validation,discoverResponse.specVersion.toString(),"Device Discover response does not contain specVersion",CommonConstant.FAILED);
+			commonValidator.setFoundMessageStatus(validation,Arrays.toString(discoverResponse.specVersion),"Device Discover response does not contain specVersion",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 		return validations;

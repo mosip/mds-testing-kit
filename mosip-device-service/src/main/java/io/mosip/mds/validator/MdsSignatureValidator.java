@@ -23,6 +23,7 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.lang.JoseException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -44,7 +45,8 @@ public class MdsSignatureValidator extends Validator{
 	Validation validation = new Validation();
 
 	CommonValidator commonValidator = new CommonValidator();
-
+	ObjectMapper jsonMapper = new ObjectMapper();
+	
 	static {
 		mapper = new ObjectMapper();
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -56,9 +58,9 @@ public class MdsSignatureValidator extends Validator{
 	}
 
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",response.toString());		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
 		if(Objects.nonNull(response))
 		{
 			if(response.getIntent().equals(Intent.DeviceInfo)) {

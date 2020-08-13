@@ -3,11 +3,15 @@ package io.mosip.mds.entitiy;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.dto.ValidationTestResultDto;
 import io.mosip.mds.dto.postresponse.ValidationResult;
 import io.mosip.mds.validator.CommonConstant;
+import io.mosip.mds.validator.CommonValidator;
 
 public abstract class Validator {
 
@@ -34,6 +38,9 @@ public abstract class Validator {
 
 	public String Description;
 
+
+	ObjectMapper jsonMapper = new ObjectMapper();
+
 	public final ValidationResult Validate(ValidateResponseRequestDto response)
 	{
 		ValidationResult validationResult = new ValidationResult();
@@ -41,11 +48,15 @@ public abstract class Validator {
 		validationResult.validationDescription = Description;
 		ValidationStatus status = ValidationStatus.Pending;
 		//ValidationTestResultDto validationTestResultDto = =new ;
-		ValidationTestResultDto validationTestResult = new ValidationTestResultDto();
-		validationTestResult.setDecodedData(response.getMdsDecodedResponse().toString());
+		ValidationTestResultDto validationTestResult = new ValidationTestResultDto(); 
+		List<Validation> validations = new ArrayList<Validation>();
+		Validation validationException = new Validation();
+		CommonValidator commonValidator=new CommonValidator();
 
 		try{
-			List<Validation> validations=DoValidate(response);
+			validationException=commonValidator.setFieldExpected("response", "Expected Valid whole json response", jsonMapper.writeValueAsString(response));			
+			validationTestResult.setDecodedData(jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
+			validations=DoValidate(response);
 			validationTestResult.setValidations(validations);
 			status = ValidationStatus.Passed;
 			for( Validation validation:validations) {
@@ -55,24 +66,35 @@ public abstract class Validator {
 			}
 			// if(status != ValidationStatus.Passed)
 			validationResult.validationTestResultDtos.add(validationTestResult);
+		}catch (JsonProcessingException ex) {
+			status = ValidationStatus.Failed;
+			validationException.setStatus(ValidationStatus.Failed.name());
+			validationException.setMessage("Failed due to JsonProcessingException -> " + ex.getMessage());
+			validations.add(validationException);
+			validationTestResult.setValidations(validations);
+			validationResult.validationTestResultDtos.add(validationTestResult);
+		}catch (NullPointerException ex) {
+			status = ValidationStatus.Failed;
+			validationException.setStatus(ValidationStatus.Failed.name());
+			validationException.setMessage("Failed due to NullPointerException -> " + ex.getMessage());
+			validations.add(validationException);
+			validationTestResult.setValidations(validations);
+			validationResult.validationTestResultDtos.add(validationTestResult);
 		}
 		catch(Exception ex)
 		{
-			status = ValidationStatus.InternalException;
-			List<Validation> validations = new ArrayList<Validation>();
-			Validation validation = new Validation();
-			validation.setStatus(ValidationStatus.InternalException.name());
-			validation.setMessage(ex.getMessage());
-			validations.add(validation);
+			status = ValidationStatus.Failed;
+			validationException.setStatus(ValidationStatus.Failed.name());
+			validationException.setMessage("Failed due to Exception-> " + ex.getMessage());
+			validations.add(validationException);
 			validationTestResult.setValidations(validations);
-			validationResult.validationTestResultDtos.add(validationTestResult);
-			return validationResult;
+			validationResult.validationTestResultDtos.add(validationTestResult);			
 		}
 		validationResult.status = status.name();
 		return validationResult;
 	}
 
-	protected abstract List<Validation> DoValidate(ValidateResponseRequestDto response);
+	protected abstract List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException;
 
 	protected abstract boolean checkVersionSupport(String version);
 

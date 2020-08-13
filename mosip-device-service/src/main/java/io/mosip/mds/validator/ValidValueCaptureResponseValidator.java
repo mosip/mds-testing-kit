@@ -1,11 +1,13 @@
 package io.mosip.mds.validator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import org.springframework.util.ObjectUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.CaptureResponse;
@@ -22,22 +24,26 @@ public class ValidValueCaptureResponseValidator extends Validator {
 	Validation validation = new Validation();
 
 	CommonValidator commonValidator = new CommonValidator();
-
+	ObjectMapper jsonMapper = new ObjectMapper();
+	
 	public ValidValueCaptureResponseValidator() {
 		super("ValidValueCaptureResponseValidator", "Valid Value Capture Response Validator");
 	}
 	private static ObjectMapper mapper=new ObjectMapper();;
 
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
 		if(Objects.nonNull(response))
 		{
+			validations.add(validation);
 			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole Capture decoded Jsone Response",response.getMdsDecodedResponse().toString());
 			CaptureResponse cr = (CaptureResponse) response.getMdsDecodedResponse();
 			if(Objects.nonNull(cr))
 			{
-				validation = commonValidator.setFieldExpected("registrationCaptureResponse.biometrics","Expected Array of biometric data",cr.biometrics.toString());
+				validations.add(validation);
+				validation = commonValidator.setFieldExpected("registrationCaptureResponse.biometrics","Expected Array of biometric data",Arrays.toString(cr.biometrics));
 				if(cr.biometrics == null || cr.biometrics.length == 0)
 				{
 					commonValidator.setFoundMessageStatus(validation,cr.biometrics.toString(),"Capture response does not contain biometrics block",CommonConstant.FAILED);
@@ -70,13 +76,15 @@ public class ValidValueCaptureResponseValidator extends Validator {
 			else
 			{
 				commonValidator.setFoundMessageStatus(validation,"Found Capture Decoded is null","Capture response is empty",CommonConstant.FAILED);
+				validations.add(validation);
 			}
-			validations.add(validation);
+
 		}else
 		{
 			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
+			validations.add(validation);
 		}
-		validations.add(validation);
+
 		return validations;
 	}
 
@@ -94,6 +102,10 @@ public class ValidValueCaptureResponseValidator extends Validator {
 				return validations;
 		}
 		validations.add(validation);
+
+		//TODO Check for digitalId dataDecoded.digitalId
+		validations=validateDigitalId(validations,dataDecoded);
+
 		//Check for purpose elements
 		validation = commonValidator.setFieldExpected("dataDecoded.purpose"," \"Auth\" or \"Registration\"",dataDecoded.purpose);
 		if(!dataDecoded.purpose.equals(CommonConstant.AUTH) && !dataDecoded.purpose.equals(CommonConstant.REGISTRATION) )
@@ -108,41 +120,43 @@ public class ValidValueCaptureResponseValidator extends Validator {
 	}
 
 	private List<Validation> validateBioSubType(List<Validation> validations, CaptureBiometricData dataDecoded) {
+		switch(dataDecoded.bioType) {
 		// Check for bioSubType of Finger elements
-		validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","For Finger: [\"Left IndexFinger\", \"Left MiddleFinger\", "
-				+ "\"Left RingFinger\", \"Left LittleFinger\", \"Left Thumb\", \"Right IndexFinger\","
-				+ " \"Right MiddleFinger\", \"Right RingFinger\", \"Right LittleFinger\", \"Right Thumb\", \"UNKNOWN\"] ",dataDecoded.bioSubType);		
-		if(dataDecoded.bioType.equals(CommonConstant.FINGER) &&
-				!bioSubTypeFingerList.contains(dataDecoded.bioSubType))
-		{
-			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Capture response bioSubType is invalid for Finger",CommonConstant.FAILED);
-		}
-		validations.add(validation);
-		// Check for bioSubType of Iris elements
-		validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","[\"Left\", \"Right\", \"UNKNOWN\"]",dataDecoded.bioSubType);
-		if(dataDecoded.bioType.equals(CommonConstant.IRIS) &&
-				!bioSubTypeIrisList.contains(dataDecoded.bioSubType))
-		{
-			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Capture response bioSubType is invalid for Iris",CommonConstant.FAILED);
-		}
-		validations.add(validation);
-		// Check for bioSubType of Face elements
-		validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","No bioSubType",dataDecoded.bioSubType);
-		if(dataDecoded.bioType.equals(CommonConstant.FACE) &&
-				!(dataDecoded.bioSubType == null || dataDecoded.bioSubType.isEmpty()))
-		{
-			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Capture response bioSubType is invalid for Face",CommonConstant.FAILED);
-		}
-		validations.add(validation);
+		case CommonConstant.FINGER:
+			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","For Finger: [\"Left IndexFinger\", \"Left MiddleFinger\", "
+					+ "\"Left RingFinger\", \"Left LittleFinger\", \"Left Thumb\", \"Right IndexFinger\","
+					+ " \"Right MiddleFinger\", \"Right RingFinger\", \"Right LittleFinger\", \"Right Thumb\", \"UNKNOWN\"] ",dataDecoded.bioSubType);		
+			if(!bioSubTypeFingerList.contains(dataDecoded.bioSubType))
+			{
+				commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Capture response bioSubType is invalid for Finger",CommonConstant.FAILED);
+			}
+			validations.add(validation);
+			break;
 
-		//TODO Check for digitalId dataDecoded.digitalId
-		validations=validateDigitalId(dataDecoded, validations);
+		case CommonConstant.IRIS:
+			// Check for bioSubType of Iris elements
+			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","[\"Left\", \"Right\", \"UNKNOWN\"]",dataDecoded.bioSubType);
+			if(!bioSubTypeIrisList.contains(dataDecoded.bioSubType))
+			{
+				commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Capture response bioSubType is invalid for Iris",CommonConstant.FAILED);
+			}
+			validations.add(validation);
+			break;
+		case CommonConstant.FACE:	
+			// Check for bioSubType of Face elements
+			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","No bioSubType",dataDecoded.bioSubType);
+			if(!(dataDecoded.bioSubType == null || dataDecoded.bioSubType.isEmpty()))
+			{
+				commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Capture response bioSubType for Face should be empty",CommonConstant.FAILED);
+			}
+			validations.add(validation);
+		}
 		return validations;
 	}
 
-	private List<Validation> validateDigitalId(CaptureBiometricData dataDecoded,List<Validation> validations) {
+	private List<Validation> validateDigitalId(List<Validation> validations,CaptureBiometricData dataDecoded) {
 		CommonValidator commonValidator=new CommonValidator();
-		validations = commonValidator.validateDecodedSignedDigitalID(dataDecoded.digitalId);
+		validations = commonValidator.validateDecodedSignedDigitalID(dataDecoded.digitalId,validations);
 		return validations;
 	}
 

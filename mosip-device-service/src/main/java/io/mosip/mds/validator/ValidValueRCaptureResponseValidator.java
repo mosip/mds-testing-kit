@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.jose4j.lang.JoseException;
 import org.springframework.util.ObjectUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.CaptureResponse;
@@ -26,14 +27,15 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 	Validation validation = new Validation();
 
 	CommonValidator commonValidator = new CommonValidator();
+	ObjectMapper jsonMapper = new ObjectMapper();
 	public ValidValueRCaptureResponseValidator() {
 		super("ValidValueRCaptureResponseValidator", "Valid Value Registration Capture Response Validator");
 	}
 
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",response.toString());		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
 		if(Objects.nonNull(response))
 		{
 			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole RCapture decoded Jsone Response",response.getMdsDecodedResponse().toString());
@@ -143,7 +145,7 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 
 	private List<Validation> validateDigitalId(CaptureBiometricData dataDecoded,List<Validation> validations) {
 		CommonValidator commonValidator=new CommonValidator();
-		validations = commonValidator.validateDecodedSignedDigitalID(dataDecoded.digitalId);
+		validations = commonValidator.validateDecodedSignedDigitalID(dataDecoded.digitalId,validations);
 		return validations;
 	}
 

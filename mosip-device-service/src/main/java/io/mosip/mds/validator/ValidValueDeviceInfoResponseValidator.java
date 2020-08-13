@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,7 +20,8 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 	Validation validation = new Validation();
 
 	CommonValidator commonValidator = new CommonValidator();
-
+	ObjectMapper jsonMapper = new ObjectMapper();
+	
 	static {
 		mapper = new ObjectMapper();
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -28,10 +30,10 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		super("ValidValueDeviceInfoResponseValidator", "Valid Value Device Info Response Validator");
 	}
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
 
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",response.toString());	
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));	
 		if(Objects.nonNull(response))
 		{
 			DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
@@ -111,7 +113,7 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		if(deviceInfoResponse.certification.equals(CommonConstant.L0) && deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
 			validations = commonValidator.validateDecodedUnSignedDigitalID(deviceInfoResponse.digitalId);
 		else
-			validations = commonValidator.validateDecodedSignedDigitalID(deviceInfoResponse.digitalId);
+			validations = commonValidator.validateDecodedSignedDigitalID(deviceInfoResponse.digitalId,validations);
 		return validations;
 	}
 

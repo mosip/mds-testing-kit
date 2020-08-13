@@ -27,11 +27,12 @@ public class CommonValidator{
 
 	Validation validation = new Validation();
 
-	public List<Validation> validateDecodedSignedDigitalID(String digitalId) {
-		List<Validation> validations= new ArrayList<>();
+	public List<Validation> validateDecodedSignedDigitalID(String digitalId, List<Validation> validations) {
 		String [] parts = digitalId.split("\\.");
 		validation = setFieldExpected("digitalId","Signed DigitalId",digitalId);	
 		if(parts.length == 3) {
+			validations.add(validation);
+			
 			try {
 				DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
 						DigitalId.class));
@@ -40,10 +41,13 @@ public class CommonValidator{
 			} 
 			catch(Exception dex)
 			{
-				setFoundMessageStatus(validation,digitalId,"(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage()+ dex.getMessage(),CommonConstant.FAILED);						
+				setFoundMessageStatus(validation,digitalId,"(Invalid Digital Id) Error interpreting digital id: " + dex.getMessage(),CommonConstant.FAILED);						
 				validations.add(validation);
 				return validations;
 			}
+		}else {
+			setFoundMessageStatus(validation,digitalId,"Invalid signed base64urlEncoded digitalId" ,CommonConstant.FAILED);						
+			validations.add(validation);
 		}
 		return validations;
 	}
@@ -98,16 +102,16 @@ public class CommonValidator{
 		}
 		validations.add(validation);
 		//Check for type element
-		validation = setFieldExpected("decodedDigitalIdPayload.type","[\"Finger\", \"Iris\", \"Face\"]",decodedDigitalIdPayload.type);	
+		validation = setFieldExpected("decodedDigitalIdPayload.type","[Finger, Iris, Face]",decodedDigitalIdPayload.type);	
 		if(decodedDigitalIdPayload.type == null || decodedDigitalIdPayload.type.isEmpty())
 		{
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.type,"Response DigitalId does not contain type block",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 		//Check for deviceSubType
-		validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","For Finger - \"Slap\", \"Single\", \"Touchless\"\r\n" + 
-				"For Iris - \"Single\", \"Double\",\r\n" + 
-				"For Face - \"Full face\"",decodedDigitalIdPayload.deviceSubType);	
+		validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","\r\n For Finger - Slap, Single, Touchless \r\n" + 
+				"For Iris - Single, Double,\r\n" + 
+				"For Face - Full face",decodedDigitalIdPayload.deviceSubType);	
 		if(decodedDigitalIdPayload.deviceSubType == null || decodedDigitalIdPayload.deviceSubType.isEmpty())
 		{
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId does not contain deviceSubType",CommonConstant.FAILED);
@@ -138,7 +142,7 @@ public class CommonValidator{
 	}
 
 	private List<Validation> validValueDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<Validation> validations) {
-		validation = setFieldExpected("decodedDigitalIdPayload.type","[\"Finger\", \"Iris\", \"Face\"]",decodedDigitalIdPayload.type);	
+		validation = setFieldExpected("decodedDigitalIdPayload.type","[Finger | Iris | Face]",decodedDigitalIdPayload.type);	
 		if(!decodedDigitalIdPayload.type.equals(CommonConstant.FINGER) && !decodedDigitalIdPayload.type.equals(CommonConstant.IRIS) 
 				&& !decodedDigitalIdPayload.type.equals(CommonConstant.FACE))
 		{
@@ -155,27 +159,39 @@ public class CommonValidator{
 	}
 
 	private List<Validation> validateDeviceSubType(List<Validation> validations, DigitalId decodedDigitalIdPayload) {
-		validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","For Finger - \"Slap\", \"Single\", \"Touchless\"",decodedDigitalIdPayload.deviceSubType);	
-		if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FINGER) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SLAP) 
-				&& !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SINGLE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.TOUCHLESS))
-		{
-			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Finger",CommonConstant.FAILED);
+
+		switch(decodedDigitalIdPayload.deviceSubType) {
+		case CommonConstant.FACE:
+			validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType",
+					"For Face - Full face",decodedDigitalIdPayload.deviceSubType);
+			if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FACE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FULL_FACE))
+			{
+				setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Face",CommonConstant.FAILED);
+			}
+			validations.add(validation);
+			break;
+
+		case CommonConstant.FINGER:
+			validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","For Finger - Slap, Single, Touchless",decodedDigitalIdPayload.deviceSubType);	
+			if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FINGER) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SLAP) 
+					&& !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SINGLE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.TOUCHLESS))
+			{
+				setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Finger",CommonConstant.FAILED);
+			}
+			validations.add(validation);
+			break;
+		case CommonConstant.IRIS:
+			validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","For Iris - Single, Double",decodedDigitalIdPayload.deviceSubType);
+			if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.IRIS) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.DOUBLE) 
+					&& !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SINGLE))
+			{
+				setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Iris",CommonConstant.FAILED);
+			}
+			validations.add(validation);
+			break;
+
 		}
-		validations.add(validation);
-		validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType",
-				"For Face - \"Full face\"",decodedDigitalIdPayload.deviceSubType);
-		if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FACE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FULL_FACE))
-		{
-			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Face",CommonConstant.FAILED);
-		}
-		validations.add(validation);
-		validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","For Iris - \"Single\", \"Double\"",decodedDigitalIdPayload.deviceSubType);
-		if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.IRIS) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.DOUBLE) 
-				&& !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SINGLE))
-		{
-			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Iris",CommonConstant.FAILED);
-		}
-		validations.add(validation);
+
 		return validations;
 	}
 

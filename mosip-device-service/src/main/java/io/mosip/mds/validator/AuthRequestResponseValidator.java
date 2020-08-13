@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
@@ -19,26 +22,33 @@ public class AuthRequestResponseValidator extends Validator{
 
 	CommonValidator commonValidator = new CommonValidator();
 	CreateAuthRequest createAuthRequest = new CreateAuthRequest();
-
+	ObjectMapper jsonMapper = new ObjectMapper();
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations= new ArrayList<>();
 		validations = validateAuthResponse(response,validations);
 		return validations;
 	}
 
-	private List<Validation> validateAuthResponse(ValidateResponseRequestDto response, List<Validation> validations) {
+	private List<Validation> validateAuthResponse(ValidateResponseRequestDto response, List<Validation> validations) throws JsonProcessingException {
 		//AuthResponseDTO authResponseDTO = new AuthResponseDTO();
-		validation = commonValidator.setFieldExpected("response","Response Field",response.toString());
+
+		validation = commonValidator.setFieldExpected("response","Response Field",jsonMapper.writeValueAsString(response));
+
 		if(Objects.nonNull(response))
 		{
+			validations.add(validation);
 			try {
+				validation = commonValidator.setFieldExpected("authResponse","authResponse Field",null);				
+
 				Object authResponse = createAuthRequest.authenticateResponse(response);
-				commonValidator.setFoundMessageStatus(validation,authResponse.toString(),"Response from AUTH",CommonConstant.SUCCESS);
-				
+				validation = commonValidator.setFieldExpected("authResponse","authResponse Field",jsonMapper.writeValueAsString(authResponse));				
+				commonValidator.setFoundMessageStatus(validation,jsonMapper.writeValueAsString(authResponse),"Response from AUTH",CommonConstant.SUCCESS);
+
 			} catch (Exception e) {
-				commonValidator.setFoundMessageStatus(validation,"Exception while processing",e.getMessage(),CommonConstant.FAILED);
+				commonValidator.setFoundMessageStatus(validation,"Exception while processing authentication",e.getMessage(),CommonConstant.FAILED);
 				validations.add(validation);
+				return validations;
 			}
 			validations.add(validation);
 		}

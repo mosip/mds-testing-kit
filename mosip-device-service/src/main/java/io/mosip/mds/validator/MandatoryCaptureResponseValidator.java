@@ -6,6 +6,9 @@ import java.util.Objects;
 
 import org.springframework.util.ObjectUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
@@ -20,21 +23,23 @@ public class MandatoryCaptureResponseValidator extends Validator {
 	Validation validation = new Validation();
 
 	CommonValidator commonValidator = new CommonValidator();
+	ObjectMapper jsonMapper = new ObjectMapper();
+	
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
 		// Check for Biometrics block
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));
 		if(Objects.nonNull(response))
 		{
-
+			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole Capture decoded Jsone Response",response.getMdsDecodedResponse().toString());
 			CaptureResponse cr = (CaptureResponse) response.getMdsDecodedResponse();
-			if(Objects.isNull(cr))
+			if(Objects.nonNull(cr))
 			{
-
-				validation = commonValidator.setFieldExpected("CaptureResponse.biometrics","Expected Array of biometric data",cr.biometrics.toString());
+				validation = commonValidator.setFieldExpected("CaptureResponse.biometrics","Expected Array of biometric data",jsonMapper.writeValueAsString(cr.biometrics));
 				if(cr.biometrics == null || cr.biometrics.length == 0)
 				{
-					commonValidator.setFoundMessageStatus(validation,cr.biometrics.toString(),"Capture response does not contain biometrics block",CommonConstant.FAILED);
+					commonValidator.setFoundMessageStatus(validation,jsonMapper.writeValueAsString(cr.biometrics),"Capture response does not contain biometrics block",CommonConstant.FAILED);
 				}
 				validations.add(validation);
 
@@ -78,10 +83,10 @@ public class MandatoryCaptureResponseValidator extends Validator {
 						}
 						validations.add(validation);
 						// Check for Decoded biometrics data
-						validation = commonValidator.setFieldExpected("biometrics.dataDecoded","Expected dataDecoded block",bb.dataDecoded.toString());
+						validation = commonValidator.setFieldExpected("biometrics.dataDecoded","Expected dataDecoded block",jsonMapper.writeValueAsString(bb.dataDecoded));
 						if(bb.dataDecoded == null)
 						{
-							commonValidator.setFoundMessageStatus(validation,bb.dataDecoded.toString(),"Capture response biometrics does not contain dataDecoded",CommonConstant.FAILED);
+							commonValidator.setFoundMessageStatus(validation,jsonMapper.writeValueAsString(bb.dataDecoded),"Capture response biometrics does not contain dataDecoded",CommonConstant.FAILED);
 							validations.add(validation);
 						}
 
@@ -111,7 +116,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 	private List<Validation> validateDataDecoded(CaptureBiometricData dataDecoded, List<Validation> validations) {
 
 		// Check for bioType in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.bioType","\"Finger\" | \"Iris\"| \"Face\"",dataDecoded.bioType);		
+		validation = commonValidator.setFieldExpected("dataDecoded.bioType","Finger | Iris| Face",dataDecoded.bioType);		
 		if(dataDecoded.bioType == null || dataDecoded.bioType.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioType,"RegistrationCapture response biometrics dataDecoded does not contain bioType",CommonConstant.FAILED);
@@ -129,7 +134,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 			validations.add(validation);
 		}
 		// Check for bioValue in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.bioValue","expected bioValue block",dataDecoded.bioValue);
+		validation = commonValidator.setFieldExpected("dataDecoded.bioValue","encrypted with session key and base64urlencoded biometric data",dataDecoded.bioValue);
 		if(dataDecoded.bioValue == null || dataDecoded.bioValue.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioValue,"Capture response biometrics dataDecoded does not contain bioValue",CommonConstant.FAILED);
@@ -137,7 +142,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for deviceCode in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.deviceCode","expected deviceCode value",dataDecoded.deviceCode);
+		validation = commonValidator.setFieldExpected("dataDecoded.deviceCode","A unique code given by MOSIP after successful registration",dataDecoded.deviceCode);
 		if(dataDecoded.deviceCode == null || dataDecoded.deviceCode.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.deviceCode,"Capture response biometrics dataDecoded does not contain deviceCode",CommonConstant.FAILED);
@@ -161,7 +166,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for domainUri in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.domainUri","expected domainUri block",dataDecoded.domainUri);
+		validation = commonValidator.setFieldExpected("dataDecoded.domainUri","uri of the auth server",dataDecoded.domainUri);
 		if(dataDecoded.domainUri == null || dataDecoded.domainUri.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.domainUri,"Capture response biometrics dataDecoded does not contain domainUri",CommonConstant.FAILED);
@@ -169,7 +174,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for env in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.env","\"Staging\" | \"Developer\" | \"Pre-Production\" | \"Production\"",dataDecoded.env);
+		validation = commonValidator.setFieldExpected("dataDecoded.env","Staging | Developer | Pre-Production | Production",dataDecoded.env);
 		if(dataDecoded.env == null || dataDecoded.env.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.env,"Capture response biometrics dataDecoded does not contain env",CommonConstant.FAILED);
@@ -177,7 +182,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for purpose in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.purpose"," \"Auth\" or \"Registration\"",dataDecoded.purpose);
+		validation = commonValidator.setFieldExpected("dataDecoded.purpose"," Auth or Registration",dataDecoded.purpose);
 		if(dataDecoded.purpose == null || dataDecoded.purpose.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.purpose,"Capture response biometrics dataDecoded does not contain purpose",CommonConstant.FAILED);
@@ -196,7 +201,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for transactionId in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.transactionId","expected transactionId value",dataDecoded.transactionId);
+		validation = commonValidator.setFieldExpected("dataDecoded.transactionId","Unique transaction id",dataDecoded.transactionId);
 		if(dataDecoded.transactionId == null || dataDecoded.transactionId.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.transactionId,"Capture response biometrics dataDecoded does not contain transactionId",CommonConstant.FAILED);
