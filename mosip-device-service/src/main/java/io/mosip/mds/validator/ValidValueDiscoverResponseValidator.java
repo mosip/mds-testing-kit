@@ -36,7 +36,7 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 			}
 			validations.add(validation);
 			//Check for device status
-			validation = commonValidator.setFieldExpected("discoverResponse.deviceStatus","Ready\" | \"Busy\" | \"Not Ready\" | \"Not Registered",discoverResponse.deviceStatus);		
+			validation = commonValidator.setFieldExpected("discoverResponse.deviceStatus","Ready | Busy | Not Ready | Not Registered",discoverResponse.deviceStatus);		
 			if(!discoverResponse.deviceStatus.equals(CommonConstant.READY) && !discoverResponse.deviceStatus.equals(CommonConstant.BUSY)
 					&& !discoverResponse.deviceStatus.equals(CommonConstant.NOT_READY) && !discoverResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
 			{
@@ -63,7 +63,7 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 			}
 
 			//Check for purpose
-			validation = commonValidator.setFieldExpected("discoverResponse.purpose","\"Auth\" | \"Registration\"",discoverResponse.purpose);
+			validation = commonValidator.setFieldExpected("discoverResponse.purpose","Auth | Registration",discoverResponse.purpose);
 			if(!discoverResponse.purpose.equals(CommonConstant.AUTH) && !discoverResponse.purpose.equals(CommonConstant.REGISTRATION))
 			{
 				commonValidator.setFoundMessageStatus(validation,discoverResponse.purpose,"Device discover response purpose is invalid",CommonConstant.FAILED);

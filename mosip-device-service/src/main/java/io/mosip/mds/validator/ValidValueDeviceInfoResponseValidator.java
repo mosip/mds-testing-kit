@@ -41,7 +41,7 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 			if(Objects.nonNull(deviceInfoResponse))
 			{
 				//Check for device status
-				validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceStatus","\"Ready\" | \"Busy\" | \"Not Ready\" | \"Not Registered\"",deviceInfoResponse.deviceStatus);
+				validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceStatus","Ready | Busy | Not Ready | Not Registered",deviceInfoResponse.deviceStatus);
 				if(!deviceInfoResponse.deviceStatus.equals(CommonConstant.READY) && !deviceInfoResponse.deviceStatus.equals(CommonConstant.BUSY)
 						&& !deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_READY) && !deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
 				{
@@ -49,7 +49,7 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 				}
 				validations.add(validation);
 				//Check for device certification
-				validation = commonValidator.setFieldExpected("deviceInfoResponse.certification","\"L0\", \"L1\"",deviceInfoResponse.certification);
+				validation = commonValidator.setFieldExpected("deviceInfoResponse.certification","L0, L1",deviceInfoResponse.certification);
 				if(!deviceInfoResponse.certification.equals(CommonConstant.L0) && !deviceInfoResponse.certification.equals(CommonConstant.L1))
 				{
 					commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.certification,"Device info response certification is invalid",CommonConstant.FAILED);
@@ -71,7 +71,7 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 				//deviceInfo.env - "None" if not registered. If registered, 
 				//then send the registered enviornment "Staging" | "Developer" | "Pre-Production" | "Production".
 
-				validation = commonValidator.setFieldExpected("deviceInfoResponse.env","\"Staging\" | \"Developer\" | \"Pre-Production\" | \"Production\" | \"None\"",deviceInfoResponse.env);
+				validation = commonValidator.setFieldExpected("deviceInfoResponse.env","Staging | Developer | Pre-Production | Production | None",deviceInfoResponse.env);
 				if(!deviceInfoResponse.env.equals(CommonConstant.NONE) && !deviceInfoResponse.env.equals(CommonConstant.STAGING) && !deviceInfoResponse.env.equals(CommonConstant.DEVELOPER)
 						&& !deviceInfoResponse.env.equals(CommonConstant.PRE_PRODUCTION) && !deviceInfoResponse.env.equals(CommonConstant.PRODUCTION))
 				{
@@ -80,7 +80,7 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 				validations.add(validation);
 
 				//Check for purpose
-				validation = commonValidator.setFieldExpected("deviceInfoResponse.purpose"," \"Auth\" or \"Registration\" or empty in case the status is \"Not Registered\"",deviceInfoResponse.purpose);
+				validation = commonValidator.setFieldExpected("deviceInfoResponse.purpose"," Auth or Registration or empty in case the status is Not Registered",deviceInfoResponse.purpose);
 				if((deviceInfoResponse.deviceStatus != CommonConstant.NOT_REGISTERED) && (!deviceInfoResponse.purpose.equals(CommonConstant.AUTH) && !deviceInfoResponse.purpose.equals(CommonConstant.REGISTRATION)))
 				{
 					commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.purpose,"Device info response purpose is invalid",CommonConstant.FAILED);

@@ -56,7 +56,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 					if(Objects.nonNull(dataDecoded)) {
 						validations=validateActualValueDatadecoded(validations, dataDecoded);
 						//TODO check for env
-						validation = commonValidator.setFieldExpected("dataDecoded.env","\"Staging\" | \"Developer\" | \"Pre-Production\" | \"Production\"",dataDecoded.env);
+						validation = commonValidator.setFieldExpected("dataDecoded.env","Staging | Developer | Pre-Production | Production",dataDecoded.env);
 						if( !dataDecoded.env.equals(CommonConstant.STAGING) && !dataDecoded.env.equals(CommonConstant.DEVELOPER)
 								&& !dataDecoded.env.equals(CommonConstant.PRE_PRODUCTION) && !dataDecoded.env.equals(CommonConstant.PRODUCTION))
 						{
@@ -90,7 +90,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 
 	private List<Validation> validateActualValueDatadecoded(List<Validation> validations, CaptureBiometricData dataDecoded) {
 		// Check for bioType elements
-		validation = commonValidator.setFieldExpected("dataDecoded.bioType","\"Finger\" | \"Iris\"| \"Face\"",dataDecoded.bioType);		
+		validation = commonValidator.setFieldExpected("dataDecoded.bioType","Finger | Iris| Face",dataDecoded.bioType);		
 		if(!dataDecoded.bioType.equals(CommonConstant.FINGER) && !dataDecoded.bioType.equals(CommonConstant.IRIS) && !dataDecoded.bioType.equals(CommonConstant.FACE))
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioType,"Capture response biometrics-dataDecoded bioType is invalid",CommonConstant.FAILED);
@@ -107,7 +107,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		validations=validateDigitalId(validations,dataDecoded);
 
 		//Check for purpose elements
-		validation = commonValidator.setFieldExpected("dataDecoded.purpose"," \"Auth\" or \"Registration\"",dataDecoded.purpose);
+		validation = commonValidator.setFieldExpected("dataDecoded.purpose"," Auth or Registration",dataDecoded.purpose);
 		if(!dataDecoded.purpose.equals(CommonConstant.AUTH) && !dataDecoded.purpose.equals(CommonConstant.REGISTRATION) )
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.purpose,"Capture response biometrics-dataDecoded purpose is invalid",CommonConstant.FAILED);
@@ -123,9 +123,9 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		switch(dataDecoded.bioType) {
 		// Check for bioSubType of Finger elements
 		case CommonConstant.FINGER:
-			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","For Finger: [\"Left IndexFinger\", \"Left MiddleFinger\", "
-					+ "\"Left RingFinger\", \"Left LittleFinger\", \"Left Thumb\", \"Right IndexFinger\","
-					+ " \"Right MiddleFinger\", \"Right RingFinger\", \"Right LittleFinger\", \"Right Thumb\", \"UNKNOWN\"] ",dataDecoded.bioSubType);		
+			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","For Finger: [Left IndexFinger, Left MiddleFinger, "
+					+ "Left RingFinger, Left LittleFinger, Left Thumb, Right IndexFinger,"
+					+ " Right MiddleFinger, Right RingFinger, Right LittleFinger, Right Thumb, UNKNOWN] ",dataDecoded.bioSubType);		
 			if(!bioSubTypeFingerList.contains(dataDecoded.bioSubType))
 			{
 				commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Capture response bioSubType is invalid for Finger",CommonConstant.FAILED);
@@ -135,7 +135,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 
 		case CommonConstant.IRIS:
 			// Check for bioSubType of Iris elements
-			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","[\"Left\", \"Right\", \"UNKNOWN\"]",dataDecoded.bioSubType);
+			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","[Left, Right, UNKNOWN]",dataDecoded.bioSubType);
 			if(!bioSubTypeIrisList.contains(dataDecoded.bioSubType))
 			{
 				commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Capture response bioSubType is invalid for Iris",CommonConstant.FAILED);

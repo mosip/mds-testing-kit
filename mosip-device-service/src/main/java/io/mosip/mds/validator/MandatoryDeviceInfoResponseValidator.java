@@ -50,7 +50,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for certification block
-		validation = commonValidator.setFieldExpected("deviceInfoResponse.certification","\"L0\", \"L1\"",deviceInfoResponse.certification);
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.certification","L0, L1",deviceInfoResponse.certification);
 		if(deviceInfoResponse.certification == null || deviceInfoResponse.certification.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.certification,"DeviceInfo response does not contain certification",CommonConstant.FAILED);
@@ -105,7 +105,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for purpose block
-		validation = commonValidator.setFieldExpected("deviceInfoResponse.purpose"," Auth or Registration or empty in case the status is \"Not Registered\"",deviceInfoResponse.purpose);
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.purpose"," Auth or Registration or empty in case the status is Not Registered",deviceInfoResponse.purpose);
 		if( (deviceInfoResponse.deviceStatus != CommonConstant.NOT_REGISTERED) && (deviceInfoResponse.purpose == null || deviceInfoResponse.purpose.isEmpty()))
 		{
 			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.purpose,"DeviceInfo response does not contain purpose",CommonConstant.FAILED);

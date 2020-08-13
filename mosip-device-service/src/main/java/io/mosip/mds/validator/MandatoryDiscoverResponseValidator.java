@@ -71,7 +71,7 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 		validations.add(validation);
 
 		// Check for deviceStatus block
-		validation = commonValidator.setFieldExpected("discoverResponse.deviceStatus","\"Ready\" | \"Busy\" | \"Not Ready\" | \"Not Registered\"",discoverResponse.deviceStatus);
+		validation = commonValidator.setFieldExpected("discoverResponse.deviceStatus","Ready | Busy | Not Ready | Not Registered",discoverResponse.deviceStatus);
 		if(discoverResponse.deviceStatus == null || discoverResponse.deviceStatus.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,discoverResponse.deviceStatus,"Device Discover response does not contain deviceStatus",CommonConstant.FAILED);
@@ -95,7 +95,7 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 		validations.add(validation);
 
 		// Check for purpose block
-		validation = commonValidator.setFieldExpected("discoverResponse.purpose","\"Auth\" | \"Registration\"",discoverResponse.purpose);
+		validation = commonValidator.setFieldExpected("discoverResponse.purpose","Auth | Registration",discoverResponse.purpose);
 		if(discoverResponse.purpose == null || discoverResponse.purpose.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,discoverResponse.purpose,"Device Discover response does not contain purpose",CommonConstant.FAILED);
