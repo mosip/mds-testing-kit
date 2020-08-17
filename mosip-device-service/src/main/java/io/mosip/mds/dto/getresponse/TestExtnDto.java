@@ -37,7 +37,23 @@ public class TestExtnDto {
 	public int deviceSubId;
 	
 	public int bioCount;
-
+	
+	public String uinNumber;
+	
+	public String baseUrl;
+	
+	public String idaAuthManagerUrl;
+	
+	public String idaPublicKeyUrl;
+	
+	public String authUrl;
+	
+	public String mispLicenseKey;
+	
+	public String partnerId;
+	
+	public String partnerApiKey;
+	
 	public List<String> mdsSpecVersions;
 
 	public List<ValidatorDef> validatorDefs;

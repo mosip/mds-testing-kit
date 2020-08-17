@@ -1,5 +1,6 @@
 package io.mosip.mds.dto;
 
+import io.mosip.mds.util.Intent;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -23,4 +24,5 @@ public class ValidateResponseRequestDto {
 
 	private MdsResponse mdsDecodedResponse; 
 
+	private Intent intent;
 }

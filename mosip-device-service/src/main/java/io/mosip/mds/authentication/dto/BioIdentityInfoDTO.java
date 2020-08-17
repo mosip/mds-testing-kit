@@ -1,4 +1,4 @@
-package io.mosip.authentication.demo.dto;
+package io.mosip.mds.authentication.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

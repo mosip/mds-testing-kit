@@ -13,6 +13,7 @@ import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.ValidatorDef;
 import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
+import io.mosip.mds.validator.AuthRequestResponseValidator;
 import io.mosip.mds.validator.MandatoryCaptureResponseValidator;
 import io.mosip.mds.validator.MandatoryDeviceInfoResponseValidator;
 import io.mosip.mds.validator.MandatoryDiscoverResponseValidator;
@@ -198,6 +199,9 @@ public class Store {
 					break;
 				case "MandatoryRCaptureResponseValidator":
 					testExtnDto.addValidator(new MandatoryRCaptureResponseValidator());
+					break;
+				case "AuthRequestResponseValidator":
+					testExtnDto.addValidator(new AuthRequestResponseValidator());
 					break;
 				default :
 					testExtnDto.addValidator(null);

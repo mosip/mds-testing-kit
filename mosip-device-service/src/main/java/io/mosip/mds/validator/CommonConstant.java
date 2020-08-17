@@ -37,4 +37,7 @@ public class CommonConstant {
 	public static final String LEFT_RING_FINGER = "Left RingFinger";
 	public static final String LEFT_MIDDLE_FINGER = "Left MiddleFinger";
 	public static final String LEFT_INDEX_FINGER = "Left IndexFinger";
+	public static final String FAILED = "FAILED";
+	public static final String SUCCESS = "SUCCESS";
+	public static final String MATCHED = "MATCHED";
 }
