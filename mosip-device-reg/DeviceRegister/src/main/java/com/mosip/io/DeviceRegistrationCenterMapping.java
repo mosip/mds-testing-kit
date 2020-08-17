@@ -17,32 +17,32 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 public class DeviceRegistrationCenterMapping  extends Util{
-	String regCenterId=commonDataProp.get("regCenterId");
-	public String deviceRegCenterMapping(String createdDeviceId) {
-		
-		//5.a check that device is isAcitive= true in both the language based on deviceId
-		 String deviceId =null;
-		 CreateDevice createDevice= new CreateDevice();
-		 boolean status=createDevice.deviceIsActive(createdDeviceId);
-		    if(status) {
-		    	auditLog.info(" Device is Active in both the language");
-		    }else {
-		    	throw new RuntimeException("Device is not active");
-		    }
+	
+	public String deviceRegCenterMapping(String createdDeviceId,Map<String,String> prop) {
+		String regCenterId = prop.get("regCenterId");
+		// 5.a check that device is isAcitive= true in both the language based on
+		// deviceId
+		String deviceId = null;
+		String requestInJsonForm = "";
+		CreateDevice createDevice = new CreateDevice();
+		boolean status = createDevice.deviceIsActive(createdDeviceId);
+		if (status) {
+			auditLog.info(" Device is Active in both the language");
+		} else {
+			throw new RuntimeException("Device is not active");
+		}
 		 
 		  //5.b check registration center  is active true in both the language  (bases on centerId)
 		if(isRegCenterActiveIn_Prim_Second_language(regCenterId)) {
 			DeviceRegistrationCenterMappingDTO deviceRegCentrMapDTO= new DeviceRegistrationCenterMappingDTO();
 			JSONObject jsonData = Util.readJsonData("/Request/deviceRegistrationCenterMapping.json");
-			auditLog.info("Acutual Reqeust: "+jsonData.toJSONString());
 			try {
 				ObjectMapper mapper = new ObjectMapper();
 				deviceRegCentrMapDTO = mapper.readValue(jsonData.toJSONString(), DeviceRegistrationCenterMappingDTO.class);
 				deviceRegCentrMapDTO.getRequest().setDeviceId(createdDeviceId);
 				deviceRegCentrMapDTO.getRequest().setRegCenterId(regCenterId);
 				deviceRegCentrMapDTO.setRequesttime(Util.getCurrentDateAndTimeForAPI());
-				String value=mapper.writeValueAsString(deviceRegCentrMapDTO);
-				auditLog.info("Updated Reqeust: "+value);
+				requestInJsonForm=mapper.writeValueAsString(deviceRegCentrMapDTO);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -55,20 +55,17 @@ public class DeviceRegistrationCenterMapping  extends Util{
 	                        .contentType("application/json")
 	                        .body(deviceRegCentrMapDTO)
 	                        .post(url);
+	        logApiInfo(requestInJsonForm, System.getProperty("baseUrl")+url, api_response);
 	        
-	        auditLog.info("Endpoint :"+url);
-		    auditLog.info("Request  :"+deviceRegCentrMapDTO);
-		    auditLog.info("Response  :"+api_response.getBody().jsonPath().prettify());
-		    
 		    ReadContext ctx = JsonPath.parse(api_response.getBody().asString());
-		   
 		    if(ctx.read("$.response") != null) {
 		    	 deviceId = (String)ctx.read("$.response.deviceId");
 		    	 String regCenteId = (String)ctx.read("$.response.regCenterId");
-		    	 auditLog.info("Device Registration  center  mapped with deviceId: "+deviceId+" and regcenerId :"+regCenteId);
+		    	 auditLog.info("Device And Center Mapped With DeviceId: "+deviceId+" And RegcenterId :"+regCenteId);
 		    }else {
 		    	String errorMessage =(String)ctx.read("$.errors[0].message");
-		    	throw new RuntimeException(errorMessage);
+		    	auditLog.warning(errorMessage);
+		    	//throw new RuntimeException(errorMessage);
 		    }
 	       	
 		}else {
@@ -83,9 +80,8 @@ public class DeviceRegistrationCenterMapping  extends Util{
 	private boolean isRegCenterActiveIn_Prim_Second_language(String regCenterId) {
 		boolean isRegCenterActive = false;
 		DataBaseAccess db= new DataBaseAccess();
-		String regCenterQueryEng = "Select * from master.registration_center where id="+"'"+regCenterId+"'"+" and is_active='true' and lang_code='eng'";
-		String regCenterQueryAra = "Select * from master.registration_center where id="+"'"+regCenterId+"'"+" and is_active='true' and lang_code='ara'";
-		if (db.getDbData(regCenterQueryEng, "masterdata").size()>0 && db.getDbData(regCenterQueryAra, "masterdata").size()>0)
+		String regCenterQueryEng = "Select * from master.registration_center where id="+"'"+regCenterId+"'"+" and is_active='true' and lang_code in ('eng','ara')";
+		if (db.getDbData(regCenterQueryEng, "masterdata").size()>0)
 			isRegCenterActive = true;
 		return isRegCenterActive;
 	}

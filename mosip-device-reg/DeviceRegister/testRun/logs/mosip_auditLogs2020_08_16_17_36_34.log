@@ -1,0 +1,139 @@
+2020-08-16@17:36:34: INFO    ******************************Authentication**************************
+2020-08-16@17:36:39: INFO          
+2020-08-16@17:36:39: INFO    Endpoint :https://qa.mosip.net/v1/authmanager/authenticate/useridPwd
+2020-08-16@17:36:39: INFO    Request  :{"request":{"password":"Techno@123","appId":"admin","userName":"110119"},"metadata":"{}","requesttime":"2020-08-16T12:06:34.252Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-16@17:36:39: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-16T12:06:18.059Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-16@17:36:39: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJERWNSdlVMMlVNSkJuODlqUUYtUzU1VmJqNTRfSnZVS1pMX0Fwa0VEMXhFIn0.eyJqdGkiOiI2MDBhZTQwYy1hOWY5LTQ1NWItOWRlNS0wN2U0NjU4ZGNlMTIiLCJleHAiOjE1OTc2MTU1NzgsIm5iZiI6MCwiaWF0IjoxNTk3NTc5NTc4LCJpc3MiOiJodHRwczovL3FhLm1vc2lwLm5ldC9rZXljbG9hay9hdXRoL3JlYWxtcy9tb3NpcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIxMzc1ZmY0Ny1jMjRmLTQzM2ItYTkwMy1iYTYyMDRmMDk4ODUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtb3NpcC1hZG1pbi1jbGllbnQiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI4NDE1YWI3MC0zNjZjLTQ0YzQtYTU4Yi1mNzFhOTVjY2YxZTAiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlNVUEVSQURNSU4iLCJSRUdJU1RSQVRJT05fT0ZGSUNFUiIsIlJFR0lTVFJBVElPTl9PUEVSQVRPUiIsIlJFU0lERU5UIiwiREVWSUNFX1BST1ZJREVSIiwiQ0VOVFJBTF9BRE1JTiIsIlJFR0lTVFJBVElPTl9QUk9DRVNTT1IiLCJSRUdJU1RSQVRJT05fQURNSU4iLCJQUkVfUkVHSVNUUkFUSU9OIiwiSURfQVVUSEVOVElDQVRJT04iLCJSRUdJU1RSQVRJT05fU1VQRVJWSVNPUiIsIlpPTkFMX0FETUlOIiwiUFJFUkVHIiwib2ZmbGluZV9hY2Nlc3MiLCJDRU5UUkFMX0FQUFJPVkVSIiwiWk9OQUxfQVBQUk9WRVIiLCJ1bWFfYXV0aG9yaXphdGlvbiIsIk1JU1AiLCJHTE9CQUxfQURNSU4iLCJQUkVfUkVHSVNUUkFUSU9OX0FETUlOIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiUGl5dXMgVGVzdCIsInByZWZlcnJlZF91c2VybmFtZSI6IjExMDExOSIsImdpdmVuX25hbWUiOiJQaXl1cyIsImZhbWlseV9uYW1lIjoiVGVzdCIsImVtYWlsIjoiMTEwMTE5QHh5ei5jb20ifQ.UP8x8t9UkJ1Iw_BbZ78JcK8plbkMxDxCe8CpPsKxcAxgH0jTRT9W1U8S-I1gqV_Ix4fhg0sLHxsQNbAlcvKkOgPyQ_6R-MCmFntEYhmjBXiw3U1tL4Kp9tP51939L7IGSikEE3NhNz2obGIOf9Ess32NSp5W8UunrCg0x6SARkktGXvtoeMkQj3PGZF4VJSAkCglKlsUcjydtKoDPFuDf938-jxYjduErlOrPshUp3DOnutyra3zQCBGw6MGfNtuYrVuc813SLnr-C9YQGKw6FWdF4CEuzI2U8ysZZH3BsnTASy7COTyh_ilw7XAte07fTUiFA1zreqZzM1vGFKB8g
+2020-08-16@17:36:39: INFO    *********************************DeviceProvider********************************
+2020-08-16@17:36:39: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table*****
+2020-08-16@17:37:23: INFO    >>>>>>>>>>>>>> DeviceProvider details is alReady Exist in DB
+2020-08-16@17:37:23: INFO    	providerId :SYNCBYTE.TCI322 VendorName :SYNCBYTE
+2020-08-16@17:37:23: INFO    ******************************Mosip Device Service*****************************************
+2020-08-16@17:37:23: INFO    ****Checking providerID in  MosipDeviceService and mosip_device_service_History table******
+2020-08-16@17:38:05: INFO    >>>>>>>>>>>>>>MDS info already Prsent in DB
+2020-08-16@17:38:05: INFO    	MosipDeviceServiceId :SYNCBYTE.TCI322 make :SB  model: FRO900
+2020-08-16@17:38:05: INFO    **************Device Specification***********************************
+2020-08-16@17:38:05: INFO    ***Checking for Device Specification in eng and ara language****
+2020-08-16@17:38:45: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/devicespecifications
+2020-08-16@17:38:45: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"brand":"SB","description":"To capture FRS","deviceTypeCode":"FRS","id":"506","isActive":true,"langCode":"eng","minDriverversion":"string","model":"FRO900","name":"Camera"},"requesttime":"2020-08-16T12:08:45.295Z","version":"string"}
+2020-08-16@17:38:45: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T12:08:24.638Z",
+    "metadata": null,
+    "response": {
+        "id": "506",
+        "langCode": "eng"
+    },
+    "errors": null
+}
+2020-08-16@17:38:45: INFO    Device Specification Created In eng With Id: 506
+2020-08-16@17:38:45: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/devicespecifications
+2020-08-16@17:38:45: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"brand":"SB","description":"To capture FRS","deviceTypeCode":"FRS","id":"506","isActive":true,"langCode":"ara","minDriverversion":"string","model":"FRO900","name":"Camera"},"requesttime":"2020-08-16T12:08:45.616Z","version":"string"}
+2020-08-16@17:38:45: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T12:08:24.939Z",
+    "metadata": null,
+    "response": {
+        "id": "506",
+        "langCode": "ara"
+    },
+    "errors": null
+}
+2020-08-16@17:38:45: INFO    Device Specification Created In ara With Id: 506
+2020-08-16@17:39:06: INFO    ********************create device***********************************
+2020-08-16@17:39:06: INFO    ****create device in primary language********
+2020-08-16@17:39:06: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/devices
+2020-08-16@17:39:06: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"506","id":"","ipAddress":"127.0.0.0","isActive":true,"langCode":"eng","macAddress":"3C-2C-30-B4-00-C0","name":"Finger Scanner","serialNum":"C8R1CP15256","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"NTH"},"requesttime":"2020-08-16T12:09:06.647Z","version":"string"}
+2020-08-16@17:39:06: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T12:08:45.962Z",
+    "metadata": null,
+    "response": {
+        "isActive": false,
+        "createdBy": "110119",
+        "createdDateTime": "2020-08-16T12:08:45.979Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "e3541f70-f40c-436d-9356-e53198e063b4",
+        "name": "Finger Scanner",
+        "serialNum": "C8R1CP15256",
+        "deviceSpecId": "506",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "eng",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "NTH"
+    },
+    "errors": null
+}
+2020-08-16@17:39:06: INFO    Device Created In eng With DeviceId: e3541f70-f40c-436d-9356-e53198e063b4
+2020-08-16@17:39:06: INFO    ****Update  the above deviceId with code from info file********
+2020-08-16@17:39:56: INFO    e799e611-6ce5-468e-b442-886430955f5d alredy exit in DB  so, deleting..
+2020-08-16@17:40:11: INFO    DeviceIdValue : e799e611-6ce5-468e-b442-886430955f5d Updated In DB
+2020-08-16@17:40:11: INFO    DeviceId updated with e799e611-6ce5-468e-b442-886430955f5d
+2020-08-16@17:40:11: INFO    *********create device in secondary language********
+2020-08-16@17:40:11: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/devices
+2020-08-16@17:40:11: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"506","id":"e799e611-6ce5-468e-b442-886430955f5d","ipAddress":"127.0.0.0","isActive":true,"langCode":"ara","macAddress":"3C-2C-30-B4-00-C0","name":"Finger Scanner","serialNum":"C8R1CP15256","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"NTH"},"requesttime":"2020-08-16T12:10:11.389Z","version":"string"}
+2020-08-16@17:40:11: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T12:09:50.635Z",
+    "metadata": null,
+    "response": {
+        "isActive": true,
+        "createdBy": "110119",
+        "createdDateTime": "2020-08-16T12:09:50.651Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "e799e611-6ce5-468e-b442-886430955f5d",
+        "name": "Finger Scanner",
+        "serialNum": "C8R1CP15256",
+        "deviceSpecId": "506",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "ara",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "NTH"
+    },
+    "errors": null
+}
+2020-08-16@17:40:11: INFO    Device Created In ara With DeviceId: e799e611-6ce5-468e-b442-886430955f5d
+2020-08-16@17:40:11: INFO    ****Device and center mapping********
+2020-08-16@17:40:46: INFO     Device is Active in both the language
+2020-08-16@17:41:01: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/registrationcenterdevice
+2020-08-16@17:41:01: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceId":"e799e611-6ce5-468e-b442-886430955f5d","isActive":true,"langCode":"eng","regCenterId":"10002"},"requesttime":"2020-08-16T12:11:01.575Z","version":"string"}
+2020-08-16@17:41:01: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T12:10:40.839Z",
+    "metadata": null,
+    "response": {
+        "regCenterId": "10002",
+        "deviceId": "e799e611-6ce5-468e-b442-886430955f5d"
+    },
+    "errors": null
+}
+2020-08-16@17:41:01: INFO    Device And Center Mapped With DeviceId: e799e611-6ce5-468e-b442-886430955f5d And RegcenterId :10002
+2020-08-16@17:41:01: INFO    device Mapped succesfully with devicId : e799e611-6ce5-468e-b442-886430955f5d
+2020-08-16@17:41:01: INFO    ****Device Registration********
+2020-08-16@17:41:16: INFO    DeviceCode and SerialNo already exist in DB so, Skipping Device Registration step
+2020-08-16@17:41:16: INFO    ****DeviceValidate History********
+2020-08-16@17:41:16: INFO    Verifying in DB whether DeviceCode and DeviceId values are Same or different
+2020-08-16@17:41:36: INFO    DeviceCode and DeviceId are Values are different so, Device History cannot be validated

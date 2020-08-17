@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZoneOffset;
@@ -32,39 +31,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.mosip.io.ProcessStep;
+import io.restassured.response.Response;
 
 public class Util {
 	private static String auditLogFileName = "mosip_auditLogs" + getCurrentDateAndTime().replace(":", "_") + ".log";
 	public static String auditLogFile = System.getProperty("user.dir") + "\\testRun\\logs\\" + auditLogFileName;
 	public static Logger auditLog = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	public static String  cookies;
-	public static Map<String,String> configProp=Util.loadProperty("/config.properties");
-	public static Map<String,String> commonDataProp=Util.loadProperty("/commonData.properties");
-	public static String type=System.getProperty("type");
-	//public static Map<String,String> prop=Util.loadProperty("/"+type+".properties");
-	/*
-	 * public static Map<String,String> prop=null;
-	 * 
-	 * public void run() { String type=System.getProperty("type"); ProcessStep
-	 * runner= new ProcessStep(); if(type!=null && !type.isEmpty()&&
-	 * type.equalsIgnoreCase("Face")||type.equalsIgnoreCase("Iris")||
-	 * type.equalsIgnoreCase("Finger")||type.equalsIgnoreCase("Auth")) {
-	 * prop=Util.loadDataFromCsv(type); auditLog.info("Registering Device :"+ type);
-	 * runner.process(type,prop); }else if(type.equalsIgnoreCase("All")) {
-	 * List<String> typeList= Arrays.asList("Face","Iris","Finger","Auth"); for (int
-	 * i = 0; i < typeList.size(); i++) {
-	 * prop=Util.loadDataFromCsv(typeList.get(i));
-	 * auditLog.info("Registering Device :"+ typeList.get(i));
-	 * runner.process(typeList.get(i),prop); } } }
-	 */
+	public static String cookies;
+	public static Map<String, String> configProp = Util.loadProperty("/config.properties");
+	public static Map<String, String> commonDataProp = Util.loadProperty("/commonData.properties");
+	public static String type = System.getProperty("type");
 
 	public static Map<String, String> loadProperty(String fileName) {
-		/*
-		 * String deviceType=System.getProperty("type"); if(deviceType==null ||
-		 * deviceType.isEmpty()) throw new
-		 * RuntimeException("Unable to load property file with type :"+type);
-		 */
 		Properties prop = new Properties();
 		try {
 			prop.load(Util.class.getResourceAsStream(fileName));
@@ -103,7 +81,7 @@ public class Util {
 		Date date = new Date();
 		return format.format(date).toString();
 	}
-	
+
 	public static JSONObject readJsonData(String path) {
 		String filePath = System.getProperty("user.dir") + path;
 		File fileToRead = new File(filePath);
@@ -121,15 +99,14 @@ public class Util {
 		}
 		return jsonData;
 	}
-	
-	
-	public static Map<String,String> loadDataFromCsv(String dType){
-		String deviceType=dType;
-		if(deviceType==null || deviceType.isEmpty())
-			throw new RuntimeException("Unable to load csv file with type :"+dType);
+
+	public static Map<String, String> loadDataFromCsv(String dType) {
+		String deviceType = dType;
+		if (deviceType == null || deviceType.isEmpty())
+			throw new RuntimeException("Unable to load csv file with type :" + dType);
 		final String CSVFILEPATH = "./dataFolder/testData.csv";
 		File file = new File(CSVFILEPATH);
-		byte[] bytes=null;
+		byte[] bytes = null;
 		try {
 			bytes = FileUtils.readFileToByteArray(file);
 		} catch (IOException e) {
@@ -152,6 +129,8 @@ public class Util {
 			List<String> row = new ArrayList<>();
 
 			String[] rowArr = dataArray[d].split(",");
+			if(dType.equalsIgnoreCase("Iris") || dType.equalsIgnoreCase("Finger"))
+			rowArr[5]="[1,2,3]";
 			row.addAll(Arrays.asList(rowArr));
 
 			String keyForTestCase = row.get(0);
@@ -167,18 +146,11 @@ public class Util {
 		return rowMap;
 
 	}
-	
-	private  File getFileFromResources(String fileName) {
 
-        ClassLoader classLoader = getClass().getClassLoader();
-
-        URL resource = classLoader.getResource(fileName);
-        if (resource == null) {
-            throw new IllegalArgumentException("file is not found!");
-        } else {
-            return new File(resource.getFile());
-        }
-
-    }
+	public static void logApiInfo(String requestInJsonForm, String url, Response api_response) {
+		auditLog.info("Endpoint :" + url);
+		auditLog.info("Request  :" + requestInJsonForm);
+		auditLog.info("Response  :" + api_response.getBody().jsonPath().prettify());
+	}
 
 }

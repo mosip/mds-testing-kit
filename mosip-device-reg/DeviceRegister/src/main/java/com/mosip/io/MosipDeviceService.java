@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.mosip.io.db.DataBaseAccess;
@@ -20,42 +21,42 @@ import io.restassured.response.Response;
 public class MosipDeviceService extends Util {
 	
 	public List<String> registerMDS(String deviceProviderId,Map<String,String> prop) {
-		MosipDeviceServiceDTO dto=createDTO(deviceProviderId,prop);
+		String requestInJsonForm = "";
+		ObjectMapper mapper = new ObjectMapper();
+		MosipDeviceServiceDTO dto = createDTO(deviceProviderId, prop);
 		String url = ServiceUrl.MOSIP_DEVICE_SERVICE;
-        RestAssured.baseURI = System.getProperty("baseUrl");
-        Response api_response =
-                given()
-                        .cookie("Authorization", Util.cookies)
-                        .contentType("application/json")
-                        .body(dto)
-                        .post(url);
-        
-        auditLog.info("Endpoint :"+url);
-	    auditLog.info("Request  :"+dto);
-	    auditLog.info("Response  :"+api_response.getBody().jsonPath().prettify());
-		
-	    ReadContext ctx = JsonPath.parse(api_response.getBody().asString());
-	    List<String> providerList= new ArrayList<>();
-	    if(ctx.read("$.response") != null) {
-	    	String mosipDeviceServiceId = (String)ctx.read("$.response.id");
-	    	String make = (String)ctx.read("$.response.make");
-	    	String model = (String)ctx.read("$.response.model");
-	    	providerList.add(mosipDeviceServiceId);
-	    	providerList.add(make);
-	    	providerList.add(model);
-	    }else {
-	    	String errorMessage =(String)ctx.read("$.errors[0].message");
-	    	throw new RuntimeException(errorMessage);
-	    }
+		RestAssured.baseURI = System.getProperty("baseUrl");
+		Response api_response = given().cookie("Authorization", Util.cookies).contentType("application/json").body(dto)
+				.post(url);
+		try {
+			requestInJsonForm = mapper.writeValueAsString(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		logApiInfo(requestInJsonForm, System.getProperty("baseUrl")+url, api_response);
+		ReadContext ctx = JsonPath.parse(api_response.getBody().asString());
+		List<String> providerList = new ArrayList<>();
+		if (ctx.read("$.response") != null) {
+			String mosipDeviceServiceId = (String) ctx.read("$.response.id");
+			String make = (String) ctx.read("$.response.make");
+			String model = (String) ctx.read("$.response.model");
+			providerList.add(mosipDeviceServiceId);
+			providerList.add(make);
+			providerList.add(model);
+		} else {
+			String errorMessage = (String) ctx.read("$.errors[0].message");
+			auditLog.warning(errorMessage);
+			// throw new RuntimeException(errorMessage);
+		}
 		return providerList;
 	}
-	
-	public boolean dbCheck(String type,String deviceProderId) {
-		if(type==null || type.isEmpty())
+
+	public boolean dbCheck(String type, String deviceProderId) {
+		if (type == null || type.isEmpty())
 			throw new RuntimeException("Please provide type value from Vm argument");
-		boolean isPresent=false;
-		
-		switch(type) {
+		boolean isPresent = false;
+
+		switch (type) {
 		case "Face":
 			isPresent = isProviderIdPresentInMDS(deviceProderId);
 			break;
@@ -67,9 +68,9 @@ public class MosipDeviceService extends Util {
 			break;
 		case "Auth":
 			isPresent = isProviderIdPresentInMDS(deviceProderId);
-				break;
-			default:
-				throw new RuntimeException("Invalid type : "+type+" is found!");
+			break;
+		default:
+			throw new RuntimeException("Invalid type : " + type + " is found!");
 		}
 		return isPresent;
 	}
@@ -84,16 +85,16 @@ public class MosipDeviceService extends Util {
 		return isPresent;
 	}
 	
-	private MosipDeviceServiceDTO createDTO(String deviceProviderId,Map<String,String> prop) {
-		MosipDeviceServiceDTO dto = new MosipDeviceServiceDTO("string", new Metadata(), createRequestBuilder(deviceProviderId,prop),
-				Util.getCurrentDateAndTimeForAPI(), "string");
+	private MosipDeviceServiceDTO createDTO(String deviceProviderId, Map<String, String> prop) {
+		MosipDeviceServiceDTO dto = new MosipDeviceServiceDTO("string", new Metadata(),
+				createRequestBuilder(deviceProviderId, prop), getCurrentDateAndTimeForAPI(), "string");
 		return dto;
 	}
 
 	private MosipDeviceServiceRequest createRequestBuilder(String deviceProviderId,Map<String,String> prop) {
-		if(prop==null || prop.isEmpty())
+		if (prop == null || prop.isEmpty())
 			throw new RuntimeException("prop value cannot be Null Or Empty");
-		MosipDeviceServiceRequest request= new MosipDeviceServiceRequest();
+		MosipDeviceServiceRequest request = new MosipDeviceServiceRequest();
 		request.setDeviceProviderId(deviceProviderId);
 		request.setIsActive(Boolean.TRUE);
 		request.setMake(prop.get("make"));
@@ -101,7 +102,7 @@ public class MosipDeviceService extends Util {
 		request.setRegDeviceSubCode(prop.get("deviceSubType"));
 		request.setRegDeviceTypeCode(prop.get("type"));
 		request.setSwBinaryHash(0);
-		request.setSwCreateDateTime(Util.getCurrentDateAndTimeForAPI());
+		request.setSwCreateDateTime(getCurrentDateAndTimeForAPI());
 		request.setSwExpiryDateTime("2020-12-31T07:00:13.375Z");
 		request.setSwVersion(prop.get("serviceVersion"));
 		return request;

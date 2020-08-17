@@ -19,9 +19,9 @@ import io.restassured.response.Response;
 public class CreateDevice extends Util{
 	
 	public String createDevice(String deviceSpecId,String id,String langCode,Map<String,String> prop) {
-		CreateDeviceDTO createDeviceDTO= new CreateDeviceDTO();
+		CreateDeviceDTO createDeviceDTO = new CreateDeviceDTO();
 		JSONObject jsonData = Util.readJsonData("/Request/createDevice.json");
-		auditLog.info("Acutual Reqeust: "+jsonData.toJSONString());
+		String requestInJsonForm = "";
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			createDeviceDTO = mapper.readValue(jsonData.toJSONString(), CreateDeviceDTO.class);
@@ -32,16 +32,14 @@ public class CreateDevice extends Util{
 			createDeviceDTO.getRequest().setName(prop.get("name"));
 			createDeviceDTO.getRequest().setSerialNum(prop.get("serialNo"));
 			createDeviceDTO.getRequest().setValidityDateTime(commonDataProp.get("validityDateTime"));
-			createDeviceDTO.getRequest().setZoneCode(commonDataProp.get("zoneCode"));
-			createDeviceDTO.setRequesttime(Util.getCurrentDateAndTimeForAPI());
-			
-			String value=mapper.writeValueAsString(createDeviceDTO);
-			auditLog.info("Updated Reqeust: "+value);
+			createDeviceDTO.getRequest().setZoneCode(prop.get("zoneCode"));
+			createDeviceDTO.setRequesttime(getCurrentDateAndTimeForAPI());
+			requestInJsonForm = mapper.writeValueAsString(createDeviceDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		String url = ServiceUrl.CREATE_DEVICE;
-        RestAssured.baseURI = System.getProperty("baseUrl");
+		RestAssured.baseURI = System.getProperty("baseUrl");
         Response api_response =
                 given()
                         .cookie("Authorization", Util.cookies)
@@ -49,22 +47,21 @@ public class CreateDevice extends Util{
                         .body(createDeviceDTO)
                         .post(url);
         
-        auditLog.info("Endpoint :"+url);
-	    auditLog.info("Request  :"+createDeviceDTO);
-	    auditLog.info("Response  :"+api_response.getBody().jsonPath().prettify());
-	    
-	    ReadContext ctx = JsonPath.parse(api_response.getBody().asString());
-	    String deviceId =null;
-	    if(ctx.read("$.response") != null) {
-	    	deviceId = (String)ctx.read("$.response.id");
-	        auditLog.info("Device Created in "+langCode+" with deviceId: "+deviceId);
-	    }else {
-	    	String errorMessage =(String)ctx.read("$.errors[0].message");
-	    	throw new RuntimeException(errorMessage);
-	    }
-        
+		logApiInfo(requestInJsonForm, System.getProperty("baseUrl")+url, api_response);
+		ReadContext ctx = JsonPath.parse(api_response.getBody().asString());
+		String deviceId = null;
+		if (ctx.read("$.response") != null) {
+			deviceId = (String) ctx.read("$.response.id");
+			auditLog.info("Device Created In " + langCode + " With DeviceId: " + deviceId);
+		} else {
+			String errorMessage = (String) ctx.read("$.errors[0].message");
+			auditLog.warning(errorMessage);
+			// throw new RuntimeException(errorMessage);
+		}
+
 		return deviceId;
 	}
+
 	
 	public String updateDeviceIdWithCode(String deviceId,String deviceSpecId,Map<String,String> prop) {
 		String deviceIdUpdatedValue=null;
@@ -80,7 +77,7 @@ public class CreateDevice extends Util{
 		} 
 		if(db.executeQuery("update  master.device_master set id="+"'"+deviceIdValue+"'" +" where id="+"'"+deviceId+"'" +" and dspec_id="+"'"+deviceSpecId+"'", "masterdata")) {
 			deviceIdUpdatedValue=deviceIdValue;
-			auditLog.info(deviceIdValue + " updated in DB");
+			auditLog.info("DeviceIdValue : "+deviceIdValue + " Updated In DB");
 		}
 		return deviceIdUpdatedValue;
 	}
@@ -88,9 +85,8 @@ public class CreateDevice extends Util{
 	public boolean deviceIsActive(String deviceId) {
 		boolean isActive=false;
 		DataBaseAccess db= new DataBaseAccess();
-		String deviceMasterQueryEng = "Select * from master.device_master where id="+"'"+deviceId+"'"+" and is_active='true' and lang_code='eng'";
-		String deviceMasterrQueryAra = "Select * from master.device_master where id="+"'"+deviceId+"'"+" and is_active='true' and lang_code='ara'";
-		if (db.getDbData(deviceMasterQueryEng, "masterdata").size()>0 && db.getDbData(deviceMasterrQueryAra, "masterdata").size()>0)
+		String deviceMasterQueryEng = "Select * from master.device_master where id="+"'"+deviceId+"'"+" and is_active='true' and lang_code in ('eng','ara')";
+		if (db.getDbData(deviceMasterQueryEng, "masterdata").size()>0)
 			isActive = true;
 		return isActive;
 	}

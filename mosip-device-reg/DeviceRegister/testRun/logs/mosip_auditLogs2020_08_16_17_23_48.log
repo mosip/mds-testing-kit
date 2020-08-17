@@ -1,0 +1,130 @@
+2020-08-16@17:23:48: INFO    ******************************Authentication**************************
+2020-08-16@17:23:53: INFO          
+2020-08-16@17:23:53: INFO    Endpoint :https://qa.mosip.net/v1/authmanager/authenticate/useridPwd
+2020-08-16@17:23:53: INFO    Request  :{"request":{"password":"Techno@123","appId":"admin","userName":"110119"},"metadata":"{}","requesttime":"2020-08-16T11:53:48.851Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-16@17:23:53: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-16T11:53:32.406Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-16@17:23:53: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJERWNSdlVMMlVNSkJuODlqUUYtUzU1VmJqNTRfSnZVS1pMX0Fwa0VEMXhFIn0.eyJqdGkiOiJkZGExNWFiYS02M2FlLTRiMDEtOTJiNC01OWQ3YTliM2M0OWMiLCJleHAiOjE1OTc2MTQ4MTIsIm5iZiI6MCwiaWF0IjoxNTk3NTc4ODEyLCJpc3MiOiJodHRwczovL3FhLm1vc2lwLm5ldC9rZXljbG9hay9hdXRoL3JlYWxtcy9tb3NpcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIxMzc1ZmY0Ny1jMjRmLTQzM2ItYTkwMy1iYTYyMDRmMDk4ODUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtb3NpcC1hZG1pbi1jbGllbnQiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiJhZDZlNzI4ZS1hNmJmLTRiZTctOWY0ZC1kY2NjODVlNDdhZWMiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlNVUEVSQURNSU4iLCJSRUdJU1RSQVRJT05fT0ZGSUNFUiIsIlJFR0lTVFJBVElPTl9PUEVSQVRPUiIsIlJFU0lERU5UIiwiREVWSUNFX1BST1ZJREVSIiwiQ0VOVFJBTF9BRE1JTiIsIlJFR0lTVFJBVElPTl9QUk9DRVNTT1IiLCJSRUdJU1RSQVRJT05fQURNSU4iLCJQUkVfUkVHSVNUUkFUSU9OIiwiSURfQVVUSEVOVElDQVRJT04iLCJSRUdJU1RSQVRJT05fU1VQRVJWSVNPUiIsIlpPTkFMX0FETUlOIiwiUFJFUkVHIiwib2ZmbGluZV9hY2Nlc3MiLCJDRU5UUkFMX0FQUFJPVkVSIiwiWk9OQUxfQVBQUk9WRVIiLCJ1bWFfYXV0aG9yaXphdGlvbiIsIk1JU1AiLCJHTE9CQUxfQURNSU4iLCJQUkVfUkVHSVNUUkFUSU9OX0FETUlOIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiUGl5dXMgVGVzdCIsInByZWZlcnJlZF91c2VybmFtZSI6IjExMDExOSIsImdpdmVuX25hbWUiOiJQaXl1cyIsImZhbWlseV9uYW1lIjoiVGVzdCIsImVtYWlsIjoiMTEwMTE5QHh5ei5jb20ifQ.BeQRPVxl0I0D__MDKIMFJMKtTR1dEECi9nenXS3fOARhdBkCPXMfjUnCwy9qVJZQmVjT8f7Y4WiK6S6QjMf-OUuICSnN4bc9F6id-ArHNFeMTozTgSll3OTQ4Rwg4wTc8SGeeQgJ9sS5L9da1ebE44qNuekabcoZVpGt0dKN7XOZcZkKtwabfvKn8alzJAcMZm-tiqmtAcZvYITAr8QhLjywLeuM8Iw2BroAws2YOFGL5ZOL4ZQMDYtPPg93ihEphkTP0X_W9ZlUC-251l0hTUIDJeXzsFSoNVWLlxCgsKoPYooLIlFia5b2BoYNGYUeWP6ZMDjrQiYJiSXQm9aXIg
+2020-08-16@17:23:53: INFO    *********************************DeviceProvider********************************
+2020-08-16@17:23:53: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table*****
+2020-08-16@17:24:31: INFO    >>>>>>>>>>>>>> DeviceProvider details is alReady Exist in DB
+2020-08-16@17:24:31: INFO    	providerId :SYNCBYTE.LTC165 VendorName :SYNCBYTE
+2020-08-16@17:24:31: INFO    ******************************Mosip Device Service*****************************************
+2020-08-16@17:24:31: INFO    ****Checking providerID in  MosipDeviceService and mosip_device_service_History table******
+2020-08-16@17:25:12: INFO    >>>>>>>>>>>>>>MDS info already Prsent in DB
+2020-08-16@17:25:12: INFO    	MosipDeviceServiceId :SYNCBYTE.LTC165 make :Logitech  model: C615
+2020-08-16@17:25:12: INFO    **************Device Specification***********************************
+2020-08-16@17:25:12: INFO    ***Checking for Device Specification in eng and ara language****
+2020-08-16@17:25:26: INFO    DeviceSpecId :736
+2020-08-16@17:25:26: INFO    ****Device Specification is present in DB with eng and ara language********
+2020-08-16@17:25:26: INFO    --------------------SKIP DEVICE SPECIFICATION STEP -------------------------
+2020-08-16@17:25:41: INFO    ********************create device***********************************
+2020-08-16@17:25:41: INFO    ****create device in primary language********
+2020-08-16@17:25:41: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/devices
+2020-08-16@17:25:41: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"736","id":"","ipAddress":"127.0.0.0","isActive":true,"langCode":"eng","macAddress":"3C-2C-30-B4-00-C0","name":"Camera","serialNum":"535626446","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"NTH"},"requesttime":"2020-08-16T11:55:41.430Z","version":"string"}
+2020-08-16@17:25:41: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T11:55:20.770Z",
+    "metadata": null,
+    "response": {
+        "isActive": false,
+        "createdBy": "110119",
+        "createdDateTime": "2020-08-16T11:55:20.790Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "708a2a5a-f1ce-4aec-a26d-7a546099dffa",
+        "name": "Camera",
+        "serialNum": "535626446",
+        "deviceSpecId": "736",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "eng",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "NTH"
+    },
+    "errors": null
+}
+2020-08-16@17:25:41: INFO    Device Created In eng With DeviceId: 708a2a5a-f1ce-4aec-a26d-7a546099dffa
+2020-08-16@17:25:41: INFO    ****Update  the above deviceId with code from info file********
+2020-08-16@17:26:31: INFO    79847aec-b87c-4692-9ae9-43ba203a3411 alredy exit in DB  so, deleting..
+2020-08-16@17:26:51: INFO    DeviceIdValue : 79847aec-b87c-4692-9ae9-43ba203a3411 Updated In DB
+2020-08-16@17:26:51: INFO    DeviceId updated with 79847aec-b87c-4692-9ae9-43ba203a3411
+2020-08-16@17:26:51: INFO    ****create device in secondary language********
+2020-08-16@17:26:52: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/devices
+2020-08-16@17:26:52: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"736","id":"79847aec-b87c-4692-9ae9-43ba203a3411","ipAddress":"127.0.0.0","isActive":true,"langCode":"ara","macAddress":"3C-2C-30-B4-00-C0","name":"Camera","serialNum":"535626446","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"NTH"},"requesttime":"2020-08-16T11:56:51.937Z","version":"string"}
+2020-08-16@17:26:52: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T11:56:31.252Z",
+    "metadata": null,
+    "response": {
+        "isActive": true,
+        "createdBy": "110119",
+        "createdDateTime": "2020-08-16T11:56:31.279Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "79847aec-b87c-4692-9ae9-43ba203a3411",
+        "name": "Camera",
+        "serialNum": "535626446",
+        "deviceSpecId": "736",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "ara",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "NTH"
+    },
+    "errors": null
+}
+2020-08-16@17:26:52: INFO    Device Created In ara With DeviceId: 79847aec-b87c-4692-9ae9-43ba203a3411
+2020-08-16@17:26:52: INFO    ****Device and center mapping********
+2020-08-16@17:27:33: INFO     Device is Active in both the language
+2020-08-16@17:27:54: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/registrationcenterdevice
+2020-08-16@17:27:54: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceId":"79847aec-b87c-4692-9ae9-43ba203a3411","isActive":true,"langCode":"eng","regCenterId":"10002"},"requesttime":"2020-08-16T11:57:54.175Z","version":"string"}
+2020-08-16@17:27:54: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T11:57:33.493Z",
+    "metadata": null,
+    "response": {
+        "regCenterId": "10002",
+        "deviceId": "79847aec-b87c-4692-9ae9-43ba203a3411"
+    },
+    "errors": null
+}
+2020-08-16@17:27:54: INFO    Device And Center Mapped With DeviceId: 79847aec-b87c-4692-9ae9-43ba203a3411 And RegcenterId :10002
+2020-08-16@17:27:54: INFO    device Mapped succesfully with devicId : 79847aec-b87c-4692-9ae9-43ba203a3411
+2020-08-16@17:27:54: INFO    ****Device Registration********
+2020-08-16@17:28:08: INFO    DeviceCode and SerialNo does exist in DB so, executing Device Registration step
+2020-08-16@17:28:08: INFO    {"serialNo":"535626446","deviceProvider":"SYNCBYTE","deviceProviderId":"SYNCBYTE.LTC165","make":"Logitech","model":"C615","dateTime":"2020-08-16T11:58:08.845Z","type":"Face","deviceSubType":"Full face"}
+2020-08-16@17:28:08: INFO    {"deviceSubId":"[0]","certification":"L0","digitalId":"eyJzZXJpYWxObyI6IjUzNTYyNjQ0NiIsImRldmljZVByb3ZpZGVyIjoiU1lOQ0JZVEUiLCJkZXZpY2VQcm92aWRlcklkIjoiU1lOQ0JZVEUuTFRDMTY1IiwibWFrZSI6IkxvZ2l0ZWNoIiwibW9kZWwiOiJDNjE1IiwiZGF0ZVRpbWUiOiIyMDIwLTA4LTE2VDExOjU4OjA4Ljg0NVoiLCJ0eXBlIjoiRmFjZSIsImRldmljZVN1YlR5cGUiOiJGdWxsIGZhY2UifQ==","firmware":"SB.WIN.001","deviceExpiry":"2020-12-16T09:06:38.161Z","timeStamp":"2020-08-16T11:58:08.847Z"}
+2020-08-16@17:28:08: INFO    {"deviceId":"79847aec-b87c-4692-9ae9-43ba203a3411","purpose":"Registration","deviceInfo":{"deviceSubId":"[0]","certification":"L0","digitalId":"eyJzZXJpYWxObyI6IjUzNTYyNjQ0NiIsImRldmljZVByb3ZpZGVyIjoiU1lOQ0JZVEUiLCJkZXZpY2VQcm92aWRlcklkIjoiU1lOQ0JZVEUuTFRDMTY1IiwibWFrZSI6IkxvZ2l0ZWNoIiwibW9kZWwiOiJDNjE1IiwiZGF0ZVRpbWUiOiIyMDIwLTA4LTE2VDExOjU4OjA4Ljg0NVoiLCJ0eXBlIjoiRmFjZSIsImRldmljZVN1YlR5cGUiOiJGdWxsIGZhY2UifQ==","firmware":"SB.WIN.001","deviceExpiry":"2020-12-16T09:06:38.161Z","timeStamp":"2020-08-16T11:58:08.847Z"},"foundationalTrustProviderId":""}
+2020-08-16@17:28:08: INFO    {"deviceData":"eyJkZXZpY2VJZCI6Ijc5ODQ3YWVjLWI4N2MtNDY5Mi05YWU5LTQzYmEyMDNhMzQxMSIsInB1cnBvc2UiOiJSZWdpc3RyYXRpb24iLCJkZXZpY2VJbmZvIjp7ImRldmljZVN1YklkIjoiWzBdIiwiY2VydGlmaWNhdGlvbiI6IkwwIiwiZGlnaXRhbElkIjoiZXlKelpYSnBZV3hPYnlJNklqVXpOVFl5TmpRME5pSXNJbVJsZG1salpWQnliM1pwWkdWeUlqb2lVMWxPUTBKWlZFVWlMQ0prWlhacFkyVlFjbTkyYVdSbGNrbGtJam9pVTFsT1EwSlpWRVV1VEZSRE1UWTFJaXdpYldGclpTSTZJa3h2WjJsMFpXTm9JaXdpYlc5a1pXd2lPaUpETmpFMUlpd2laR0YwWlZScGJXVWlPaUl5TURJd0xUQTRMVEUyVkRFeE9qVTRPakE0TGpnME5Wb2lMQ0owZVhCbElqb2lSbUZqWlNJc0ltUmxkbWxqWlZOMVlsUjVjR1VpT2lKR2RXeHNJR1poWTJVaWZRPT0iLCJmaXJtd2FyZSI6IlNCLldJTi4wMDEiLCJkZXZpY2VFeHBpcnkiOiIyMDIwLTEyLTE2VDA5OjA2OjM4LjE2MVoiLCJ0aW1lU3RhbXAiOiIyMDIwLTA4LTE2VDExOjU4OjA4Ljg0N1oifSwiZm91bmRhdGlvbmFsVHJ1c3RQcm92aWRlcklkIjoiIn0="}
+2020-08-16@17:28:08: INFO    {"id":"string","metadata":{"metadata":null},"request":{"deviceData":"eyJkZXZpY2VJZCI6Ijc5ODQ3YWVjLWI4N2MtNDY5Mi05YWU5LTQzYmEyMDNhMzQxMSIsInB1cnBvc2UiOiJSZWdpc3RyYXRpb24iLCJkZXZpY2VJbmZvIjp7ImRldmljZVN1YklkIjoiWzBdIiwiY2VydGlmaWNhdGlvbiI6IkwwIiwiZGlnaXRhbElkIjoiZXlKelpYSnBZV3hPYnlJNklqVXpOVFl5TmpRME5pSXNJbVJsZG1salpWQnliM1pwWkdWeUlqb2lVMWxPUTBKWlZFVWlMQ0prWlhacFkyVlFjbTkyYVdSbGNrbGtJam9pVTFsT1EwSlpWRVV1VEZSRE1UWTFJaXdpYldGclpTSTZJa3h2WjJsMFpXTm9JaXdpYlc5a1pXd2lPaUpETmpFMUlpd2laR0YwWlZScGJXVWlPaUl5TURJd0xUQTRMVEUyVkRFeE9qVTRPakE0TGpnME5Wb2lMQ0owZVhCbElqb2lSbUZqWlNJc0ltUmxkbWxqWlZOMVlsUjVjR1VpT2lKR2RXeHNJR1poWTJVaWZRPT0iLCJmaXJtd2FyZSI6IlNCLldJTi4wMDEiLCJkZXZpY2VFeHBpcnkiOiIyMDIwLTEyLTE2VDA5OjA2OjM4LjE2MVoiLCJ0aW1lU3RhbXAiOiIyMDIwLTA4LTE2VDExOjU4OjA4Ljg0N1oifSwiZm91bmRhdGlvbmFsVHJ1c3RQcm92aWRlcklkIjoiIn0="},"requesttime":"2020-08-16T11:58:08.838Z","version":"version"}
+2020-08-16@17:28:09: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/registereddevices
+2020-08-16@17:28:09: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceData":"eyJkZXZpY2VJZCI6Ijc5ODQ3YWVjLWI4N2MtNDY5Mi05YWU5LTQzYmEyMDNhMzQxMSIsInB1cnBvc2UiOiJSZWdpc3RyYXRpb24iLCJkZXZpY2VJbmZvIjp7ImRldmljZVN1YklkIjoiWzBdIiwiY2VydGlmaWNhdGlvbiI6IkwwIiwiZGlnaXRhbElkIjoiZXlKelpYSnBZV3hPYnlJNklqVXpOVFl5TmpRME5pSXNJbVJsZG1salpWQnliM1pwWkdWeUlqb2lVMWxPUTBKWlZFVWlMQ0prWlhacFkyVlFjbTkyYVdSbGNrbGtJam9pVTFsT1EwSlpWRVV1VEZSRE1UWTFJaXdpYldGclpTSTZJa3h2WjJsMFpXTm9JaXdpYlc5a1pXd2lPaUpETmpFMUlpd2laR0YwWlZScGJXVWlPaUl5TURJd0xUQTRMVEUyVkRFeE9qVTRPakE0TGpnME5Wb2lMQ0owZVhCbElqb2lSbUZqWlNJc0ltUmxkbWxqWlZOMVlsUjVjR1VpT2lKR2RXeHNJR1poWTJVaWZRPT0iLCJmaXJtd2FyZSI6IlNCLldJTi4wMDEiLCJkZXZpY2VFeHBpcnkiOiIyMDIwLTEyLTE2VDA5OjA2OjM4LjE2MVoiLCJ0aW1lU3RhbXAiOiIyMDIwLTA4LTE2VDExOjU4OjA4Ljg0N1oifSwiZm91bmRhdGlvbmFsVHJ1c3RQcm92aWRlcklkIjoiIn0="},"requesttime":"2020-08-16T11:58:08.838Z","version":"version"}
+2020-08-16@17:28:09: INFO    Response  :{
+    "id": "string",
+    "version": "version",
+    "responsetime": "2020-08-16T11:57:48.101Z",
+    "metadata": null,
+    "response": "eyJhbGciOiJSUzI1NiIsInR5cGUiOiJKV1MifQ==.eyJzdGF0dXMiOiJSRUdJU1RFUkVEIiwiZGlnaXRhbElkIjoiZXlKelpYSnBZV3hPYnlJNklqVXpOVFl5TmpRME5pSXNJbVJsZG1salpWQnliM1pwWkdWeUlqb2lVMWxPUTBKWlZFVWlMQ0prWlhacFkyVlFjbTkyYVdSbGNrbGtJam9pVTFsT1EwSlpWRVV1VEZSRE1UWTFJaXdpYldGclpTSTZJa3h2WjJsMFpXTm9JaXdpYlc5a1pXd2lPaUpETmpFMUlpd2laR0YwWlZScGJXVWlPaUl5TURJd0xUQTRMVEUyVkRFeE9qVTRPakE0TGpnME5Wb2lMQ0owZVhCbElqb2lSbUZqWlNJc0ltUmxkbWxqWlZOMVlsUjVjR1VpT2lKR2RXeHNJR1poWTJVaWZRIiwiZGV2aWNlQ29kZSI6ImY0NTA1NDAyLWQ0MTgtNGViMC1iZDFjLTdkOGM1NzBjZGQ0NCIsImVudiI6Im16IiwidGltZVN0YW1wIjoiMjAyMC0wOC0xNlQxMTo1ODowOC44NDdaIn0=.ZXlKaGJHY2lPaUpTVXpJMU5pSjkuLklud3VYTlVRUXJLMDRTd1N1ajJpakpoWno3U3VpYXl3eXNPSnRmSnJmeTZHX0JkU3pwbFBMTXl4bC1yQnNSdjJpN3dvbV9JWGtNWmFCN0lWazlNZU51VGtjSlVNanU0T2k3T3BDdVp1alJaYWJiNEt1Mjc4R0ZhWlFEa3RkV2ZKYW5kalpYcG9yMEk1cU1TYzk1cE5uT0MtVjR3aWg4aElZTW5LU0FLTzdkR2l3SWVLNUpCLW04b1pWQ2pLSmVoLXVrOGkyejNHSUJucXZMMmhrRU5KSzdnNV9JYXQyZDRVSkNoNFNrc0ZjOEE2WldqUXRLbGdCeHBYLWprdjdPVnFNQ3VrN3ctZEk4ZmM0OEdudjA0RDgzWmFnV2NZRzlRNzkxVWJEbFpQbE95Sk5NQmIxT2F1NjBFQTBwbzI2STJ3bjRnS21MTDJ0c3c4LTQwdVZfMGszdw==",
+    "errors": null
+}
+2020-08-16@17:28:09: INFO    Device Registration Center Mapped: eyJhbGciOiJSUzI1NiIsInR5cGUiOiJKV1MifQ==.eyJzdGF0dXMiOiJSRUdJU1RFUkVEIiwiZGlnaXRhbElkIjoiZXlKelpYSnBZV3hPYnlJNklqVXpOVFl5TmpRME5pSXNJbVJsZG1salpWQnliM1pwWkdWeUlqb2lVMWxPUTBKWlZFVWlMQ0prWlhacFkyVlFjbTkyYVdSbGNrbGtJam9pVTFsT1EwSlpWRVV1VEZSRE1UWTFJaXdpYldGclpTSTZJa3h2WjJsMFpXTm9JaXdpYlc5a1pXd2lPaUpETmpFMUlpd2laR0YwWlZScGJXVWlPaUl5TURJd0xUQTRMVEUyVkRFeE9qVTRPakE0TGpnME5Wb2lMQ0owZVhCbElqb2lSbUZqWlNJc0ltUmxkbWxqWlZOMVlsUjVjR1VpT2lKR2RXeHNJR1poWTJVaWZRIiwiZGV2aWNlQ29kZSI6ImY0NTA1NDAyLWQ0MTgtNGViMC1iZDFjLTdkOGM1NzBjZGQ0NCIsImVudiI6Im16IiwidGltZVN0YW1wIjoiMjAyMC0wOC0xNlQxMTo1ODowOC44NDdaIn0=.ZXlKaGJHY2lPaUpTVXpJMU5pSjkuLklud3VYTlVRUXJLMDRTd1N1ajJpakpoWno3U3VpYXl3eXNPSnRmSnJmeTZHX0JkU3pwbFBMTXl4bC1yQnNSdjJpN3dvbV9JWGtNWmFCN0lWazlNZU51VGtjSlVNanU0T2k3T3BDdVp1alJaYWJiNEt1Mjc4R0ZhWlFEa3RkV2ZKYW5kalpYcG9yMEk1cU1TYzk1cE5uT0MtVjR3aWg4aElZTW5LU0FLTzdkR2l3SWVLNUpCLW04b1pWQ2pLSmVoLXVrOGkyejNHSUJucXZMMmhrRU5KSzdnNV9JYXQyZDRVSkNoNFNrc0ZjOEE2WldqUXRLbGdCeHBYLWprdjdPVnFNQ3VrN3ctZEk4ZmM0OEdudjA0RDgzWmFnV2NZRzlRNzkxVWJEbFpQbE95Sk5NQmIxT2F1NjBFQTBwbzI2STJ3bjRnS21MTDJ0c3c4LTQwdVZfMGszdw==
+2020-08-16@17:28:09: INFO    ****DeviceValidate History********
+2020-08-16@17:28:09: INFO    Verifying in DB whether DeviceCode and DeviceId values are Same or different
+2020-08-16@17:28:29: INFO    DeviceCode and DeviceId are Values are different so, Device History cannot be validated

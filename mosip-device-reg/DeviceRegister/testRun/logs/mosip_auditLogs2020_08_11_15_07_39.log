@@ -1,2 +1,0 @@
-2020-08-11@15:07:39: INFO    ****Authentication********
-2020-08-11@15:07:43: INFO    Request :{"request":{"password":"mosip","appId":"admin","userName":"110119"},"metadata":"{}","requesttime":"2020-08-11T09:37:39.917Z","id":"mosip.authentication.useridPwd","version":"1.0"}

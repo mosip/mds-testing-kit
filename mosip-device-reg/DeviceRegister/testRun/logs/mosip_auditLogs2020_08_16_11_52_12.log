@@ -1,0 +1,54 @@
+2020-08-16@11:52:12: INFO    ******************************Authentication**************************
+2020-08-16@11:52:16: INFO          
+2020-08-16@11:52:16: INFO    Endpoint :https://extint.technoforte.co.in/v1/authmanager/authenticate/useridPwd
+2020-08-16@11:52:16: INFO    Request  :{"request":{"password":"Techno@123","appId":"admin","userName":"110119"},"metadata":"{}","requesttime":"2020-08-16T06:22:12.605Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-16@11:52:16: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-16T06:21:54.776Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-16@11:52:16: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ3TndEaGFrSUYzdmkzWFBvbmdiVlpQR3FDaXZDVUV0MFRWTHh0ZGVMNFVzIn0.eyJqdGkiOiIxNDE1NmRmYi0zZmIxLTQwMGYtYmRkZS1iOTFiMWQzOTkyYjQiLCJleHAiOjE1OTc1OTQ5MTQsIm5iZiI6MCwiaWF0IjoxNTk3NTU4OTE0LCJpc3MiOiJodHRwczovL2V4dGludC50ZWNobm9mb3J0ZS5jby5pbi9rZXljbG9hay9hdXRoL3JlYWxtcy9tb3NpcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIzNmQ5MjZmNS04MGQ1LTQ2ZWQtOTRlNy1hNDQ5ODQwZjExNzkiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtb3NpcC1hZG1pbi1jbGllbnQiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiJjYzRlODdkYi1lMzVmLTRlNmQtYTM2OC1lZDdiMzliYmNiNDYiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlNVUEVSQURNSU4iLCJSRUdJU1RSQVRJT05fT0ZGSUNFUiIsIlJFU0lERU5UIiwiUkVHSVNUUkFUSU9OX09QRVJBVE9SIiwiREVWSUNFX1BST1ZJREVSIiwiQ0VOVFJBTF9BRE1JTiIsIlJFR0lTVFJBVElPTl9QUk9DRVNTT1IiLCJSRUdJU1RSQVRJT05fQURNSU4iLCJQUkVfUkVHSVNUUkFUSU9OIiwiWk9OQUxfQURNSU4iLCJJRF9BVVRIRU5USUNBVElPTiIsIlJFR0lTVFJBVElPTl9TVVBFUlZJU09SIiwiUFJFUkVHIiwiQ0VOVFJBTF9BUFBST1ZFUiIsIlpPTkFMX0FQUFJPVkVSIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsIkdMT0JBTF9BRE1JTiIsIk1JU1AiLCJQUkVfUkVHSVNUUkFUSU9OX0FETUlOIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiUGl5dXMgVGVzdCIsInByZWZlcnJlZF91c2VybmFtZSI6IjExMDExOSIsImdpdmVuX25hbWUiOiJQaXl1cyIsImZhbWlseV9uYW1lIjoiVGVzdCIsImVtYWlsIjoiMTEwMTE5QHh5ei5jb20ifQ.Vx_slwIa3_YTtxW-4G-O9r-J9H1rB82J8KcWLI9llpQ81zd1NZBRn_NwpLKGfd_Ppz5Cn1qogqIgLpyJazFs8bXuJo4nV9gpUXybF9puuhi3Vy6QWoqlCw4TcBm3wl0XwA7_yETBrzuRRn9ub5dNiKkVidxcArxJMXQ0sNjqaYTXoV-hvuzHs8RX7rsw8bvAiBZDtvVYxUI_o6FkgMrKh9MoA4S4R8NqZvXqLVCPxkuceKMPkYkf18dOYTJDuXRU59I7BKCKw-1raQ6YkOs8l8iurDwHynb4KmTTQ0tvCUHmCKOlzMwFOwyXeTYejbJVtMg-oQmiBAsHXfStN_97Zw
+2020-08-16@11:52:16: INFO    *********************************DeviceProvider********************************
+2020-08-16@11:52:16: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table*****
+2020-08-16@11:52:30: INFO    >>>>>>>>>>>>>> DeviceProvider details is alReady Exist in DB
+2020-08-16@11:52:30: INFO    	providerId :SYNCBYTE.LTC165 VendorName :SYNCBYTE
+2020-08-16@11:52:30: INFO    ******************************Mosip Device Service*****************************************
+2020-08-16@11:52:30: INFO    ****Checking providerID in  MosipDeviceService and mosip_device_service_History table******
+2020-08-16@11:52:42: INFO    >>>>>>>>>>>>>>MDS info already Prsent in DB
+2020-08-16@11:52:42: INFO    	MosipDeviceServiceId :SYNCBYTE.LTC165 make :Logitech  model: C615
+2020-08-16@11:52:42: INFO    **************Device Specification***********************************
+2020-08-16@11:52:42: INFO    ***Checking for Device Specification in eng and ara language****
+2020-08-16@11:52:49: INFO    DeviceSpecId :736
+2020-08-16@11:52:49: INFO    ****Device Specification is present in DB with eng and ara language********
+2020-08-16@11:52:49: INFO    --------------------SKIP DEVICE SPECIFICATION STEP -------------------------
+2020-08-16@11:52:55: INFO    serial_num :535626446 and dtyp_code :736 is present
+2020-08-16@11:52:55: INFO    Device deatils already exist in DB so, Skipping Create Device step
+2020-08-16@11:52:55: INFO    ****Device and center mapping********
+2020-08-16@11:53:01: INFO    regcntr_id :10002 and device_id : 79847aec-b87c-4692-9ae9-43ba203a3411 is present
+2020-08-16@11:53:01: INFO    Mapping  already exist in DB so, Skipping Device & Center mapping step
+2020-08-16@11:53:01: INFO    ****Device Registration********
+2020-08-16@11:53:07: INFO    DeviceCode and SerialNo already exist in DB so, Skipping Device Registration step
+2020-08-16@11:53:07: INFO    ****DeviceValidate History********
+2020-08-16@11:53:07: INFO    Verifying in DB whether DeviceCode and DeviceId values are Same or different
+2020-08-16@11:53:12: INFO    DeviceCode and DeviceId  values are same so, now validating device History
+2020-08-16@11:53:13: INFO    Endpoint :https://extint.technoforte.co.in/v1/masterdata/deviceprovidermanagement/validate
+2020-08-16@11:53:13: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceCode":"79847aec-b87c-4692-9ae9-43ba203a3411","deviceServiceVersion":"SB.WIN.001","digitalId":{"dateTime":"2020-08-16T06:23:12.928Z","deviceSubType":"Full face","dp":"SYNCBYTE","dpId":"SYNCBYTE.LTC165","make":"Logitech","model":"C615","serialNo":"535626446","type":"Face"},"purpose":"Registration","timeStamp":"2020-08-16T06:23:12.928Z"},"requesttime":"2020-08-16T06:23:12.928Z","version":"string"}
+2020-08-16@11:53:13: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T06:22:52.185Z",
+    "metadata": null,
+    "response": {
+        "status": "Valid",
+        "message": "Device details history validated successfully"
+    },
+    "errors": null
+}
+2020-08-16@11:53:13: INFO    **** Device Validate Success*****
+2020-08-16@11:53:13: INFO    Status :Valid  Message :Device details history validated successfully

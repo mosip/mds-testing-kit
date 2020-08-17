@@ -1,0 +1,139 @@
+2020-08-16@17:31:03: INFO    ******************************Authentication**************************
+2020-08-16@17:31:07: INFO          
+2020-08-16@17:31:07: INFO    Endpoint :https://qa.mosip.net/v1/authmanager/authenticate/useridPwd
+2020-08-16@17:31:07: INFO    Request  :{"request":{"password":"Techno@123","appId":"admin","userName":"110119"},"metadata":"{}","requesttime":"2020-08-16T12:01:03.593Z","id":"mosip.authentication.useridPwd","version":"1.0"}
+2020-08-16@17:31:07: INFO    Response  :{
+    "id": "mosip.authentication.useridPwd",
+    "version": "1.0",
+    "responsetime": "2020-08-16T12:00:46.517Z",
+    "metadata": null,
+    "response": {
+        "status": "success",
+        "message": "Username and password combination had been validated successfully"
+    },
+    "errors": null
+}
+2020-08-16@17:31:07: INFO    Authorization  :eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJERWNSdlVMMlVNSkJuODlqUUYtUzU1VmJqNTRfSnZVS1pMX0Fwa0VEMXhFIn0.eyJqdGkiOiJlMjgxNWM4MS00MGRhLTRmNjAtOGQ0OC05YzA0YmMxMmM4NTMiLCJleHAiOjE1OTc2MTUyNDYsIm5iZiI6MCwiaWF0IjoxNTk3NTc5MjQ2LCJpc3MiOiJodHRwczovL3FhLm1vc2lwLm5ldC9rZXljbG9hay9hdXRoL3JlYWxtcy9tb3NpcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIxMzc1ZmY0Ny1jMjRmLTQzM2ItYTkwMy1iYTYyMDRmMDk4ODUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtb3NpcC1hZG1pbi1jbGllbnQiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiIwZjg2ZGFlMS1jZTYyLTQyN2QtYjE3OS1lOWEwMzgxNzVlNjQiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlNVUEVSQURNSU4iLCJSRUdJU1RSQVRJT05fT0ZGSUNFUiIsIlJFR0lTVFJBVElPTl9PUEVSQVRPUiIsIlJFU0lERU5UIiwiREVWSUNFX1BST1ZJREVSIiwiQ0VOVFJBTF9BRE1JTiIsIlJFR0lTVFJBVElPTl9QUk9DRVNTT1IiLCJSRUdJU1RSQVRJT05fQURNSU4iLCJQUkVfUkVHSVNUUkFUSU9OIiwiSURfQVVUSEVOVElDQVRJT04iLCJSRUdJU1RSQVRJT05fU1VQRVJWSVNPUiIsIlpPTkFMX0FETUlOIiwiUFJFUkVHIiwib2ZmbGluZV9hY2Nlc3MiLCJDRU5UUkFMX0FQUFJPVkVSIiwiWk9OQUxfQVBQUk9WRVIiLCJ1bWFfYXV0aG9yaXphdGlvbiIsIk1JU1AiLCJHTE9CQUxfQURNSU4iLCJQUkVfUkVHSVNUUkFUSU9OX0FETUlOIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiUGl5dXMgVGVzdCIsInByZWZlcnJlZF91c2VybmFtZSI6IjExMDExOSIsImdpdmVuX25hbWUiOiJQaXl1cyIsImZhbWlseV9uYW1lIjoiVGVzdCIsImVtYWlsIjoiMTEwMTE5QHh5ei5jb20ifQ.BgoNNAS51hNp9hVH_bAc0ijc7wdEv1X8Mud3E40HKZgN3Ley6FT23v8su5ZaloLPVkb1uwv4fbfd1Xp0P5GNW0O0oRMbDneupOqw4eS8ZkbLktFsjpYfPqI6Rdik9ZhW2NOysGlEdnoxQ0xab7Uy0c1dFRkSjgXw-8H5RENM3D3o9HGplI7ZHMG0LB9PLQDK_zAK93Xv7ONbLQPst6brukMeD-qu0u1EXBKp3hb7zoXw34Nht-91f2lI6QP8hExvf8YYFKk-nmQzdIA8oXuHRqU5SxSGDwR0rT0VLqAPqW4dltxRE3wH7EZyizs0vKu6C0GDSvdlTUn-SGi7BWr88Q
+2020-08-16@17:31:07: INFO    *********************************DeviceProvider********************************
+2020-08-16@17:31:07: INFO    ****Checking providerID in  DeviceProvider and DeviceProviderHistory table*****
+2020-08-16@17:31:45: INFO    >>>>>>>>>>>>>> DeviceProvider details is alReady Exist in DB
+2020-08-16@17:31:45: INFO    	providerId :SYNCBYTE.TCI322 VendorName :SYNCBYTE
+2020-08-16@17:31:45: INFO    ******************************Mosip Device Service*****************************************
+2020-08-16@17:31:45: INFO    ****Checking providerID in  MosipDeviceService and mosip_device_service_History table******
+2020-08-16@17:32:27: INFO    >>>>>>>>>>>>>>MDS info already Prsent in DB
+2020-08-16@17:32:27: INFO    	MosipDeviceServiceId :SYNCBYTE.TCI322 make :EYECOOL  model: TCI322
+2020-08-16@17:32:27: INFO    **************Device Specification***********************************
+2020-08-16@17:32:27: INFO    ***Checking for Device Specification in eng and ara language****
+2020-08-16@17:33:08: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/devicespecifications
+2020-08-16@17:33:08: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"brand":"EYECOOL","description":"To capture Iris","deviceTypeCode":"IRS","id":"556","isActive":true,"langCode":"eng","minDriverversion":"string","model":"TCI322","name":"Camera"},"requesttime":"2020-08-16T12:03:08.539Z","version":"string"}
+2020-08-16@17:33:08: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T12:02:47.889Z",
+    "metadata": null,
+    "response": {
+        "id": "556",
+        "langCode": "eng"
+    },
+    "errors": null
+}
+2020-08-16@17:33:08: INFO    Device Specification Created In eng With Id: 556
+2020-08-16@17:33:09: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/devicespecifications
+2020-08-16@17:33:09: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"brand":"EYECOOL","description":"To capture Iris","deviceTypeCode":"IRS","id":"556","isActive":true,"langCode":"ara","minDriverversion":"string","model":"TCI322","name":"Camera"},"requesttime":"2020-08-16T12:03:08.866Z","version":"string"}
+2020-08-16@17:33:09: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T12:02:48.135Z",
+    "metadata": null,
+    "response": {
+        "id": "556",
+        "langCode": "ara"
+    },
+    "errors": null
+}
+2020-08-16@17:33:09: INFO    Device Specification Created In ara With Id: 556
+2020-08-16@17:33:23: INFO    ********************create device***********************************
+2020-08-16@17:33:23: INFO    ****create device in primary language********
+2020-08-16@17:33:24: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/devices
+2020-08-16@17:33:24: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"556","id":"","ipAddress":"127.0.0.0","isActive":true,"langCode":"eng","macAddress":"3C-2C-30-B4-00-C0","name":"Double Iris","serialNum":"9149769","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"NTH"},"requesttime":"2020-08-16T12:03:23.923Z","version":"string"}
+2020-08-16@17:33:24: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T12:03:03.190Z",
+    "metadata": null,
+    "response": {
+        "isActive": false,
+        "createdBy": "110119",
+        "createdDateTime": "2020-08-16T12:03:03.208Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "777eb0bd-1852-4540-8df6-25d303d18162",
+        "name": "Double Iris",
+        "serialNum": "9149769",
+        "deviceSpecId": "556",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "eng",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "NTH"
+    },
+    "errors": null
+}
+2020-08-16@17:33:24: INFO    Device Created In eng With DeviceId: 777eb0bd-1852-4540-8df6-25d303d18162
+2020-08-16@17:33:24: INFO    ****Update  the above deviceId with code from info file********
+2020-08-16@17:34:20: INFO    bc808c02-1a7d-4a5d-848f-1aa8590ca6ef alredy exit in DB  so, deleting..
+2020-08-16@17:34:34: INFO    DeviceIdValue : bc808c02-1a7d-4a5d-848f-1aa8590ca6ef Updated In DB
+2020-08-16@17:34:34: INFO    DeviceId updated with bc808c02-1a7d-4a5d-848f-1aa8590ca6ef
+2020-08-16@17:34:34: INFO    *********create device in secondary language********
+2020-08-16@17:34:35: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/devices
+2020-08-16@17:34:35: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceSpecId":"556","id":"bc808c02-1a7d-4a5d-848f-1aa8590ca6ef","ipAddress":"127.0.0.0","isActive":true,"langCode":"ara","macAddress":"3C-2C-30-B4-00-C0","name":"Double Iris","serialNum":"9149769","validityDateTime":"2020-12-31T06:12:52.994Z","zoneCode":"NTH"},"requesttime":"2020-08-16T12:04:34.798Z","version":"string"}
+2020-08-16@17:34:35: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T12:04:14.111Z",
+    "metadata": null,
+    "response": {
+        "isActive": true,
+        "createdBy": "110119",
+        "createdDateTime": "2020-08-16T12:04:14.128Z",
+        "updatedBy": null,
+        "updatedDateTime": null,
+        "isDeleted": null,
+        "deletedDateTime": null,
+        "id": "bc808c02-1a7d-4a5d-848f-1aa8590ca6ef",
+        "name": "Double Iris",
+        "serialNum": "9149769",
+        "deviceSpecId": "556",
+        "macAddress": "3C-2C-30-B4-00-C0",
+        "ipAddress": "127.0.0.0",
+        "langCode": "ara",
+        "validityDateTime": "2020-12-31T06:12:52.994Z",
+        "zoneCode": "NTH"
+    },
+    "errors": null
+}
+2020-08-16@17:34:35: INFO    Device Created In ara With DeviceId: bc808c02-1a7d-4a5d-848f-1aa8590ca6ef
+2020-08-16@17:34:35: INFO    ****Device and center mapping********
+2020-08-16@17:35:16: INFO     Device is Active in both the language
+2020-08-16@17:35:31: INFO    Endpoint :https://qa.mosip.net/v1/masterdata/registrationcenterdevice
+2020-08-16@17:35:31: INFO    Request  :{"id":"string","metadata":{"metadata":null},"request":{"deviceId":"bc808c02-1a7d-4a5d-848f-1aa8590ca6ef","isActive":true,"langCode":"eng","regCenterId":"10002"},"requesttime":"2020-08-16T12:05:31.645Z","version":"string"}
+2020-08-16@17:35:31: INFO    Response  :{
+    "id": "string",
+    "version": "string",
+    "responsetime": "2020-08-16T12:05:10.907Z",
+    "metadata": null,
+    "response": {
+        "regCenterId": "10002",
+        "deviceId": "bc808c02-1a7d-4a5d-848f-1aa8590ca6ef"
+    },
+    "errors": null
+}
+2020-08-16@17:35:31: INFO    Device And Center Mapped With DeviceId: bc808c02-1a7d-4a5d-848f-1aa8590ca6ef And RegcenterId :10002
+2020-08-16@17:35:31: INFO    device Mapped succesfully with devicId : bc808c02-1a7d-4a5d-848f-1aa8590ca6ef
+2020-08-16@17:35:31: INFO    ****Device Registration********
+2020-08-16@17:35:46: INFO    DeviceCode and SerialNo already exist in DB so, Skipping Device Registration step
+2020-08-16@17:35:46: INFO    ****DeviceValidate History********
+2020-08-16@17:35:46: INFO    Verifying in DB whether DeviceCode and DeviceId values are Same or different
+2020-08-16@17:36:06: INFO    DeviceCode and DeviceId are Values are different so, Device History cannot be validated

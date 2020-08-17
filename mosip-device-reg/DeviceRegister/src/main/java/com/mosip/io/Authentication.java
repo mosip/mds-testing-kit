@@ -1,12 +1,7 @@
 package com.mosip.io;
 
 import static io.restassured.RestAssured.given;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.json.simple.JSONObject;
-
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.mosip.io.util.ServiceUrl;
@@ -34,7 +29,7 @@ public class Authentication extends Util{
 	    }
 	    
 	    cookies=api_response.getCookie("Authorization");
-	    logInfo(request, url, response);
+	    logInfo(request, System.getProperty("baseUrl")+url, response);
 	}
 
 	
