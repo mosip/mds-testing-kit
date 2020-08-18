@@ -7,13 +7,16 @@ import java.util.List;
 
 import javax.imageio.stream.FileImageInputStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.ValidatorDef;
 import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
-import io.mosip.mds.validator.AuthRequestResponseValidator;
+import io.mosip.mds.repository.TestCaseResultRepository;
 import io.mosip.mds.validator.MandatoryCaptureResponseValidator;
 import io.mosip.mds.validator.MandatoryDeviceInfoResponseValidator;
 import io.mosip.mds.validator.MandatoryDiscoverResponseValidator;
@@ -23,7 +26,10 @@ import io.mosip.mds.validator.ValidValueDeviceInfoResponseValidator;
 import io.mosip.mds.validator.ValidValueDiscoverResponseValidator;
 import io.mosip.mds.validator.ValidValueRCaptureResponseValidator;
 
+
 public class Store {
+	
+
 
     public static String STORAGE_PATH = null;
 
@@ -93,6 +99,7 @@ public class Store {
         try
         {
             mapper.writeValue(runFile, run);
+            //testCaseResultRepository.save(null);
         }
         catch(Exception ex)
         {

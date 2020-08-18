@@ -1,9 +1,11 @@
 package io.mosip.mds.controller;
 
 import io.mosip.mds.entitiy.*;
+import io.mosip.mds.service.TestCaseResultService;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +28,9 @@ import io.swagger.annotations.ApiResponses;
 public class TestManagerController {
 
 	private TestManager testManager = new TestManager();
+	
+	@Autowired
+	TestCaseResultService testCaseResultService;
 
 	@GetMapping("/masterdata")
 	@ApiOperation(value = "Retrieve all MasterData", notes = "Retrieve all MasterData")
@@ -54,7 +59,8 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When No Test found"),
 			@ApiResponse(code = 500, message = "While retrieving Test any error occured") })
 	public List<TestRun> getRuns(@PathVariable("email")String email) {
-		return testManager.getRuns(email);
+		//testCaseResultService.getTests(email);
+		return testCaseResultService.getRuns(email);
 	}
 
 	
@@ -64,7 +70,7 @@ public class TestManagerController {
 			@ApiResponse(code = 400, message = "When Request body passed  is null or invalid"),
 			@ApiResponse(code = 500, message = "While creating test any error occured") })
 	public RunExtnDto createRun(@RequestBody TestManagerDto testManagerDto) {
-		return testManager.createRun(testManagerDto);
+		return testCaseResultService.saveTestRun(testManagerDto);
 		
 	}
 	
