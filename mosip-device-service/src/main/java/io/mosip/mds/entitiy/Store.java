@@ -3,16 +3,23 @@ package io.mosip.mds.entitiy;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.imageio.stream.FileImageInputStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.mds.dto.TestManagerGetDto;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.ValidatorDef;
 import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
+import io.mosip.mds.repository.TestCaseResultRepository;
 import io.mosip.mds.validator.AuthRequestResponseValidator;
 import io.mosip.mds.validator.MandatoryCaptureResponseValidator;
 import io.mosip.mds.validator.MandatoryDeviceInfoResponseValidator;
@@ -23,7 +30,10 @@ import io.mosip.mds.validator.ValidValueDeviceInfoResponseValidator;
 import io.mosip.mds.validator.ValidValueDiscoverResponseValidator;
 import io.mosip.mds.validator.ValidValueRCaptureResponseValidator;
 
+
 public class Store {
+	
+
 
     public static String STORAGE_PATH = null;
 
@@ -93,6 +103,7 @@ public class Store {
         try
         {
             mapper.writeValue(runFile, run);
+            //testCaseResultRepository.save(null);
         }
         catch(Exception ex)
         {
@@ -209,5 +220,20 @@ public class Store {
 			}
 		}
 		return testExtnDtos;
+	}
+    
+	public static List<TestExtnDto> filterTestType(TestManagerGetDto filter,HashMap<String, TestExtnDto> allTests)
+	{
+		List<TestExtnDto> results =  allTests.values().stream().filter(test -> 
+				(isValid(test.processes) && test.processes.contains(filter.process)) && 
+				(isValid(test.biometricTypes) && test.biometricTypes.contains(filter.biometricType)) &&
+				(isValid(test.deviceSubTypes) && test.deviceSubTypes.contains(filter.deviceSubType)) && 
+				( !isValid(test.mdsSpecVersions) || test.mdsSpecVersions.contains(filter.mdsSpecificationVersion ) ))
+		.collect(Collectors.toList());
+		
+		return results;	
+	}
+	private static boolean isValid(List<String> value) {
+		return (value != null && !value.isEmpty());
 	}
 }

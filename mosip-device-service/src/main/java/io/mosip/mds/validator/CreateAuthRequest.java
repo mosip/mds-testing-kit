@@ -71,6 +71,7 @@ public class CreateAuthRequest {
 
 	private static final String SSL = "SSL";
 
+
 	public CryptoUtility cryptoUtil=new CryptoUtility();
 
 	TestExtnDto testExtnDto;
@@ -94,6 +95,7 @@ public class CreateAuthRequest {
 		}
 		areTestsLoaded = true;
 	}
+
 
 	static{
 		loadTests();

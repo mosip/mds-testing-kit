@@ -7,6 +7,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.cert.X509Certificate;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -46,10 +47,83 @@ public class CryptoUtility {
 	/**
 	 * {@link CryptoCoreSpec} instance for cryptographic functionalities.
 	 */
-	@Autowired
-	public CryptoCoreSpec<byte[], byte[], SecretKey, PublicKey, PrivateKey, String> cryptoCore;
+
+	public CryptoCoreSpec<byte[], byte[], SecretKey, PublicKey, PrivateKey, String> cryptoCore=new CryptoCoreSpec<byte[], byte[], SecretKey, PublicKey, PrivateKey, String>() {
+		
+		@Override
+		public boolean verifySignature(byte[] data, String signature, PublicKey publicKey) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+		@Override
+		public boolean verifySignature(String signature) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+		@Override
+		public byte[] symmetricEncrypt(SecretKey key, byte[] data, byte[] iv, byte[] aad) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public byte[] symmetricEncrypt(SecretKey key, byte[] data, byte[] aad) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public byte[] symmetricDecrypt(SecretKey key, byte[] data, byte[] iv, byte[] aad) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public byte[] symmetricDecrypt(SecretKey key, byte[] data, byte[] aad) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public String sign(byte[] data, PrivateKey privateKey, X509Certificate x509Certificate) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public String sign(byte[] data, PrivateKey privateKey) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public <U> U random() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public String hash(byte[] data, byte[] salt) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public byte[] asymmetricEncrypt(PublicKey key, byte[] data) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public byte[] asymmetricDecrypt(PrivateKey key, byte[] data) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
 	
-	
+
 
 	/**
 	 * Symmetric encrypt.
