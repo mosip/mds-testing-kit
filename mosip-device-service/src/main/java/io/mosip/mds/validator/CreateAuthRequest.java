@@ -68,8 +68,8 @@ public class CreateAuthRequest {
 
 	private static final String SSL = "SSL";
 
-	@Autowired
-	public CryptoUtility cryptoUtil;
+	
+	public CryptoUtility cryptoUtil=new CryptoUtility();
 
 	public Object authenticateResponse(String capture) throws Exception {
 		AuthRequestDTO authRequestDTO = new AuthRequestDTO();
