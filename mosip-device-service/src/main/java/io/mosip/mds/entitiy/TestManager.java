@@ -164,7 +164,7 @@ public class TestManager {
 	}
 
 	
-	private static List<TestExtnDto> filterTests(TestManagerGetDto filter)
+	public static List<TestExtnDto> filterTests(TestManagerGetDto filter)
 	{
 		List<TestExtnDto> results =  allTests.values().stream().filter(test -> 
 				(isValid(test.processes) && test.processes.contains(filter.process)) && 
@@ -495,4 +495,6 @@ public class TestManager {
 	public DeviceInfoResponse[] decodeDeviceInfo(String deviceInfo) {
 		return DeviceInfoHelper.decode(deviceInfo);
 	}
+	
+
 }

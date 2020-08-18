@@ -16,23 +16,23 @@ public class TestcaseResult {
 	@EmbeddedId
 	public TestResultKey testResultKey;
 	
-	@Column(name="testcase_owner")
-	public String testcaseOwner;
+	@Column(name="owner")
+	public String owner;
 	
 	@Lob
-	@Column(name="testcase_request")
-	public String testcaseRequest;
+	@Column(name="request")
+	public String request;
 	
 	@Lob
-	@Column(name="testcase_response")
-	public String testcaseResponse;
+	@Column(name="response")
+	public String response;
 	
 	@Lob
-	@Column(name="testcase_result")
+	@Column(name="validation_results")
 	public String validationResults;
 	
-	@Column(name="testcase_passed")
-	public boolean testcasePassed;
+	@Column(name="passed")
+	public boolean passed;
 	
 	@Lob
 	@Column(name="device_info")

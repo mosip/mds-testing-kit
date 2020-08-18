@@ -71,8 +71,31 @@ public class CreateAuthRequest {
 
 	private static final String SSL = "SSL";
 
-	
+
 	public CryptoUtility cryptoUtil=new CryptoUtility();
+
+	TestExtnDto testExtnDto;
+	
+	private static Boolean areTestsLoaded = false;
+
+	private static HashMap<String, TestExtnDto> allTests = new HashMap<>();
+
+	private static void loadTests()
+	{
+		if(!areTestsLoaded)
+		{
+			TestExtnDto[] tests = Store.getTestDefinitions();
+			if(tests != null)
+			{
+				for(TestExtnDto test:tests)
+				{
+					allTests.put(test.testId, test);
+				}
+			}
+		}
+		areTestsLoaded = true;
+	}
+
 
 	static{
 		loadTests();

@@ -10,8 +10,8 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name ="run_id_status")
-public class RunIdStatus {
+@Table(name ="run_status")
+public class RunStatus {
 	
 	@Id
 	@Column(name = "run_id",nullable=false)
