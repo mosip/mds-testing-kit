@@ -22,35 +22,36 @@ import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.lang.JoseException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.CaptureResponse;
+import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import io.mosip.mds.dto.DataHeader;
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
-import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import io.mosip.mds.entitiy.DeviceInfoMinimal;
 import io.mosip.mds.entitiy.Validator;
 import io.mosip.mds.util.Intent;
 
 public class MdsSignatureValidator extends Validator{
 
-	private static ObjectMapper mapper;
+	@Autowired
+	private ObjectMapper mapper;
 
 	Validation validation = new Validation();
 
 	CommonValidator commonValidator = new CommonValidator();
 	ObjectMapper jsonMapper = new ObjectMapper();
-	
-	static {
-		mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-	}
+
+	//	static {
+	//		mapper = new ObjectMapper();
+	//		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	//	}
 
 	public MdsSignatureValidator()
 	{
@@ -103,7 +104,7 @@ public class MdsSignatureValidator extends Validator{
 				validation = commonValidator.setFieldExpected("deviceInfoMinimal.deviceInfo","Valid JWT signed Device info Details",deviceInfoMinimal.deviceInfo);
 				try {
 					validations = validateSignatureValidity(deviceInfoMinimal.deviceInfo,validations);
-					
+
 					if(!validateSignature(deviceInfoMinimal.deviceInfo)) {
 						commonValidator.setFoundMessageStatus(validation,deviceInfoMinimal.deviceInfo,"MdsResponse signature verification failed",CommonConstant.FAILED);
 					}

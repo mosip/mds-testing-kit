@@ -6,7 +6,7 @@ import lombok.Data;
 public class RegistrationCaptureResponse extends MdsResponse{
 
 	@Data
-	public static class RegistrationCaptureBiometric {
+	public class RegistrationCaptureBiometric {
 		public String specVersion;
 		public String hash;
 		public MDSError error;

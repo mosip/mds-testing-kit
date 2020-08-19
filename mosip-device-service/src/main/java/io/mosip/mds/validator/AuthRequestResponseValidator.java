@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -11,6 +14,7 @@ import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
 
+@Component
 public class AuthRequestResponseValidator extends Validator{
 
 	public AuthRequestResponseValidator()
@@ -20,9 +24,15 @@ public class AuthRequestResponseValidator extends Validator{
 
 	Validation validation = new Validation();
 
-	CommonValidator commonValidator = new CommonValidator();
-	CreateAuthRequest createAuthRequest = new CreateAuthRequest();
-	ObjectMapper jsonMapper = new ObjectMapper();
+	@Autowired
+	CommonValidator commonValidator;
+
+	@Autowired
+	CreateAuthRequest createAuthRequest;
+
+	@Autowired
+	ObjectMapper jsonMapper;
+
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations= new ArrayList<>();

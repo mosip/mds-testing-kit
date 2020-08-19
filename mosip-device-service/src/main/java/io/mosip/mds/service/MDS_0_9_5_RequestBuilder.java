@@ -24,20 +24,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+@Component
 public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
 
-	 private static ObjectMapper mapper;
+	@Autowired
+	 private ObjectMapper mapper;
 	
-    static {
-    	mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-    }
+//    static {
+//    	mapper = new ObjectMapper();
+//		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+//		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+//    }
 
     public String getSpecVersion()
     {
@@ -178,7 +183,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         return mapper.writeValueAsString(requestBody);
     }
 
-     public static String getTimestamp() {
+     public String getTimestamp() {
     	DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
     	return formatter.format(ZonedDateTime.now());
     }

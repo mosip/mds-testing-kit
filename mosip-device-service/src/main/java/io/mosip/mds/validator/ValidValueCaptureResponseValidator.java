@@ -1,11 +1,11 @@
 package io.mosip.mds.validator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.util.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +16,7 @@ import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
 
+@Component
 public class ValidValueCaptureResponseValidator extends Validator {
 
 	private final List<String> bioSubTypeFingerList= getBioSubTypeFinger();
@@ -23,13 +24,15 @@ public class ValidValueCaptureResponseValidator extends Validator {
 
 	Validation validation = new Validation();
 
-	CommonValidator commonValidator = new CommonValidator();
-	ObjectMapper jsonMapper = new ObjectMapper();
-	
+	@Autowired
+	CommonValidator commonValidator;
+
+	@Autowired
+	ObjectMapper jsonMapper;
+
 	public ValidValueCaptureResponseValidator() {
 		super("ValidValueCaptureResponseValidator", "Valid Value Capture Response Validator");
 	}
-	private static ObjectMapper mapper=new ObjectMapper();;
 
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
@@ -38,12 +41,12 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		if(Objects.nonNull(response))
 		{
 			validations.add(validation);
-			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole Capture decoded Jsone Response",response.getMdsDecodedResponse().toString());
+			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole Capture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
 			CaptureResponse cr = (CaptureResponse) response.getMdsDecodedResponse();
 			if(Objects.nonNull(cr))
 			{
 				validations.add(validation);
-				validation = commonValidator.setFieldExpected("registrationCaptureResponse.biometrics","Expected Array of biometric data",Arrays.toString(cr.biometrics));
+				validation = commonValidator.setFieldExpected("CaptureResponse.biometrics","Expected Array of biometric data",jsonMapper.writeValueAsString(cr.biometrics));
 				if(cr.biometrics == null || cr.biometrics.length == 0)
 				{
 					commonValidator.setFoundMessageStatus(validation,cr.biometrics.toString(),"Capture response does not contain biometrics block",CommonConstant.FAILED);
@@ -94,14 +97,15 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		if(!dataDecoded.bioType.equals(CommonConstant.FINGER) && !dataDecoded.bioType.equals(CommonConstant.IRIS) && !dataDecoded.bioType.equals(CommonConstant.FACE))
 		{
 			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioType,"Capture response biometrics-dataDecoded bioType is invalid",CommonConstant.FAILED);
+			validations.add(validation);
+
 		}else {
+			validations.add(validation);
 
 			//Check for bioSubType
 			validations = validateBioSubType(validations, dataDecoded);
-			if(!ObjectUtils.isEmpty(validations))
-				return validations;
+
 		}
-		validations.add(validation);
 
 		//TODO Check for digitalId dataDecoded.digitalId
 		validations=validateDigitalId(validations,dataDecoded);
@@ -155,7 +159,6 @@ public class ValidValueCaptureResponseValidator extends Validator {
 	}
 
 	private List<Validation> validateDigitalId(List<Validation> validations,CaptureBiometricData dataDecoded) {
-		CommonValidator commonValidator=new CommonValidator();
 		validations = commonValidator.validateDecodedSignedDigitalID(dataDecoded.digitalId,validations);
 		return validations;
 	}
