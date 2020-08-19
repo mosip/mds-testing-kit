@@ -40,14 +40,14 @@ public class TestExtnDto {
 	
 	public String uinNumber;
 	
-	public String baseUrl;
-	
-	public String idaAuthManagerUrl;
-	
-	public String idaPublicKeyUrl;
-	
-	public String authUrl;
-	
+//	public String baseUrl;
+//	
+//	public String idaAuthManagerUrl;
+//	
+//	public String idaPublicKeyUrl;
+//	
+//	public String authUrl;
+//	
 	public String mispLicenseKey;
 	
 	public String partnerId;

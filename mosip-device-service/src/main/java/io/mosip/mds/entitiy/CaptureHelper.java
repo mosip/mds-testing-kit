@@ -1,46 +1,27 @@
 package io.mosip.mds.entitiy;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
-import java.util.UUID;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.OAEPParameterSpec;
-import javax.crypto.spec.PSource.PSpecified;
-import javax.crypto.spec.SecretKeySpec;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.PdfImage;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.DigitalId;
@@ -51,94 +32,82 @@ import io.mosip.mds.helper.IrisImageExtractor;
 import io.mosip.mds.util.CryptoUtility;
 import io.mosip.mds.util.SecurityUtil;;
 
+@Component
 public class CaptureHelper {
-	
-	private static ObjectMapper mapper;
-	
-	static {
-		mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-	}
 
-	private static String RCAPTURE = "rCapture";
-	private static String CAPTURE = "Capture";
-	private static String RCAPTURE_DECODE_ERROR = "Error while decoding the " + CAPTURE + " request";
+	@Autowired
+	private  ObjectMapper mapper;
+
+	@Autowired
+	SecurityUtil securityUtil;
+
+	@Autowired
+	Store store;
+
+	private String RCAPTURE = "rCapture";
+	private String CAPTURE = "Capture";
+	private String RCAPTURE_DECODE_ERROR = "Error while decoding the " + CAPTURE + " request";
 	// private static String CAPTURE_DECODE_ERROR = "Error while decoding the " +
 	// CAPTURE + " request";
+	private String PAYLOAD_EMPTY = "PayLoad Empty";
 
-	private static String PAYLOAD_EMPTY = "PayLoad Empty";
+	public CaptureResponse decode(String responseInfo, boolean isRCapture) {
 
-	public static CaptureResponse decode(String responseInfo, boolean isRCapture) {
-
-		CaptureResponse response = null;
-
+		CaptureResponse response;
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		// Deserialize Capture Response
 		try {
 			response = (CaptureResponse) (mapper.readValue(responseInfo.getBytes(), CaptureResponse.class));
-
 			for (CaptureResponse.CaptureBiometric biometric : response.biometrics) {
-
 				if (biometric.getData() == null) {
 					response.setAnalysisError(RCAPTURE_DECODE_ERROR + " : data empty");
 					break;
 				}
-				
 				try {
-
 					// Decode data
 					biometric.setDataDecoded((CaptureResponse.CaptureBiometricData) (mapper.readValue(
-							SecurityUtil.getPayload(biometric.getData()), CaptureResponse.CaptureBiometricData.class)));
-
+							securityUtil.getPayload(biometric.getData()), CaptureResponse.CaptureBiometricData.class)));
 					if (!isRCapture) {
-
 						if (biometric.getSessionKey() == null) {
 							response.analysisError = RCAPTURE_DECODE_ERROR + " : " + "Session Key is empty";
 							break;
 						}
-
 						String decryptedBioValue = getDecryptedBioValue(biometric);
 						biometric.getDataDecoded().setBioValue(decryptedBioValue);
 					}
 					// TODO Verify Digital Id with mock mds
 					// Decode.DigitalId
-
 					if (biometric.getDataDecoded().getDigitalId() != null) {
 						biometric.getDataDecoded()
-								.setDigitalIdDecoded((DigitalId) (mapper.readValue(SecurityUtil.getPayload(biometric.getDataDecoded().getDigitalId()),
-										DigitalId.class)));
+						.setDigitalIdDecoded((DigitalId) (mapper.readValue(securityUtil.getPayload(biometric.getDataDecoded().getDigitalId()),
+								DigitalId.class)));
 					} else {
 						response.analysisError = RCAPTURE_DECODE_ERROR + " : " + "digital id is empty";
 						break;
 					}
-
 				} catch (IllegalArgumentException illegalArgumentException) {
 					response.setAnalysisError(RCAPTURE_DECODE_ERROR + " : Error while decoding payload"
 							+ illegalArgumentException.getMessage());
 				}
-
 			}
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			response = new CaptureResponse();
 			response.setAnalysisError(RCAPTURE_DECODE_ERROR + exception.getMessage());
 		}
-
 		return response;
-
 	}
 
-	private static String getDecryptedBioValue(CaptureBiometric biometric) {
+	private String getDecryptedBioValue(CaptureBiometric biometric) {
 		PrivateKey privateKey = getPrivateKey();
-		
 		String plainBioValue = CryptoUtility.decrypt(privateKey, biometric.sessionKey, biometric.getDataDecoded().bioValue, 
 				biometric.getDataDecoded().timestamp);		
 		return Base64.getUrlEncoder().encodeToString(plainBioValue.getBytes());
 	}
-	
-	public static PrivateKey getPrivateKey() {		
+
+	public PrivateKey getPrivateKey() {		
 		try {
 			FileInputStream pkeyfis = new FileInputStream("data/keys/PrivateKey.pem");
-
 			String pKey = getFileContent(pkeyfis, "UTF-8");
 			pKey = trimBeginEnd(pKey);
 			KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -149,8 +118,8 @@ public class CaptureHelper {
 		}
 		return null;
 	}
-	
-	public static String getFileContent(FileInputStream fis, String encoding) throws IOException {
+
+	public String getFileContent(FileInputStream fis, String encoding) throws IOException {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(fis, encoding))) {
 			StringBuilder sb = new StringBuilder();
 			String line;
@@ -162,7 +131,7 @@ public class CaptureHelper {
 		}
 	}
 
-	private static String trimBeginEnd(String pKey) {
+	private String trimBeginEnd(String pKey) {
 		pKey = pKey.replaceAll("-*BEGIN([^-]*)-*(\r?\n)?", "");
 		pKey = pKey.replaceAll("-*END([^-]*)-*(\r?\n)?", "");
 		pKey = pKey.replaceAll("\\s", "");
@@ -192,8 +161,8 @@ public class CaptureHelper {
 		return file;
 	}*/
 
-	public static void createImageFile(byte[] image, String randomFilename, String format, String segment) {
-		File path = Store.getOrCreateDirectory(Store.getStorePath() + File.separator + "renders");
+	public void createImageFile(byte[] image, String randomFilename, String format, String segment) {
+		File path = store.getOrCreateDirectory(store.getStorePath() + File.separator + "renders");
 		String fileName = path.getAbsolutePath()  + File.separator + randomFilename + "." + format;
 
 		try(FileOutputStream fos = new FileOutputStream(new File(fileName))) {
@@ -207,7 +176,6 @@ public class CaptureHelper {
 			String pdfFileName = path.getAbsolutePath()  + File.separator + randomFilename + ".pdf";
 			File pdfFile = new File(pdfFileName);
 			pdfFile.createNewFile();
-
 			Document document = new Document();
 			PdfWriter.getInstance(document, new FileOutputStream(pdfFileName));
 			document.open();
@@ -221,7 +189,7 @@ public class CaptureHelper {
 		}
 	}
 
-	public static List<ExtractDTO> extractJPGfromISO(byte[] isoValue, String bioType) {
+	public List<ExtractDTO> extractJPGfromISO(byte[] isoValue, String bioType) {
 		List<ExtractDTO> extracts = null;
 		if (bioType.equalsIgnoreCase("Finger")) {
 			extracts = new FingerPrintImageExtractor().extractFingerImageData(isoValue);

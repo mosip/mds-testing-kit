@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -13,15 +16,19 @@ import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
 
+@Component
 public class MandatoryDiscoverResponseValidator  extends Validator {
 	public MandatoryDiscoverResponseValidator() {
 		super("MandatoryDiscoverResponseValidator", "Mandatory Discover Response Validator");
 	}
 
 	Validation validation = new Validation();
+	@Autowired
+	CommonValidator commonValidator;
 
-	CommonValidator commonValidator = new CommonValidator();
-	ObjectMapper jsonMapper = new ObjectMapper();
+	@Autowired
+	ObjectMapper jsonMapper;
+
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 

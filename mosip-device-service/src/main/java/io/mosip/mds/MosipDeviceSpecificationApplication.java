@@ -26,8 +26,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class MosipDeviceSpecificationApplication implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
-		Store.STORAGE_PATH = args.length == 0 ? null : args[0];
-		System.out.println("Store.STORAGE_PATH set to : " + Store.STORAGE_PATH);
+//		Store.STORAGE_PATH = args.length == 0 ? null : args[0];
+//		System.out.println("Store.STORAGE_PATH set to : " + Store.STORAGE_PATH);
 		SpringApplication.run(MosipDeviceSpecificationApplication.class, args);
 	}
 
