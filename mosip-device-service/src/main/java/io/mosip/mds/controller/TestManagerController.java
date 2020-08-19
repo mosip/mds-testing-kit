@@ -1,9 +1,12 @@
 package io.mosip.mds.controller;
 
 import io.mosip.mds.entitiy.*;
+import io.mosip.mds.service.TestManagerService;
+import io.mosip.mds.util.TestServiceUtil;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +28,12 @@ import io.swagger.annotations.ApiResponses;
 @RequestMapping("/testmanager")
 public class TestManagerController {
 
-	private TestManager testManager = new TestManager();
-
+	@Autowired
+	TestServiceUtil testServiceUtil;
+	
+	@Autowired
+	TestManagerService testManagerService;
+	
 	@GetMapping("/masterdata")
 	@ApiOperation(value = "Retrieve all MasterData", notes = "Retrieve all MasterData")
 	@ApiResponses({
@@ -34,7 +41,7 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When No MasterData found"),
 			@ApiResponse(code = 500, message = "While retrieving MasterData any error occured") })
 	public MasterDataResponseDto getMasterData() {
-		return testManager.getMasterData();
+		return testManagerService.getMasterData();
 	}
 
 	@PostMapping("/test")
@@ -44,7 +51,7 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When No Test found"),
 			@ApiResponse(code = 500, message = "While retrieving Test any error occured") })
 	public TestExtnDto[] getTest(@RequestBody TestManagerGetDto testManagerGetDto) {
-		return testManager.GetTests(testManagerGetDto);
+		return testManagerService.getTests(testManagerGetDto);
 	}
 
 	@GetMapping("/runs/{email}")
@@ -54,7 +61,7 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When No Test found"),
 			@ApiResponse(code = 500, message = "While retrieving Test any error occured") })
 	public List<TestRun> getRuns(@PathVariable("email")String email) {
-		return testManager.getRuns(email);
+		return testManagerService.getRuns(email);
 	}
 
 	
@@ -64,7 +71,7 @@ public class TestManagerController {
 			@ApiResponse(code = 400, message = "When Request body passed  is null or invalid"),
 			@ApiResponse(code = 500, message = "While creating test any error occured") })
 	public RunExtnDto createRun(@RequestBody TestManagerDto testManagerDto) {
-		return testManager.createRun(testManagerDto);
+		return testManagerService.createRun(testManagerDto);
 		
 	}
 	
@@ -75,7 +82,7 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When Test Report found"),
 			@ApiResponse(code = 500, message = "While retrieving Test Report any error occured") })
 	public TestReport getTestReport(@PathVariable("runId")String runId, @PathVariable String format) {
-		return testManager.getReport(runId);
+		return testManagerService.getReport(runId);
 	}
 
 	@GetMapping("/pdfreport/{runId}")
@@ -85,7 +92,7 @@ public class TestManagerController {
 			@ApiResponse(code = 404, message = "When Test Report found"),
 			@ApiResponse(code = 500, message = "While retrieving Test Report any error occured") })
 	public HttpEntity<byte[]> getpdfTestReport(@PathVariable("runId")String runId) throws Exception {
-			return testManager.getPdfReport(runId,"report.pdf");
+			return testManagerService.getPdfReport(runId,"report.pdf");
 
 	}
 

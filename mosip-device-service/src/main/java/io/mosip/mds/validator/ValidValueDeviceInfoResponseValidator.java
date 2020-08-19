@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,19 +15,19 @@ import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
-
+@Component
 public class ValidValueDeviceInfoResponseValidator extends Validator {
 
-	private static ObjectMapper mapper;
-
 	Validation validation = new Validation();
+	@Autowired
+	CommonValidator commonValidator;
 
-	CommonValidator commonValidator = new CommonValidator();
-	ObjectMapper jsonMapper = new ObjectMapper();
-	
-	static {
-		mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	@Autowired
+	ObjectMapper jsonMapper;
+
+	{
+		jsonMapper = new ObjectMapper();
+		jsonMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
 	public ValidValueDeviceInfoResponseValidator() {
 		super("ValidValueDeviceInfoResponseValidator", "Valid Value Device Info Response Validator");
@@ -109,7 +112,6 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		//		deviceInfo.digitalId - As defined under the digital id section. 
 		//		The digital id will be unsigned if the device is L0 and the the status of the device is "Not Registered".
 
-		CommonValidator commonValidator=new CommonValidator();
 		if(deviceInfoResponse.certification.equals(CommonConstant.L0) && deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
 			validations = commonValidator.validateDecodedUnSignedDigitalID(deviceInfoResponse.digitalId);
 		else

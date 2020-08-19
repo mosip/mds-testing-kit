@@ -21,6 +21,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
@@ -52,10 +54,16 @@ import io.mosip.mds.authentication.dto.EncryptionResponseDto;
 import io.mosip.mds.authentication.dto.RequestDTO;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
-import io.mosip.mds.entitiy.Store;
+import io.mosip.mds.util.TestServiceUtil;
 
 @Component
 public class CreateAuthRequest {
+
+	@Autowired
+	TestServiceUtil testServiceUtil;
+
+	@Autowired
+	private Environment env;
 
 	private static final String VERSION = "1.0";
 
@@ -66,41 +74,38 @@ public class CreateAuthRequest {
 	private static final String UIN = "UIN";
 
 	private static final String ASYMMETRIC_ALGORITHM_NAME = "RSA";
-	
+
 	ObjectMapper mapper = new ObjectMapper();
 
 	private static final String SSL = "SSL";
 
-	public CryptoUtility cryptoUtil=new CryptoUtility();
+	@Autowired
+	public CryptoUtility cryptoUtil;
 
 	TestExtnDto testExtnDto;
-	
-	private static Boolean areTestsLoaded = false;
 
-	private static HashMap<String, TestExtnDto> allTests = new HashMap<>();
+	//	private static void loadTests()
+	//	{
+	//		if(!areTestsLoaded)
+	//		{
+	//			TestExtnDto[] tests = Store.getTestDefinitions();
+	//			if(tests != null)
+	//			{
+	//				for(TestExtnDto test:tests)
+	//				{
+	//					allTests.put(test.testId, test);
+	//				}
+	//			}
+	//		}
+	//		areTestsLoaded = true;
+	//	}
 
-	private static void loadTests()
-	{
-		if(!areTestsLoaded)
-		{
-			TestExtnDto[] tests = Store.getTestDefinitions();
-			if(tests != null)
-			{
-				for(TestExtnDto test:tests)
-				{
-					allTests.put(test.testId, test);
-				}
-			}
-		}
-		areTestsLoaded = true;
-	}
-
-	static{
-		loadTests();
-	}
+	//	{
+	//		testServiceUtil.loadTests();
+	//	}
 	public Object authenticateResponse(ValidateResponseRequestDto response) throws Exception {
 		AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-		testExtnDto = allTests.get(response.testId);
+		testExtnDto = testServiceUtil.getAllTests().get(response.testId);
 
 		// Set Auth Type
 		AuthTypeDTO authTypeDTO = new AuthTypeDTO();
@@ -127,7 +132,7 @@ public class CreateAuthRequest {
 
 		// TODO if bio type true always true
 		if(Objects.nonNull(response))
-		identityBlock.put("biometrics", mapper.readValue(response.mdsResponse, Map.class).get("biometrics"));
+			identityBlock.put("biometrics", mapper.readValue(response.mdsResponse, Map.class).get("biometrics"));
 
 		System.out.println("******* Request before encryption ************ \n\n");
 		System.out.println(mapper.writeValueAsString(identityBlock));
@@ -158,11 +163,11 @@ public class CreateAuthRequest {
 		authRequestMap.replace("request", kernelEncrypt.getEncryptedIdentity());
 		authRequestMap.replace("requestSessionKey", kernelEncrypt.getEncryptedSessionKey());
 		authRequestMap.replace("requestHMAC", kernelEncrypt.getRequestHMAC());
-		
+
 		RestTemplate restTemplate = createTemplate();
 		HttpEntity<Map> httpEntity = new HttpEntity<>(authRequestMap);
 		ResponseEntity<Map> authResponse = null;
-		String url = testExtnDto.baseUrl+testExtnDto.authUrl+testExtnDto.mispLicenseKey+"/"+testExtnDto.partnerId+"/"+testExtnDto.partnerApiKey;
+		String url =env.getProperty("ida.auth.url")+testExtnDto.mispLicenseKey+"/"+testExtnDto.partnerId+"/"+testExtnDto.partnerApiKey;
 		System.out.println("Auth URL: " + url);
 		System.out.println("Auth Request : \n" + new ObjectMapper().writeValueAsString(authRequestMap));
 		try {
@@ -253,7 +258,7 @@ public class CreateAuthRequest {
 		uriParams.put("appId", "IDA");
 
 		UriComponentsBuilder builder = UriComponentsBuilder
-				.fromUriString(testExtnDto.baseUrl+testExtnDto.idaPublicKeyUrl)
+				.fromUriString(env.getProperty("ida.publickey.url"))
 				.queryParam("timeStamp", getUTCCurrentDateTimeISOString())
 				.queryParam("referenceId", publicKeyId);
 		ResponseEntity<Map> response = restTemplate.exchange(builder.build(uriParams), HttpMethod.GET, null, Map.class);
@@ -273,7 +278,7 @@ public class CreateAuthRequest {
 		request.setRequesttime(DateUtils.getUTCCurrentDateTime());
 		request.setRequest(requestBody);
 		ClientResponse response = WebClient
-				.create(testExtnDto.baseUrl+testExtnDto.idaAuthManagerUrl)
+				.create(env.getProperty("ida.authmanager.url"))
 				.post().syncBody(request).exchange().block();
 		List<ResponseCookie> list = response.cookies().get("Authorization");
 		if (list != null && !list.isEmpty()) {
