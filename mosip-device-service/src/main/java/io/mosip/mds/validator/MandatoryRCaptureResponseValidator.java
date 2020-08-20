@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,6 +18,7 @@ import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
 
+@Component
 public class MandatoryRCaptureResponseValidator extends Validator {
 	public MandatoryRCaptureResponseValidator()
 	{
@@ -24,21 +27,26 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 
 	Validation validation = new Validation();
 
-	CommonValidator commonValidator = new CommonValidator();
-	ObjectMapper jsonMapper = new ObjectMapper();
-	
+	@Autowired
+	CommonValidator commonValidator;
+
+	@Autowired
+	ObjectMapper jsonMapper;
+
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
 		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));
 		if(Objects.nonNull(response))
 		{
+			validations.add(validation);
 			// Check for Biometrics block
 			CaptureResponse registrationCaptureResponse = (CaptureResponse) response.getMdsDecodedResponse();
-			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole Capture decoded Jsone Response",response.getMdsDecodedResponse().toString());
-			
+			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole Capture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
+
 			if(Objects.nonNull(registrationCaptureResponse))
 			{
+				validations.add(validation);
 				validation = commonValidator.setFieldExpected("registrationCaptureResponse.analysisError",
 						"analysis Error should be empty",registrationCaptureResponse.analysisError);
 				if(!registrationCaptureResponse.analysisError.isEmpty()) {
@@ -47,10 +55,10 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 					return validations;
 				}
 
-				validation = commonValidator.setFieldExpected("registrationCaptureResponse.biometrics","Expected Array of biometric data",registrationCaptureResponse.biometrics.toString());
+				validation = commonValidator.setFieldExpected("registrationCaptureResponse.biometrics","Expected Array of biometric data",jsonMapper.writeValueAsString(registrationCaptureResponse.biometrics));
 				if(registrationCaptureResponse.biometrics == null || registrationCaptureResponse.biometrics.length == 0)
 				{
-					commonValidator.setFoundMessageStatus(validation,registrationCaptureResponse.biometrics.toString(),"RegistrationCapture response does not contain biometrics block",CommonConstant.FAILED);
+					commonValidator.setFoundMessageStatus(validation,jsonMapper.writeValueAsString(registrationCaptureResponse.biometrics),"RegistrationCapture response does not contain biometrics block",CommonConstant.FAILED);
 				}
 				validations.add(validation);
 				for(CaptureBiometric bb:registrationCaptureResponse.biometrics)

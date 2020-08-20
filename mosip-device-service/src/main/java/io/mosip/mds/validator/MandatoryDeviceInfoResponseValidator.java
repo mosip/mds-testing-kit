@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -13,6 +16,7 @@ import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
 
+@Component
 public class MandatoryDeviceInfoResponseValidator extends Validator {
 	public MandatoryDeviceInfoResponseValidator() {
 		super("MandatoryDeviceInfoResponseValidator", "Mandatory DeviceInfo Response Validator");   
@@ -20,9 +24,12 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 
 	Validation validation = new Validation();
 
-	CommonValidator commonValidator = new CommonValidator();
-	ObjectMapper jsonMapper = new ObjectMapper();
-	
+	@Autowired
+	CommonValidator commonValidator;
+
+	@Autowired
+	ObjectMapper jsonMapper;
+
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();

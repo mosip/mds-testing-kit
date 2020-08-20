@@ -32,6 +32,7 @@ import io.mosip.mds.helper.MdsLogger;
 import io.mosip.mds.repository.RunIdStatusRepository;
 import io.mosip.mds.repository.TestCaseResultRepository;
 import io.mosip.mds.service.TestCaseResultService;
+import io.mosip.mds.util.TestServiceUtil;
 
 @Service
 public class TestCaseResultServiceImpl implements TestCaseResultService {
@@ -42,6 +43,9 @@ public class TestCaseResultServiceImpl implements TestCaseResultService {
 	@Autowired
 	public RunIdStatusRepository runIdStatusRepository;
 
+	@Autowired
+	TestServiceUtil testServiceUtil;
+	
 	@Transactional
 	public List<TestcaseResult> saveTestResult(TestRun run) {
 		HashMap<String, TestResult> testReport = new HashMap<>();
@@ -96,7 +100,7 @@ public class TestCaseResultServiceImpl implements TestCaseResultService {
 		testManagerGetDto.deviceSubType = runInfo.deviceSubType;
 		testManagerGetDto.mdsSpecificationVersion = runInfo.mdsSpecVersion;
 		testManagerGetDto.process = runInfo.process;
-		List<TestExtnDto> testCaseList = TestManager.filterTests(testManagerGetDto);
+		List<TestExtnDto> testCaseList = testServiceUtil.filterTests(testManagerGetDto);
 		for (TestExtnDto testcase : testCaseList) {
 			if (runInfo.tests.contains(testcase.testId)) {
 				testToRun.add(testcase.testId);

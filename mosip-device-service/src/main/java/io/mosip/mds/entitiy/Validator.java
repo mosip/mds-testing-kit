@@ -3,6 +3,8 @@ package io.mosip.mds.entitiy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,9 +40,12 @@ public abstract class Validator {
 
 	public String Description;
 
+	@Autowired
+	ObjectMapper jsonMapper;
 
-	ObjectMapper jsonMapper = new ObjectMapper();
-
+	@Autowired
+	CommonValidator commonValidator;
+	
 	public final ValidationResult Validate(ValidateResponseRequestDto response)
 	{
 		ValidationResult validationResult = new ValidationResult();
@@ -51,7 +56,7 @@ public abstract class Validator {
 		ValidationTestResultDto validationTestResult = new ValidationTestResultDto(); 
 		List<Validation> validations = new ArrayList<Validation>();
 		Validation validationException = new Validation();
-		CommonValidator commonValidator=new CommonValidator();
+		
 
 		try{
 			validationException=commonValidator.setFieldExpected("response", "Expected Valid whole json response", jsonMapper.writeValueAsString(response));			

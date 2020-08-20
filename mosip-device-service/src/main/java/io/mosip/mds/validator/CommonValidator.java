@@ -6,24 +6,30 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.util.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DigitalId;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.util.SecurityUtil;
 
+@Component
 public class CommonValidator{
 	//2020-07-07T01:18:58.804+05:30
 	private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
-	private static ObjectMapper mapper;
 
-	static {
-		mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-	}
+	@Autowired
+	private ObjectMapper mapper;
+
+	@Autowired
+	SecurityUtil securityUtil;
+
+	//	static {
+	//		mapper = new ObjectMapper();
+	//		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	//	}
 
 	Validation validation = new Validation();
 
@@ -32,9 +38,9 @@ public class CommonValidator{
 		validation = setFieldExpected("digitalId","Signed DigitalId",digitalId);	
 		if(parts.length == 3) {
 			validations.add(validation);
-			
+
 			try {
-				DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(SecurityUtil.getPayload(digitalId),
+				DigitalId decodedDigitalId=(DigitalId) (mapper.readValue(securityUtil.getPayload(digitalId),
 						DigitalId.class));
 				validations=mandatoryParamDigitalIdPayload(decodedDigitalId,validations);
 				validations=validValueDigitalIdPayload(decodedDigitalId,validations);
@@ -84,9 +90,9 @@ public class CommonValidator{
 		if(decodedDigitalIdPayload.dateTime == null)
 		{	
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.dateTime.toString(),"Response DigitalId does not contain date and Time",CommonConstant.FAILED);
-			validations.add(validation);
-		}
 
+		}
+		validations.add(validation);
 		//Check for deviceProvider
 		validation = setFieldExpected("decodedDigitalIdPayload.deviceProvider","Device provider name",decodedDigitalIdPayload.deviceProvider);	
 		if(decodedDigitalIdPayload.deviceProvider == null || decodedDigitalIdPayload.deviceProvider.isEmpty())
@@ -147,13 +153,15 @@ public class CommonValidator{
 				&& !decodedDigitalIdPayload.type.equals(CommonConstant.FACE))
 		{
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.type,"Response DigitalId type is invalid",CommonConstant.FAILED);
+			validations.add(validation);
+
 		}else {
 			//Check for bioSubType
+			validations.add(validation);
+
 			validations = validateDeviceSubType(validations, decodedDigitalIdPayload);
-			if(!ObjectUtils.isEmpty(validations))
-				return validations;
+
 		}
-		validations.add(validation);
 		//		errors=validateTimeStamp(decodedDigitalIdPayload.dateTime.toString(),errors);
 		return validations;
 	}
