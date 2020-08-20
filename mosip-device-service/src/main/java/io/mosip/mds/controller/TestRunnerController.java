@@ -2,8 +2,6 @@ package io.mosip.mds.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +24,9 @@ import io.swagger.annotations.ApiResponses;
 @RequestMapping("/testrunner")
 @Api(tags = { "TestRunner" })
 public class TestRunnerController {
-/*	@Autowired
+	@Autowired
 	TestCaseResultService testCaseResultService;
-*/
+
 	@PostMapping("/composerequest")
 	@ApiOperation(value = "Service to save composeRequest", notes = "Saves composeRequest and json")
 	@ApiResponses({ @ApiResponse(code = 201, message = "When composerequest Details successfully created"),
@@ -60,9 +58,9 @@ public class TestRunnerController {
 	public TestRun validateResponse(@RequestBody ValidateResponseRequestDto validateRequestDto) {
 		// TODO handle null return for invalid runId and testId
 		TestManager testManager = new TestManager();
-		/*TestRun testRun=testManager.validateResponse(validateRequestDto);
-		testCaseResultService.saveTestResult(testRun);*/
-		return testManager.validateResponse(validateRequestDto);	
+		TestRun testRun=testManager.validateResponse(validateRequestDto);
+		testCaseResultService.saveTestResult(testRun);
+		return testRun;	
 	}
 
 	@PostMapping("/decodediscover")
