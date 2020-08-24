@@ -20,7 +20,7 @@ public class TestRun {
 
     public String runId;
 
-    public RunStatus runStatus;
+    public String runStatus;
 
     public Date createdOn;
 

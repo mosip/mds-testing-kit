@@ -234,7 +234,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		boolean isAllInResponseValidationStage = run.testReport.values().stream()
 				.allMatch( result -> result.currentState.startsWith("MDS Response Validations"));
 		if(isAllInResponseValidationStage)
-			run.runStatus = RunStatus.Done;
+			run.runStatus = "Done";
 		return store.saveTestRun(run.user, run);
 	}
 
@@ -325,7 +325,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 				run.testReport.put(testId, testResult);
 			}
 
-			run.runStatus = RunStatus.InProgress;
+			run.runStatus = "InProgress";
 			persistRun(run);
 		}
 		return run;

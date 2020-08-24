@@ -24,8 +24,6 @@ import io.mosip.mds.dto.TestResult;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.dto.postresponse.RunExtnDto;
-import io.mosip.mds.entitiy.Store;
-import io.mosip.mds.entitiy.TestManager;
 import io.mosip.mds.entitiy.TestResultKey;
 import io.mosip.mds.entitiy.TestcaseResult;
 import io.mosip.mds.helper.MdsLogger;
@@ -46,6 +44,7 @@ public class TestCaseResultServiceImpl implements TestCaseResultService {
 	@Autowired
 	TestServiceUtil testServiceUtil;
 	
+
 	@Transactional
 	public List<TestcaseResult> saveTestResult(TestRun run) {
 		HashMap<String, TestResult> testReport = new HashMap<>();
@@ -117,6 +116,7 @@ public class TestCaseResultServiceImpl implements TestCaseResultService {
 		newRunDto.runId = "" + System.currentTimeMillis();
 		newRunDto.runName = runInfo.runName;
 		newRunDto.tests = testToRun.toArray(new String[testToRun.size()]);
+		
 		if (!runInfo.email.isEmpty())
 			newRunDto.email = runInfo.email;
 		else
@@ -156,6 +156,7 @@ public class TestCaseResultServiceImpl implements TestCaseResultService {
 	@Override
 	@Transactional
 	public List<TestRun> getRuns(String email) {
+		
 		List<TestRun> runs = new ArrayList<>();
 		ObjectMapper mapper = new ObjectMapper();
 		List<Optional<TestcaseResult>> listOfTests = testCaseResultRepository.findByOwner(email);
@@ -165,11 +166,13 @@ public class TestCaseResultServiceImpl implements TestCaseResultService {
 				continue;
 			} else {
 				runId = tests.get().testResultKey.runId;
+				int totalTests=0;
+				int passedTests=0;
 				TestRun testRun = new TestRun();
 				testRun.tests = new ArrayList<>();
 				testRun.createdOn = new Date(Long.valueOf(tests.get().testResultKey.runId));
 				testRun.runId = tests.get().testResultKey.runId;
-				testRun.runStatus = testRun.runStatus.Done;
+				
 				Optional<io.mosip.mds.entitiy.RunStatus> runIdStatus = runIdStatusRepository.findById(testRun.runId);
 				testRun.runName = runIdStatus.get().runName;
 				try {
@@ -182,8 +185,9 @@ public class TestCaseResultServiceImpl implements TestCaseResultService {
 				testRun.user = email;
 				for (Optional<TestcaseResult> testCase : testCaseResultRepository.findByTestResultKeyRunId(runId)) {
 					testRun.tests.add(testCase.get().testResultKey.testcaseName);
+					totalTests++;
 				}
-
+				testRun.runStatus = passedTests + "/" + totalTests; 
 				runs.add(testRun);
 			}
 		}

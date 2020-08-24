@@ -30,7 +30,6 @@ import io.mosip.mds.dto.TestManagerDto;
 import io.mosip.mds.dto.TestManagerGetDto;
 import io.mosip.mds.dto.TestReport;
 import io.mosip.mds.dto.TestRun;
-import io.mosip.mds.dto.TestRun.RunStatus;
 import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.dto.postresponse.RunExtnDto;
@@ -142,7 +141,7 @@ public class TestManagerServiceImpl implements TestManagerService {
 		newTestRun.runId = newRun.runId;
 		newTestRun.runName = newRun.runName;
 		newTestRun.createdOn = new Date();
-		newTestRun.runStatus = RunStatus.Created;
+		//newTestRun.runStatus = RunStatus.Created;
 		newTestRun.tests = new ArrayList<>();
 		newTestRun.user = newRun.email;
 		Collections.addAll(newTestRun.tests, newRun.tests);
@@ -163,7 +162,8 @@ public class TestManagerServiceImpl implements TestManagerService {
 		boolean isAllInResponseValidationStage = run.testReport.values().stream()
 				.allMatch( result -> result.currentState.startsWith("MDS Response Validations"));
 		if(isAllInResponseValidationStage)
-			run.runStatus = RunStatus.Done;
+			//run.runStatus = RunStatus.Done;
+			run.runStatus="Done";
 		return store.saveTestRun(run.user, run);
 	}
 
