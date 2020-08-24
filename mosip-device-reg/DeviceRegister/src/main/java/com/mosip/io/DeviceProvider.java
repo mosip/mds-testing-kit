@@ -32,6 +32,7 @@ public class DeviceProvider extends Util{
 			deviceRegisterDTO.getRequest().setEmail(commonDataProp.get("email"));
 			deviceRegisterDTO.getRequest().setIsActive(Boolean.valueOf(commonDataProp.get("isActive")));
 			deviceRegisterDTO.getRequest().setVendorName(commonDataProp.get("vendorName"));
+			//deviceRegisterDTO.getRequest().setVendorName("devicetest");
 			requestInJsonForm = mapper.writeValueAsString(deviceRegisterDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();

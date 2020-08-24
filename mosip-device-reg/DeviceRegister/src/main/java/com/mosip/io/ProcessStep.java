@@ -42,10 +42,10 @@ public class ProcessStep extends Util {
 		// 2. checking mosip_device_service and mosip_device_service_History table for
 		// providerID is present or not
 		auditLog.info("******************************Mosip Device Service*****************************************");
-		auditLog.info("****Checking providerID in  MosipDeviceService and mosip_device_service_History table******");
+		auditLog.info("****Checking providerID and model in  MosipDeviceService and mosip_device_service_History table******");
 		MosipDeviceService mds = new MosipDeviceService();
 		List<String> mosipDeviceServiceProviderList = new ArrayList<>();
-		if (!mds.dbCheck(type, prop.get("deviceProviderId"))) {
+		if (!mds.dbCheck(type, prop.get("deviceProviderId"),prop.get("model"))) {
 			// mosipDeviceServiceProviderList = mds.registerMDS(providerList.get(0),prop);
 			mosipDeviceServiceProviderList = mds.registerMDS(prop.get("deviceProviderId"), prop);
 			String mosipDeviceServiceId = mosipDeviceServiceProviderList.get(0);
@@ -161,19 +161,21 @@ public class ProcessStep extends Util {
 
 		// 5.a check that device is isAcitive= true in both the language based on
 		// deviceId
-		auditLog.info("****Device and center mapping********");
+		if (!(type.equalsIgnoreCase("Auth"))) {
+			auditLog.info("****Device and center mapping********");
 
-		String centerMappingSqlQuery = "Select * from master.reg_center_device where regcntr_id=" + "'"
-				+ prop.get("regCenterId") + "'" + " and device_id=" + "'" + prop.get("deviceId") + "'";
-		List<String> dSpecId = db.getDbData(centerMappingSqlQuery, "masterdata");
-		if (dSpecId.size() > 0) {
-			auditLog.info(
-					"regcntr_id :" + prop.get("regCenterId") + " and device_id : " + updatedDeviceId + " is present");
-			auditLog.info("Mapping  already exist in DB so, Skipping Device & Center mapping step");
-		} else {
-			DeviceRegistrationCenterMapping mapping = new DeviceRegistrationCenterMapping();
-			String devicId = mapping.deviceRegCenterMapping(updatedDeviceId, prop);
-			auditLog.info("device Mapped succesfully with devicId : " + devicId);
+			String centerMappingSqlQuery = "Select * from master.reg_center_device where regcntr_id=" + "'"
+					+ prop.get("regCenterId") + "'" + " and device_id=" + "'" + prop.get("deviceId") + "'";
+			List<String> dSpecId = db.getDbData(centerMappingSqlQuery, "masterdata");
+			if (dSpecId.size() > 0) {
+				auditLog.info("regcntr_id :" + prop.get("regCenterId") + " and device_id : " + updatedDeviceId
+						+ " is present");
+				auditLog.info("Mapping  already exist in DB so, Skipping Device & Center mapping step");
+			} else {
+				DeviceRegistrationCenterMapping mapping = new DeviceRegistrationCenterMapping();
+				String devicId = mapping.deviceRegCenterMapping(updatedDeviceId, prop);
+				auditLog.info("device Mapped succesfully with devicId : " + devicId);
+			}
 		}
 
 		// 6. Register device take request value from info

@@ -51,23 +51,23 @@ public class MosipDeviceService extends Util {
 		return providerList;
 	}
 
-	public boolean dbCheck(String type, String deviceProderId) {
+	public boolean dbCheck(String type, String deviceProderId,String model) {
 		if (type == null || type.isEmpty())
 			throw new RuntimeException("Please provide type value from Vm argument");
 		boolean isPresent = false;
 
 		switch (type) {
 		case "Face":
-			isPresent = isProviderIdPresentInMDS(deviceProderId);
+			isPresent = isProviderIdPresentInMDS(deviceProderId,model);
 			break;
 		case "Iris":
-			isPresent = isProviderIdPresentInMDS(deviceProderId);
+			isPresent = isProviderIdPresentInMDS(deviceProderId,model);
 			break;
 		case "Finger":
-			isPresent = isProviderIdPresentInMDS(deviceProderId);
+			isPresent = isProviderIdPresentInMDS(deviceProderId,model);
 			break;
 		case "Auth":
-			isPresent = isProviderIdPresentInMDS(deviceProderId);
+			isPresent = isProviderIdPresentInMDS(deviceProderId,model);
 			break;
 		default:
 			throw new RuntimeException("Invalid type : " + type + " is found!");
@@ -75,11 +75,11 @@ public class MosipDeviceService extends Util {
 		return isPresent;
 	}
 
-	private boolean isProviderIdPresentInMDS(String deviceProderId) {
+	private boolean isProviderIdPresentInMDS(String deviceProderId,String model) {
 		boolean isPresent=false;
 		DataBaseAccess db= new DataBaseAccess();
-		String device_providerQuery = "Select * from master.mosip_device_service where dprovider_id="+"'"+deviceProderId+"'";
-		String device_providerHistoryQuery = "Select * from master.mosip_device_service_h where dprovider_id="+"'"+deviceProderId+"'";
+		String device_providerQuery = "Select * from master.mosip_device_service where dprovider_id="+"'"+deviceProderId+"' and model="+"'"+model+"'";
+		String device_providerHistoryQuery = "Select * from master.mosip_device_service_h where dprovider_id="+"'"+deviceProderId+"'  and model="+"'"+model+"'";
 		if (db.getDbData(device_providerQuery, "masterdata").size()>0 && db.getDbData(device_providerHistoryQuery, "masterdata").size()>0)
 			isPresent = true;
 		return isPresent;
