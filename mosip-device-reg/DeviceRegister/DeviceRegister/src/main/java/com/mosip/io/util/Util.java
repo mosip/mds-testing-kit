@@ -38,6 +38,7 @@ public class Util {
 	public static String auditLogFile = System.getProperty("user.dir") + "\\testRun\\logs\\" + auditLogFileName;
 	public static Logger auditLog = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	public static String cookies;
+	public static Map<String, String> configProp = Util.loadProperty("/config.properties");
 	public static Map<String, String> commonDataProp = Util.loadProperty("/commonData.properties");
 	public static String type = System.getProperty("type");
 
@@ -147,18 +148,9 @@ public class Util {
 	}
 
 	public static void logApiInfo(String requestInJsonForm, String url, Response api_response) {
-		auditLog.info("Endpoint : " + url);
-		auditLog.info("Request  : " + requestInJsonForm);
-		auditLog.info("Response : " + api_response.getBody().jsonPath().prettify());
-	}
-	
-	public static void logInfo(String string) {
-		auditLog.info("**    "+string+"    **");
-	}
-	
-	public static boolean isSecdryLangRequired() {
-		return commonDataProp.get("secondaryLangRequired") != null
-				&& commonDataProp.get("secondaryLangRequired").equalsIgnoreCase("true");
+		auditLog.info("Endpoint :" + url);
+		auditLog.info("Request  :" + requestInJsonForm);
+		auditLog.info("Response  :" + api_response.getBody().jsonPath().prettify());
 	}
 
 }

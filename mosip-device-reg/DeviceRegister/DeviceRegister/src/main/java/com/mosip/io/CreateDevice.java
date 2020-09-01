@@ -82,16 +82,11 @@ public class CreateDevice extends Util{
 		return deviceIdUpdatedValue;
 	}
 	
-	public boolean deviceIsActive(String deviceId,String primaryLanguage) {
+	public boolean deviceIsActive(String deviceId) {
 		boolean isActive=false;
 		DataBaseAccess db= new DataBaseAccess();
-		String deviceMasterQueryInEng = "Select * from master.device_master where id="+"'"+deviceId+"'"+" and is_active='true' and lang_code="+"'"+primaryLanguage+"'";
-		if (isSecdryLangRequired()) {
-			String deviceMasterQueryInAra = "Select * from master.device_master where id="+"'"+deviceId+"'"+" and is_active='true' and lang_code="+"'"+commonDataProp.get("secondaryLanguage")+"'";
-			if (db.getDbData(deviceMasterQueryInEng, "masterdata").size()>0 && db.getData(deviceMasterQueryInAra, "masterdata").size()>0)
-				isActive = true;
-		}
-		else if (db.getDbData(deviceMasterQueryInEng, "masterdata").size()>0)
+		String deviceMasterQueryEng = "Select * from master.device_master where id="+"'"+deviceId+"'"+" and is_active='true' and lang_code in ('eng','ara')";
+		if (db.getDbData(deviceMasterQueryEng, "masterdata").size()>0)
 			isActive = true;
 		return isActive;
 	}

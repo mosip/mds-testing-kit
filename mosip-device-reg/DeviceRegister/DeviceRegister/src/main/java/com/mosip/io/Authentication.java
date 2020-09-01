@@ -42,9 +42,9 @@ public class Authentication extends Util{
 	    request.put("metadata", "{}");
 	    
 	    JSONObject api_input=new JSONObject();
-	    api_input.put("appId", commonDataProp.get("admin_appid"));
-	    api_input.put("password", commonDataProp.get("admin_password"));
-	    api_input.put("userName", commonDataProp.get("admin_user"));
+	    api_input.put("appId", configProp.get("admin_appid"));
+	    api_input.put("password", configProp.get("admin_password"));
+	    api_input.put("userName", configProp.get("admin_user"));
 	    request.put("request", api_input);
 		return request;
 	}

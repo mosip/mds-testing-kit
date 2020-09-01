@@ -18,23 +18,22 @@ import io.restassured.response.Response;
 
 public class DeviceRegistrationCenterMapping  extends Util{
 	
-	public String deviceRegCenterMapping(String createdDeviceId,Map<String,String> prop,String primaryLanguage) {
+	public String deviceRegCenterMapping(String createdDeviceId,Map<String,String> prop) {
 		String regCenterId = prop.get("regCenterId");
 		// 5.a check that device is isAcitive= true in both the language based on
 		// deviceId
 		String deviceId = null;
 		String requestInJsonForm = "";
 		CreateDevice createDevice = new CreateDevice();
-		boolean status = createDevice.deviceIsActive(createdDeviceId,primaryLanguage);
+		boolean status = createDevice.deviceIsActive(createdDeviceId);
 		if (status) {
-			auditLog.info("**Device is Active**");
+			auditLog.info(" Device is Active in both the language");
 		} else {
 			throw new RuntimeException("Device is not active");
 		}
 		 
 		  //5.b check registration center  is active true in both the language  (bases on centerId)
-		if(isRegCenterActiveIn_Prim_Second_language(regCenterId,primaryLanguage)) {
-			auditLog.info("**Registration Center  is Active**");
+		if(isRegCenterActiveIn_Prim_Second_language(regCenterId)) {
 			DeviceRegistrationCenterMappingDTO deviceRegCentrMapDTO= new DeviceRegistrationCenterMappingDTO();
 			JSONObject jsonData = Util.readJsonData("/Request/deviceRegistrationCenterMapping.json");
 			try {
@@ -70,24 +69,19 @@ public class DeviceRegistrationCenterMapping  extends Util{
 		    }
 	       	
 		}else {
-			auditLog.info("RegCenterId: "+regCenterId+" is not activated in Primary or secondory language ");
-			throw new RuntimeException("RegCenterId: "+regCenterId+" is not activated in Primary or secondory language ");
+			auditLog.info("RegCenterId: "+regCenterId+" is not activated in Primary and secondory language ");
+			throw new RuntimeException("RegCenterId: "+regCenterId+" is not activated in Primary and secondory language ");
 		}
 		
 		return deviceId;
 	}
 	
 	
-	private boolean isRegCenterActiveIn_Prim_Second_language(String regCenterId,String primaryLanguage) {
+	private boolean isRegCenterActiveIn_Prim_Second_language(String regCenterId) {
 		boolean isRegCenterActive = false;
 		DataBaseAccess db= new DataBaseAccess();
-		String regCenterQueryEng = "Select * from master.registration_center where id="+"'"+regCenterId+"'"+" and is_active='true' and lang_code="+"'"+primaryLanguage+"'";
-		if (isSecdryLangRequired()) {
-			String regCenterQueryAra = "Select * from master.registration_center where id="+"'"+regCenterId+"'"+" and is_active='true' and lang_code="+"'"+commonDataProp.get("secondaryLanguage")+"'";
-			if (db.getDbData(regCenterQueryEng, "masterdata").size()>0 && db.getData(regCenterQueryAra, "masterdata").size()>0)
-				isRegCenterActive = true;
-		}
-		else if (db.getDbData(regCenterQueryEng, "masterdata").size()>0)
+		String regCenterQueryEng = "Select * from master.registration_center where id="+"'"+regCenterId+"'"+" and is_active='true' and lang_code in ('eng','ara')";
+		if (db.getDbData(regCenterQueryEng, "masterdata").size()>0)
 			isRegCenterActive = true;
 		return isRegCenterActive;
 	}

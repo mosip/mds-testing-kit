@@ -29,7 +29,7 @@ public class CreateDeviceSpecification extends Util {
 			ObjectMapper mapper = new ObjectMapper();
 			deviceSpecDTO = mapper.readValue(jsonData.toJSONString(), CreateDeviceSpecDTO.class);
 			String deviceSpecId=deviceSpecDTO.getRequest().getId();
-			if(langCode.equalsIgnoreCase(commonDataProp.get("secondaryLanguage"))) {
+			if(langCode.equalsIgnoreCase("ara")) {
 				deviceSpecDTO.getRequest().setId(String.valueOf(deviceId));
 			}else {
 				if(db.validateDataInDb("select * from master.device_spec where id="+"'"+deviceSpecId+"'" +"and lang_code="+"'"+langCode+"'", "masterdata")) {
@@ -70,7 +70,6 @@ public class CreateDeviceSpecification extends Util {
 		} else {
 			String errorMessage = (String) ctx.read("$.errors[0].message");
 			auditLog.warning(errorMessage);
-			
 			// throw new RuntimeException(errorMessage);
 		}
 

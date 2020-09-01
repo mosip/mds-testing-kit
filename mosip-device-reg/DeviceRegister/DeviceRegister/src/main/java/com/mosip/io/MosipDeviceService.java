@@ -103,7 +103,7 @@ public class MosipDeviceService extends Util {
 		request.setRegDeviceTypeCode(prop.get("type"));
 		request.setSwBinaryHash(0);
 		request.setSwCreateDateTime(getCurrentDateAndTimeForAPI());
-		request.setSwExpiryDateTime(commonDataProp.get("validityDateTime"));
+		request.setSwExpiryDateTime("2020-12-31T07:00:13.375Z");
 		request.setSwVersion(prop.get("serviceVersion"));
 		return request;
 	}

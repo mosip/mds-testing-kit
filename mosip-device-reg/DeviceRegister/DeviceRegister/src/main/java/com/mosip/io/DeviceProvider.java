@@ -6,17 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.mosip.io.db.DataBaseAccess;
-import com.mosip.io.db.QueryBuilder;
 import com.mosip.io.pojo.DeviceRegisterDTO;
 import com.mosip.io.util.ServiceUrl;
 import com.mosip.io.util.Util;
-
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
@@ -35,6 +32,7 @@ public class DeviceProvider extends Util{
 			deviceRegisterDTO.getRequest().setEmail(commonDataProp.get("email"));
 			deviceRegisterDTO.getRequest().setIsActive(Boolean.valueOf(commonDataProp.get("isActive")));
 			deviceRegisterDTO.getRequest().setVendorName(commonDataProp.get("vendorName"));
+			//deviceRegisterDTO.getRequest().setVendorName("devicetest");
 			requestInJsonForm = mapper.writeValueAsString(deviceRegisterDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
@@ -89,9 +87,9 @@ public class DeviceProvider extends Util{
 	private boolean isProviderIdPresentInDB(String deviceProderId) {
 		boolean isPresent=false;
 		DataBaseAccess db= new DataBaseAccess();
-		String device_providerQuery = QueryBuilder.device_providerSqlQuery(deviceProderId, commonDataProp.get("vendorName"));
-		String device_providerHistoryQuery = QueryBuilder.device_providerHistorySqlQuery(deviceProderId, commonDataProp.get("vendorName"));
-		if (db.getDbData(device_providerQuery, "masterdata").size()>0 && db.getDbData(device_providerHistoryQuery, "masterdata").size()>0)	
+		String device_providerQuery = "Select * from master.device_provider where id="+"'"+deviceProderId+"' and vendor_name="+"'"+commonDataProp.get("vendorName")+"'";
+		String device_providerHistoryQuery = "Select * from master.device_provider_h where id="+"'"+deviceProderId+"' and vendor_name="+"'"+commonDataProp.get("vendorName")+"'";
+		if (db.getDbData(device_providerQuery, "masterdata").size()>0 && db.getDbData(device_providerHistoryQuery, "masterdata").size()>0)
 			isPresent = true;
 		return isPresent;
 	}
