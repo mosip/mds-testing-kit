@@ -24,6 +24,7 @@ import io.restassured.response.Response;
 public class RegisterDevice extends Util{
 	
 	//6.e finally sending the request (take step 6.d registerDevice())
+	@SuppressWarnings("unused")
 	public boolean registerDevice(Map<String,String> prop) {
 		boolean isDeviceRegistered=false;
 		String requestInJsonForm="";
@@ -47,13 +48,11 @@ public class RegisterDevice extends Util{
 		ReadContext ctx = JsonPath.parse(api_response.getBody().asString());
 		if (ctx.read("$.response") != null) {
 			String registeredDeviceInfo = (String) ctx.read("$.response");
-			auditLog.info("Device Registration Center Mapped: " + registeredDeviceInfo);
 			isDeviceRegistered = true;
 		} else {
 			String errorMessage = (String) ctx.read("$.errors[0].message");
 			auditLog.info(errorMessage);
 			isDeviceRegistered = false;
-			// throw new RuntimeException(errorMessage);
 		}
 		return isDeviceRegistered;
        

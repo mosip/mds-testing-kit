@@ -3,6 +3,7 @@ package com.mosip.io;
 import static io.restassured.RestAssured.given;
 
 import java.util.Map;
+
 import org.json.simple.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,7 +67,6 @@ public class DeviceRegistrationCenterMapping  extends Util{
 		    }else {
 		    	String errorMessage =(String)ctx.read("$.errors[0].message");
 		    	auditLog.warning(errorMessage);
-		    	//throw new RuntimeException(errorMessage);
 		    }
 	       	
 		}else {

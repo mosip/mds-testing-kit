@@ -46,7 +46,6 @@ public class MosipDeviceService extends Util {
 		} else {
 			String errorMessage = (String) ctx.read("$.errors[0].message");
 			auditLog.warning(errorMessage);
-			// throw new RuntimeException(errorMessage);
 		}
 		return providerList;
 	}

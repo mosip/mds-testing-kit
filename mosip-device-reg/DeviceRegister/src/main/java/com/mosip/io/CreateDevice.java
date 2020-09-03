@@ -56,7 +56,6 @@ public class CreateDevice extends Util{
 		} else {
 			String errorMessage = (String) ctx.read("$.errors[0].message");
 			auditLog.warning(errorMessage);
-			// throw new RuntimeException(errorMessage);
 		}
 
 		return deviceId;
@@ -75,7 +74,8 @@ public class CreateDevice extends Util{
 				auditLog.info(deviceIdValue + " alredy exit in DB  so, deleting..");
 			}
 		} 
-		if(db.executeQuery("update  master.device_master set id="+"'"+deviceIdValue+"'" +" where id="+"'"+deviceId+"'" +" and dspec_id="+"'"+deviceSpecId+"'", "masterdata")) {
+		if(db.executeQuery("update  master.device_master set id="+"'"+deviceIdValue+"'" +" where id="+"'"+deviceId+"'" +" and dspec_id="+"'"+deviceSpecId+"'", "masterdata") &&
+				db.executeQuery("update  master.device_master_h set id="+"'"+deviceIdValue+"'" +" where id="+"'"+deviceId+"'" +" and dspec_id="+"'"+deviceSpecId+"'", "masterdata")) {
 			deviceIdUpdatedValue=deviceIdValue;
 			auditLog.info("DeviceIdValue : "+deviceIdValue + " Updated In DB");
 		}

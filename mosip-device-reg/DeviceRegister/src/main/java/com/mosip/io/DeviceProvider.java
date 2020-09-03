@@ -58,7 +58,6 @@ public class DeviceProvider extends Util{
 		} else {
 			String errorMessage = (String) ctx.read("$.errors[0].message");
 			auditLog.warning(errorMessage);
-			// throw new RuntimeException("Please check properties file");
 		}
 		return providerList;
 	}

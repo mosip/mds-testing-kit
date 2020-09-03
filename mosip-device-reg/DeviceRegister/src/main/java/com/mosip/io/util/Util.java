@@ -13,11 +13,13 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -54,7 +56,10 @@ public class Util {
 	}
 
 	public static String getCurrentDateAndTimeForAPI() {
-		return ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
+		return	javax.xml.bind.DatatypeConverter.printDateTime(
+			    Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+			);
+		//return ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
 	}
 
 	public static void setupLogger() {
@@ -66,7 +71,7 @@ public class Util {
 		ch.setLevel(Level.ALL);
 		auditLog.addHandler(ch);
 		try {
-			FileHandler fh = new FileHandler(auditLogFile, false);
+			FileHandler fh = new FileHandler(auditLogFile, true);
 			fh.setFormatter(new CustomizedLogFormatter());
 			fh.setLevel(Level.ALL);
 			auditLog.addHandler(fh);

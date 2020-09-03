@@ -99,12 +99,14 @@ public class QueryBuilder extends Util{
 		.append("'").toString();
 		}
 	
-	public static String updateCodewithDeviceIdSqlQuery(String code,String dtype_code,String serial_number,String provider_id ){
+	public static String updateCodewithDeviceIdSqlQuery(String tableName,String code,String dtype_code,String serial_number,String provider_id ){
 		StringBuilder query= new StringBuilder();
-		return query.append("update master.registered_device_master set code='")
+		return query.append("update master.")
+		.append(tableName)
+		.append(" set code='")
 		.append(code)
 		.append("'")
-		.append(" and dtype_code='")
+		.append(" where dtype_code='")
 		.append(dtype_code)
 		.append("'")
 		.append(" and serial_number='")

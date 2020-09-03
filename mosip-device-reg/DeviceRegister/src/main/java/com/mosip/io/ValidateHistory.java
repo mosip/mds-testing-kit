@@ -43,13 +43,10 @@ public void validateDeviceHistory(Map<String,String> prop) {
 		ReadContext ctx = JsonPath.parse(api_response.getBody().asString());
 		if (ctx.read("$.response") != null) {
 			String status = (String) ctx.read("$.response.status");
-			String message = (String) ctx.read("$.response.message");
-			auditLog.info("**** Device Validate Success*****");
-			auditLog.info("Status :" + status + "  Message :" + message);
+			auditLog.info("Status :" + status );
 		} else {
 			String errorMessage = (String) ctx.read("$.errors[0].message");
 			auditLog.info(errorMessage);
-			// throw new RuntimeException(errorMessage);
 		}
 	
 }
