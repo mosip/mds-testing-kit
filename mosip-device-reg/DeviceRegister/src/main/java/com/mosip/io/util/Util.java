@@ -8,9 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -28,6 +25,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -164,6 +162,14 @@ public class Util {
 	public static boolean isSecdryLangRequired() {
 		return commonDataProp.get("secondaryLangRequired") != null
 				&& commonDataProp.get("secondaryLangRequired").equalsIgnoreCase("true");
+	}
+	
+	public static String generateRandomStringForAddress() {
+	    int length = 10;
+	    boolean useLetters = true;
+	    boolean useNumbers = false;
+	    String generatedString = RandomStringUtils.random(length, useLetters, useNumbers);
+	    return generatedString;
 	}
 
 }

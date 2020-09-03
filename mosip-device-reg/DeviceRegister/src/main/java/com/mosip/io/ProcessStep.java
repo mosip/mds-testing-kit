@@ -118,7 +118,7 @@ public class ProcessStep extends Util {
 				if (!(StringUtils.isEmpty(deviceId))) {
 					// 4.b Update the above deviceId (from 4.a response) with code from info
 					logInfo("update above deviceId with code from info file");
-					deviceIdUpdatedValue = createDevice.updateDeviceIdWithCode(deviceId, deviceSpecId, prop);
+					deviceIdUpdatedValue = createDevice.updateDeviceIdWithCode(type,deviceId, deviceSpecId, prop);
 					if (deviceIdUpdatedValue != null)
 						logInfo("deviceId updated with " + deviceIdUpdatedValue);
 					else
@@ -172,7 +172,7 @@ public class ProcessStep extends Util {
 					if (!(StringUtils.isEmpty(deviceId))) {
 						// 4.b Update the above deviceId (from 4.a response) with code from info
 						logInfo("update above deviceId with code from info file");
-						deviceIdUpdatedValue = createDevice.updateDeviceIdWithCode(deviceId, deviceSpecId, prop);
+						deviceIdUpdatedValue = createDevice.updateDeviceIdWithCode(type,deviceId, deviceSpecId, prop);
 						if (deviceIdUpdatedValue != null)
 							logInfo("deviceId updated with " + deviceIdUpdatedValue);
 						else

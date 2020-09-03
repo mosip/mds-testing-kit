@@ -121,7 +121,7 @@ public class QueryBuilder extends Util{
 		setupLogger();
 		DataBaseAccess db = new DataBaseAccess();
 		if (db.executeQuery("update master.device_provider set id=" + "'" + prop.get("deviceProviderId") + "'"
-				+ " where id=" + "'" + providerList.get(0) + "'and ", "masterdata")
+				+ " where id=" + "'" + providerList.get(0) + "'", "masterdata")
 				&& db.executeQuery("update master.device_provider_h set id=" + "'" + prop.get("deviceProviderId") + "'"
 						+ " where id=" + "'" + providerList.get(0) + "'", "masterdata")) {
 			logInfo("DeviceProvider and DeviceProviderHistory updated with :" + prop.get("deviceProviderId"));

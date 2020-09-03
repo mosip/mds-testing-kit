@@ -62,13 +62,19 @@ public class CreateDevice extends Util{
 	}
 
 	
-	public String updateDeviceIdWithCode(String deviceId,String deviceSpecId,Map<String,String> prop) {
+	public String updateDeviceIdWithCode(String type,String deviceId,String deviceSpecId,Map<String,String> prop) {
 		String deviceIdUpdatedValue=null;
 		String deviceIdValue=prop.get("deviceCode");
 		DataBaseAccess db= new DataBaseAccess();
 			
 		if(db.getDbData("select * from master.device_master where  id=" + "'" + deviceIdValue + "'", "masterdata").size()>0) {
-			if (db.executeQuery("delete from master.reg_center_device where  device_id=" + "'" + deviceIdValue + "'",
+			if(type.equalsIgnoreCase("Auth")) {
+				if (db.executeQuery("delete from master.device_master where  id=" + "'" + deviceIdValue + "'",
+						"masterdata")) {
+					auditLog.info(deviceIdValue + " alredy exit in DB  so, deleting..");
+				}
+			}
+			else if (db.executeQuery("delete from master.reg_center_device where  device_id=" + "'" + deviceIdValue + "'",
 					"masterdata") && db.executeQuery("delete from master.device_master where  id=" + "'" + deviceIdValue + "'",
 					"masterdata")) {
 				auditLog.info(deviceIdValue + " alredy exit in DB  so, deleting..");

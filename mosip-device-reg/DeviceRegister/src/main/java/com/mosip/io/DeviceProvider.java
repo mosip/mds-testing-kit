@@ -29,7 +29,8 @@ public class DeviceProvider extends Util{
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			deviceRegisterDTO = mapper.readValue(jsonData.toJSONString(), DeviceRegisterDTO.class);
-			deviceRegisterDTO.getRequest().setAddress(commonDataProp.get("address"));
+			//deviceRegisterDTO.getRequest().setAddress(commonDataProp.get("address"));
+			deviceRegisterDTO.getRequest().setAddress(generateRandomStringForAddress());
 			deviceRegisterDTO.getRequest().setCertificateAlias(commonDataProp.get("certificateAlias"));
 			deviceRegisterDTO.getRequest().setContactNumber(commonDataProp.get("contactNumber"));
 			deviceRegisterDTO.getRequest().setEmail(commonDataProp.get("email"));
