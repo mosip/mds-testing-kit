@@ -41,6 +41,7 @@ public class DeviceRegistrationCenterMapping  extends Util{
 			try {
 				ObjectMapper mapper = new ObjectMapper();
 				deviceRegCentrMapDTO = mapper.readValue(jsonData.toJSONString(), DeviceRegistrationCenterMappingDTO.class);
+				deviceRegCentrMapDTO.getRequest().setLangCode(primaryLanguage);
 				deviceRegCentrMapDTO.getRequest().setDeviceId(createdDeviceId);
 				deviceRegCentrMapDTO.getRequest().setRegCenterId(regCenterId);
 				deviceRegCentrMapDTO.setRequesttime(Util.getCurrentDateAndTimeForAPI());
