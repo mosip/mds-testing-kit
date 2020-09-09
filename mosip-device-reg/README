@@ -1,1 +1,11 @@
-Script for automatically registering devices
+##Steps to run device registration automation application
+
+1.git clone <https://github.com/mosip/mds-testing-kit.git>
+2.import the project mds-testing-kit/mosip-device-reg/DeviceRegister/  into IDE
+3.Check/put your login credential  in DeviceRegister\src\main\resources\commonData.properties
+4.Check environment related files here DeviceRegister\src\main\resources\dbFiles
+5.Check provider details or prerequisite data to run the application here  DeviceRegister\dataFolder\testData.csv
+6.Go to Runner.java class (DeviceRegister\src\main\java\com\mosip\io\Runner.java) right click on class and click on java application select run as run configuraiton.
+7.Give the vm arumgent -Dtype=<Finger> -Denv.user=dev -DbaseUrl=https://dev.mosip.net
+8.vm arumgent -Dtype values can be either Finger,Face,Iris and Auth or All (to run all types at one-shot)
+9.Logs can be found here DeviceRegister\testRun\logs
