@@ -1,4 +1,4 @@
-##Steps to run device registration automation application
+Steps to run device registration automation application
 
 1.git clone <https://github.com/mosip/mds-testing-kit.git>
 2.import the project mds-testing-kit/mosip-device-reg/DeviceRegister/  into IDE
@@ -9,3 +9,8 @@
 7.Give the vm arumgent -Dtype=<Finger> -Denv.user=dev -DbaseUrl=https://dev.mosip.net
 8.vm arumgent -Dtype values can be either Finger,Face,Iris and Auth or All (to run all types at one-shot)
 9.Logs can be found here DeviceRegister\testRun\logs
+
+**Note :  if want to run application in primary language
+          DeviceRegister\src\main\resources\commonData.properties  set secondaryLangRequired=false
+          if want to run application in primary and secondary language both
+          DeviceRegister\src\main\resources\commonData.properties  set secondaryLangRequired=true
