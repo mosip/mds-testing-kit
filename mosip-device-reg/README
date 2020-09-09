@@ -14,3 +14,5 @@ Steps to run device registration automation application
           DeviceRegister\src\main\resources\commonData.properties  set secondaryLangRequired=false
           if want to run application in primary and secondary language both
           DeviceRegister\src\main\resources\commonData.properties  set secondaryLangRequired=true
+          
+**Note : Required java version 1.8 or higher          
