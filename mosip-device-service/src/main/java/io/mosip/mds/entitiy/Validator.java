@@ -1,59 +1,107 @@
 package io.mosip.mds.entitiy;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.dto.Validation;
+import io.mosip.mds.dto.ValidationTestResultDto;
 import io.mosip.mds.dto.postresponse.ValidationResult;
+import io.mosip.mds.validator.CommonConstant;
+import io.mosip.mds.validator.CommonValidator;
 
 public abstract class Validator {
 
-    public enum ValidationStatus
-    {
-        Pending,
-        Passed,
-        Failed,
-        InternalException
-    };
+	public enum ValidationStatus
+	{
+		Pending,
+		Passed,
+		Failed,
+		InternalException
+	};
 
-    public Validator(String Name, String Description)
-    {
-        this.Name = Name;
-        this.Description = Description;
-    }
+	public Validator(String Name, String Description)
+	{
+		this.Name = Name;
+		this.Description = Description;
+	}
 
-    protected Validator()
-    {
+	protected Validator()
+	{
 
-    }
+	}
 
-    public String Name;
+	public String Name;
 
-    public String Description;
+	public String Description;
 
-    public final ValidationResult Validate(ValidateResponseRequestDto response)
-    {
-        ValidationResult validationResult = new ValidationResult();
-        validationResult.validationName = Name;
-        validationResult.validationDescription = Description;
-        ValidationStatus status = ValidationStatus.Pending;
-        try{
-            List<String> errors = DoValidate(response);
-            status = (errors == null || errors.size() == 0)?ValidationStatus.Passed:ValidationStatus.Failed;
-            if(status != ValidationStatus.Passed)
-                validationResult.errors.addAll(errors);
-        }
-        catch(Exception ex)
-        {
-            status = ValidationStatus.InternalException;
-            validationResult.errors.add(ex.toString());
-        }
-        validationResult.status = status.name();
-        return validationResult;
-    }
+	@Autowired
+	ObjectMapper jsonMapper;
 
-    protected abstract List<String> DoValidate(ValidateResponseRequestDto response);
+	@Autowired
+	CommonValidator commonValidator;
+	
+	public final ValidationResult Validate(ValidateResponseRequestDto response)
+	{
+		ValidationResult validationResult = new ValidationResult();
+		validationResult.validationName = Name;
+		validationResult.validationDescription = Description;
+		ValidationStatus status = ValidationStatus.Pending;
+		//ValidationTestResultDto validationTestResultDto = =new ;
+		ValidationTestResultDto validationTestResult = new ValidationTestResultDto(); 
+		List<Validation> validations = new ArrayList<Validation>();
+		Validation validationException = new Validation();
+		
 
-    protected abstract boolean checkVersionSupport(String version);
-    
-    protected abstract String supportedVersion();
+		try{
+			validationException=commonValidator.setFieldExpected("response", "Expected Valid whole json response", jsonMapper.writeValueAsString(response));			
+			validationTestResult.setDecodedData(jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
+			validations=DoValidate(response);
+			validationTestResult.setValidations(validations);
+			status = ValidationStatus.Passed;
+			for( Validation validation:validations) {
+				if(validation.getStatus().equals(CommonConstant.FAILED))
+					status=ValidationStatus.Failed;
+				//status = (validations == null || validations.size() == 0)?ValidationStatus.Passed:ValidationStatus.Failed;
+			}
+			// if(status != ValidationStatus.Passed)
+			validationResult.validationTestResultDtos.add(validationTestResult);
+		}catch (JsonProcessingException ex) {
+			status = ValidationStatus.Failed;
+			validationException.setStatus(ValidationStatus.Failed.name());
+			validationException.setMessage("Failed due to JsonProcessingException -> " + ex.getMessage());
+			validations.add(validationException);
+			validationTestResult.setValidations(validations);
+			validationResult.validationTestResultDtos.add(validationTestResult);
+		}catch (NullPointerException ex) {
+			status = ValidationStatus.Failed;
+			validationException.setStatus(ValidationStatus.Failed.name());
+			validationException.setMessage("Failed due to NullPointerException -> " + ex.getMessage());
+			validations.add(validationException);
+			validationTestResult.setValidations(validations);
+			validationResult.validationTestResultDtos.add(validationTestResult);
+		}
+		catch(Exception ex)
+		{
+			status = ValidationStatus.Failed;
+			validationException.setStatus(ValidationStatus.Failed.name());
+			validationException.setMessage("Failed due to Exception-> " + ex.getMessage());
+			validations.add(validationException);
+			validationTestResult.setValidations(validations);
+			validationResult.validationTestResultDtos.add(validationTestResult);			
+		}
+		validationResult.status = status.name();
+		return validationResult;
+	}
+
+	protected abstract List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException;
+
+	protected abstract boolean checkVersionSupport(String version);
+
+	protected abstract String supportedVersion();
 }

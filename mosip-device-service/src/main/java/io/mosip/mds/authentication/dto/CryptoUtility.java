@@ -1,4 +1,4 @@
-package io.mosip.authentication.demo.dto;
+package io.mosip.mds.authentication.dto;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -7,6 +7,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.cert.X509Certificate;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -14,10 +15,10 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
+import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.apache.commons.codec.binary.Base64;
 
 import io.mosip.kernel.core.crypto.spi.CryptoCoreSpec;
 
@@ -31,15 +32,15 @@ import io.mosip.kernel.core.crypto.spi.CryptoCoreSpec;
 public class CryptoUtility {
 
 	/** The Constant SYM_ALGORITHM. */
-	private static final String SYM_ALGORITHM = "AES";
-	
+	private final String SYM_ALGORITHM = "AES";
+
 	/** The Constant SYM_ALGORITHM_LENGTH. */
-	private static final int SYM_ALGORITHM_LENGTH = 256;
+	private final int SYM_ALGORITHM_LENGTH = 256;
 
 	/** The bouncy castle provider. */
-	private static BouncyCastleProvider bouncyCastleProvider;
+	private BouncyCastleProvider bouncyCastleProvider;
 
-	static {
+	{
 		bouncyCastleProvider = addProvider();
 	}
 
@@ -48,8 +49,6 @@ public class CryptoUtility {
 	 */
 	@Autowired
 	public CryptoCoreSpec<byte[], byte[], SecretKey, PublicKey, PrivateKey, String> cryptoCore;
-	
-	
 
 	/**
 	 * Symmetric encrypt.
@@ -70,9 +69,7 @@ public class CryptoUtility {
 		return cryptoCore.symmetricEncrypt(secretKey, data, null);
 
 	}
-	
-	
-	
+
 	/**
 	 * Symmetric decrypt.
 	 *
@@ -95,7 +92,7 @@ public class CryptoUtility {
 	 *
 	 * @return the bouncy castle provider
 	 */
-	private static BouncyCastleProvider addProvider() {
+	private BouncyCastleProvider addProvider() {
 		BouncyCastleProvider bouncyCastleProvider = new BouncyCastleProvider();
 		Security.addProvider(bouncyCastleProvider);
 		return bouncyCastleProvider;
@@ -110,11 +107,10 @@ public class CryptoUtility {
 	public SecretKey genSecKey() throws NoSuchAlgorithmException {
 		KeyGenerator keyGen;
 		SecretKey secretKey = null;
-        keyGen = KeyGenerator.getInstance(CryptoUtility.SYM_ALGORITHM, bouncyCastleProvider);
-		keyGen.init(CryptoUtility.SYM_ALGORITHM_LENGTH, new SecureRandom());
+		keyGen = KeyGenerator.getInstance(SYM_ALGORITHM, bouncyCastleProvider);
+		keyGen.init(SYM_ALGORITHM_LENGTH, new SecureRandom());
 		secretKey = keyGen.generateKey();
-        return secretKey;
-
+		return secretKey;
 	}
 
 	/**
@@ -130,10 +126,10 @@ public class CryptoUtility {
 	 * @throws BadPaddingException the bad padding exception
 	 */
 	public byte[] asymmetricEncrypt(byte[] data, PublicKey publicKey) throws NoSuchAlgorithmException,
-			NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+	NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		return cryptoCore.asymmetricEncrypt(publicKey, data);
 	}
-	
+
 	/**
 	 * Decodes from BASE64
 	 * 
@@ -143,5 +139,4 @@ public class CryptoUtility {
 	public byte[] decodeBase64(String data) {
 		return Base64.decodeBase64(data);
 	}
-
 }

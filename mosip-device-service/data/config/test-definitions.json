@@ -300,6 +300,10 @@
         "bioCount" : 1,
         "mdsSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
+        "uinNumber" : "9709607563",
+        "mispLicenseKey" : "MXdfykG3cE2rzInx7JyfnXNSnpY3BHqPpjbp7pZjDTwoJBTyUj",
+        "partnerId" : "329087",
+        "partnerApiKey" : "28268765",
         "validatorDefs": [
             {
                 "Name": "MandatoryCaptureResponseValidator",
@@ -308,6 +312,10 @@
             {
                 "Name": "ValidValueCaptureResponseValidator",
                 "Description": "valid values check"
+            },
+            {
+                "Name": "AuthRequestResponseValidator",
+                "Description": "Auth Request Response check"
             }
         ]
     },

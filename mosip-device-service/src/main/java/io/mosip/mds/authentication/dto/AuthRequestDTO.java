@@ -1,4 +1,4 @@
-package io.mosip.authentication.demo.dto;
+package io.mosip.mds.authentication.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,6 +20,8 @@ public class AuthRequestDTO extends BaseAuthRequestDTO {
 	/** The value for requestTime*/
 	private String requestTime;
 
+	private RequestDTO request;
+	
 	/** The value for consentObtained*/
 	private boolean consentObtained;
 
