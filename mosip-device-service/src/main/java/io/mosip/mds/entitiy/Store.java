@@ -5,10 +5,15 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.imageio.stream.FileImageInputStream;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import io.mosip.mds.dto.TestDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,8 +37,13 @@ import io.mosip.mds.validator.ValidValueRCaptureResponseValidator;
 
 @Component
 public class Store {
+
+	private static final Logger logger = LoggerFactory.getLogger(Store.class);
 	
-	public String STORAGE_PATH = null;
+	public static String STORAGE_PATH = null;
+	private static final ObjectMapper mapper = new ObjectMapper();
+	private static Map<String, TestDefinition> testDefinitions = null;
+	private static MasterDataResponseDto masterDataResponseDto = null;
 
 	@Autowired
 	AuthRequestResponseValidator authRequestResponseValidator;
@@ -62,8 +72,6 @@ public class Store {
 	@Autowired
 	ValidValueRCaptureResponseValidator validValueRCaptureResponseValidator;
 
-	@Autowired
-	ObjectMapper mapper;
 
 	public List<String> GetRunIds(String email)
 	{
@@ -139,7 +147,7 @@ public class Store {
 		return run;
 	}
 
-	public String getStorePath()
+	public static String getStorePath()
 	{
 		String storePath = STORAGE_PATH == null ? System.getProperty("user.dir") :
 			STORAGE_PATH;
@@ -152,7 +160,7 @@ public class Store {
 		return storePath;
 	}
 
-	public File getOrCreateDirectory(String path)
+	public static File getOrCreateDirectory(String path)
 	{
 		File f = new File(path);
 		if(f.isDirectory())
@@ -164,20 +172,57 @@ public class Store {
 		return null;
 	}
 
-	public MasterDataResponseDto getMasterData()
+	/**
+	 * returns master data from local cache
+	 * @return
+	 */
+	public static MasterDataResponseDto getMasterData()
 	{
+		if(masterDataResponseDto != null)
+			return masterDataResponseDto;
+
 		File masterDataFile = new File(getStorePath() + "config/masterdata.json");
 		if(masterDataFile.exists()) {
 			try
 			{
-				return (MasterDataResponseDto)mapper.readValue(new FileImageInputStream(masterDataFile), MasterDataResponseDto.class); 
+				masterDataResponseDto = (MasterDataResponseDto) mapper.readValue(masterDataFile,
+						MasterDataResponseDto.class);
 			}
 			catch(Exception ex)
 			{
-				ex.printStackTrace();
+				logger.error("Error reading master data", ex);
 			}
 		}
-		return null;
+		return masterDataResponseDto;
+	}
+
+	/**
+	 * returns all the test definitions from local cache
+	 * @return
+	 */
+	public static Map<String, TestDefinition> getAllTestDefinitions()
+	{
+		if(testDefinitions != null)
+			return testDefinitions;
+
+		File file = new File(getStorePath() + "config/test-definitions.json");
+		if(file.exists()) {
+			try
+			{
+				testDefinitions = new HashMap<>();
+				List<TestDefinition> definitions = (List<TestDefinition>) mapper.readValue(file,
+						new TypeReference<List<TestDefinition>>(){});
+
+				for(TestDefinition definition : definitions) {
+					testDefinitions.put(definition.testId, definition);
+				}
+			}
+			catch(Exception ex)
+			{
+				logger.error("Error reading test definitions", ex);
+			}
+		}
+		return testDefinitions;
 	}
 
 	public TestExtnDto[] getTestDefinitions()
@@ -258,6 +303,7 @@ public class Store {
 		
 		return results;	
 	}
+
 	private static boolean isValid(List<String> value) {
 		return (value != null && !value.isEmpty());
 	}

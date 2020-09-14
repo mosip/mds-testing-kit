@@ -17,14 +17,17 @@ public class RunStatus {
 	@Column(name = "run_id",nullable=false)
 	public String runId;
 	
-	@Column(name="run_passed")
-	public boolean runPassed;
+	@Column(name="status")
+	public String status;
 	
 	@Lob
-	@Column(name="target_profile")
-	public String targetProfile;
+	@Column(name="profile")
+	public String profile;
 
 	@Lob
-	@Column(name="run_name")
-	public String runName; 
+	@Column(name="name")
+	public String runName;
+
+	@Column(name="owner")
+	public String runOwner;
 }

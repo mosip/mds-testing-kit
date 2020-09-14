@@ -1,6 +1,8 @@
 package io.mosip.mds.service;
 
 import io.mosip.mds.dto.DeviceDto;
+import io.mosip.mds.dto.TestDefinition;
+import io.mosip.mds.dto.TestManagerDto;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
@@ -10,7 +12,7 @@ public interface IMDSRequestBuilder {
    
     public String getSpecVersion();
 
-    public ComposeRequestResponseDto buildRequest(TestRun run, TestExtnDto test, DeviceDto device, Intent op);
+    public ComposeRequestResponseDto buildRequest(String runId, TestManagerDto targetProfile, TestDefinition test, DeviceDto device, Intent op);
    
 
 }

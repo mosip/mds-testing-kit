@@ -47,7 +47,8 @@ import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.HMACUtils;
 import io.mosip.mds.authentication.dto.AuthRequestDTO;
 import io.mosip.mds.authentication.dto.AuthTypeDTO;
-import io.mosip.mds.authentication.dto.CryptoUtility;
+import io.mosip.mds.util.CryptoUtility;
+
 import io.mosip.mds.authentication.dto.CryptomanagerRequestDto;
 import io.mosip.mds.authentication.dto.EncryptionRequestDto;
 import io.mosip.mds.authentication.dto.EncryptionResponseDto;

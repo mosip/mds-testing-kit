@@ -44,6 +44,9 @@ public class CaptureHelper {
 	@Autowired
 	Store store;
 
+	@Autowired
+	private CryptoUtility cryptoUtility;
+
 	private String RCAPTURE = "rCapture";
 	private String CAPTURE = "Capture";
 	private String RCAPTURE_DECODE_ERROR = "Error while decoding the " + CAPTURE + " request";
@@ -100,8 +103,8 @@ public class CaptureHelper {
 
 	private String getDecryptedBioValue(CaptureBiometric biometric) {
 		PrivateKey privateKey = getPrivateKey();
-		String plainBioValue = CryptoUtility.decrypt(privateKey, biometric.sessionKey, biometric.getDataDecoded().bioValue, 
-				biometric.getDataDecoded().timestamp);		
+		String plainBioValue = cryptoUtility.decrypt(privateKey, biometric.sessionKey, biometric.getDataDecoded().bioValue,
+				biometric.getDataDecoded().timestamp, biometric.getDataDecoded().getTransactionId());
 		return Base64.getUrlEncoder().encodeToString(plainBioValue.getBytes());
 	}
 

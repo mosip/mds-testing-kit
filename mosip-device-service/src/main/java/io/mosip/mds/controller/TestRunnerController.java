@@ -27,14 +27,14 @@ public class TestRunnerController {
 	@Autowired
 	private TestRunnerService testRunnerService;
 
-	@PostMapping("/composerequest")
+	/*@PostMapping("/composerequest")
 	@ApiOperation(value = "Service to save composeRequest", notes = "Saves composeRequest and json")
 	@ApiResponses({ @ApiResponse(code = 201, message = "When composerequest Details successfully created"),
 		@ApiResponse(code = 400, message = "When Request body passed  is null or invalid"),
 		@ApiResponse(code = 500, message = "While creating composerequest any error occured") })
 	public ComposeRequestResponseDto composeRequest(@RequestBody ComposeRequestDto composeRequestDto) {
 		return testRunnerService.composeRequest(composeRequestDto);
-	}
+	}*/
 
 	@PostMapping("/getallrequests")
 	@ApiOperation(value = "Service to save MDM requests for all test cases", notes = "Saves composeRequest and json")
@@ -74,17 +74,5 @@ public class TestRunnerController {
 		// TODO handle null return for invalid runId and testId
 		return testRunnerService.decodeDeviceInfo(deviceInfo);	
 	}
-
-
-	/*	@GetMapping("/getRunStatus/{runId}")
-	@ApiOperation(value = "Service to get RunStatus", notes = "Gets status of current run Id")
-	@ApiResponses({ @ApiResponse(code = 201, message = "When status of the run id is successfully returned"),
-			@ApiResponse(code = 400, message = "When request does not have a run Id"),
-			@ApiResponse(code = 500, message = "While fetching runStatus any error occured") })
-	public boolean getRunStatus(@PathVariable("runId") String runId) {
-		return	testCaseResultService.getRunStatus(runId);
-
-	}*/
-
 
 }

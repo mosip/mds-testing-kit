@@ -1,13 +1,6 @@
 package io.mosip.mds.service;
 
-import io.mosip.mds.dto.CaptureRequest;
-import io.mosip.mds.dto.DeviceDto;
-import io.mosip.mds.dto.DeviceInfoRequest;
-import io.mosip.mds.dto.DiscoverRequest;
-import io.mosip.mds.dto.RegistrationCaptureRequest;
-import io.mosip.mds.dto.StreamRequest;
-import io.mosip.mds.dto.TestManagerDto;
-import io.mosip.mds.dto.TestRun;
+import io.mosip.mds.dto.*;
 import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.dto.postresponse.RequestInfoDto;
@@ -24,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,8 +30,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @Component
 public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
 
+    private static final Logger logger = LoggerFactory.getLogger(MDS_0_9_5_RequestBuilder.class);
+
 	@Autowired
-	 private ObjectMapper mapper;
+    private ObjectMapper mapper;
 	
 //    static {
 //    	mapper = new ObjectMapper();
@@ -57,9 +54,9 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
 	}
 
 
-    public ComposeRequestResponseDto buildRequest(TestRun run, TestExtnDto test, DeviceDto device, Intent op)
+    public ComposeRequestResponseDto buildRequest(String runId, TestManagerDto targetProfile, TestDefinition test, DeviceDto device, Intent op)
     {
-        ComposeRequestResponseDto composeRequestResponseDto=new ComposeRequestResponseDto(run.runId, test.testId);
+        ComposeRequestResponseDto composeRequestResponseDto=new ComposeRequestResponseDto(runId, test.testId);
 		RequestInfoDto requestInfoDto=new RequestInfoDto();
 
         try
@@ -78,12 +75,12 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
                 break;
                 case Capture:
                     requestInfoDto.verb = "CAPTURE";
-                    requestInfoDto.body = getCaptureRequest(run.targetProfile, test, device);
+                    requestInfoDto.body = getCaptureRequest(targetProfile, test, device);
                     requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/capture";
                 break;
                 case RegistrationCapture:
                     requestInfoDto.verb = "RCAPTURE";
-                    requestInfoDto.body = getRegistrationCaptureRequest(run.targetProfile, test, device);
+                    requestInfoDto.body = getRegistrationCaptureRequest(targetProfile, test, device);
                     requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/capture";
                     String streamUrl = "http://127.0.0.1:" + getPort(device) + "/stream?deviceId=%s&deviceSubId=%s";                    
                     composeRequestResponseDto.streamUrl = String.format(streamUrl, device.deviceInfo.deviceId, test.deviceSubId);
@@ -98,26 +95,26 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         }
         catch(JsonProcessingException jEx)
         {
-        	jEx.printStackTrace();
+        	logger.error("Error building request", jEx);
         }
         composeRequestResponseDto.requestInfoDto = requestInfoDto;
         return composeRequestResponseDto;
     }
 
-    private String getDiscoverRequest(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String getDiscoverRequest(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         DiscoverRequest requestBody = new DiscoverRequest();
         requestBody.type = "Biometric Device";
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String getDeviceInfoRequest(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String getDeviceInfoRequest(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         DeviceInfoRequest requestBody = new DeviceInfoRequest();
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String getStreamRequest(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String getStreamRequest(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         StreamRequest requestBody = new StreamRequest();
         requestBody.deviceId = device.deviceInfo.deviceId;
@@ -125,7 +122,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String getCaptureRequest(TestManagerDto targetProfile, TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String getCaptureRequest(TestManagerDto targetProfile, TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         CaptureRequest requestBody = new CaptureRequest();
         requestBody.captureTime = getTimestamp();
@@ -151,7 +148,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String getRegistrationCaptureRequest(TestManagerDto targetProfile, TestExtnDto test, DeviceDto device)
+    private String getRegistrationCaptureRequest(TestManagerDto targetProfile, TestDefinition test, DeviceDto device)
     		throws JsonProcessingException
     {
         RegistrationCaptureRequest requestBody = new RegistrationCaptureRequest();

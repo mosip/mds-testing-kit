@@ -14,29 +14,34 @@ import lombok.Data;
 public class TestcaseResult {
 
 	@EmbeddedId
-	public TestResultKey testResultKey;
+	private TestResultKey testResultKey;
+
+	@Column(name="description")
+	private String description;
 	
 	@Column(name="owner")
-	public String owner;
+	private String owner;
 	
 	@Lob
 	@Column(name="request")
-	public String request;
+	private String request;
 	
 	@Lob
 	@Column(name="response")
-	public String response;
+	private String response;
 	
 	@Lob
 	@Column(name="validation_results")
-	public String validationResults;
+	private String validationResults;
 	
 	@Column(name="passed")
-	public boolean passed;
+	private boolean passed;
 	
 	@Lob
 	@Column(name="device_info")
-	public String deviceInfo;
-	
+	private String deviceInfo;
+
+	@Column(name="executed_on")
+	private long executedOn;
 	
 }
