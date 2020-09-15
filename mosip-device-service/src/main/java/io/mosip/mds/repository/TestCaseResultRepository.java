@@ -11,6 +11,8 @@ import io.mosip.mds.entitiy.TestcaseResult;
 
 @Repository
 public interface TestCaseResultRepository extends JpaRepository<TestcaseResult, TestResultKey>{
-	public List<Optional<TestcaseResult>> findByOwner(String testcaseOwner);
-	public List<Optional<TestcaseResult>> findByTestResultKeyRunId(String runId);
+
+	List<TestcaseResult> findAllByOwner(String testcaseOwner);
+	List<TestcaseResult> findAllByTestResultKeyRunId(String runId);
+	Optional<TestcaseResult> findByTestResultKey(TestResultKey testResultKey);
 }

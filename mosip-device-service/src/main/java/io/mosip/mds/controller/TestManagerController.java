@@ -2,6 +2,7 @@ package io.mosip.mds.controller;
 
 import java.util.List;
 
+import io.mosip.mds.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,16 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.mosip.mds.dto.TestManagerDto;
-import io.mosip.mds.dto.TestManagerGetDto;
-import io.mosip.mds.dto.TestReport;
-import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
-import io.mosip.mds.dto.getresponse.TestExtnDto;
-import io.mosip.mds.dto.postresponse.RunExtnDto;
-import io.mosip.mds.service.TestCaseResultService;
 import io.mosip.mds.service.TestManagerService;
-import io.mosip.mds.util.TestServiceUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -32,12 +25,6 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = { "TestManager" })
 @RequestMapping("/testmanager")
 public class TestManagerController {
-
-	@Autowired
-	TestCaseResultService testCaseResultService;
-
-	@Autowired
-	TestServiceUtil testServiceUtil;
 
 	@Autowired
 	TestManagerService testManagerService;
@@ -53,25 +40,23 @@ public class TestManagerController {
 	}
 
 	@PostMapping("/test")
-	@ApiOperation(value = "Retrieve Test bassed on testManagerGetDto", notes = "Retrieve Test bassed on testManagerGetDto")
+	@ApiOperation(value = "Retrieve Test based on selected profile", notes = "Retrieve Test based on testManagerGetDto")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "When Test retrieved"),
 		@ApiResponse(code = 404, message = "When No Test found"),
-		@ApiResponse(code = 500, message = "While retrieving Test any error occured") })
-	public TestExtnDto[] getTest(@RequestBody TestManagerGetDto testManagerGetDto) {
+		@ApiResponse(code = 500, message = "While retrieving Test any error occurred") })
+	public List<TestDefinition> getTest(@RequestBody TestManagerGetDto testManagerGetDto) {
 		return testManagerService.getTests(testManagerGetDto);
 	}
 
 	@GetMapping("/runs/{email}")
-	@ApiOperation(value = "Retrieve Test bassed on testManagerGetDto", notes = "Retrieve Test bassed on testManagerGetDto")
+	@ApiOperation(value = "Retrieve Run metadata based on testManagerGetDto", notes = "Retrieve Test bassed on testManagerGetDto")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "When Test retrieved"),
 		@ApiResponse(code = 404, message = "When No Test found"),
-		@ApiResponse(code = 500, message = "While retrieving Test any error occured") })
-	public List<TestRun> getRuns(@PathVariable("email")String email) {
-		//testCaseResultService.getTests(email);
-		return testCaseResultService.getRuns(email);
-
+		@ApiResponse(code = 500, message = "While retrieving Test any error occurred") })
+	public List<TestRunMetadata> getRuns(@PathVariable("email")String email) {
+		return testManagerService.getRuns(email);
 	}
 
 
@@ -80,8 +65,8 @@ public class TestManagerController {
 	@ApiResponses({ @ApiResponse(code = 201, message = "When test Details successfully created"),
 		@ApiResponse(code = 400, message = "When Request body passed  is null or invalid"),
 		@ApiResponse(code = 500, message = "While creating test any error occured") })
-	public RunExtnDto createRun(@RequestBody TestManagerDto testManagerDto) {
-		return testCaseResultService.saveTestRun(testManagerDto);
+	public TestRunMetadata createRun(@RequestBody TestManagerDto testManagerDto) {
+		return testManagerService.createRun(testManagerDto);
 	}
 
 	@GetMapping("/report/{runId}/{format}")

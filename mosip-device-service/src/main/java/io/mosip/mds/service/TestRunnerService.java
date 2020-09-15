@@ -1,5 +1,6 @@
 package io.mosip.mds.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.mosip.mds.dto.ComposeRequestDto;
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.DiscoverResponse;
@@ -15,7 +16,7 @@ public interface TestRunnerService {
 
 	public TestRun validateResponse(ValidateResponseRequestDto validateRequestDto);
 
-	public ComposeRequestResponseDto composeRequest(ComposeRequestDto composeRequestDto);
+	//public ComposeRequestResponseDto composeRequest(ComposeRequestDto composeRequestDto);
 
 	public TestRun composeRequestForAllTests(ComposeRequestDto composeRequestDto);
 
