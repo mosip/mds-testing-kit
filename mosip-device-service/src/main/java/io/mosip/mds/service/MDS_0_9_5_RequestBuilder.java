@@ -32,14 +32,13 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(MDS_0_9_5_RequestBuilder.class);
 
-	@Autowired
-    private ObjectMapper mapper;
+	private static ObjectMapper mapper;
 	
-//    static {
-//    	mapper = new ObjectMapper();
-//		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-//		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-//    }
+    static {
+    	mapper = new ObjectMapper();
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+    }
 
     public String getSpecVersion()
     {

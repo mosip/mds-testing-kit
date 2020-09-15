@@ -35,7 +35,7 @@ public class TestcaseResult {
 	private String validationResults;
 	
 	@Column(name="passed")
-	private boolean passed;
+	public boolean passed;
 	
 	@Lob
 	@Column(name="device_info")
@@ -43,5 +43,8 @@ public class TestcaseResult {
 
 	@Column(name="executed_on")
 	private long executedOn;
+
+	@Column(name="current_state")
+	private String currentState;
 	
 }

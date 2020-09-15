@@ -80,7 +80,6 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 				//validate MDS response
 				if(testcaseResult.getTestResultKey().getTestcaseName().equals(validateRequestDto.getTestId())) {
 					testcaseResult.setExecutedOn(System.currentTimeMillis());
-					testResult.setRequestData(testcaseResult.getRequest());
 					testcaseResult.setResponse(validateRequestDto.getMdsResponse());
 					try {
 						TestDefinition testDefinition = Store.getAllTestDefinitions().get(validateRequestDto.getTestId());
@@ -90,22 +89,18 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 						MdsResponse[] mdsDecodedResponse = responseProcessor.getMdsDecodedResponse(intent, validateRequestDto.getMdsResponse());
 						validateRequestDto.setIntent(intent);
 
-						List<Validator> optedValidators = validators.stream().filter(validator ->
-								validator.Name.equals("")).collect(Collectors.toList());
-
 						for(ValidatorDef validatorDef : testDefinition.validatorDefs) {
 							Optional<Validator> validator = validators.stream().filter(v ->	v.Name.equals(validatorDef.Name)).findFirst();
 							if(validator.isPresent())
 								testResult.validationResults.add(validator.get().Validate(validateRequestDto));
 						}
 
-						testResult.setExecutedOn(new Date(testcaseResult.getExecutedOn()));
-						testResult.renderContent = responseProcessor.getRenderContent(intent, testResult.responseData);
-						testResult.currentState = "MDS Response Validations : Completed";
+						testResult.renderContent = responseProcessor.getRenderContent(intent, validateRequestDto.getMdsResponse());
 
 						//persist case validation results
 						testcaseResult.setValidationResults(mapper.writeValueAsString(testResult.validationResults));
 						testcaseResult.setPassed(true); //TODO
+						testcaseResult.setCurrentState("MDS Response Validations : Completed");
 						testCaseResultRepository.save(testcaseResult);
 
 					} catch (Exception ex) {
@@ -113,6 +108,12 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 						testResult.currentState = "MDS Response Validations : Failed";
 					}
 				}
+
+				testResult.currentState = testcaseResult.getCurrentState();
+				testResult.setResponseData(testcaseResult.getResponse());
+				testResult.setExecutedOn(new Date(testcaseResult.getExecutedOn()));
+				testResult.setSummary(testcaseResult.getDescription());
+				testResult.setRequestData(testcaseResult.getRequest());
 
 				testRun.getTests().add(testcaseResult.getTestResultKey().getTestcaseName());
 				testRun.getTestReport().put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
@@ -155,6 +156,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
 					testcaseResult.setDeviceInfo(mapper.writeValueAsString(composeRequestDto.deviceInfo));
 					testcaseResult.setRequest(testResult.requestData);
+					testcaseResult.setCurrentState("Compose MDS request : Completed");
 					testCaseResultRepository.save(testcaseResult);
 
 					testRun.getTests().add(testcaseResult.getTestResultKey().getTestcaseName());

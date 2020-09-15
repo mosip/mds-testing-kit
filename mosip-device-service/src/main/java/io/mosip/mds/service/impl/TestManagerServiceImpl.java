@@ -76,8 +76,9 @@ public class TestManagerServiceImpl implements TestManagerService {
 		for (io.mosip.mds.entitiy.RunStatus runStatus : runs) {
 			TestRunMetadata testRunMetadata = new TestRunMetadata();
 			testRunMetadata.setRunId(runStatus.getRunId());
+			testRunMetadata.setRunName(runStatus.getRunName());
 			testRunMetadata.setRunStatus(runStatus.getStatus()); //TODO
-			testRunMetadata.setCreatedOn(null); //TODO
+			testRunMetadata.setCreatedOn(new Date(Long.valueOf(runStatus.getRunId()))); //TODO
 			list.add(testRunMetadata);
 		}
 		list.sort((run1, run2) -> run1.getCreatedOn().compareTo(run2.getCreatedOn()));
@@ -92,7 +93,7 @@ public class TestManagerServiceImpl implements TestManagerService {
 				testManagerDto.biometricType, testManagerDto.deviceSubType));
 
 		definitions = definitions.stream()
-				.filter(testDefinition -> !testManagerDto.getTests().contains(testDefinition.getTestId()))
+				.filter(testDefinition -> testManagerDto.getTests().contains(testDefinition.getTestId()))
 				.collect(Collectors.toList());
 
 		if(definitions == null || definitions.isEmpty()) {
@@ -100,6 +101,10 @@ public class TestManagerServiceImpl implements TestManagerService {
 		}
 		//create entry in runStatus
 		io.mosip.mds.entitiy.RunStatus runStatus = saveRunStatus(testManagerDto, definitions);
+
+		logger.info("Runstatus saved >>> {}", runStatus);
+		logger.info("Runstatus saved id >>> {}", runStatus.getRunId());
+
 		//then create initial entries in testcaseresult table
 		saveRunCases(testManagerDto, definitions, runStatus);
 		return getTestRunMetadata(runStatus);
@@ -165,6 +170,7 @@ public class TestManagerServiceImpl implements TestManagerService {
 
 			TestcaseResult testCaseResult = new TestcaseResult();
 			testCaseResult.setTestResultKey(testResultKey);
+			testCaseResult.setDescription(testDefinition.getTestDescription());
 			testCaseResult.setOwner(testManagerDto.getEmail());
 			testCaseResultRepository.save(testCaseResult);
 		}
