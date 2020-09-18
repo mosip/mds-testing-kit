@@ -1,13 +1,13 @@
 package io.mosip.mds.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.mosip.mds.dto.*;
-import io.mosip.mds.entitiy.*;
-import io.mosip.mds.repository.RunIdStatusRepository;
-import io.mosip.mds.repository.TestCaseResultRepository;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,21 +15,29 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.mosip.mds.dto.TestRun.RunStatus;
-import io.mosip.mds.dto.getresponse.TestExtnDto;
+import io.mosip.mds.dto.ComposeRequestDto;
+import io.mosip.mds.dto.DeviceInfoResponse;
+import io.mosip.mds.dto.DiscoverResponse;
+import io.mosip.mds.dto.MdsResponse;
+import io.mosip.mds.dto.TestDefinition;
+import io.mosip.mds.dto.TestManagerDto;
+import io.mosip.mds.dto.TestResult;
+import io.mosip.mds.dto.TestRun;
+import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.dto.ValidatorDef;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
-import io.mosip.mds.dto.postresponse.RequestInfoDto;
-import io.mosip.mds.dto.postresponse.ValidationResult;
+import io.mosip.mds.entitiy.DeviceInfoHelper;
+import io.mosip.mds.entitiy.DiscoverHelper;
+import io.mosip.mds.entitiy.Store;
+import io.mosip.mds.entitiy.TestcaseResult;
+import io.mosip.mds.entitiy.Validator;
+import io.mosip.mds.repository.RunIdStatusRepository;
+import io.mosip.mds.repository.TestCaseResultRepository;
 import io.mosip.mds.service.IMDSRequestBuilder;
 import io.mosip.mds.service.IMDSResponseProcessor;
 import io.mosip.mds.service.MDS_0_9_2_RequestBuilder;
-import io.mosip.mds.service.MDS_0_9_5_RequestBuilder;
-import io.mosip.mds.service.MDS_0_9_5_ResponseProcessor;
 import io.mosip.mds.service.TestRunnerService;
 import io.mosip.mds.util.Intent;
-import io.mosip.mds.util.TestServiceUtil;
-
-import javax.swing.text.html.Option;
 
 @Service
 public class TestRunnerServiceImpl implements TestRunnerService {
@@ -48,7 +56,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
 	@Autowired
 	IMDSResponseProcessor iMDSResponseProcessor;
-	
+
 	@Autowired
 	IMDSRequestBuilder iMDSRequestBuilder;
 
@@ -68,7 +76,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		List<TestcaseResult> testcaseResults = testCaseResultRepository.findAllByTestResultKeyRunId(validateRequestDto.getRunId());
 		if(testcaseResults != null) {
 			boolean matched = testcaseResults.stream().anyMatch(testcaseResult ->
-					testcaseResult.getTestResultKey().getTestcaseName().equals(validateRequestDto.getTestId()));
+			testcaseResult.getTestResultKey().getTestcaseName().equals(validateRequestDto.getTestId()));
 			if(!matched)
 				return null;
 
@@ -87,14 +95,23 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 						Intent intent = getIntent(testDefinition.getMethod());
 						IMDSResponseProcessor responseProcessor = getResponseProcessor(targetProfile.mdsSpecVersion);
 						MdsResponse[] mdsDecodedResponse = responseProcessor.getMdsDecodedResponse(intent, validateRequestDto.getMdsResponse());
+
+						String deviceInfoString = getRequiredJson(testcaseResult.getDeviceInfo(),"deviceInfo");			
+						validateRequestDto.setDeviceInfo((DeviceInfoResponse) (mapper.readValue(deviceInfoString, DeviceInfoResponse.class)));
+						String requestString = getRequiredJson(testcaseResult.getRequest(),"body");
+						validateRequestDto.setMdsDecodedRequest(requestString);
 						validateRequestDto.setIntent(intent);
-
-						for(ValidatorDef validatorDef : testDefinition.validatorDefs) {
-							Optional<Validator> validator = validators.stream().filter(v ->	v.Name.equals(validatorDef.Name)).findFirst();
-							if(validator.isPresent())
-								testResult.validationResults.add(validator.get().Validate(validateRequestDto));
+						validateRequestDto.setTestManagerDto(targetProfile);
+						
+						for(MdsResponse mdsResponse:mdsDecodedResponse)
+						{
+							validateRequestDto.setMdsDecodedResponse(mdsResponse);						
+							for(ValidatorDef validatorDef : testDefinition.validatorDefs) {
+								Optional<Validator> validator = validators.stream().filter(v ->	v.Name.equals(validatorDef.Name)).findFirst();
+								if(validator.isPresent())
+									testResult.validationResults.add(validator.get().Validate(validateRequestDto));
+							}
 						}
-
 						testResult.renderContent = responseProcessor.getRenderContent(intent, validateRequestDto.getMdsResponse());
 
 						//persist case validation results
@@ -123,7 +140,17 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		return null;
 	}
 
-
+	private String getRequiredJson(String jsonString,String key) {
+		String resultString = null;
+		try {
+			JSONObject json = new JSONObject(jsonString);
+			resultString = (String) json.get(key).toString();
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return resultString;
+	}
 
 	@Override
 	public TestRun composeRequestForAllTests(ComposeRequestDto composeRequestDto) {

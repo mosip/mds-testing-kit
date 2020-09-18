@@ -1,5 +1,7 @@
 package io.mosip.mds.entitiy;
 
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -45,7 +47,7 @@ public class DiscoverHelper {
 			for(DiscoverResponse resp:response)
 			{
 				try {
-					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
+					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(Base64.getUrlDecoder().decode(resp.digitalId), DigitalId.class));
 					//TODO always unsigned in discover
 					//					if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
 					//						resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
@@ -75,7 +77,7 @@ public class DiscoverHelper {
 
 			try {
 				if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
-					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
+					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(Base64.getUrlDecoder().decode(resp.digitalId), DigitalId.class));
 				else
 					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(securityUtil.getPayload(resp.digitalId),	DigitalId.class));
 			}

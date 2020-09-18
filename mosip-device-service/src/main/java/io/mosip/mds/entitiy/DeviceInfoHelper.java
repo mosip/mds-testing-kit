@@ -1,6 +1,7 @@
 package io.mosip.mds.entitiy;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,11 @@ import io.mosip.mds.util.SecurityUtil;
 @Component
 public class DeviceInfoHelper {
 
+	@Autowired
 	private ObjectMapper mapper;
 
 	@Autowired
-	SecurityUtil securityUtil;
-	{
-		mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-	}
+	private SecurityUtil securityUtil;
 
 	public String getRenderContent(DeviceInfoResponse response)
 	{
@@ -40,6 +38,7 @@ public class DeviceInfoHelper {
 	}
 
 	public DeviceInfoResponse[] decode(String deviceInfo) {
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		DeviceInfoMinimal[] input = null;
 		List<DeviceInfoResponse> response = new ArrayList<DeviceInfoResponse>();		
 		//Pattern pattern = Pattern.compile("(?<=\\.)(.*)(?=\\.)");
@@ -60,13 +59,14 @@ public class DeviceInfoHelper {
 
 	public DeviceInfoResponse decodeDeviceInfo(String encodeInfo)
 	{
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		DeviceInfoResponse resp = new DeviceInfoResponse();	
 		try
 		{		
 			resp = (DeviceInfoResponse) (mapper.readValue(securityUtil.getPayload(encodeInfo), DeviceInfoResponse.class));
 			try {
 				if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
-					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(resp.digitalId.getBytes(), DigitalId.class));
+					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(Base64.getUrlDecoder().decode(resp.digitalId), DigitalId.class));
 				else
 					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(securityUtil.getPayload(resp.digitalId), DigitalId.class));
 			}

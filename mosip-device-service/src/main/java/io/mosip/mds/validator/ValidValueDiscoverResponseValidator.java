@@ -22,13 +22,13 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 		super("ValidValueDiscoverResponseValidator", "Valid Value Discover Response Validator");
 	}
 
-	Validation validation = new Validation();
+	private Validation validation = new Validation();
 
 	@Autowired
-	CommonValidator commonValidator;
+	private CommonValidator commonValidator;
 
 	@Autowired
-	ObjectMapper jsonMapper;
+	private ObjectMapper jsonMapper;
 
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
@@ -43,6 +43,10 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 				commonValidator.setFoundMessageStatus(validation,"Found Discover Decoded is null","Discover response is empty",CommonConstant.FAILED);
 			}
 			validations.add(validation);
+
+			//check Device status 
+			validations = validateDeviceStatus(response,discoverResponse,validations);
+
 			//Check for device status
 			validation = commonValidator.setFieldExpected("discoverResponse.deviceStatus","Ready | Busy | Not Ready | Not Registered",discoverResponse.deviceStatus);		
 			if(!discoverResponse.deviceStatus.equals(CommonConstant.READY) && !discoverResponse.deviceStatus.equals(CommonConstant.BUSY)
@@ -93,10 +97,21 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 		return validations;
 	}
 
+	private List<Validation> validateDeviceStatus(ValidateResponseRequestDto response, DiscoverResponse discoverResponse, List<Validation> validations) {
+		
+				validation = commonValidator.setFieldExpected("Device Type",response.getTestManagerDto().biometricType,discoverResponse.digitalIdDecoded.type);	
+
+				if((!"Biometric Device".equals(response.getTestManagerDto().biometricType))
+						&& (!response.getTestManagerDto().biometricType.equals(discoverResponse.digitalIdDecoded.type))) {
+					commonValidator.setFoundMessageStatus(validation,discoverResponse.digitalIdDecoded.type,"Response from different device is returning",CommonConstant.FAILED);
+				}
+				validations.add(validation);
+			
+		return validations;
+	}
+
 	private List<Validation> validateDigitalId(DiscoverResponse discoverResponse, List<Validation> validations) {
 		//digitalId - Digital ID as per the Digital ID definition but it will not be signed.
-
-		CommonValidator commonValidator=new CommonValidator();
 		validations = commonValidator.validateDecodedUnSignedDigitalID(discoverResponse.digitalId);
 		return validations;
 	}

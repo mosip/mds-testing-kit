@@ -1,5 +1,6 @@
 package io.mosip.mds.entitiy;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,7 +100,7 @@ public abstract class Validator {
 		return validationResult;
 	}
 
-	protected abstract List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException;
+	protected abstract List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException, IOException;
 
 	protected abstract boolean checkVersionSupport(String version);
 

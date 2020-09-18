@@ -23,6 +23,12 @@ public class ValidateResponseRequestDto {
 	public String resultVerbosity;
 
 	private MdsResponse mdsDecodedResponse; 
+	
+	private TestManagerDto testManagerDto;
+	
+	private String mdsDecodedRequest;
+	
+	private DeviceInfoResponse deviceInfo;
 
 	private Intent intent;
 }

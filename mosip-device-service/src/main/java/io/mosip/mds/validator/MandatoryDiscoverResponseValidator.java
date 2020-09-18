@@ -22,12 +22,13 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 		super("MandatoryDiscoverResponseValidator", "Mandatory Discover Response Validator");
 	}
 
-	Validation validation = new Validation();
+	private Validation validation = new Validation();
+	
 	@Autowired
-	CommonValidator commonValidator;
+	private CommonValidator commonValidator;
 
 	@Autowired
-	ObjectMapper jsonMapper;
+	private ObjectMapper jsonMapper;
 
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
@@ -62,13 +63,6 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 		}
 		validations.add(validation);
 
-		// Check for deviceCode block
-		validation = commonValidator.setFieldExpected("discoverResponse.deviceCode","A unique code given by MOSIP after successful registration",discoverResponse.deviceCode);
-		if(discoverResponse.deviceCode == null || discoverResponse.deviceCode.isEmpty())
-		{
-			commonValidator.setFoundMessageStatus(validation,discoverResponse.deviceCode,"Device Discover response does not contain deviceCode",CommonConstant.FAILED);
-		}
-		validations.add(validation);
 		// Check for deviceId block
 		validation = commonValidator.setFieldExpected("discoverResponse.deviceId","Internal ID",discoverResponse.deviceId);
 		if(discoverResponse.deviceId == null)
@@ -82,8 +76,20 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 		if(discoverResponse.deviceStatus == null || discoverResponse.deviceStatus.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,discoverResponse.deviceStatus,"Device Discover response does not contain deviceStatus",CommonConstant.FAILED);
+			validations.add(validation);
+		}else if(!(!discoverResponse.deviceStatus.equals(CommonConstant.READY) && !discoverResponse.deviceStatus.equals(CommonConstant.BUSY)
+				&& !discoverResponse.deviceStatus.equals(CommonConstant.NOT_READY) && !discoverResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))){
+			validations.add(validation);
+			// Check for deviceCode block
+			validation = commonValidator.setFieldExpected("discoverResponse.deviceCode","A unique code given by MOSIP after successful registration",discoverResponse.deviceCode);
+			if(!discoverResponse.deviceStatus.equals("Not Registered") && (discoverResponse.deviceCode == null || discoverResponse.deviceCode.isEmpty()))
+			{
+				commonValidator.setFoundMessageStatus(validation,discoverResponse.deviceCode,"Device Discover response does not contain deviceCode",CommonConstant.FAILED);
+			}else if(discoverResponse.deviceStatus.equals("Not Registered") && (discoverResponse.deviceCode != null && (!discoverResponse.deviceCode.isEmpty()))) {
+				commonValidator.setFoundMessageStatus(validation,discoverResponse.deviceCode,"Device Discover response deviceCode should be empty when deviceStatus is Not Registered",CommonConstant.FAILED);
+			}
+			validations.add(validation);
 		}
-		validations.add(validation);
 
 		// TODO Check for deviceSubId block
 		validation = commonValidator.setFieldExpected("discoverResponse.deviceSubId","[0/1/2/3]",Arrays.toString(discoverResponse.deviceSubId));

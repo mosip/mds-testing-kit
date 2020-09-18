@@ -87,6 +87,38 @@
             }
         ]
     },
+     {
+        "testId": "Registration capture - Left Slab - One Exception",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request for Slap scanner type",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Finger"
+        ],
+        "deviceSubTypes": [
+            "Slap"
+        ],
+		"segments" : ["LeftIndex", "LeftMiddle", "LeftLittle"],
+		"deviceSubId" : 1,
+		"bioCount" : 3,
+		"exceptions" : ["LeftRing"],
+        "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+            {
+                "Name": "MandatoryRCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueRCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
 	{
         "testId": "Registration capture - Right Slab",
         "method": "rcapture",
@@ -106,6 +138,38 @@
 		"deviceSubId" : 2,
 		"bioCount" : 4,
 		"exceptions" : [],
+        "requestedScore" : 40,
+        "mdsSpecVersions": ["0.9.5"],
+        "validatorDefs": [
+            {
+                "Name": "MandatoryRCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueRCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Registration capture - Right Slab - Two Exception",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request for Slap scanner type",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Finger"
+        ],
+        "deviceSubTypes": [
+            "Slap"
+        ],
+		"segments" : ["RightRing", "RightLittle"],
+		"deviceSubId" : 2,
+		"bioCount" : 2,
+		"exceptions" : ["RightIndex", "RightMiddle"],
         "requestedScore" : 40,
         "mdsSpecVersions": ["0.9.5"],
         "validatorDefs": [
@@ -151,6 +215,70 @@
             }
         ]
     },
+    {
+        "testId": "Registration capture - Two Thumbs - One Exception",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request for Slap scanner type",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Finger"
+        ],
+        "deviceSubTypes": [
+            "Slap"
+        ],
+		"segments" : ["RightThumb"],
+		"exceptions" : ["LeftThumb"],
+		"deviceSubId" : 3,
+		"bioCount" : 1,
+        "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+            {
+                "Name": "MandatoryRCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueRCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Registration capture - Two Thumbs - Both Exception",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request for Slap scanner type",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Finger"
+        ],
+        "deviceSubTypes": [
+            "Slap"
+        ],
+		"segments" : [],
+		"exceptions" : ["RightThumb","LeftThumb"],
+		"deviceSubId" : 3,
+		"bioCount" : 0,
+        "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+            {
+                "Name": "MandatoryRCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueRCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
 	{
         "testId": "Registration capture - Double Iris",
         "method": "rcapture",
@@ -170,6 +298,70 @@
 		"exceptions" : [],
 		"deviceSubId" : 3,
 		"bioCount" : 2,
+        "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+             {
+                "Name": "MandatoryRCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueRCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Registration capture - Double Iris - One Exception",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Iris"
+        ],
+        "deviceSubTypes": [
+            "Double"
+        ],
+		"segments" : ["RightEye"],
+		"exceptions" : ["LeftEye"],
+		"deviceSubId" : 3,
+		"bioCount" : 1,
+        "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+             {
+                "Name": "MandatoryRCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueRCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Registration capture - Double Iris - Both Exception",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Iris"
+        ],
+        "deviceSubTypes": [
+            "Double"
+        ],
+		"segments" : [],
+		"exceptions" : ["LeftEye","RightEye"],
+		"deviceSubId" : 3,
+		"bioCount" : 0,
         "mdsSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
@@ -280,6 +472,38 @@
         ]
     },
     {
+        "testId": "Registration capture - Face",
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request only for Face",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Face"
+        ],
+        "deviceSubTypes": [
+             "Full face"
+        ],
+		"segments" : [],
+		"exceptions" : ["UNKNOWN"],
+		"deviceSubId" : 0,
+		"bioCount" : 1,
+        "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+             {
+                "Name": "MandatoryRCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueRCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
         "testId": "Auth capture - Face",
         "method": "capture",
         "testDescription": "Valid Auth capture Request only for Face",
@@ -297,7 +521,7 @@
         "segments" : [],
         "exceptions" : [],
         "deviceSubId" : 0,
-        "bioCount" : 1,
+        "bioCount" : 0,
         "mdsSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "uinNumber" : "9709607563",
@@ -352,6 +576,70 @@
         ]
     },
     {
+        "testId": "Auth capture - Left Iris",
+        "method": "capture",
+        "testDescription": "Valid Auth capture Request for Unknown iris",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Iris"
+        ],
+        "deviceSubTypes": [
+            "Single"
+        ],
+        "segments" : ["Left"],
+        "exceptions" : [],
+        "deviceSubId" : 1,
+        "bioCount" : 1,
+        "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+            {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+            {
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Auth capture - Right Iris",
+        "method": "capture",
+        "testDescription": "Valid Auth capture Request for Unknown iris",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Iris"
+        ],
+        "deviceSubTypes": [
+            "Single"
+        ],
+        "segments" : ["Right"],
+        "exceptions" : [],
+        "deviceSubId" : 2,
+        "bioCount" : 1,
+        "mdsSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+            {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+            {
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
         "testId": "Auth capture - Unknown Finger",
         "method": "capture",
         "testDescription": "Valid Auth capture Request for Unknown Finger",
@@ -370,6 +658,102 @@
         "exceptions" : [],
         "deviceSubId" : 1,
         "bioCount" : 1,
+        "requestedScore" : 40,
+        "mdsSpecVersions": ["0.9.5"],
+        "validatorDefs": [
+            {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+            {
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Auth capture -Two Unknown Finger",
+        "method": "capture",
+        "testDescription": "Valid Auth capture Request for Unknown Finger",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Finger"
+        ],
+        "deviceSubTypes": [
+            "Single"
+        ],
+        "segments" : ["UNKNOWN","UNKNOWN"],
+        "exceptions" : [],
+        "deviceSubId" : 2,
+        "bioCount" : 2,
+        "requestedScore" : 40,
+        "mdsSpecVersions": ["0.9.5"],
+        "validatorDefs": [
+            {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+            {
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Auth capture - LeftIndex Finger",
+        "method": "capture",
+        "testDescription": "Valid Auth capture Request for Unknown Finger",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Finger"
+        ],
+        "deviceSubTypes": [
+            "Single"
+        ],
+        "segments" : ["LeftIndex"],
+        "exceptions" : [],
+        "deviceSubId" : 1,
+        "bioCount" : 1,
+        "requestedScore" : 40,
+        "mdsSpecVersions": ["0.9.5"],
+        "validatorDefs": [
+            {
+                "Name": "MandatoryCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+            {
+                "Name": "ValidValueCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+    {
+        "testId": "Auth capture - Two Finger",
+        "method": "capture",
+        "testDescription": "Valid Auth capture Request for Unknown Finger",
+        "requestGenerator": null,
+        "uiInput": null,
+        "processes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Finger"
+        ],
+        "deviceSubTypes": [
+            "Single"
+        ],
+        "segments" : ["LeftIndex","LeftMiddle"],
+        "exceptions" : [],
+        "deviceSubId" : 1,
+        "bioCount" : 2,
         "requestedScore" : 40,
         "mdsSpecVersions": ["0.9.5"],
         "validatorDefs": [
