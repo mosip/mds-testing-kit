@@ -1,5 +1,6 @@
 package io.mosip.mds.validator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -7,10 +8,15 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.mds.dto.CaptureRequest;
+import io.mosip.mds.dto.CaptureRequest.CaptureBioRequest;
 import io.mosip.mds.dto.CaptureResponse;
+import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
@@ -22,20 +28,20 @@ public class ValidValueCaptureResponseValidator extends Validator {
 	private final List<String> bioSubTypeFingerList= getBioSubTypeFinger();
 	private final List<String> bioSubTypeIrisList = getBioSubTypeIris();
 
-	Validation validation = new Validation();
+	private Validation validation = new Validation();
 
 	@Autowired
-	CommonValidator commonValidator;
+	private CommonValidator commonValidator;
 
 	@Autowired
-	ObjectMapper jsonMapper;
+	private ObjectMapper jsonMapper;
 
 	public ValidValueCaptureResponseValidator() {
 		super("ValidValueCaptureResponseValidator", "Valid Value Capture Response Validator");
 	}
 
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException, IOException {
 		List<Validation> validations = new ArrayList<>();
 		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
 		if(Objects.nonNull(response))
@@ -53,6 +59,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 				}
 				validations.add(validation);
 
+				validations=validateBiometricsType(validations, cr.biometrics,response);
 				for(CaptureResponse.CaptureBiometric bb:cr.biometrics)
 				{
 					CaptureBiometricData dataDecoded = bb.dataDecoded;
@@ -88,6 +95,40 @@ public class ValidValueCaptureResponseValidator extends Validator {
 			validations.add(validation);
 		}
 
+		return validations;
+	}
+
+	public List<Validation> validateBiometricsType(List<Validation> validations,
+			CaptureBiometric[] biometrics, ValidateResponseRequestDto response) throws JsonParseException, JsonMappingException, IOException {
+		//check for L1 device only
+		int bioIndex = 0;
+		CaptureRequest captureRequest = (CaptureRequest) (jsonMapper.readValue(response.getMdsDecodedRequest(), CaptureRequest.class));
+		if(response.getDeviceInfo().certification.equals(CommonConstant.L1)) {
+			for(CaptureBioRequest bio:captureRequest.bio) {
+				validation = commonValidator.setFieldExpected("dataDecoded.bioType",response.getTestManagerDto().getBiometricType(),biometrics[bioIndex].dataDecoded.bioType);				
+				if(!biometrics[bioIndex].dataDecoded.bioType.equals(response.getTestManagerDto().getBiometricType()) &&
+						!biometrics[bioIndex].dataDecoded.bioType.equals(bio.type)) {
+					commonValidator.setFoundMessageStatus(validation,biometrics[bioIndex].dataDecoded.bioType,"invalid biometrics type returned",CommonConstant.FAILED);					
+				}
+				validations.add(validation);
+				if(bio.bioSubType.length != bio.count)
+				{			
+					for(String subType:bio.bioSubType)
+					{
+						validation = commonValidator.setFieldExpected("dataDecoded.bioSubType",subType,biometrics[bioIndex].dataDecoded.bioSubType);				
+						if(!biometrics[bioIndex].dataDecoded.bioSubType.equals(subType)) {
+							commonValidator.setFoundMessageStatus(validation,biometrics[bioIndex].dataDecoded.bioSubType,"invalid biometrics SubType returned",CommonConstant.FAILED);											
+						}
+						validations.add(validation);
+						bioIndex++;
+					}
+				}else {
+					validation = commonValidator.setFieldExpected("dataDecoded data count",bio.count.toString(),String.valueOf(bio.bioSubType.length));				
+					commonValidator.setFoundMessageStatus(validation,String.valueOf(bio.bioSubType.length),"invalid biometrics count bio.count v/s expected bio.bioSubType",CommonConstant.FAILED);																
+					validations.add(validation);
+				}
+			}
+		}
 		return validations;
 	}
 

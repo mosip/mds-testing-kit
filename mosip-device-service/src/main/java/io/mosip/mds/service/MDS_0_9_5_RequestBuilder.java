@@ -1,21 +1,7 @@
 package io.mosip.mds.service;
 
-import io.mosip.mds.dto.*;
-import io.mosip.mds.dto.getresponse.TestExtnDto;
-import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
-import io.mosip.mds.dto.postresponse.RequestInfoDto;
-import io.mosip.mds.util.BioSubType;
-import io.mosip.mds.util.Intent;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,18 +13,28 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import io.mosip.mds.dto.CaptureRequest;
+import io.mosip.mds.dto.CaptureRequest.CaptureBioRequest;
+import io.mosip.mds.dto.DeviceDto;
+import io.mosip.mds.dto.DeviceInfoRequest;
+import io.mosip.mds.dto.DiscoverRequest;
+import io.mosip.mds.dto.RegistrationCaptureRequest;
+import io.mosip.mds.dto.RegistrationCaptureRequest.RegistrationCaptureBioRequest;
+import io.mosip.mds.dto.StreamRequest;
+import io.mosip.mds.dto.TestDefinition;
+import io.mosip.mds.dto.TestManagerDto;
+import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
+import io.mosip.mds.dto.postresponse.RequestInfoDto;
+import io.mosip.mds.util.BioSubType;
+import io.mosip.mds.util.Intent;
+
 @Component
 public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(MDS_0_9_5_RequestBuilder.class);
 
-	private static ObjectMapper mapper;
-	
-    static {
-    	mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-    }
+    @Autowired
+	private ObjectMapper mapper;
 
     public String getSpecVersion()
     {
@@ -109,6 +105,8 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
 
     private String getDeviceInfoRequest(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
+    	mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         DeviceInfoRequest requestBody = new DeviceInfoRequest();
         return mapper.writeValueAsString(requestBody);
     }
@@ -134,7 +132,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         
         requestBody.bio = new CaptureRequest.CaptureBioRequest[1];
         
-        CaptureRequest.CaptureBioRequest bio = requestBody.new CaptureBioRequest();
+        CaptureRequest.CaptureBioRequest bio = new CaptureBioRequest();
         bio.count = test.bioCount;
         bio.deviceId = device.deviceInfo.deviceId;
         bio.deviceSubId = test.deviceSubId;
@@ -161,7 +159,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         
         requestBody.bio = new RegistrationCaptureRequest.RegistrationCaptureBioRequest[1];
         
-        RegistrationCaptureRequest.RegistrationCaptureBioRequest bio = requestBody.new RegistrationCaptureBioRequest();        
+        RegistrationCaptureRequest.RegistrationCaptureBioRequest bio = new RegistrationCaptureBioRequest();        
     	bio.type = targetProfile.biometricType;
     	bio.previousHash = "";
         bio.deviceId = device.deviceInfo.deviceId;

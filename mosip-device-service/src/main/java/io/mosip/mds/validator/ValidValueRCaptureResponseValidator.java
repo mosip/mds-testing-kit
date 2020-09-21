@@ -1,47 +1,53 @@
 package io.mosip.mds.validator;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
+import io.mosip.mds.dto.RegistrationCaptureRequest;
+import io.mosip.mds.dto.RegistrationCaptureRequest.RegistrationCaptureBioRequest;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
-
 @Component
 public class ValidValueRCaptureResponseValidator extends Validator{
 
-	private final List<String> bioSubTypeFingerList= getBioSubTypeFinger();
-	private final List<String> bioSubTypeIrisList = getBioSubTypeIris();
+	private List<String> bioSubTypeFingerList=new ArrayList<String>();
+	private List<String> bioSubTypeIrisList=new ArrayList<String>();
 
 	@Autowired
 	private ObjectMapper jsonMapper;
 
-	Validation validation = new Validation();
+	private Validation validation = new Validation();
 
 	@Autowired
-	CommonValidator commonValidator;
+	private CommonValidator commonValidator;
 
 	public ValidValueRCaptureResponseValidator() {
 		super("ValidValueRCaptureResponseValidator", "Valid Value Registration Capture Response Validator");
 	}
 
 	@Override
-	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
+	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException,IOException {
 		List<Validation> validations = new ArrayList<>();
 		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
 		if(Objects.nonNull(response))
 		{
 			validations.add(validation);
+
 			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole RCapture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
 			// Check for Biometrics block
 			validations.add(validation);
@@ -55,6 +61,11 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 					commonValidator.setFoundMessageStatus(validation,registrationCaptureResponse.biometrics.toString(),"RCapture response does not contain biometrics block",CommonConstant.FAILED);
 				}
 				validations.add(validation);
+
+				validations=checkdeviceError(validations,response);
+
+				validations=validateBiometricsType(validations,response);
+
 				for(CaptureBiometric bb:registrationCaptureResponse.biometrics)
 				{
 					CaptureBiometricData dataDecoded = bb.dataDecoded;
@@ -91,21 +102,86 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 		}
 		return validations;
 	}
+	private List<Validation> checkdeviceError(List<Validation> validations, ValidateResponseRequestDto response) throws JsonParseException, JsonMappingException, IOException {
+		RegistrationCaptureRequest rcaptureRequest = (RegistrationCaptureRequest) (jsonMapper.readValue(response.getMdsDecodedRequest(), RegistrationCaptureRequest.class));
+		CaptureResponse registrationCaptureResponse = (CaptureResponse) response.getMdsDecodedResponse();
+
+		int index=-1;
+		for(RegistrationCaptureBioRequest bio:rcaptureRequest.bio) {
+			if(bio.type.equals(CommonConstant.FINGER)) {
+				if(bio.deviceSubId ==1 || bio.deviceSubId ==2) {
+					if(bio.exception.length == 4) {
+						if(registrationCaptureResponse.biometrics[index] != null){
+							validation = commonValidator.setFieldExpected("correct error code for invalid finger slap count","correcr error code 109 should be returned",registrationCaptureResponse.biometrics[index].error.errorCode);											
+							if(!registrationCaptureResponse.biometrics[index].error.errorCode.equals(109)) {
+								commonValidator.setFoundMessageStatus(validation,registrationCaptureResponse.biometrics[index].error.errorCode,"invalid error code returned",CommonConstant.FAILED);																								
+							}
+							validations.add(validation);
+						}
+					}
+				}else if(bio.deviceSubId ==3) {
+					if(bio.exception.length == 2) {
+						if(registrationCaptureResponse.biometrics[index] != null){
+							validation = commonValidator.setFieldExpected("correct error code for invalid thumb count","correcr error code 109 should be returned",registrationCaptureResponse.biometrics[index].error.errorCode);								
+							if(!registrationCaptureResponse.biometrics[index].error.errorCode.equals(109)) {
+								commonValidator.setFoundMessageStatus(validation,registrationCaptureResponse.biometrics[index].error.errorCode,"invalid error code returned",CommonConstant.FAILED);																								
+							}
+							validations.add(validation);
+						}
+					}
+				}
+			}
+			if(bio.type.equals(CommonConstant.IRIS)) {
+
+				if(bio.deviceSubId ==1 || bio.deviceSubId ==2) {
+					if(bio.exception.length == 1) {
+						if(registrationCaptureResponse.biometrics[index] != null){
+							if(!registrationCaptureResponse.biometrics[index].error.errorCode.equals(109)) {
+								if(registrationCaptureResponse.biometrics[index] != null){
+									validation = commonValidator.setFieldExpected("correct error code for invalid iris count","correcr error code 109 should be returned",registrationCaptureResponse.biometrics[index].error.errorCode);								
+									if(!registrationCaptureResponse.biometrics[index].error.errorCode.equals(109)) {
+										commonValidator.setFoundMessageStatus(validation,registrationCaptureResponse.biometrics[index].error.errorCode,"invalid error code returned",CommonConstant.FAILED);																								
+									}
+									validations.add(validation);
+								}													
+							}
+						}
+					}
+				}else if(bio.deviceSubId ==3) {
+					if(bio.exception.length == 2) {
+						if(registrationCaptureResponse.biometrics[index] != null){
+							if(!registrationCaptureResponse.biometrics[index].error.errorCode.equals(109)) {
+								if(registrationCaptureResponse.biometrics[index] != null){
+									validation = commonValidator.setFieldExpected("correct error code for invalid iris count","correcr error code 109 should be returned",registrationCaptureResponse.biometrics[index].error.errorCode);								
+									if(!registrationCaptureResponse.biometrics[index].error.errorCode.equals(109)) {
+										commonValidator.setFoundMessageStatus(validation,registrationCaptureResponse.biometrics[index].error.errorCode,"invalid error code returned",CommonConstant.FAILED);																								
+									}
+									validations.add(validation);
+								}						
+							}
+						}
+					}
+				}
+			}
+		}
+		return validations;
+	}
+
 	private List<Validation> validateActualValueDatadecoded(List<Validation> validations, CaptureBiometricData dataDecoded) {
 		// Check for bioType elements
-		validation = commonValidator.setFieldExpected("dataDecoded.bioType","Finger | Iris| Face",dataDecoded.bioType);		
-		if(!dataDecoded.bioType.equals(CommonConstant.FINGER) && !dataDecoded.bioType.equals(CommonConstant.IRIS) && !dataDecoded.bioType.equals(CommonConstant.FACE))
-		{
-			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioType,"Registration Capture response biometrics-dataDecoded bioType is invalid",CommonConstant.FAILED);
-			validations.add(validation);
-
-		}
-		else
-		{
-			validations.add(validation);
-			//Check for bioSubType
-			validations = validateBioSubType(validations, dataDecoded);
-		}
+		//		validation = commonValidator.setFieldExpected("dataDecoded.bioType","Finger | Iris| Face",dataDecoded.bioType);		
+		//		if(!dataDecoded.bioType.equals(CommonConstant.FINGER) && !dataDecoded.bioType.equals(CommonConstant.IRIS) && !dataDecoded.bioType.equals(CommonConstant.FACE))
+		//		{
+		//			commonValidator.setFoundMessageStatus(validation,dataDecoded.bioType,"Registration Capture response biometrics-dataDecoded bioType is invalid",CommonConstant.FAILED);
+		//			validations.add(validation);
+		//
+		//		}
+		//		else
+		//		{
+		//			validations.add(validation);
+		//			//Check for bioSubType
+		//			validations = validateBioSubType(validations, dataDecoded);
+		//		}
 
 
 		//TODO Check for digitalId dataDecoded.digitalId
@@ -122,42 +198,143 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 	}
 
 	private List<Validation> validateBioSubType(List<Validation> validations, CaptureBiometricData dataDecoded) {
-		switch(dataDecoded.bioType) {
-		// Check for bioSubType of Finger elements
-		case CommonConstant.FINGER:
-			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","For Finger: [Left IndexFinger, Left MiddleFinger, "
-					+ "Left RingFinger, Left LittleFinger, Left Thumb, Right IndexFinger,"
-					+ " Right MiddleFinger, Right RingFinger, Right LittleFinger, Right Thumb, UNKNOWN] ",dataDecoded.bioSubType);		
-			if(!bioSubTypeFingerList.contains(dataDecoded.bioSubType))
-			{
-				commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Registration Capture response bioSubType is invalid for Finger",CommonConstant.FAILED);
-			}
-			validations.add(validation);
-			break;
+		if(bioSubTypeFingerList.size() != 0)		
+			switch(dataDecoded.bioType) {
+			// Check for bioSubType of Finger elements
+			case CommonConstant.FINGER:
+				validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","For Finger: [Left IndexFinger, Left MiddleFinger, "
+						+ "Left RingFinger, Left LittleFinger, Left Thumb, Right IndexFinger,"
+						+ " Right MiddleFinger, Right RingFinger, Right LittleFinger, Right Thumb, UNKNOWN] ",dataDecoded.bioSubType);		
+				if(!bioSubTypeFingerList.contains(dataDecoded.bioSubType))
+				{
+					commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Registration Capture response bioSubType is invalid for Finger",CommonConstant.FAILED);
+				}
+				validations.add(validation);
+				break;
 
-		case CommonConstant.IRIS:
-			// Check for bioSubType of Iris elements
-			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","[Left, Right, UNKNOWN]",dataDecoded.bioSubType);
-			if(!bioSubTypeIrisList.contains(dataDecoded.bioSubType))
-			{
-				commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Registration Capture response bioSubType is invalid for Iris",CommonConstant.FAILED);
+			case CommonConstant.IRIS:
+				// Check for bioSubType of Iris elements
+				validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","[Left, Right, UNKNOWN]",dataDecoded.bioSubType);
+				if(!bioSubTypeIrisList.contains(dataDecoded.bioSubType))
+				{
+					commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Registration Capture response bioSubType is invalid for Iris",CommonConstant.FAILED);
+				}
+				validations.add(validation);
+				break;
+			case CommonConstant.FACE:	
+				// Check for bioSubType of Face elements
+				validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","No bioSubType",dataDecoded.bioSubType);
+				if(!(dataDecoded.bioSubType == null || dataDecoded.bioSubType.isEmpty()))
+				{
+					commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Registration Capture response bioSubType for Face should be empty",CommonConstant.FAILED);
+				}
+				validations.add(validation);
 			}
-			validations.add(validation);
-			break;
-		case CommonConstant.FACE:	
-			// Check for bioSubType of Face elements
-			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","No bioSubType",dataDecoded.bioSubType);
-			if(!(dataDecoded.bioSubType == null || dataDecoded.bioSubType.isEmpty()))
-			{
-				commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"Registration Capture response bioSubType for Face should be empty",CommonConstant.FAILED);
-			}
-			validations.add(validation);
-		}
 		return validations;
 	}
 
 	private List<Validation> validateDigitalId(CaptureBiometricData dataDecoded,List<Validation> validations) {
 		validations = commonValidator.validateDecodedSignedDigitalID(dataDecoded.digitalId,validations);
+		return validations;
+	}
+	public List<Validation> validateBiometricsType(List<Validation> validations,
+			ValidateResponseRequestDto response) throws JsonParseException, JsonMappingException, IOException {
+		//check for L0 device only
+		int bioIndex = 0;
+		RegistrationCaptureRequest rcaptureRequest = (RegistrationCaptureRequest) (jsonMapper.readValue(response.getMdsDecodedRequest(), RegistrationCaptureRequest.class));
+		CaptureResponse registrationCaptureResponse = (CaptureResponse) response.getMdsDecodedResponse();
+		CaptureBiometric[] biometrics = registrationCaptureResponse.getBiometrics();
+		if(response.getDeviceInfo().certification.equals(CommonConstant.L0)) {
+			for(RegistrationCaptureBioRequest request:rcaptureRequest.bio) {
+				validation = commonValidator.setFieldExpected("dataDecoded.bioType",response.getTestManagerDto().getBiometricType(),biometrics[bioIndex].dataDecoded.bioType);				
+				if(!biometrics[bioIndex].dataDecoded.bioType.equals(response.getTestManagerDto().getBiometricType()) &&
+						!biometrics[bioIndex].dataDecoded.bioType.equals(request.type)) {
+					commonValidator.setFoundMessageStatus(validation,biometrics[bioIndex].dataDecoded.bioType,"invalid biometrics type returned",CommonConstant.FAILED);					
+				}
+				validations.add(validation);
+
+				if(biometrics[bioIndex].dataDecoded.bioType.equals(CommonConstant.FINGER)) {
+					if(request.deviceSubId ==1) {
+						bioSubTypeFingerList=getBioSubTypeFingerLeftSlap();
+					}else if(request.deviceSubId==2) {
+						bioSubTypeFingerList=getBioSubTypeFingerRightSlap();						
+					}else if(request.deviceSubId==3) {
+						bioSubTypeFingerList=getBioSubTypeFingerThumb();						
+					}else {
+						validation = commonValidator.setFieldExpected("module in the scanner","deviceInfo.deviceSubId should be present","invalid");				
+						commonValidator.setFoundMessageStatus(validation,"invalid","Right/Left/Thumb for finger should be mentioned through deviceSubId",CommonConstant.FAILED);																	
+						validations.add(validation);
+					}
+					validation = commonValidator.setFieldExpected("captured biometrics count","correct requested finger",String.valueOf(4-request.exception.length));				
+					if(!(request.count <=4-request.exception.length && request.count>0)) {
+						commonValidator.setFoundMessageStatus(validation,String.valueOf(request.count),"biometrics count is invalid for requested finger",CommonConstant.FAILED);											
+					}
+					validations.add(validation);
+				}
+				else if(biometrics[bioIndex].dataDecoded.bioType.equals(CommonConstant.IRIS)) {
+					if(request.deviceSubId==1) {
+						bioSubTypeIrisList.add(CommonConstant.LEFT);
+					}else if(request.deviceSubId==2) {
+						bioSubTypeIrisList.add(CommonConstant.RIGHT);						
+					}else if(request.deviceSubId==3) {
+						bioSubTypeIrisList.add(CommonConstant.LEFT);
+						bioSubTypeIrisList.add(CommonConstant.RIGHT);						
+					}else {
+						validation = commonValidator.setFieldExpected("module in the scanner","deviceInfo.deviceSubId should be present","invalid");				
+						commonValidator.setFoundMessageStatus(validation,"invalid","Right/Left for Iris should be mentioned through deviceSubId",CommonConstant.FAILED);																	
+						validations.add(validation);
+					}
+					validation = commonValidator.setFieldExpected("captured biometrics count","for Iris count between 0-2",String.valueOf(request.count));				
+					if(!(request.count <=2 && request.count>0)) {
+						commonValidator.setFoundMessageStatus(validation,String.valueOf(request.count),"biometrics count is invalid for iris",CommonConstant.FAILED);											
+					}
+					validations.add(validation);
+				}
+				else if(biometrics[bioIndex].dataDecoded.bioType.equals(CommonConstant.FACE)) {
+					validation = commonValidator.setFieldExpected("captured biometrics count","for finger count between 0-1",String.valueOf(request.count));				
+					if(!(request.count <=1 && request.count>=0)) {
+						commonValidator.setFoundMessageStatus(validation,String.valueOf(request.count),"biometrics count is invalid for face",CommonConstant.FAILED);											
+					}
+					validations.add(validation);
+
+					validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","No bioSubType",biometrics[bioIndex].dataDecoded.bioSubType);
+					if(!(biometrics[bioIndex].dataDecoded.bioSubType == null || biometrics[bioIndex].dataDecoded.bioSubType.isEmpty()))
+					{
+						commonValidator.setFoundMessageStatus(validation,biometrics[bioIndex].dataDecoded.bioSubType,"Registration Capture response bioSubType for Face should be empty",CommonConstant.FAILED);
+					}
+					validations.add(validation);
+				}			
+
+				if((request.bioSubType.length == request.count) && (request.count == biometrics.length))
+				{
+					//validations = validateBioSubType(validations, biometrics[bioIndex].dataDecoded);
+					for(String subType:request.bioSubType) {
+						validation = commonValidator.setFieldExpected("dataDecoded.bioSubType",subType,biometrics[bioIndex].dataDecoded.bioSubType);				
+						if(!biometrics[bioIndex].dataDecoded.bioSubType.equals(subType)
+								&& !bioSubTypeFingerList.contains(biometrics[bioIndex].dataDecoded.bioSubType)) {
+							commonValidator.setFoundMessageStatus(validation,biometrics[bioIndex].dataDecoded.bioSubType,"invalid biometrics SubType returned",CommonConstant.FAILED);											
+						}
+						validations.add(validation);
+						bioIndex++;
+					}
+
+
+					for(int i=0;i<request.count;i++) {
+						validation = commonValidator.setFieldExpected("exception biometrics",Arrays.toString(request.bioSubType),request.bioSubType[i]);					
+						if(Arrays.asList(request.exception).contains(request.bioSubType[i])) {
+							commonValidator.setFoundMessageStatus(validation,request.bioSubType[i],"Exception biometrics should not be requested",CommonConstant.FAILED);											
+							validations.add(validation);
+						}
+						validations.add(validation);
+					}
+
+				}else {
+					validation = commonValidator.setFieldExpected("dataDecoded data count",String.valueOf(request.count),String.valueOf(request.bioSubType.length));				
+					commonValidator.setFoundMessageStatus(validation,String.valueOf(request.bioSubType.length),"invalid biometrics count 'bio.count' v/s expected 'bio.bioSubType' v/s 'biometrics captured'",CommonConstant.FAILED);																
+					validations.add(validation);
+				}
+			}
+		}
 		return validations;
 	}
 
@@ -184,7 +361,28 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 
 		return bioSubTypeFingerList;
 	}
-
+	public List<String> getBioSubTypeFingerThumb() {
+		List<String> bioSubTypeFingerList=new ArrayList<String>();
+		bioSubTypeFingerList.add(CommonConstant.LEFT_THUMB);
+		bioSubTypeFingerList.add(CommonConstant.RIGHT_THUMB);
+		return bioSubTypeFingerList;
+	}
+	public List<String> getBioSubTypeFingerLeftSlap() {
+		List<String> bioSubTypeFingerList=new ArrayList<String>();
+		bioSubTypeFingerList.add(CommonConstant.LEFT_INDEX_FINGER);
+		bioSubTypeFingerList.add(CommonConstant.LEFT_MIDDLE_FINGER);
+		bioSubTypeFingerList.add(CommonConstant.LEFT_RING_FINGER);
+		bioSubTypeFingerList.add(CommonConstant.LEFT_LITTLE_FINGER);
+		return bioSubTypeFingerList;
+	}
+	public List<String> getBioSubTypeFingerRightSlap() {
+		List<String> bioSubTypeFingerList=new ArrayList<String>();
+		bioSubTypeFingerList.add(CommonConstant.RIGHT_INDEX_FINGER);
+		bioSubTypeFingerList.add(CommonConstant.RIGHT_MIDDLE_FINGER);
+		bioSubTypeFingerList.add(CommonConstant.RIGHT_RING_FINGER);
+		bioSubTypeFingerList.add(CommonConstant.RIGHT_LITTLE_FINGER);
+		return bioSubTypeFingerList;
+	}
 	@Override
 	protected boolean checkVersionSupport(String version) {
 		//TODO

@@ -86,7 +86,7 @@ public class CommonValidator{
 	private List<Validation> mandatoryParamDigitalIdPayload(DigitalId decodedDigitalIdPayload, List<Validation> validations) {
 
 		//Check for Date Time
-		validation = setFieldExpected("decodedDigitalIdPayload.dateTime","ISO format with timezone",decodedDigitalIdPayload.dateTime.toString());	
+		validation = setFieldExpected("Mandatory Check decodedDigitalIdPayload.dateTime","ISO format with timezone",decodedDigitalIdPayload.dateTime.toString());	
 		if(decodedDigitalIdPayload.dateTime == null)
 		{	
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.dateTime.toString(),"Response DigitalId does not contain date and Time",CommonConstant.FAILED);
@@ -94,28 +94,28 @@ public class CommonValidator{
 		}
 		validations.add(validation);
 		//Check for deviceProvider
-		validation = setFieldExpected("decodedDigitalIdPayload.deviceProvider","Device provider name",decodedDigitalIdPayload.deviceProvider);	
+		validation = setFieldExpected("Mandatory Check decodedDigitalIdPayload.deviceProvider","Device provider name",decodedDigitalIdPayload.deviceProvider);	
 		if(decodedDigitalIdPayload.deviceProvider == null || decodedDigitalIdPayload.deviceProvider.isEmpty())
 		{
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceProvider,"Response DigitalId does not contain deviceProvider",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 		//Check for deviceProviderId
-		validation = setFieldExpected("decodedDigitalIdPayload.deviceProviderId","Device provider Id issued by MOSIP adopters",decodedDigitalIdPayload.deviceProviderId);	
+		validation = setFieldExpected("Mandatory Check decodedDigitalIdPayload.deviceProviderId","Device provider Id issued by MOSIP adopters",decodedDigitalIdPayload.deviceProviderId);	
 		if(decodedDigitalIdPayload.deviceProviderId == null || decodedDigitalIdPayload.deviceProviderId.isEmpty())
 		{
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceProviderId,"Response DigitalId does not contain deviceProviderId",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 		//Check for type element
-		validation = setFieldExpected("decodedDigitalIdPayload.type","[Finger, Iris, Face]",decodedDigitalIdPayload.type);	
+		validation = setFieldExpected("Mandatory Check decodedDigitalIdPayload.type","[Finger, Iris, Face]",decodedDigitalIdPayload.type);	
 		if(decodedDigitalIdPayload.type == null || decodedDigitalIdPayload.type.isEmpty())
 		{
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.type,"Response DigitalId does not contain type block",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 		//Check for deviceSubType
-		validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","\r\n For Finger - Slap, Single, Touchless \r\n" + 
+		validation = setFieldExpected("Mandatory Check decodedDigitalIdPayload.deviceSubType","\r\n For Finger - Slap, Single, Touchless \r\n" + 
 				"For Iris - Single, Double,\r\n" + 
 				"For Face - Full face",decodedDigitalIdPayload.deviceSubType);	
 		if(decodedDigitalIdPayload.deviceSubType == null || decodedDigitalIdPayload.deviceSubType.isEmpty())
@@ -124,21 +124,21 @@ public class CommonValidator{
 		}
 		validations.add(validation);
 		//Check for make element
-		validation = setFieldExpected("decodedDigitalIdPayload.make","Brand name",decodedDigitalIdPayload.make);	
+		validation = setFieldExpected("Mandatory Check decodedDigitalIdPayload.make","Brand name",decodedDigitalIdPayload.make);	
 		if(decodedDigitalIdPayload.make == null || decodedDigitalIdPayload.make.isEmpty())
 		{
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.make,"Response DigitalId does not contain make block",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 		//Check for model element
-		validation = setFieldExpected("decodedDigitalIdPayload.model","Model of the device",decodedDigitalIdPayload.model);	
+		validation = setFieldExpected("Mandatory Check decodedDigitalIdPayload.model","Model of the device",decodedDigitalIdPayload.model);	
 		if(decodedDigitalIdPayload.model == null || decodedDigitalIdPayload.model.isEmpty())
 		{
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.model,"Response DigitalId does not contain model block",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 		//Check for serialNo element
-		validation = setFieldExpected("decodedDigitalIdPayload.serialNo","Serial number of the device",decodedDigitalIdPayload.serialNo);	
+		validation = setFieldExpected("Mandatory Check decodedDigitalIdPayload.serialNo","Serial number of the device",decodedDigitalIdPayload.serialNo);	
 		if(decodedDigitalIdPayload.serialNo == null || decodedDigitalIdPayload.serialNo.isEmpty())
 		{
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.serialNo,"Response DigitalId does not contain serialNo block",CommonConstant.FAILED);

@@ -43,10 +43,10 @@ public class MdsSignatureValidator extends Validator{
 	@Autowired
 	private ObjectMapper mapper;
 
-	Validation validation = new Validation();
+	private Validation validation = new Validation();
 
-	CommonValidator commonValidator = new CommonValidator();
-	ObjectMapper jsonMapper = new ObjectMapper();
+	@Autowired
+	private CommonValidator commonValidator;
 
 	//	static {
 	//		mapper = new ObjectMapper();
@@ -61,7 +61,7 @@ public class MdsSignatureValidator extends Validator{
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",mapper.writeValueAsString(response));		
 		if(Objects.nonNull(response))
 		{
 			if(response.getIntent().equals(Intent.DeviceInfo)) {

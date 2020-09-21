@@ -1,15 +1,22 @@
 package io.mosip.mds.service;
 
-import io.mosip.mds.dto.*;
-import io.mosip.mds.dto.getresponse.TestExtnDto;
-import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
-import io.mosip.mds.dto.postresponse.RequestInfoDto;
-import io.mosip.mds.util.Intent;
-
 import java.util.Date;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.mosip.mds.dto.CaptureRequest;
+import io.mosip.mds.dto.CaptureRequest.CaptureBioRequest;
+import io.mosip.mds.dto.DeviceDto;
+import io.mosip.mds.dto.DeviceInfoRequest;
+import io.mosip.mds.dto.DiscoverRequest;
+import io.mosip.mds.dto.RegistrationCaptureRequest_0_9_2;
+import io.mosip.mds.dto.StreamRequest;
+import io.mosip.mds.dto.TestDefinition;
+import io.mosip.mds.dto.TestManagerDto;
+import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
+import io.mosip.mds.dto.postresponse.RequestInfoDto;
+import io.mosip.mds.util.Intent;
 
 public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
 
@@ -102,7 +109,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         requestBody.specVersion = "0.9.2";
         requestBody.timeout = 30;
         requestBody.transactionId = "" + System.currentTimeMillis();
-        CaptureRequest.CaptureBioRequest bio = requestBody.new CaptureBioRequest();
+        CaptureRequest.CaptureBioRequest bio = new CaptureBioRequest();
         bio.count = 1;
 //        bio.deviceId = device.discoverInfo;
         bio.deviceId = "1";
