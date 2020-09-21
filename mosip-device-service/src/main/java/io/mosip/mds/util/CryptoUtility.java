@@ -24,12 +24,19 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.spec.PSource.PSpecified;
 
 import io.mosip.kernel.core.crypto.spi.CryptoCoreSpec;
+import io.mosip.mds.entitiy.CaptureHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CryptoUtility {
+
+	private static final Logger logger = LoggerFactory.getLogger(CryptoUtility.class);
+
+	private static String DECRYPT_REQ_TEMPLATE = "{ \"id\": \"string\", \"metadata\": {}, \"request\": { \"aad\": \"%s\", \"applicationId\": \"%s\", \"data\": \"%s\", \"referenceId\": \"%s\", \"salt\": \"%s\", \"timeStamp\": \"%s\" }, \"requesttime\": \"%s\", \"version\": \"string\"}";
 
 	/** The Constant SYM_ALGORITHM. */
 	private final String SYM_ALGORITHM = "AES";
@@ -60,36 +67,14 @@ public class CryptoUtility {
 		return localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 	}
 	
-	public Map<String, String>  encrypt(PublicKey publicKey, String data) {
-		Map<String, String> result = new HashMap<>();
-		try {	
-			String timestamp = getTimestamp();
-			
-			byte[] aadBytes = timestamp.substring(timestamp.length() - 16).getBytes();
-			byte[] ivBytes = timestamp.substring(timestamp.length() - 12).getBytes();
-			byte[] dataBytes = data.getBytes();
-		
-			SecretKey secretKey = getSymmetricKey();
-			final byte[] encryptedData = cryptoCore.symmetricEncrypt(secretKey, dataBytes, ivBytes, aadBytes);
-			final byte[] encryptedSymmetricKey =  cryptoCore.asymmetricEncrypt(publicKey, secretKey.getEncoded());
-					
-			result.put("ENC_SESSION_KEY", java.util.Base64.getUrlEncoder().encodeToString(encryptedSymmetricKey));
-			result.put("ENC_DATA", java.util.Base64.getUrlEncoder().encodeToString(encryptedData));
-			result.put("TIMESTAMP", timestamp);
-			
-		} catch(Exception ex) {
-			ex.printStackTrace();
-		}
-		return result;
-	}
-	
+	//TODO - check with loga about decryption URL of MDS response
 	public String decrypt(PrivateKey privateKey, String sessionKey, String data, String timestamp,
 						  String transactionId) {
 		try {
-			//TODO - XOR logic
 			timestamp = timestamp.trim();
-			byte[] aadBytes = timestamp.substring(timestamp.length() - 16).getBytes();
-			byte[] ivBytes = timestamp.substring(timestamp.length() - 12).getBytes();
+			byte[] xorResult = getXOR(timestamp, transactionId);
+			byte[] aadBytes = getLastBytes(xorResult, 16);
+			byte[] ivBytes = getLastBytes(xorResult, 12);
 			
 			byte[] decodedSessionKey =  java.util.Base64.getUrlDecoder().decode(sessionKey);		
 			final byte[] symmetricKey = cryptoCore.asymmetricDecrypt(privateKey, decodedSessionKey);
@@ -100,7 +85,7 @@ public class CryptoUtility {
 			return new String(decryptedData);
 			
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error decrypting transactionId : {} ", transactionId, ex);
 		}
 		return null;
 	}
@@ -148,6 +133,53 @@ public class CryptoUtility {
 
 	public byte[] decodeBase64(String data) {
 		return java.util.Base64.getDecoder().decode(data);
+	}
+
+	// Function to insert n 0s in the
+	// beginning of the given string
+	static byte[] prependZeros(byte[] str, int n) {
+		byte[] newBytes = new byte[str.length + n];
+		int i = 0;
+		for (; i < n; i++) {
+			newBytes[i] = 0;
+		}
+
+		for(int j = 0;i < newBytes.length; i++, j++) {
+			newBytes[i] = str[j];
+		}
+
+		return newBytes;
+	}
+
+	// Function to return the XOR
+	// of the given strings
+	private static byte[] getXOR(String a, String b) {
+		byte[] aBytes = a.getBytes();
+		byte[] bBytes = b.getBytes();
+		// Lengths of the given strings
+		int aLen = aBytes.length;
+		int bLen = bBytes.length;
+		// Make both the strings of equal lengths
+		// by inserting 0s in the beginning
+		if (aLen > bLen) {
+			bBytes = prependZeros(bBytes, aLen - bLen);
+		} else if (bLen > aLen) {
+			aBytes = prependZeros(aBytes, bLen - aLen);
+		}
+		// Updated length
+		int len = Math.max(aLen, bLen);
+		byte[] xorBytes = new byte[len];
+
+		// To store the resultant XOR
+		for (int i = 0; i < len; i++) {
+			xorBytes[i] = (byte)(aBytes[i] ^ bBytes[i]);
+		}
+		return xorBytes;
+	}
+
+	private static byte[] getLastBytes(byte[] xorBytes, int lastBytesNum) {
+		assert(xorBytes.length >= lastBytesNum);
+		return java.util.Arrays.copyOfRange(xorBytes, xorBytes.length - lastBytesNum, xorBytes.length);
 	}
 
 }

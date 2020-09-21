@@ -1,11 +1,16 @@
 package io.mosip.mds.helper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class FingerPrintImageExtractor {
+
+    private static final Logger logger = LoggerFactory.getLogger(FingerPrintImageExtractor.class);
 
     public List<ExtractDTO> extractFingerImageData(byte[] decodedBioValue)  {
         List<ExtractDTO> extracts = new ArrayList<>();
@@ -14,7 +19,7 @@ public class FingerPrintImageExtractor {
 
             byte[] format = new byte[4];
             din.read(format, 0, format.length);
-            System.out.println("format >>>> " + new String(format));
+            logger.debug("format >>>> " + new String(format));
 
             int version = din.readInt();
             int recordLength = din.readInt();
@@ -24,7 +29,7 @@ public class FingerPrintImageExtractor {
 
             for(int i=0; i<noOfFingersOrPalms; i++) {
                 int representationLength = din.readInt();
-                System.out.println("representationLength >>> " + representationLength);
+                logger.debug("representationLength >>> " + representationLength);
 
                 byte[] representationBlock = new byte[representationLength-4];
                 din.read(representationBlock, 0, representationBlock.length);
@@ -47,23 +52,23 @@ public class FingerPrintImageExtractor {
                     }
 
                     byte finger = rdin.readByte(); // finger/palm position
-                    System.out.println("Finger position >>>>>> " + finger);
+                    logger.debug("Finger position >>>>>> " + finger);
 
                     byte representationNumber = rdin.readByte();
-                    System.out.println("representationNumber >>>>>> " + representationNumber);
+                    logger.debug("representationNumber >>>>>> " + representationNumber);
 
                     byte[] otherDetails = new byte[10];
                     rdin.read(otherDetails, 0, otherDetails.length);
 
                     byte imageCompressionAlgo = rdin.readByte();
-                    System.out.println("imageCompressionAlgo >>> " + imageCompressionAlgo);
+                    logger.debug("imageCompressionAlgo >>> " + imageCompressionAlgo);
                     byte impressionType = rdin.readByte();
 
                     byte[] lineDetails = new byte[4];
                     rdin.read(lineDetails, 0, lineDetails.length);
 
                     int imageDatalength = rdin.readInt();
-                    System.out.println("imageDatalength >>> " + imageDatalength);
+                    logger.debug("imageDatalength >>> " + imageDatalength);
 
                     byte[] image = new byte[imageDatalength];
                     rdin.read(image, 0, image.length);
@@ -75,7 +80,7 @@ public class FingerPrintImageExtractor {
             }
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.error("Error extracting finger image from biovalue", ex);
         }
         return extracts;
     }

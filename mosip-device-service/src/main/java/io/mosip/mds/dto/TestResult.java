@@ -59,4 +59,6 @@ public class TestResult {
     public String currentState;
     
     public String streamUrl;
+
+    public boolean enableAuthTest;
 }

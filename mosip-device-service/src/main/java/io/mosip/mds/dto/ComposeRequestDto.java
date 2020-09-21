@@ -18,4 +18,6 @@ public class ComposeRequestDto {
 	public List<UIInput> uiInputs;
 	
 	public DeviceDto deviceInfo;
+
+	public boolean forceReset;
 }

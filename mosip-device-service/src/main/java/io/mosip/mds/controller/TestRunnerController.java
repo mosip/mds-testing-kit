@@ -1,23 +1,18 @@
 package io.mosip.mds.controller;
 
+import io.mosip.mds.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import io.mosip.mds.dto.ComposeRequestDto;
-import io.mosip.mds.dto.DeviceInfoResponse;
-import io.mosip.mds.dto.DiscoverResponse;
-import io.mosip.mds.dto.TestRun;
-import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.service.TestRunnerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import java.util.Map;
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/testrunner")
@@ -73,6 +68,13 @@ public class TestRunnerController {
 	public DeviceInfoResponse[] decodeDeviceInfo(@RequestBody String deviceInfo) {
 		// TODO handle null return for invalid runId and testId
 		return testRunnerService.decodeDeviceInfo(deviceInfo);	
+	}
+
+	@PostMapping("/validateauthrequest")
+	@ApiOperation(value = "Service to validate auth request", notes = "Service to validate auth request")
+	public String validateAuthRequest(@RequestBody AuthRequestDto authRequestDto) {
+		// TODO handle null return for invalid runId and testId
+		return testRunnerService.validateAuthRequest(authRequestDto.getRunId(), authRequestDto.getTestId());
 	}
 
 }

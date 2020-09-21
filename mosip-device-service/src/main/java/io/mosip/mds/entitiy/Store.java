@@ -23,17 +23,6 @@ import io.mosip.mds.dto.TestManagerGetDto;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.ValidatorDef;
 import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
-import io.mosip.mds.dto.getresponse.TestExtnDto;
-import io.mosip.mds.repository.TestCaseResultRepository;
-import io.mosip.mds.validator.AuthRequestResponseValidator;
-import io.mosip.mds.validator.MandatoryCaptureResponseValidator;
-import io.mosip.mds.validator.MandatoryDeviceInfoResponseValidator;
-import io.mosip.mds.validator.MandatoryDiscoverResponseValidator;
-import io.mosip.mds.validator.MandatoryRCaptureResponseValidator;
-import io.mosip.mds.validator.ValidValueCaptureResponseValidator;
-import io.mosip.mds.validator.ValidValueDeviceInfoResponseValidator;
-import io.mosip.mds.validator.ValidValueDiscoverResponseValidator;
-import io.mosip.mds.validator.ValidValueRCaptureResponseValidator;
 
 @Component
 public class Store {
@@ -44,33 +33,6 @@ public class Store {
 	private static final ObjectMapper mapper = new ObjectMapper();
 	private static Map<String, TestDefinition> testDefinitions = null;
 	private static MasterDataResponseDto masterDataResponseDto = null;
-
-	@Autowired
-	AuthRequestResponseValidator authRequestResponseValidator;
-
-	@Autowired
-	ValidValueDeviceInfoResponseValidator validValueDeviceInfoResponseValidator;
-
-	@Autowired
-	MandatoryDeviceInfoResponseValidator mandatoryDeviceInfoResponseValidator;
-
-	@Autowired
-	MandatoryCaptureResponseValidator mandatoryCaptureResponseValidator;
-
-	@Autowired
-	MandatoryDiscoverResponseValidator mandatoryDiscoverResponseValidator;
-
-	@Autowired
-	ValidValueCaptureResponseValidator validValueCaptureResponseValidator;
-
-	@Autowired
-	MandatoryRCaptureResponseValidator mandatoryRCaptureResponseValidator;
-
-	@Autowired
-	ValidValueDiscoverResponseValidator validValueDiscoverResponseValidator;
-
-	@Autowired
-	ValidValueRCaptureResponseValidator validValueRCaptureResponseValidator;
 
 
 	public List<String> GetRunIds(String email)
@@ -87,7 +49,7 @@ public class Store {
 		}
 		catch(Exception ex)
 		{
-			ex.printStackTrace();
+			logger.error("Error reading master data", ex);
 		}
 		return files;
 	}
@@ -106,7 +68,7 @@ public class Store {
 		}
 		catch(Exception ex)
 		{
-			ex.printStackTrace();
+			logger.error("Error reading master data", ex);
 		}
 		return files;
 	}
@@ -142,7 +104,7 @@ public class Store {
 		}
 		catch(Exception ex)
 		{
-			ex.printStackTrace();
+			logger.error("Error reading master data", ex);
 		}
 		return run;
 	}
@@ -225,84 +187,6 @@ public class Store {
 		return testDefinitions;
 	}
 
-	public TestExtnDto[] getTestDefinitions()
-	{
-		File testDeinitionsFile = new File(getStorePath() + "config/test-definitions.json");
-		if(testDeinitionsFile.exists()) {
-			try
-			{
-				TestExtnDto[] testExtnDtos=(TestExtnDto[])mapper.readValue(new FileImageInputStream(testDeinitionsFile), TestExtnDto[].class);
-				testExtnDtos=addValidators(testExtnDtos);
-				return  testExtnDtos; 
-			}
-			catch(Exception ex)
-			{
-				ex.printStackTrace();                
-			}
-		}
-		return null; 
-	}
-
-	private TestExtnDto[] addValidators(TestExtnDto[] testExtnDtos) {
-		for(TestExtnDto testExtnDto :testExtnDtos) {
-			for(ValidatorDef validatorDef:testExtnDto.validatorDefs) {
-				//testExtnDto.validators.add(validatorDef.Name.);
-				switch(validatorDef.Name) {
-				case "MandatoryCaptureResponseValidator":
-					testExtnDto.addValidator(mandatoryCaptureResponseValidator);
-					break;
-				case "MandatoryDeviceInfoResponseValidator":
-					testExtnDto.addValidator(mandatoryDeviceInfoResponseValidator);
-					break;
-				case "MandatoryDiscoverResponseValidator":
-					testExtnDto.addValidator(mandatoryDiscoverResponseValidator);
-					break;
-				case "AlwaysFailValidator":
-					testExtnDto.addValidator(new AlwaysFailValidator());
-					break;
-				case "AlwaysPassValidator":
-					testExtnDto.addValidator(new AlwaysPassValidator());
-					break;
-				case "CoinTossValidator":
-					testExtnDto.addValidator(new CoinTossValidator());
-					break;
-				case "ValidValueCaptureResponseValidator":
-					testExtnDto.addValidator(validValueCaptureResponseValidator);
-					break;
-				case "ValidValueDeviceInfoResponseValidator":
-					testExtnDto.addValidator(validValueDeviceInfoResponseValidator);
-					break;
-				case "ValidValueDiscoverResponseValidator":
-					testExtnDto.addValidator(validValueDiscoverResponseValidator);
-					break;
-				case "ValidValueRCaptureResponseValidator":
-					testExtnDto.addValidator(validValueRCaptureResponseValidator);
-					break;
-				case "MandatoryRCaptureResponseValidator":
-					testExtnDto.addValidator(mandatoryRCaptureResponseValidator);
-					break;
-				case "AuthRequestResponseValidator":
-					testExtnDto.addValidator(authRequestResponseValidator);
-					break;
-				default :
-					testExtnDto.addValidator(null);
-				}
-			}
-		}
-		return testExtnDtos;
-	}
-    
-	public static List<TestExtnDto> filterTestType(TestManagerGetDto filter,HashMap<String, TestExtnDto> allTests)
-	{
-		List<TestExtnDto> results =  allTests.values().stream().filter(test -> 
-				(isValid(test.processes) && test.processes.contains(filter.process)) && 
-				(isValid(test.biometricTypes) && test.biometricTypes.contains(filter.biometricType)) &&
-				(isValid(test.deviceSubTypes) && test.deviceSubTypes.contains(filter.deviceSubType)) && 
-				( !isValid(test.mdsSpecVersions) || test.mdsSpecVersions.contains(filter.mdsSpecificationVersion ) ))
-		.collect(Collectors.toList());
-		
-		return results;	
-	}
 
 	private static boolean isValid(List<String> value) {
 		return (value != null && !value.isEmpty());
