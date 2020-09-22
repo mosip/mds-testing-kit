@@ -1,5 +1,6 @@
 package io.mosip.mds.dto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +43,7 @@ public class TestResult {
 
     public String testId;
 
-    public Date executedOn;
+    public LocalDateTime executedOn;
 
     public String summary;
     
@@ -59,4 +60,6 @@ public class TestResult {
     public String currentState;
     
     public String streamUrl;
+
+    public boolean enableAuthTest;
 }

@@ -71,7 +71,12 @@
             <button *ngIf="isStreamRequired(key)" mat-raised-button (click)="startStreaming(key)">Start Streaming</button>
 
             <button mat-raised-button (click)="getMDSResponse(testReportObject.testReport[key].requestData,
-            testReportObject.testReport[key].runId, key)">{{getButtonName(testReportObject.testReport[key].requestData)}}</button>
+            testReportObject.testReport[key].runId, key)" [class.spinner]="loading" [disabled]="loading">
+              {{getButtonName(testReportObject.testReport[key].requestData)}}</button>
+
+            <button *ngIf="isAuthRequestRequired(key)" mat-raised-button (click)="startAuthTest(key)"
+                    [class.spinner]="authloading" [disabled]="authloading">Test Authentication</button>
+
           </div>
 
         <pre>{{JSON.parse(testReportObject.testReport[key].requestData) | json}}</pre>
@@ -94,7 +99,7 @@
                 {{result.validationDescription}}
               </mat-panel-description>
             </mat-expansion-panel-header>
-            <pre *ngIf="result.errors">{{ result.errors | json}}</pre>
+            <pre *ngIf="result.validationTestResultDtos">{{ result.validationTestResultDtos | json}}</pre>
           </mat-expansion-panel>
         </mat-accordion>
       </mat-tab>

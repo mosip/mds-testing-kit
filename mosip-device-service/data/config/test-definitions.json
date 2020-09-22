@@ -10,7 +10,7 @@
             "Auth"
         ],
         "biometricTypes": [
-            "Finger", "Face", "Iris"
+            "Biometric Device"
         ],
         "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
 		"segments" : [],
@@ -38,7 +38,7 @@
             "Auth"
         ],
         "biometricTypes": [
-            "Finger", "Face", "Iris"
+            "Biometric Device"
         ],
         "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
 		"segments" : [],

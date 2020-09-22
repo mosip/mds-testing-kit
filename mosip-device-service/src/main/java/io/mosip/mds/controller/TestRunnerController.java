@@ -1,23 +1,16 @@
 package io.mosip.mds.controller;
 
+import io.mosip.mds.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import io.mosip.mds.dto.ComposeRequestDto;
-import io.mosip.mds.dto.DeviceInfoResponse;
-import io.mosip.mds.dto.DiscoverResponse;
-import io.mosip.mds.dto.TestRun;
-import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.service.TestRunnerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/testrunner")
@@ -41,7 +34,7 @@ public class TestRunnerController {
 	@ApiResponses({ @ApiResponse(code = 201, message = "When MDM request Details successfully created"),
 		@ApiResponse(code = 400, message = "When Request body passed  is null or invalid"),
 		@ApiResponse(code = 500, message = "While creating MDM request any error occured") })
-	public TestRun getAllRequests(@RequestBody ComposeRequestDto composeRequestDto) {
+	public TestRun getAllRequests(@RequestBody ComposeRequestDto composeRequestDto) throws Exception {
 		return testRunnerService.composeRequestForAllTests(composeRequestDto);
 	}
 
@@ -50,8 +43,7 @@ public class TestRunnerController {
 	@ApiResponses({ @ApiResponse(code = 201, message = "When validateResponse Details successfully created"),
 		@ApiResponse(code = 400, message = "When Request body passed  is null or invalid"),
 		@ApiResponse(code = 500, message = "While creating validateResponse any error occured") })
-	public TestRun validateResponse(@RequestBody ValidateResponseRequestDto validateRequestDto) {
-		// TODO handle null return for invalid runId and testId
+	public TestRun validateResponse(@RequestBody ValidateResponseRequestDto validateRequestDto) throws Exception {
 		return testRunnerService.validateResponse(validateRequestDto);
 	}
 
@@ -73,6 +65,13 @@ public class TestRunnerController {
 	public DeviceInfoResponse[] decodeDeviceInfo(@RequestBody String deviceInfo) {
 		// TODO handle null return for invalid runId and testId
 		return testRunnerService.decodeDeviceInfo(deviceInfo);	
+	}
+
+	@PostMapping("/validateauthrequest")
+	@ApiOperation(value = "Service to validate auth request", notes = "Service to validate auth request")
+	public String validateAuthRequest(@RequestBody AuthRequestDto authRequestDto) {
+		// TODO handle null return for invalid runId and testId
+		return testRunnerService.validateAuthRequest(authRequestDto.getRunId(), authRequestDto.getTestId());
 	}
 
 }

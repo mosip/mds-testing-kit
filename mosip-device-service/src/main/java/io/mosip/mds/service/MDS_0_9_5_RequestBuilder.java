@@ -1,5 +1,13 @@
 package io.mosip.mds.service;
 
+import io.mosip.mds.dto.*;
+import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
+import io.mosip.mds.dto.postresponse.RequestInfoDto;
+import io.mosip.mds.util.BioSubType;
+import io.mosip.mds.util.Intent;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -96,10 +104,11 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         return composeRequestResponseDto;
     }
 
+    //TODO - consider testDefinition.biometricTypes - but its an array
     private String getDiscoverRequest(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         DiscoverRequest requestBody = new DiscoverRequest();
-        requestBody.type = "Biometric Device";
+        requestBody.type = (test.biometricTypes == null || test.biometricTypes.size() == 0) ? null : test.biometricTypes.get(0);
         return mapper.writeValueAsString(requestBody);
     }
 

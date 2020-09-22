@@ -4,13 +4,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { catchError } from 'rxjs/operators';
 
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ModalComponent } from '../../modal/modal.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private dialog: MatDialog) { }
 
   getMasterData() {
     return this.httpClient.get(environment.base_url + 'testmanager/masterdata')
@@ -60,8 +62,9 @@ export class DataService {
 
       console.error('An error occurred >>> ', JSON.stringify(error));
 
-      if(error.status === 0 || error.status === 404)
-        return throwError('Not Connected to Server');
+      if(error.status === 0 || error.status === 404) {
+          return throwError('Not Connected to Server');
+      }
 
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
@@ -109,4 +112,21 @@ export class DataService {
         catchError(this.handleError)
       );
   }
+
+  authTestCall(runId: any, testId: string) {
+      return this.httpClient.post(environment.base_url + 'testrunner/validateauthrequest', {
+        runId,
+        testId
+      })
+        .pipe(
+          catchError(this.handleError)
+        );
+    }
+
+    openDialog(title: string, message: string): void {
+              this.dialog.open(ModalComponent, {
+                width: '40%',
+                data: {'title': title, 'message' : message }
+              });
+          }
 }

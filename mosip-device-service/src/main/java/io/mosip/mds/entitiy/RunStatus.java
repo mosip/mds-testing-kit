@@ -8,6 +8,8 @@ import javax.persistence.Table;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @Table(name ="run_status")
@@ -20,14 +22,20 @@ public class RunStatus {
 	@Column(name="status")
 	public String status;
 	
-	@Lob
+	//@Lob
 	@Column(name="profile")
 	public String profile;
 
-	@Lob
+	//@Lob
 	@Column(name="name")
 	public String runName;
 
 	@Column(name="owner")
 	public String runOwner;
+
+	@Column(name="cr_dtimes")
+	public LocalDateTime createdOn;
+
+	@Column(name="cr_by")
+	public String createdBy;
 }

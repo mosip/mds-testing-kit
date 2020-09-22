@@ -16,13 +16,13 @@ import io.mosip.mds.dto.DigitalId;
 import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.MdsResponse;
 import io.mosip.mds.dto.TestRun;
-import io.mosip.mds.dto.getresponse.TestExtnDto;
 import io.mosip.mds.entitiy.CaptureHelper;
 import io.mosip.mds.entitiy.DeviceInfoHelper;
 import io.mosip.mds.entitiy.DiscoverHelper;
 import io.mosip.mds.helper.ExtractDTO;
 import io.mosip.mds.util.Intent;
 import io.mosip.mds.util.SecurityUtil;
+import io.mosip.mds.dto.TestDefinition;
 
 @Component
 public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
@@ -52,7 +52,7 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 	}
 
 	@Override
-	public String processResponse(TestRun run, TestExtnDto test, DeviceDto device, Intent op) {
+	public String processResponse(TestRun run, TestDefinition test, DeviceDto device, Intent op) {
 		switch(op)
 		{
 		case Capture:
@@ -70,22 +70,22 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 		}
 	}
 
-	private String processCapture(TestRun run, TestExtnDto test, DeviceDto device)
+	private String processCapture(TestRun run, TestDefinition test, DeviceDto device)
 	{
 		return "";
 	}
 
-	private String processDiscover(TestRun run, TestExtnDto test, DeviceDto device)
+	private String processDiscover(TestRun run, TestDefinition test, DeviceDto device)
 	{
 		return "";
 	}
 
-	private String processDeviceInfo(TestRun run, TestExtnDto test, DeviceDto device)
+	private String processDeviceInfo(TestRun run, TestDefinition test, DeviceDto device)
 	{
 		return "";
 	}
 
-	private String processStream(TestRun run, TestExtnDto test, DeviceDto device)
+	private String processStream(TestRun run, TestDefinition test, DeviceDto device)
 	{
 		return "";
 	}

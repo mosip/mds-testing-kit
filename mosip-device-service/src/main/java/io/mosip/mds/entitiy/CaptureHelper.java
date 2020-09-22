@@ -12,6 +12,8 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +36,8 @@ import io.mosip.mds.util.SecurityUtil;;
 
 @Component
 public class CaptureHelper {
+
+	private static final Logger logger = LoggerFactory.getLogger(CaptureHelper.class);
 
 	@Autowired
 	private  ObjectMapper mapper;
@@ -94,7 +98,7 @@ public class CaptureHelper {
 				}
 			}
 		} catch (Exception exception) {
-			exception.printStackTrace();
+			logger.error("Error decoding capture response", exception);
 			response = new CaptureResponse();
 			response.setAnalysisError(RCAPTURE_DECODE_ERROR + exception.getMessage());
 		}
@@ -116,8 +120,7 @@ public class CaptureHelper {
 			KeyFactory kf = KeyFactory.getInstance("RSA");
 			return kf.generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(pKey)));
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			//throw new Exception("Failed to get private key");
+			logger.error("Error creating private key", ex);
 		}
 		return null;
 	}
@@ -139,7 +142,7 @@ public class CaptureHelper {
 		pKey = pKey.replaceAll("-*END([^-]*)-*(\r?\n)?", "");
 		pKey = pKey.replaceAll("\\s", "");
 		return pKey;
-	}	
+	}
 
 	/*public static File extractImage(String bioValue, String bioType) {
 		// do base64 url decoding
@@ -172,7 +175,7 @@ public class CaptureHelper {
 			fos.write(image);
 			fos.flush();
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			logger.error("Error creating image", ex);
 		}
 
 		try {
@@ -187,8 +190,8 @@ public class CaptureHelper {
 			document.add(imageObj);
 			document.close();
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			logger.error("Error creating image", ex);
 		}
 	}
 

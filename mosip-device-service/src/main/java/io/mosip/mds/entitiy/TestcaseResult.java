@@ -8,6 +8,9 @@ import javax.persistence.Table;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 @Entity
 @Data
 @Table(name ="testcase_result")
@@ -22,29 +25,35 @@ public class TestcaseResult {
 	@Column(name="owner")
 	private String owner;
 	
-	@Lob
+	//@Lob
 	@Column(name="request")
 	private String request;
 	
-	@Lob
+	//@Lob
 	@Column(name="response")
 	private String response;
 	
-	@Lob
+	//@Lob
 	@Column(name="validation_results")
 	private String validationResults;
 	
 	@Column(name="passed")
 	public boolean passed;
 	
-	@Lob
+	//@Lob
 	@Column(name="device_info")
 	private String deviceInfo;
 
 	@Column(name="executed_on")
-	private long executedOn;
+	private LocalDateTime executedOn;
 
-	@Column(name="current_state")
+	@Column(name="current_status")
 	private String currentState;
+
+	@Column(name="cr_dtimes")
+	public LocalDateTime createdOn;
+
+	@Column(name="cr_by")
+	public String createdBy;
 	
 }

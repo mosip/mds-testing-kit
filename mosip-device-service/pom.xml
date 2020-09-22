@@ -109,6 +109,13 @@
 			<artifactId>kernel-logger-logback</artifactId>
 			<version>1.2.0-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.squareup.okhttp</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>2.7.5</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

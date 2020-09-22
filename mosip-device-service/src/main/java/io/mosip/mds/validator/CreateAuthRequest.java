@@ -20,7 +20,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import io.mosip.mds.entitiy.Store;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -54,14 +57,12 @@ import io.mosip.mds.authentication.dto.EncryptionRequestDto;
 import io.mosip.mds.authentication.dto.EncryptionResponseDto;
 import io.mosip.mds.authentication.dto.RequestDTO;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
-import io.mosip.mds.dto.getresponse.TestExtnDto;
-import io.mosip.mds.util.TestServiceUtil;
+import io.mosip.mds.dto.TestDefinition;
 
 @Component
 public class CreateAuthRequest {
 
-	@Autowired
-	TestServiceUtil testServiceUtil;
+	private static final Logger logger = LoggerFactory.getLogger(CreateAuthRequest.class);
 
 	@Autowired
 	private Environment env;
@@ -85,8 +86,7 @@ public class CreateAuthRequest {
 
 	public Object authenticateResponse(ValidateResponseRequestDto response) throws Exception {
 		AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-		TestExtnDto testExtnDto;
-		testExtnDto = testServiceUtil.getAllTests().get(response.testId);
+		TestDefinition testExtnDto = Store.getAllTestDefinitions().get(response.testId);
 
 		// Set Auth Type
 		AuthTypeDTO authTypeDTO = new AuthTypeDTO();
@@ -115,15 +115,15 @@ public class CreateAuthRequest {
 		if(Objects.nonNull(response))
 			identityBlock.put("biometrics", mapper.readValue(response.mdsResponse, Map.class).get("biometrics"));
 
-		System.out.println("******* Request before encryption ************ \n\n");
-		System.out.println(mapper.writeValueAsString(identityBlock));
+		logger.info("******* Request before encryption ************ \n\n");
+		logger.info(mapper.writeValueAsString(identityBlock));
 		EncryptionRequestDto encryptionRequestDto = new EncryptionRequestDto();
 		encryptionRequestDto.setIdentityRequest(identityBlock);
 		EncryptionResponseDto kernelEncrypt = null;
 		try {
 			kernelEncrypt = kernelEncrypt(encryptionRequestDto, false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Failed encrypting auth request", e);
 		}
 
 		// Set request block
@@ -148,16 +148,14 @@ public class CreateAuthRequest {
 		RestTemplate restTemplate = createTemplate();
 		HttpEntity<Map> httpEntity = new HttpEntity<>(authRequestMap);
 		ResponseEntity<Map> authResponse = null;
-		String url =env.getProperty("ida.auth.url")+testExtnDto.mispLicenseKey+"/"+testExtnDto.partnerId+"/"+testExtnDto.partnerApiKey;
-		System.out.println("Auth URL: " + url);
-		System.out.println("Auth Request : \n" + new ObjectMapper().writeValueAsString(authRequestMap));
+		String url = String.format(env.getProperty("ida.auth.url"),testExtnDto.mispLicenseKey, testExtnDto.partnerId, testExtnDto.partnerApiKey);
+		logger.info("Auth URL: " + url);
+		logger.info("Auth Request : \n" + new ObjectMapper().writeValueAsString(authRequestMap));
 		try {
-			authResponse = restTemplate.exchange(url,
-					HttpMethod.POST, httpEntity, Map.class);
-			System.out.println("Auth Response : \n" + new ObjectMapper().writeValueAsString(authResponse));
-			System.out.println(authResponse.getBody());
+			authResponse = restTemplate.exchange(url, HttpMethod.POST, httpEntity, Map.class);
+			logger.info("Auth Response : \n" + mapper.writeValueAsString(authResponse));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Failed Auth request", e);
 		}
 		return authResponse.getBody();
 	}

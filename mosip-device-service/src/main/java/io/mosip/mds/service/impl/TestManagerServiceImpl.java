@@ -1,5 +1,7 @@
 package io.mosip.mds.service.impl;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -77,8 +79,11 @@ public class TestManagerServiceImpl implements TestManagerService {
 			TestRunMetadata testRunMetadata = new TestRunMetadata();
 			testRunMetadata.setRunId(runStatus.getRunId());
 			testRunMetadata.setRunName(runStatus.getRunName());
-			testRunMetadata.setRunStatus(runStatus.getStatus()); //TODO
-			testRunMetadata.setCreatedOn(new Date(Long.valueOf(runStatus.getRunId()))); //TODO
+			int total = testCaseResultRepository.countByTestResultKeyRunId(runStatus.getRunId());
+			int completed = testCaseResultRepository.countByTestResultKeyRunIdAndPassed(runStatus.getRunId(), true);
+			String status = (completed == total) ? "Completed (%d/%d)" : "InProgress (%d/%d)";
+			testRunMetadata.setRunStatus(String.format(status, completed, total));
+			testRunMetadata.setCreatedOn(new Date(Long.valueOf(runStatus.getRunId())));
 			list.add(testRunMetadata);
 		}
 		list.sort((run1, run2) -> run1.getCreatedOn().compareTo(run2.getCreatedOn()));
@@ -103,7 +108,6 @@ public class TestManagerServiceImpl implements TestManagerService {
 		io.mosip.mds.entitiy.RunStatus runStatus = saveRunStatus(testManagerDto, definitions);
 
 		logger.info("Runstatus saved >>> {}", runStatus);
-		logger.info("Runstatus saved id >>> {}", runStatus.getRunId());
 
 		//then create initial entries in testcaseresult table
 		saveRunCases(testManagerDto, definitions, runStatus);
@@ -153,6 +157,8 @@ public class TestManagerServiceImpl implements TestManagerService {
 		runStatus.setRunName(testManagerDto.getRunName());
 		runStatus.setRunOwner(testManagerDto.getEmail());
 		runStatus.setStatus("0/"+definitions.size());
+		runStatus.setCreatedBy(testManagerDto.getEmail());
+		runStatus.setCreatedOn(LocalDateTime.now(ZoneId.of("UTC")));
 		try {
 			runStatus.setProfile(mapper.writeValueAsString(testManagerDto));
 		} catch (JsonProcessingException ex) {
@@ -172,6 +178,9 @@ public class TestManagerServiceImpl implements TestManagerService {
 			testCaseResult.setTestResultKey(testResultKey);
 			testCaseResult.setDescription(testDefinition.getTestDescription());
 			testCaseResult.setOwner(testManagerDto.getEmail());
+			testCaseResult.setPassed(false);
+			testCaseResult.setCreatedBy(testManagerDto.getEmail());
+			testCaseResult.setCreatedOn(LocalDateTime.now(ZoneId.of("UTC")));
 			testCaseResultRepository.save(testCaseResult);
 		}
 	}
