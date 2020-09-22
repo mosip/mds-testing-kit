@@ -19,8 +19,11 @@ public class DiscoverHelper {
 	@Autowired
 	SecurityUtil securityUtil;
 
-	@Autowired
-	ObjectMapper mapper;
+	private static ObjectMapper mapper = new ObjectMapper();
+
+	static {
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
 
 	public String getRenderContent(DiscoverResponse response)
 	{
@@ -40,8 +43,6 @@ public class DiscoverHelper {
 
 	public DiscoverResponse[] decode(String discoverInfo) {
 		DiscoverResponse[] response = new DiscoverResponse[1];
-
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		try {
 			response = (DiscoverResponse[]) (mapper.readValue(discoverInfo.getBytes(), DiscoverResponse[].class));
 			for(DiscoverResponse resp:response)

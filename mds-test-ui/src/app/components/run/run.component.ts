@@ -109,10 +109,11 @@ export class RunComponent implements OnInit {
         this.mdsService.request(JSON.parse(request)).subscribe(
                 response => {
                   this.validateMDSResponse(runId, testId, request, response);
-                  this.loading = false;
+                  //this.loading = false;
                 },
-                error => { this.validateMDSResponse(runId, testId, request, error);
-                            this.loading = false;
+                error => {
+                      this.validateMDSResponse(runId, testId, request, error);
+                      //this.loading = false;
                  }
               );
               console.log("Finished capturing MDS Responses >>>>> " + testId);
@@ -124,9 +125,12 @@ export class RunComponent implements OnInit {
           this.dataService.validateResponse(runId, testId, request, response).subscribe(
                       result => {
                         this.testReportObject = result;
+                        this.loading = false;
                         //console.log('result:' + result);
                       },
-                      error => this.openDialog("Alert", error)
+                      error => { this.openDialog("Alert", error);
+                              this.loading = false;
+                        }
                     );
     }
 

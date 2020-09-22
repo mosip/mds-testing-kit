@@ -1,5 +1,7 @@
 package io.mosip.mds.service.impl;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -155,6 +157,8 @@ public class TestManagerServiceImpl implements TestManagerService {
 		runStatus.setRunName(testManagerDto.getRunName());
 		runStatus.setRunOwner(testManagerDto.getEmail());
 		runStatus.setStatus("0/"+definitions.size());
+		runStatus.setCreatedBy(testManagerDto.getEmail());
+		runStatus.setCreatedOn(LocalDateTime.now(ZoneId.of("UTC")));
 		try {
 			runStatus.setProfile(mapper.writeValueAsString(testManagerDto));
 		} catch (JsonProcessingException ex) {
@@ -175,6 +179,8 @@ public class TestManagerServiceImpl implements TestManagerService {
 			testCaseResult.setDescription(testDefinition.getTestDescription());
 			testCaseResult.setOwner(testManagerDto.getEmail());
 			testCaseResult.setPassed(false);
+			testCaseResult.setCreatedBy(testManagerDto.getEmail());
+			testCaseResult.setCreatedOn(LocalDateTime.now(ZoneId.of("UTC")));
 			testCaseResultRepository.save(testCaseResult);
 		}
 	}

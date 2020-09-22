@@ -77,7 +77,7 @@ export class DataService {
   }
 
   composeRequest(runId: string, test: string, deviceDto: { port: any; deviceInfo: any }) {
-    return this.httpClient.post(environment.base_url + 'testrunner/composerequest', {qqq:q
+    return this.httpClient.post(environment.base_url + 'testrunner/composerequest', {
       runId,
       testId: test,
       uiInputs: [],

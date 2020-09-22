@@ -5,6 +5,9 @@ import {environment} from '../../../environments/environment';
 import {catchError, map} from 'rxjs/operators';
 import {DataService} from '../data/data.service';
 import {LocalStorageService} from '../local-storage/local-storage.service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ModalComponent } from '../../modal/modal.component';
+
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +20,8 @@ export class MdsService {
   constructor(
     private httpClient: HttpClient,
     private dataService: DataService,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private dialog: MatDialog
   ) { }
 
   discover(host:string, port: string) {
@@ -65,7 +69,7 @@ export class MdsService {
             value => {
               this.dataService.decodeDeviceInfo(value).subscribe(
                 decodedDeviceInfo => this.localStorageService.addDeviceInfos(i.toString(), decodedDeviceInfo),
-                error => window.alert(error)
+                error => console.log("Failed to get decoded device info")
               );
             }
           );
@@ -99,5 +103,12 @@ export class MdsService {
   request(requestInfoDto: any) {
     return this.httpClient.request(requestInfoDto.verb, requestInfoDto.url, {body: requestInfoDto.body});
   }
+
+  openDialog(title: string, message: string): void {
+                this.dialog.open(ModalComponent, {
+                  width: '40%',
+                  data: {'title': title, 'message' : message }
+                });
+            }
 
 }

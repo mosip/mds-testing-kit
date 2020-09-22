@@ -12,11 +12,11 @@ import java.util.Map;
 
 public interface TestRunnerService {
 	
-	public TestRun validateResponse(ValidateResponseRequestDto validateRequestDto);
+	public TestRun validateResponse(ValidateResponseRequestDto validateRequestDto) throws Exception;
 
 	//public ComposeRequestResponseDto composeRequest(ComposeRequestDto composeRequestDto);
 
-	public TestRun composeRequestForAllTests(ComposeRequestDto composeRequestDto);
+	public TestRun composeRequestForAllTests(ComposeRequestDto composeRequestDto) throws Exception;
 
 	public DiscoverResponse[] decodeDiscoverInfo(String discoverInfo);
 

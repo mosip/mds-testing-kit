@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -54,17 +56,17 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
 
 	@Override
-	public TestRun validateResponse(ValidateResponseRequestDto validateRequestDto) {
+	public TestRun validateResponse(ValidateResponseRequestDto validateRequestDto) throws Exception {
 		io.mosip.mds.entitiy.RunStatus runStatus = runIdStatusRepository.findByRunId(validateRequestDto.getRunId());
 		if(runStatus == null)
-			return null;
+			throw new Exception("Invalid Run Id !");
 
 		List<TestcaseResult> testcaseResults = testCaseResultRepository.findAllByTestResultKeyRunId(validateRequestDto.getRunId());
 		if(testcaseResults != null) {
 			boolean matched = testcaseResults.stream().anyMatch(testcaseResult ->
 					testcaseResult.getTestResultKey().getTestcaseName().equals(validateRequestDto.getTestId()));
 			if(!matched)
-				return null;
+				throw new Exception("Invalid Test case found !");
 
 			TestRun testRun = getTestRunDetail(runStatus);
 			for(TestcaseResult testcaseResult : testcaseResults) {
@@ -72,7 +74,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 				Intent intent = getIntent(testDefinition.getMethod());
 				String renderContent = "";
 
-				testcaseResult.setExecutedOn(System.currentTimeMillis());
+				testcaseResult.setExecutedOn(LocalDateTime.now(ZoneId.of("UTC")));
 				testcaseResult.setResponse(validateRequestDto.getMdsResponse());
 
 				//validate MDS response
@@ -109,16 +111,18 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 			}
 			return testRun;
 		}
-		return null;
+		throw new Exception("No Test cases found for the provided run !");
 	}
 
 
 
 	@Override
-	public TestRun composeRequestForAllTests(ComposeRequestDto composeRequestDto) {
+	public TestRun composeRequestForAllTests(ComposeRequestDto composeRequestDto) throws Exception {
+		isDeviceAvailable(composeRequestDto.deviceInfo);
+
 		io.mosip.mds.entitiy.RunStatus runStatus = runIdStatusRepository.findByRunId(composeRequestDto.runId);
 		if(runStatus == null)
-			return null;
+			throw new Exception("Invalid Run Id !");
 
 		TestRun testRun = getTestRunDetail(runStatus);
 		List<TestcaseResult> testcaseResults = testCaseResultRepository.findAllByTestResultKeyRunId(composeRequestDto.runId);
@@ -192,7 +196,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 				testcaseResult.getDescription());
 		testResult.currentState = testcaseResult.getCurrentState();
 		testResult.setResponseData(testcaseResult.getResponse());
-		testResult.setExecutedOn(new Date(testcaseResult.getExecutedOn()));
+		testResult.setExecutedOn(testcaseResult.getExecutedOn());
 		testResult.setSummary(testcaseResult.getDescription());
 		testResult.setRequestData(testcaseResult.getRequest());
 		testResult.enableAuthTest = (testDefinition.getMethod().equals("capture")) ? true : false;
@@ -259,5 +263,17 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		if(version.contains("0.9.2"))
 			return new MDS_0_9_2_RequestBuilder();
 		return iMDSRequestBuilder;
+	}
+
+	private void isDeviceAvailable(DeviceDto deviceDto) throws  Exception {
+		logger.info("Validating device status {}", deviceDto.port);
+		if(deviceDto.deviceInfo == null)
+			throw new Exception("Invalid device details !");
+
+		if(deviceDto.deviceInfo.deviceStatus == null)
+			throw new Exception("Invalid device status !");
+
+		if(!deviceDto.deviceInfo.deviceStatus.equals("Ready"))
+			throw new Exception("Invalid device status !");
 	}
 }

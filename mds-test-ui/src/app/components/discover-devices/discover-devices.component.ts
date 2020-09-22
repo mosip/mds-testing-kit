@@ -73,7 +73,10 @@ export class DiscoverDevicesComponent implements OnInit {
       () => {
         this.scanning = false;
         this.availablePorts = this.localStorageService.getAvailablePorts();
-        this.openDialog("Message", "Scan Complete");
+        if(this.availablePorts && !this.availablePorts.length)
+          this.openDialog("Alert", "Scan Complete, No devices discovered.");
+        else
+          this.openDialog("Message", "Scan Complete");
       }
     );
   }
