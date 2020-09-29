@@ -242,7 +242,7 @@ public class BioAuthRequestUtil {
         return x509Certificate.getPublicKey();
     }
 
-    private String getAuthToken() throws IOException {
+    public String getAuthToken() throws IOException {
         OkHttpClient client = new OkHttpClient();
         String requestBody = String.format(AUTH_REQ_TEMPLATE,
                 env.getProperty("ida.auth.appid"),

@@ -1,28 +1,20 @@
 package io.mosip.mds.validator;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
-import java.security.spec.EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
-import org.bouncycastle.util.io.pem.PemReader;
-import org.jose4j.jwa.AlgorithmConstraints;
-import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
-import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +30,7 @@ import io.mosip.mds.entitiy.DeviceInfoMinimal;
 import io.mosip.mds.entitiy.Validator;
 import io.mosip.mds.util.Intent;
 
+@Component
 public class MdsSignatureValidator extends Validator{
 
 	@Autowired
@@ -104,12 +97,16 @@ public class MdsSignatureValidator extends Validator{
 				validation = commonValidator.setFieldExpected("deviceInfoMinimal.deviceInfo","Valid JWT signed Device info Details",deviceInfoMinimal.deviceInfo);
 				try {
 					validations = validateSignatureValidity(deviceInfoMinimal.deviceInfo,validations);
-
+					String [] parts = deviceInfoMinimal.deviceInfo.split("\\.");
+					validation = commonValidator.setFieldExpected("JWT Signed deviceInfoMinimal.deviceInfo","Expected Signed deviceInfoMinimal.deviceInfo with header,payload,signature",deviceInfoMinimal.deviceInfo);
+					if(parts.length != 3) {
+						commonValidator.setFoundMessageStatus(validation,"Found deviceInfoMinimal.deviceInfo is not valid signed response","Missing header|payload|signature in deviceInfoMinimal.deviceInfo",CommonConstant.FAILED);
+					}
 					if(!validateSignature(deviceInfoMinimal.deviceInfo)) {
 						commonValidator.setFoundMessageStatus(validation,deviceInfoMinimal.deviceInfo,"MdsResponse signature verification failed",CommonConstant.FAILED);
 					}
 					validations.add(validation);
-				} catch (CertificateException | JoseException | IOException e) {
+				} catch (CertificateException | JoseException e) {
 					commonValidator.setFoundMessageStatus(validation,deviceInfoMinimal.deviceInfo,"Interuption while validating DiviceInfo Signature->"+e.getMessage(),CommonConstant.FAILED);
 					validations.add(validation);
 					return validations;
@@ -148,12 +145,17 @@ public class MdsSignatureValidator extends Validator{
 			for (CaptureResponse.CaptureBiometric biometric : mdsResponse.biometrics) {
 				validation = commonValidator.setFieldExpected("biometric","biometric details",biometric.toString());
 				if (biometric.getData() != null) {
+					String [] parts = biometric.getData().split("\\.");
+					validation = commonValidator.setFieldExpected("JWT Signed biometric.getData()","Expected Signed biometric data with header,payload,signature",biometric.getData());
+					if(parts.length != 3) {
+						commonValidator.setFoundMessageStatus(validation,"Found biometric.getData() is not valid signed response","Missing header|payload|signature in data block",CommonConstant.FAILED);
+					}
 					try {
 						if(!validateSignature(biometric.getData())) {
 							commonValidator.setFoundMessageStatus(validation,biometric.toString(),"MdsResponse signature verification failed",CommonConstant.FAILED);
 						}
 						validations.add(validation);
-					} catch (CertificateException | JoseException | IOException e) {
+					} catch (CertificateException | JoseException e) {
 						commonValidator.setFoundMessageStatus(validation,"Excetption while validating signature","mdsResponse with Invalid Signature" + e,CommonConstant.FAILED);
 						validations.add(validation);
 					}
@@ -198,7 +200,7 @@ public class MdsSignatureValidator extends Validator{
 				commonValidator.setFoundMessageStatus(validation,"Found digitalId is not valid signed digitalId","digitalId signature verification failed",CommonConstant.FAILED);
 			}
 			validations.add(validation);
-		} catch (CertificateException | JoseException | IOException e) {
+		} catch (CertificateException | JoseException e) {
 			commonValidator.setFoundMessageStatus(validation,"Exception while processing","Interuption while validating digitalId Signature->"+e.getMessage(),CommonConstant.FAILED);
 			validations.add(validation);
 		}
@@ -248,49 +250,31 @@ public class MdsSignatureValidator extends Validator{
 		return validations;
 	}
 
-	public boolean validateSignature(String signature) throws JoseException, IOException, CertificateException {
+	public boolean validateSignature(String signature) throws JoseException, CertificateExpiredException, CertificateNotYetValidException {
 
-		JsonWebSignature jws = new JsonWebSignature();
-
-		FileReader certreader = new FileReader("MosipTestCert.pem");
-		PemReader certpemReader = new PemReader(certreader);
-		final byte[] certpemContent = certpemReader.readPemObject().getContent();
-		certpemReader.close();	   
-		EncodedKeySpec certspec = new X509EncodedKeySpec(certpemContent);
-		CertificateFactory cf = CertificateFactory.getInstance("X.509");
-		X509Certificate certificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certspec.getEncoded()));
-		PublicKey  publicKey = certificate.getPublicKey();
-
-		jws.setAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST,   AlgorithmIdentifiers.RSA_USING_SHA256));
-		jws.setCompactSerialization(signature);		    
-		jws.setKey(publicKey);
-
-		//  System.out.println("JWS validation >>> " + jws.verifySignature());
-		//return jws.verifySignature();
+		JsonWebSignature jws = new JsonWebSignature();	
+		jws.setCompactSerialization(signature);
+		List<X509Certificate> certificateChainHeaderValue = jws.getCertificateChainHeaderValue();
+		X509Certificate certificate = certificateChainHeaderValue.get(0);
+		certificate.checkValidity();
+		PublicKey publicKey = certificate.getPublicKey();
+		 jws.setKey(publicKey);
+		   return jws.verifySignature();
 
 		// TODO handle signature with certificate
-		return true;
 	}
 
-	public List<Validation> validateSignatureValidity(String signature,List<Validation> validations) throws JoseException, IOException, CertificateException {
+	public List<Validation> validateSignatureValidity(String signature,List<Validation> validations) throws JoseException {
 		validation = commonValidator.setFieldExpected("signature","proper signature",signature);
 
-		JsonWebSignature jws = new JsonWebSignature();
-
-		FileReader certreader = new FileReader("MosipTestCert.pem");
-		PemReader certpemReader = new PemReader(certreader);
-		final byte[] certpemContent = certpemReader.readPemObject().getContent();
-		certpemReader.close();	   
-		EncodedKeySpec certspec = new X509EncodedKeySpec(certpemContent);
-		CertificateFactory cf = CertificateFactory.getInstance("X.509");
-		X509Certificate certificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certspec.getEncoded()));
-		PublicKey  publicKey = certificate.getPublicKey();
-
-		jws.setAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST,   AlgorithmIdentifiers.RSA_USING_SHA256));
-		jws.setCompactSerialization(signature);		    
-		jws.setKey(publicKey);
-
 		try {
+			JsonWebSignature jws = new JsonWebSignature();	
+			jws.setCompactSerialization(signature);
+			List<X509Certificate> certificateChainHeaderValue = jws.getCertificateChainHeaderValue();
+			X509Certificate certificate = certificateChainHeaderValue.get(0);
+			certificate.checkValidity();
+			PublicKey publicKey = certificate.getPublicKey();
+			 jws.setKey(publicKey);
 			// TODO do for proper signature validity
 			jws.getLeafCertificateHeaderValue().checkValidity();
 		}catch (CertificateExpiredException e) {
