@@ -31,12 +31,19 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.squareup.okhttp.*;
 
 @Component
 public class CryptoUtility {
+
+	private static final String IDA_FIR = "IDA-FIR";
+
+	private static final String IDA = "IDA";
+
+	private static final String KEY_SPLITTER = "#KEY_SPLITTER#";
 
 	private static final Logger logger = LoggerFactory.getLogger(CryptoUtility.class);
 
@@ -56,6 +63,9 @@ public class CryptoUtility {
 	@Autowired
 	public CryptoCoreSpec<byte[], byte[], SecretKey, PublicKey, PrivateKey, String> cryptoCore;
 
+	@Autowired
+    private Environment env;
+	
 	static {
 		bouncyCastleProvider = init();
 	}
@@ -66,13 +76,13 @@ public class CryptoUtility {
 		return provider;
 	}
 
-	public static String getTimestamp() {
-		DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-    	return formatter.format(ZonedDateTime.now());
-    	
-//		LocalDateTime localDateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
-//		return localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-	}
+//	public static String getTimestamp() {
+//		DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+//    	return formatter.format(ZonedDateTime.now());
+//    	
+////		LocalDateTime localDateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
+////		return localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+//	}
 	
 	public String decryptbio(String encSessionKey, String encData, String timestamp, String transactionId, String authToken) {
 		   try {
@@ -81,13 +91,13 @@ public class CryptoUtility {
 		      byte[] aadBytes = getLastBytes(xorResult, 16);
 		      byte[] ivBytes = getLastBytes(xorResult, 12);
 		      String data = CryptoUtil.encodeBase64(CryptoUtil.combineByteArray(CryptoUtil.decodeBase64(encData),
-		            CryptoUtil.decodeBase64(encSessionKey), "#KEY_SPLITTER#"));
+		            CryptoUtil.decodeBase64(encSessionKey), KEY_SPLITTER));
 		      OkHttpClient client = new OkHttpClient();
 		      String requestBody = String.format(DECRYPT_REQ_TEMPLATE,
 		            CryptoUtil.encodeBase64(aadBytes),
-		            "IDA",
+		            IDA,
 		            data,
-		            "IDA-FIR",
+		            IDA_FIR,
 		            CryptoUtil.encodeBase64(ivBytes),
 		            DateUtils.formatToISOString(DateUtils.getUTCCurrentDateTime()),
 		            DateUtils.formatToISOString(DateUtils.getUTCCurrentDateTime()));
@@ -95,7 +105,7 @@ public class CryptoUtility {
 		      RequestBody body = RequestBody.create(mediaType, requestBody);
 		      Request request = new Request.Builder()
 		            .header("cookie", "Authorization="+authToken)
-		            .url("https://dev.mosip.net/idauthentication/v1/internal/decrypt")
+		            .url( env.getProperty("ida.decrypt.url"))
 		            .post(body)
 		            .build();
 		      Response response = client.newCall(request).execute();

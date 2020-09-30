@@ -94,6 +94,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 						validateRequestDto.setIntent(intent);
 						validateRequestDto.setTestManagerDto(targetProfile);
 						for(MdsResponse mdsResponse : mdsDecodedResponses) {
+							validateRequestDto.setMdsDecodedResponse(mdsResponse);
 							for(ValidatorDef validatorDef : testDefinition.validatorDefs) {
 								Optional<Validator> validator = validators.stream().filter(v ->	v.Name.equals(validatorDef.Name)).findFirst();
 								if(validator.isPresent())

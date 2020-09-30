@@ -57,6 +57,7 @@ public class MdsSignatureValidator extends Validator{
 		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",mapper.writeValueAsString(response));		
 		if(Objects.nonNull(response))
 		{
+			validations.add(validation);
 			if(response.getIntent().equals(Intent.DeviceInfo)) {
 				validations = validateDeviceInfoSignature(response, validations);
 			}else if(response.getIntent().equals(Intent.Discover)) {
@@ -67,8 +68,8 @@ public class MdsSignatureValidator extends Validator{
 			}
 		}else {
 			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
+			validations.add(validation);			
 		}
-		validations.add(validation);
 		return validations;
 	}
 
@@ -81,7 +82,7 @@ public class MdsSignatureValidator extends Validator{
 			commonValidator.setFoundMessageStatus(validation,"Found Discover Decoded is null","Discover response is empty",CommonConstant.FAILED);
 			validations.add(validation);
 		}else {
-			validations = validateUnSignedDigitalID(discoverResponse.digitalId);
+			validations = validateUnSignedDigitalID(discoverResponse.digitalId,validations);
 		}
 		validations.add(validation);
 		return validations;
@@ -90,8 +91,9 @@ public class MdsSignatureValidator extends Validator{
 	private List<Validation> validateDeviceInfoSignature(ValidateResponseRequestDto response, List<Validation> validations) {
 		try {
 			validation = commonValidator.setFieldExpected("response.getMdsResponse()","JWT Signed ,Array of Device info Details",response.getMdsResponse());
-
 			DeviceInfoMinimal[]	deviceInfos = (DeviceInfoMinimal[])(mapper.readValue(response.getMdsResponse().getBytes(), DeviceInfoMinimal[].class));
+			validations.add(validation);
+
 			for(DeviceInfoMinimal deviceInfoMinimal:deviceInfos)
 			{
 				validation = commonValidator.setFieldExpected("deviceInfoMinimal.deviceInfo","Valid JWT signed Device info Details",deviceInfoMinimal.deviceInfo);
@@ -103,7 +105,13 @@ public class MdsSignatureValidator extends Validator{
 						commonValidator.setFoundMessageStatus(validation,"Found deviceInfoMinimal.deviceInfo is not valid signed response","Missing header|payload|signature in deviceInfoMinimal.deviceInfo",CommonConstant.FAILED);
 					}
 					if(!validateSignature(deviceInfoMinimal.deviceInfo)) {
-						commonValidator.setFoundMessageStatus(validation,deviceInfoMinimal.deviceInfo,"MdsResponse signature verification failed",CommonConstant.FAILED);
+
+						validation = commonValidator.setFieldExpected("JWT Signed device info","Expected Signed device info data with header,payload,signature",deviceInfoMinimal.deviceInfo);					
+						commonValidator.setFoundMessageStatus(validation,deviceInfoMinimal.deviceInfo,"MdsResponse device info signature verification failed",CommonConstant.FAILED);
+						validations.add(validation);
+					}else {
+						validation = commonValidator.setFieldExpected("JWT Signed device info)","Expected Signed deviceinfo data with header,payload,signature",deviceInfoMinimal.deviceInfo);					
+						validations.add(validation);	
 					}
 					validations.add(validation);
 				} catch (CertificateException | JoseException e) {
@@ -120,21 +128,21 @@ public class MdsSignatureValidator extends Validator{
 		// validate digitalId for signature
 		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
 		if(deviceInfoResponse.certification.equals(CommonConstant.L0) && deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
-			validations = validateUnSignedDigitalID(deviceInfoResponse.digitalId);
+			validations = validateUnSignedDigitalID(deviceInfoResponse.digitalId,validations);
 		else
-			validations = validateSignedDigitalID(deviceInfoResponse.digitalId);
+			validations = validateSignedDigitalID(deviceInfoResponse.digitalId,validations);
 
 		return validations;
 	}
 
 	private List<Validation> validateCaptureSignatureTampered(ValidateResponseRequestDto response, List<Validation> validations) {
 		CaptureResponse mdsResponse = null;
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",response.toString());		
 		if(Objects.nonNull(response))
 		{
 			validation = commonValidator.setFieldExpected("response.mdsResponse","Expected JWT format mdsResponse",response.mdsResponse);
 			try {
 				mdsResponse = (CaptureResponse) (mapper.readValue(response.mdsResponse.getBytes(), CaptureResponse.class));
+				validations.add(validation);
 			}
 			catch (IOException e)
 			{
@@ -146,19 +154,27 @@ public class MdsSignatureValidator extends Validator{
 				validation = commonValidator.setFieldExpected("biometric","biometric details",biometric.toString());
 				if (biometric.getData() != null) {
 					String [] parts = biometric.getData().split("\\.");
-					validation = commonValidator.setFieldExpected("JWT Signed biometric.getData()","Expected Signed biometric data with header,payload,signature",biometric.getData());
+					validation = commonValidator.setFieldExpected("JWT Signed biometric.getData().size()","Expected Signed biometric data with header,payload,signature",biometric.getData());
 					if(parts.length != 3) {
 						commonValidator.setFoundMessageStatus(validation,"Found biometric.getData() is not valid signed response","Missing header|payload|signature in data block",CommonConstant.FAILED);
 					}
+					validations.add(validation);
 					try {
 						if(!validateSignature(biometric.getData())) {
+							validation = commonValidator.setFieldExpected("JWT Signed biometric.getData()","Expected Signed biometric data with header,payload,signature",biometric.getData());					
 							commonValidator.setFoundMessageStatus(validation,biometric.toString(),"MdsResponse signature verification failed",CommonConstant.FAILED);
+							validations.add(validation);
+						}else {
+							validation = commonValidator.setFieldExpected("JWT Signed biometric.getData()","Expected Signed biometric data with header,payload,signature",biometric.getData());					
+							validations.add(validation);	
 						}
-						validations.add(validation);
 					} catch (CertificateException | JoseException e) {
 						commonValidator.setFoundMessageStatus(validation,"Excetption while validating signature","mdsResponse with Invalid Signature" + e,CommonConstant.FAILED);
 						validations.add(validation);
 					}
+				}else {
+					commonValidator.setFoundMessageStatus(validation,"biometric.getData() in empty","data block is empty",CommonConstant.FAILED);
+					validations.add(validation);
 				}
 			}
 
@@ -171,7 +187,7 @@ public class MdsSignatureValidator extends Validator{
 					{
 						CaptureBiometricData dataDecoded = bb.dataDecoded;
 						if(Objects.nonNull(dataDecoded)) {
-							validations = validateSignedDigitalID(dataDecoded.digitalId);
+							validations = validateSignedDigitalID(dataDecoded.digitalId,validations);
 							return validations;
 						}
 					}
@@ -180,13 +196,13 @@ public class MdsSignatureValidator extends Validator{
 		}
 		else{
 			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
+			validations.add(validation);
 		}
-		validations.add(validation);
 		return validations;
 	}
 
-	public List<Validation> validateSignedDigitalID(String digitalId) {
-		List<Validation> validations= new ArrayList<>();
+	public List<Validation> validateSignedDigitalID(String digitalId,List<Validation> validations) {
+		//List<Validation> validations= new ArrayList<>();
 		String [] parts = digitalId.split("\\.");
 		validation = commonValidator.setFieldExpected("digitalId","Expected Signed digitalId with header,payload,signature",digitalId);
 		if(parts.length != 3) {
@@ -197,9 +213,13 @@ public class MdsSignatureValidator extends Validator{
 
 		try {
 			if(!validateSignature(digitalId)) {
+				validation = commonValidator.setFieldExpected("JWT Signed digital ID","Expected Signed digital ID data with header,payload,signature",digitalId);					
 				commonValidator.setFoundMessageStatus(validation,"Found digitalId is not valid signed digitalId","digitalId signature verification failed",CommonConstant.FAILED);
+				validations.add(validation);
+			}else {
+				validation = commonValidator.setFieldExpected("JWT Signed digital ID","Expected Signed digital ID data with header,payload,signature",digitalId);					
+				validations.add(validation);	
 			}
-			validations.add(validation);
 		} catch (CertificateException | JoseException e) {
 			commonValidator.setFoundMessageStatus(validation,"Exception while processing","Interuption while validating digitalId Signature->"+e.getMessage(),CommonConstant.FAILED);
 			validations.add(validation);
@@ -207,8 +227,8 @@ public class MdsSignatureValidator extends Validator{
 		return validations;
 	}
 
-	public List<Validation> validateUnSignedDigitalID(String digitalId) {
-		List<Validation> validations= new ArrayList<>();
+	public List<Validation> validateUnSignedDigitalID(String digitalId,List<Validation> validations) {
+		//List<Validation> validations= new ArrayList<>();
 		String [] parts = digitalId.split("\\.");
 		validation = commonValidator.setFieldExpected("digitalId","Expected UnSigned digitalId with payload only",digitalId);
 		if(parts.length != 1) {
@@ -224,7 +244,7 @@ public class MdsSignatureValidator extends Validator{
 			validation = commonValidator.setFieldExpected("header","Expected Proper header",header);
 			DataHeader decodedHeader = (DataHeader) (mapper.readValue(Base64.getUrlDecoder().decode(header),
 					DataHeader.class));
-
+			validations.add(validation);			
 			validation = commonValidator.setFieldExpected("decodedHeader.alg","RS256",decodedHeader.alg);
 			if(decodedHeader.alg == null || decodedHeader.alg.isEmpty())
 			{
@@ -251,21 +271,19 @@ public class MdsSignatureValidator extends Validator{
 	}
 
 	public boolean validateSignature(String signature) throws JoseException, CertificateExpiredException, CertificateNotYetValidException {
-
 		JsonWebSignature jws = new JsonWebSignature();	
 		jws.setCompactSerialization(signature);
 		List<X509Certificate> certificateChainHeaderValue = jws.getCertificateChainHeaderValue();
 		X509Certificate certificate = certificateChainHeaderValue.get(0);
 		certificate.checkValidity();
 		PublicKey publicKey = certificate.getPublicKey();
-		 jws.setKey(publicKey);
-		   return jws.verifySignature();
-
+		jws.setKey(publicKey);
+		return jws.verifySignature();
 		// TODO handle signature with certificate
 	}
 
 	public List<Validation> validateSignatureValidity(String signature,List<Validation> validations) throws JoseException {
-		validation = commonValidator.setFieldExpected("signature","proper signature",signature);
+		validation = commonValidator.setFieldExpected("signature","signature validity",signature);
 
 		try {
 			JsonWebSignature jws = new JsonWebSignature();	
@@ -274,7 +292,7 @@ public class MdsSignatureValidator extends Validator{
 			X509Certificate certificate = certificateChainHeaderValue.get(0);
 			certificate.checkValidity();
 			PublicKey publicKey = certificate.getPublicKey();
-			 jws.setKey(publicKey);
+			jws.setKey(publicKey);
 			// TODO do for proper signature validity
 			jws.getLeafCertificateHeaderValue().checkValidity();
 		}catch (CertificateExpiredException e) {
@@ -285,6 +303,8 @@ public class MdsSignatureValidator extends Validator{
 			commonValidator.setFoundMessageStatus(validation,signature," CertificateNotYetValidException - " + "with Message - "+e.getMessage(),CommonConstant.FAILED);
 			validations.add(validation);
 		}
+		validations.add(validation);
+
 		return validations;
 	}
 
