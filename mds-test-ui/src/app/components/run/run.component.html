@@ -50,7 +50,7 @@
 
       <mat-tab label="Request">
 
-          <div class="centereddiv" *ngIf="isStreamRequired(key)">
+          <div class="centereddiv" *ngIf="isRcapture(testReportObject.testReport[key].requestData)">
             <!--<img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
                  style="background-color: #000000;" border="1">-->
             <!--<mat-video [id]="getStreamImgTagId(key)" width="200" height="200" ></mat-video>-->
@@ -68,7 +68,8 @@
 
           <div class="centereddiv" >
 
-            <button *ngIf="isStreamRequired(key)" mat-raised-button (click)="startStreaming(key)">Start Streaming</button>
+            <!-- <button *ngIf="isStreamRequired(key)" mat-raised-button (click)="startStreaming(key)">Start Streaming</button> -->
+            <button *ngIf="isRcapture(testReportObject.testReport[key].requestData)" mat-raised-button (click)="streamingStart(key,testReportObject.testReport[key].requestData)">Start Streaming</button>
 
             <button mat-raised-button (click)="getMDSResponse(testReportObject.testReport[key].requestData,
             testReportObject.testReport[key].runId, key)" [class.spinner]="loading" [disabled]="loading">
