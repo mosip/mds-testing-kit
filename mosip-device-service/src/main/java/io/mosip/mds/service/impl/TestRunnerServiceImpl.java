@@ -168,7 +168,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 					testCaseResultRepository.save(testcaseResult);
 				}
 				TestResult testResult = getTestResult(composeRequestDto.runId, testcaseResult, testDefinition);
-				testResult.streamUrl = requestDTO != null ? requestDTO.streamUrl : null;
+				testResult.streamUrl = requestDTO != null ? requestDTO.getRequestInfoDto().streamUrl : null;
 				testRun.getTests().add(testcaseResult.getTestResultKey().getTestcaseName());
 				testRun.getTestReport().put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
 			}
