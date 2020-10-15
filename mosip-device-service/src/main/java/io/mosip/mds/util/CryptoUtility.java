@@ -109,7 +109,8 @@ public class CryptoUtility {
 		            .post(body)
 		            .build();
 		      Response response = client.newCall(request).execute();
-		      System.out.println("successful response >>> " + response.body().string());
+		      logger.info("successful response >>> " + response.body().string());
+			  
 		      if(response.isSuccessful()) {
 					return response.body().toString();
 				}
