@@ -31,6 +31,7 @@ import io.mosip.mds.helper.ExtractDTO;
 import io.mosip.mds.helper.FaceImageExtractor;
 import io.mosip.mds.helper.FingerPrintImageExtractor;
 import io.mosip.mds.helper.IrisImageExtractor;
+import io.mosip.mds.util.BioAuthRequestUtil;
 import io.mosip.mds.util.CryptoUtility;
 import io.mosip.mds.util.SecurityUtil;;
 
@@ -48,6 +49,9 @@ public class CaptureHelper {
 	@Autowired
 	Store store;
 
+	@Autowired
+	BioAuthRequestUtil bioAuthRequestutil;
+	
 	@Autowired
 	private CryptoUtility cryptoUtility;
 
@@ -105,10 +109,10 @@ public class CaptureHelper {
 		return response;
 	}
 
-	private String getDecryptedBioValue(CaptureBiometric biometric) {
+	private String getDecryptedBioValue(CaptureBiometric biometric) throws IOException {
 		PrivateKey privateKey = getPrivateKey();
-		String plainBioValue = cryptoUtility.decrypt(privateKey, biometric.sessionKey, biometric.getDataDecoded().bioValue,
-				biometric.getDataDecoded().timestamp, biometric.getDataDecoded().getTransactionId());
+		String plainBioValue = cryptoUtility.decryptbio(biometric.sessionKey, biometric.getDataDecoded().bioValue,
+				biometric.getDataDecoded().timestamp, biometric.getDataDecoded().getTransactionId(),bioAuthRequestutil.getAuthToken());
 		return Base64.getUrlEncoder().encodeToString(plainBioValue.getBytes());
 	}
 

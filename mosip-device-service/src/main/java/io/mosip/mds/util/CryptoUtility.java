@@ -24,15 +24,26 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.spec.PSource.PSpecified;
 
 import io.mosip.kernel.core.crypto.spi.CryptoCoreSpec;
+import io.mosip.kernel.core.util.CryptoUtil;
+import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.mds.entitiy.CaptureHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
+import com.squareup.okhttp.*;
 
 @Component
 public class CryptoUtility {
+
+	private static final String IDA_FIR = "IDA-FIR";
+
+	private static final String IDA = "IDA";
+
+	private static final String KEY_SPLITTER = "#KEY_SPLITTER#";
 
 	private static final Logger logger = LoggerFactory.getLogger(CryptoUtility.class);
 
@@ -52,6 +63,9 @@ public class CryptoUtility {
 	@Autowired
 	public CryptoCoreSpec<byte[], byte[], SecretKey, PublicKey, PrivateKey, String> cryptoCore;
 
+	@Autowired
+    private Environment env;
+	
 	static {
 		bouncyCastleProvider = init();
 	}
@@ -62,33 +76,49 @@ public class CryptoUtility {
 		return provider;
 	}
 
-	public static String getTimestamp() {
-		LocalDateTime localDateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
-		return localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-	}
+//	public static String getTimestamp() {
+//		DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+//    	return formatter.format(ZonedDateTime.now());
+//    	
+////		LocalDateTime localDateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
+////		return localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+//	}
 	
-	//TODO - check with loga about decryption URL of MDS response
-	public String decrypt(PrivateKey privateKey, String sessionKey, String data, String timestamp,
-						  String transactionId) {
-		try {
-			timestamp = timestamp.trim();
-			byte[] xorResult = getXOR(timestamp, transactionId);
-			byte[] aadBytes = getLastBytes(xorResult, 16);
-			byte[] ivBytes = getLastBytes(xorResult, 12);
-			
-			byte[] decodedSessionKey =  java.util.Base64.getUrlDecoder().decode(sessionKey);		
-			final byte[] symmetricKey = cryptoCore.asymmetricDecrypt(privateKey, decodedSessionKey);
-			SecretKeySpec secretKeySpec = new SecretKeySpec(symmetricKey, "AES");
-			
-			byte[] decodedData =  java.util.Base64.getUrlDecoder().decode(data);
-			final byte[] decryptedData = cryptoCore.symmetricDecrypt(secretKeySpec, decodedData, ivBytes, aadBytes);
-			return new String(decryptedData);
-			
-		} catch(Exception ex) {
-			logger.error("Error decrypting transactionId : {} ", transactionId, ex);
-		}
+	public String decryptbio(String encSessionKey, String encData, String timestamp, String transactionId, String authToken) {
+		   try {
+		      timestamp = timestamp.trim();
+		      byte[] xorResult = getXOR(timestamp, transactionId);
+		      byte[] aadBytes = getLastBytes(xorResult, 16);
+		      byte[] ivBytes = getLastBytes(xorResult, 12);
+		      String data = CryptoUtil.encodeBase64(CryptoUtil.combineByteArray(CryptoUtil.decodeBase64(encData),
+		            CryptoUtil.decodeBase64(encSessionKey), KEY_SPLITTER));
+		      OkHttpClient client = new OkHttpClient();
+		      String requestBody = String.format(DECRYPT_REQ_TEMPLATE,
+		            CryptoUtil.encodeBase64(aadBytes),
+		            IDA,
+		            data,
+		            IDA_FIR,
+		            CryptoUtil.encodeBase64(ivBytes),
+		            DateUtils.formatToISOString(DateUtils.getUTCCurrentDateTime()),
+		            DateUtils.formatToISOString(DateUtils.getUTCCurrentDateTime()));
+		      MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+		      RequestBody body = RequestBody.create(mediaType, requestBody);
+		      Request request = new Request.Builder()
+		            .header("cookie", "Authorization="+authToken)
+		            .url( env.getProperty("ida.decrypt.url"))
+		            .post(body)
+		            .build();
+		      Response response = client.newCall(request).execute();
+		      logger.info("successful response >>> " + response.body().string());
+			  
+		      if(response.isSuccessful()) {
+					return response.body().toString();
+				}
+		   } catch(Exception ex) {
+		      logger.error("Error decrypting transactionId : {} ", transactionId, ex);
+		   }
 		return null;
-	}
+		}
 	
 	public SecretKey getSymmetricKey() throws NoSuchAlgorithmException {
 		javax.crypto.KeyGenerator generator = KeyGenerator.getInstance("AES", bouncyCastleProvider);

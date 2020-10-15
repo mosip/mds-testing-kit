@@ -85,8 +85,9 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
                     requestInfoDto.verb = "RCAPTURE";
                     requestInfoDto.body = getRegistrationCaptureRequest(targetProfile, test, device);
                     requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/capture";
-                    String streamUrl = "http://127.0.0.1:" + getPort(device) + "/stream?deviceId=%s&deviceSubId=%s";                    
-                    composeRequestResponseDto.streamUrl = String.format(streamUrl, device.deviceInfo.deviceId, test.deviceSubId);
+                   // String streamUrl = "http://127.0.0.1:" + getPort(device) + "/stream?deviceId=%s&deviceSubId=%s";                    
+                    requestInfoDto.streamUrl = "http://127.0.0.1:" + getPort(device) + "/stream";                    
+                   // composeRequestResponseDto.streamUrl = String.format(streamUrl, device.deviceInfo.deviceId, test.deviceSubId);
                     
                 break;
                 case DeviceInfo:

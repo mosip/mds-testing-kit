@@ -530,6 +530,10 @@
         "partnerApiKey" : "28268765",
         "validatorDefs": [
             {
+            	"Name": "MdsSignatureValidator",
+                "Description": "jwt signature Validator"         
+            },
+            {
                 "Name": "MandatoryCaptureResponseValidator",
                 "Description": "Mandatory fields check"
             },

@@ -14,6 +14,9 @@ import io.mosip.mds.service.MDS_0_9_2_RequestBuilder;
 import io.mosip.mds.service.TestRunnerService;
 import io.mosip.mds.util.BioAuthRequestUtil;
 import io.mosip.mds.util.Intent;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,18 +87,25 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 						TestManagerDto targetProfile = mapper.readValue(runStatus.getProfile(), TestManagerDto.class);
 						MdsResponse[] mdsDecodedResponses = getResponseProcessor(targetProfile.mdsSpecVersion).getMdsDecodedResponse(intent,
 								validateRequestDto.getMdsResponse());
+						String deviceInfoString = getRequiredJson(testcaseResult.getDeviceInfo(),"deviceInfo");			
+						validateRequestDto.setDeviceInfo((DeviceInfoResponse) (mapper.readValue(deviceInfoString, DeviceInfoResponse.class)));
+						String requestString = getRequiredJson(testcaseResult.getRequest(),"body");
+						validateRequestDto.setMdsDecodedRequest(requestString);
 						validateRequestDto.setIntent(intent);
+						validateRequestDto.setTestManagerDto(targetProfile);
 						for(MdsResponse mdsResponse : mdsDecodedResponses) {
+							validateRequestDto.setMdsDecodedResponse(mdsResponse);
 							for(ValidatorDef validatorDef : testDefinition.validatorDefs) {
 								Optional<Validator> validator = validators.stream().filter(v ->	v.Name.equals(validatorDef.Name)).findFirst();
 								if(validator.isPresent())
 									validationResults.add(validator.get().Validate(validateRequestDto));
 							}
 						}
+						testcaseResult.setValidationResults(mapper.writeValueAsString(validationResults));
+						
 						renderContent = getResponseProcessor(targetProfile.mdsSpecVersion).getRenderContent(intent,
 								validateRequestDto.getMdsResponse());
 
-						testcaseResult.setValidationResults(mapper.writeValueAsString(validationResults));
 						testcaseResult.setPassed(true); //TODO - need to change column name
 						testcaseResult.setCurrentState("MDS Response Validations : Completed");
 					} catch (Exception ex) {
@@ -114,7 +124,17 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		throw new Exception("No Test cases found for the provided run !");
 	}
 
-
+	private String getRequiredJson(String jsonString,String key) {
+		String resultString = null;
+		try {
+			JSONObject json = new JSONObject(jsonString);
+			resultString = (String) json.get(key).toString();
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return resultString;
+	}
 
 	@Override
 	public TestRun composeRequestForAllTests(ComposeRequestDto composeRequestDto) throws Exception {
@@ -148,7 +168,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 					testCaseResultRepository.save(testcaseResult);
 				}
 				TestResult testResult = getTestResult(composeRequestDto.runId, testcaseResult, testDefinition);
-				testResult.streamUrl = requestDTO != null ? requestDTO.streamUrl : null;
+				testResult.streamUrl = requestDTO != null ? requestDTO.getRequestInfoDto().streamUrl : null;
 				testRun.getTests().add(testcaseResult.getTestResultKey().getTestcaseName());
 				testRun.getTestReport().put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
 			}

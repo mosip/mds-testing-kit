@@ -136,7 +136,7 @@ export class RunComponent implements OnInit {
 
     getStreamImgTagId(testId) {
       let id = testId.split(' ').join('-');
-      return id;
+       return id;
     }
 
     /* startStreaming(testId) {
@@ -211,7 +211,15 @@ export class RunComponent implements OnInit {
   }
 
   isStreamRequired(testId) {
-     return this.testReportObject.testReport[testId].streamUrl ? true : false;
+    return this.testReportObject.testReport[testId].streamUrl ? true : false;
+  }
+
+  isRcapture(intent){
+    let method = JSON.parse(intent).verb;
+    if(method=="RCAPTURE"){
+      return true;
+    }
+      return false;
   }
 
   /* isMDSResponseCaptured(testId) {
@@ -291,10 +299,18 @@ export class RunComponent implements OnInit {
     }
 
     startStreaming(testId) {
+      this.stopStreaming(testId);
       let url = this.getStreamUrl(testId);
       var parts = url.split("?");
       var args = parts[1].split("&");
       start_streaming(parts[0], args[0].replace("deviceId=", ""), args[1].replace("deviceSubId=", ""),
+      this.getStreamImgTagId(testId))
+    }
+
+  streamingStart(testId,request) {
+      this.stopStreaming(testId);
+      start_streaming(JSON.parse(request).streamUrl, JSON.parse(JSON.parse(request).body).bio[0].deviceId,
+      JSON.parse(JSON.parse(request).body).bio[0].deviceSubId,
       this.getStreamImgTagId(testId))
     }
 
