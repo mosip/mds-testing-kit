@@ -51,7 +51,7 @@ public class BioAuthRequestUtil {
     private static final String VERSION = "1.0";
     private static final String ASYMMETRIC_ALGORITHM_NAME = "RSA";
     private static final String SSL = "SSL";
-    private static final String UIN = "uin";
+    private static final String UIN = "UIN";
     private static final String TRANSACTION_ID = "1234567890";
     private static final String MOSIP_IDENTITY_AUTH = "mosip.identity.auth";
     private static final String APPLICATIONID = "IDA";
