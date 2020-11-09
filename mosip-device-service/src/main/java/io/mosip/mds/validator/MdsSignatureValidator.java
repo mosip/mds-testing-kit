@@ -251,10 +251,10 @@ public class MdsSignatureValidator extends Validator{
 				commonValidator.setFoundMessageStatus(validation,decodedHeader.alg,"Response DigitalId does not contain alg block in header",CommonConstant.FAILED);
 			}
 			validations.add(validation);
-			validation = commonValidator.setFieldExpected("decodedHeader.typ","JWT",decodedHeader.typ);
-			if(decodedHeader.typ == null || decodedHeader.typ.isEmpty())
+			validation = commonValidator.setFieldExpected("decodedHeader.type","JWT",decodedHeader.type);
+			if(decodedHeader.type == null || decodedHeader.type.isEmpty())
 			{
-				commonValidator.setFoundMessageStatus(validation,decodedHeader.typ,"Response DigitalId does not contain typ block in header",CommonConstant.FAILED);
+				commonValidator.setFoundMessageStatus(validation,decodedHeader.type,"Response DigitalId does not contain type block in header",CommonConstant.FAILED);
 			}
 			validations.add(validation);
 			validation = commonValidator.setFieldExpected("decodedHeader.x5c","Certificate of the FTM chip",decodedHeader.x5c.toString());
