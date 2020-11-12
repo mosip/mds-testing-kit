@@ -10,7 +10,7 @@
             "Auth"
         ],
         "biometricTypes": [
-            "Biometric Device"
+            "Finger","Iris","Face"
         ],
         "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
 		"segments" : [],
@@ -38,7 +38,7 @@
             "Auth"
         ],
         "biometricTypes": [
-            "Biometric Device"
+            "Finger","Iris","Face"
         ],
         "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
 		"segments" : [],
@@ -298,16 +298,8 @@
         "requestedScore" : 40,
         "validatorDefs": [
              {
-            	"Name": "MdsSignatureValidator",
-                "Description": "jwt signature Validator"         
-            },
-            {
-                "Name": "MandatoryRCaptureResponseValidator",
-                "Description": "Mandatory fields check"
-            },
-			{
-                "Name": "ValidValueRCaptureResponseValidator",
-                "Description": "valid values check"
+            	"Name": "ValidErrorResponseValidator",
+                "Description": "Error Response Validator"         
             }
         ]
     },
@@ -405,17 +397,9 @@
         "mdsSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
-              {
-            	"Name": "MdsSignatureValidator",
-                "Description": "jwt signature Validator"         
-            },
-            {
-                "Name": "MandatoryRCaptureResponseValidator",
-                "Description": "Mandatory fields check"
-            },
-			{
-                "Name": "ValidValueRCaptureResponseValidator",
-                "Description": "valid values check"
+               {
+            	"Name": "ValidErrorResponseValidator",
+                "Description": "Error Response Validator"         
             }
         ]
     },

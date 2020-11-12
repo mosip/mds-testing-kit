@@ -113,7 +113,7 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		//		The digital id will be unsigned if the device is L0 and the the status of the device is "Not Registered".
 
 		if(deviceInfoResponse.certification.equals(CommonConstant.L0) && deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
-			validations = commonValidator.validateDecodedUnSignedDigitalID(deviceInfoResponse.digitalId);
+			validations = commonValidator.validateDecodedUnSignedDigitalID(deviceInfoResponse.digitalId,validations);
 		else
 			validations = commonValidator.validateDecodedSignedDigitalID(deviceInfoResponse.digitalId,validations);
 		return validations;

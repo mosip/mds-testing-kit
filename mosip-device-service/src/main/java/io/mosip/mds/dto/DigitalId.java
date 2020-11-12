@@ -1,7 +1,5 @@
 package io.mosip.mds.dto;
 
-import java.util.Date;
-
 public class DigitalId {
 
     public String serialNo;
@@ -11,7 +9,7 @@ public class DigitalId {
     public String deviceSubType;
     public String deviceProvider;
     public String deviceProviderId;
-    public Date dateTime;
+    public String dateTime;
     /*
     serialNo - Serial number of the device. This value should be same as printed on the device (Refer Physical ID)
 make - Brand name. This value should be same as printed on the device (Refer Physical ID)

@@ -1,10 +1,11 @@
 package io.mosip.mds.validator;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,9 @@ import io.mosip.mds.util.SecurityUtil;
 
 @Component
 public class CommonValidator{
+
 	//2020-07-07T01:18:58.804+05:30
-	private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+	private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -58,8 +60,7 @@ public class CommonValidator{
 		return validations;
 	}
 
-	public List<Validation> validateDecodedUnSignedDigitalID(String digitalId) {
-		List<Validation> validations= new ArrayList<>();
+	public List<Validation> validateDecodedUnSignedDigitalID(String digitalId, List<Validation> validations) {
 		String [] parts = digitalId.split("\\.");
 		validation = setFieldExpected("digitalId","UnSigned DigitalId",digitalId);	
 		if(parts.length == 1) {
@@ -90,7 +91,6 @@ public class CommonValidator{
 		if(decodedDigitalIdPayload.dateTime == null)
 		{	
 			setFoundMessageStatus(validation,decodedDigitalIdPayload.dateTime.toString(),"Response DigitalId does not contain date and Time",CommonConstant.FAILED);
-
 		}
 		validations.add(validation);
 		//Check for deviceProvider
@@ -158,11 +158,9 @@ public class CommonValidator{
 		}else {
 			//Check for bioSubType
 			validations.add(validation);
-
 			validations = validateDeviceSubType(validations, decodedDigitalIdPayload);
-
 		}
-		//		errors=validateTimeStamp(decodedDigitalIdPayload.dateTime.toString(),errors);
+		validations=validateTimeStamp(decodedDigitalIdPayload.dateTime.toString(),validations);
 		return validations;
 	}
 
@@ -210,17 +208,34 @@ public class CommonValidator{
 			setFoundMessageStatus(validation,"timeStamp in null","TimeStamp is empty",CommonConstant.FAILED);
 		}
 		validations.add(validation);
-
+		String dateStr = dateString.substring(0, dateString.length()-5);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PATTERN);
+		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		try {
-
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PATTERN);
-			System.out.println(simpleDateFormat.parse(dateString));
+			Date dt = simpleDateFormat.parse(dateStr);
+			String plusminus=dateString.substring(dateString.length()-6, dateString.length()-5);
+			matchplusminus(plusminus);
+			String zoneStr=dateString.substring(dateString.length()-4, dateString.length());
+			matchTimeZone(zoneStr);
 
 		} catch (Exception e) {
 			setFoundMessageStatus(validation,"TimeStamp formatte is invalid as per ISO Date formate",e.getMessage(),CommonConstant.FAILED);
 			validations.add(validation);
 		}
 		return validations;
+	}
+
+	private void matchplusminus(String plusminus) throws Exception {
+		if(!(plusminus.equals("+") || plusminus.equals("-"))) {
+			throw new Exception();
+		}
+	}
+
+	private void matchTimeZone(String zoneStr) throws Exception {
+		String pattern ="^\\d{1,2}[:]{1}\\d{1,2}$";
+		if(!(zoneStr.matches(pattern))) {
+			throw new Exception();
+		}
 	}
 
 	public void setFoundMessageStatus(Validation validation,String found,String message,String status) {

@@ -1,6 +1,7 @@
 package io.mosip.mds.validator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,11 +66,11 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 			//Check for device sub id
 			for(Integer subid:discoverResponse.deviceSubId)
 			{
-				validation = commonValidator.setFieldExpected("discoverResponse.deviceSubId","[0/1/2/3]",discoverResponse.deviceSubId.toString());		
+				validation = commonValidator.setFieldExpected("discoverResponse.deviceSubId","[0/1/2/3]",Arrays.toString(discoverResponse.deviceSubId));		
 				if(subid != null)
 					if(subid < 0 && subid >3)
 					{
-						commonValidator.setFoundMessageStatus(validation,discoverResponse.deviceSubId.toString(),"Device discover response deviceSubId - "+ subid +" is invalid",CommonConstant.FAILED);
+						commonValidator.setFoundMessageStatus(validation,Arrays.toString(discoverResponse.deviceSubId),"Device discover response deviceSubId - "+ subid +" is invalid",CommonConstant.FAILED);
 					}
 				validations.add(validation);
 			}
@@ -112,7 +113,7 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 
 	private List<Validation> validateDigitalId(DiscoverResponse discoverResponse, List<Validation> validations) {
 		//digitalId - Digital ID as per the Digital ID definition but it will not be signed.
-		validations = commonValidator.validateDecodedUnSignedDigitalID(discoverResponse.digitalId);
+		validations = commonValidator.validateDecodedUnSignedDigitalID(discoverResponse.digitalId,validations);
 		return validations;
 	}
 
