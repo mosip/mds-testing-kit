@@ -51,7 +51,7 @@ public class ValidErrorResponseValidator extends Validator{
 					validation = commonValidator.setFieldExpected("biometric","biometric details",biometric.toString());
 					if (biometric.getError() != null) {
 						validation = commonValidator.setFieldExpected("biometric.error.errorCode",ERROR_CODE,biometric.error.errorCode);
-						if(biometric.getError().getErrorCode().equals(ERROR_CODE)) {
+						if(!biometric.getError().getErrorCode().equals(ERROR_CODE)) {
 							commonValidator.setFoundMessageStatus(validation,biometric.error.errorCode,"errorCode not Matched",CommonConstant.FAILED);
 						}
 						validations.add(validation);

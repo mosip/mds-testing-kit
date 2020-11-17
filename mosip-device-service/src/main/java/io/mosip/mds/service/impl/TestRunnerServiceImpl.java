@@ -77,11 +77,12 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 				Intent intent = getIntent(testDefinition.getMethod());
 				String renderContent = "";
 
-				testcaseResult.setExecutedOn(LocalDateTime.now(ZoneId.of("UTC")));
-				testcaseResult.setResponse(validateRequestDto.getMdsResponse());
-
+				
 				//validate MDS response
 				if(testcaseResult.getTestResultKey().getTestcaseName().equals(validateRequestDto.getTestId())) {
+					testcaseResult.setExecutedOn(LocalDateTime.now(ZoneId.of("UTC")));
+					testcaseResult.setResponse(validateRequestDto.getMdsResponse());
+
 					List<ValidationResult> validationResults = new ArrayList<>();
 					try {
 						TestManagerDto targetProfile = mapper.readValue(runStatus.getProfile(), TestManagerDto.class);
