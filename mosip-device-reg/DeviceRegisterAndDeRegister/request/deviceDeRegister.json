@@ -1,0 +1,9 @@
+{
+  "id": "io.mosip.devicederegister",
+  "version": "1.0",
+  "request": { 
+    "device": "",
+    "isItForRegistrationDevice": true
+  },
+  "requesttime": "2020-09-18T13:44:30.813Z"
+}

@@ -1,0 +1,10 @@
+{
+	"serialNo": "Test98765",   
+	"deviceProvider": "DevTest",
+	"deviceProviderId": "d4d93f36-eb95-4a70-9d6b-ed17e2391110",
+	"make": "abcd",
+	"model": "FRO900",
+	"dateTime": "2020-07-14T08:04:57.456Z",
+	"type": "Finger",
+	"deviceSubType": "Slab"
+}

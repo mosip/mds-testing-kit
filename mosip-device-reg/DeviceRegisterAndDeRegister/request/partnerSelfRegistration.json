@@ -1,0 +1,15 @@
+{
+  "id": "string",
+  "metadata": {},
+  "request": {
+    "address": "abcd",
+    "contactNumber": "8553967572",
+    "emailId": "test_org@gmail.com",
+    "organizationName": "test org",
+    "partnerType": "Auth Test",
+    "policyGroup": "P_Group",
+	"partnerId":"1212121"
+  },
+  "requesttime": "2020-09-18T05:00:52.275Z",
+  "version": "string"
+}

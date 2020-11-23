@@ -1,0 +1,5 @@
+# Eclipse specific files #
+*bin/
+*target/
+*.class
+**/*.log

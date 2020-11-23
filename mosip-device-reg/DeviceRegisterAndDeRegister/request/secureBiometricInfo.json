@@ -1,0 +1,14 @@
+{
+  "id": "string",
+  "metadata": {},
+  "request": {
+    "deviceDetailId": "123456",
+    "isItForRegistrationDevice": true,
+    "swBinaryHash": "string",
+    "swCreateDateTime": "2020-10-01T08:56:40.588Z",
+    "swExpiryDateTime": "2021-10-01T08:56:40.588Z",
+    "swVersion": "SB.WIN.001"
+  },
+  "requesttime": "2020-10-06T05:09:44.042Z",
+  "version": "string"
+}
