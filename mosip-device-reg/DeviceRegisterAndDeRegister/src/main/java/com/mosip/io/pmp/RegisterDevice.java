@@ -6,6 +6,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -58,11 +60,15 @@ public class RegisterDevice extends Util{
 		ReadContext ctx = JsonPath.parse(api_response.getBody().asString());
 		if (ctx.read("$.response") != null) {
 			String registeredDeviceInfo = (String) ctx.read("$.response");
-			db= new DataBaseAccess();
-			deviceCodeId = db.getDbData(sqlQuery,"regdevice");
-			if(!(deviceCodeId.isEmpty()) && deviceCodeId.size()>0) {
-				registeredDeviceId=deviceCodeId.get(0);
-			}
+			String payload=registeredDeviceInfo.split("\\.")[1];
+			String decodeString=new String(Base64.getDecoder().decode(payload));
+			JSONObject jsonObject= new JSONObject(decodeString);
+			registeredDeviceId=jsonObject.get("deviceCode").toString();
+				/*
+				 * db= new DataBaseAccess(); deviceCodeId = db.getDbData(sqlQuery,"regdevice");
+				 * if(!(deviceCodeId.isEmpty()) && deviceCodeId.size()>0) {
+				 * registeredDeviceId=deviceCodeId.get(0); }
+				 */
 		} else {
 			String errorMessage = (String) ctx.read("$.errors.message");
 			auditLog.info(errorMessage);
@@ -97,7 +103,7 @@ public class RegisterDevice extends Util{
 		registerDeviceInfo.setDeviceId(deviceId);
 		registerDeviceInfo.setPurpose(prop.get("purpose"));
 		registerDeviceInfo.setFoundationalTrustProviderId("");
-		registerDeviceInfo.setDeviceInfo(createDeviceInfo(prop));
+		registerDeviceInfo.setDeviceInfo(encodeRequest(createDeviceInfo(prop)));
 		auditLog.info(convertObjectToJsonString(registerDeviceInfo));
 		return registerDeviceInfo;
 	}

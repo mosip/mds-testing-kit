@@ -36,7 +36,7 @@ public class SaveDeviceDetail extends Util{
 			deviceDetailDTO = mapper.readValue(jsonData.toJSONString(), DeviceDetailDTO.class);
 			deviceDetailDTO.getRequest().setDeviceProviderId(deviceProviderId);
 			deviceDetailDTO.getRequest().setDeviceSubTypeCode(prop.get("deviceSubType"));
-			deviceDetailDTO.getRequest().setDeviceTypeCode(prop.get("deviceTypeCode"));
+			deviceDetailDTO.getRequest().setDeviceTypeCode(prop.get("type"));
 			deviceDetailDTO.getRequest().setId(UUID.randomUUID().toString());
 			deviceDetailDTO.getRequest().setIsItForRegistrationDevice(Boolean.TRUE);
 			deviceDetailDTO.getRequest().setMake(prop.get("make"));

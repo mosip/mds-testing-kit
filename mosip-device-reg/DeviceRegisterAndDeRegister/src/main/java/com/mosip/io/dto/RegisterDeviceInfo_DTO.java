@@ -5,10 +5,11 @@ import com.mosip.io.pmp.model.RegisterDeviceInfoRequest;
 public class RegisterDeviceInfo_DTO {
 	private String deviceId;
 	private String purpose;
-	private RegisterDeviceInfoRequest deviceInfo;
+	//private RegisterDeviceInfoRequest deviceInfo;
+	private String deviceInfo;
 	private String foundationalTrustProviderId;
 	public RegisterDeviceInfo_DTO() {}
-	public RegisterDeviceInfo_DTO(String deviceId, String purpose, RegisterDeviceInfoRequest deviceInfo,
+	public RegisterDeviceInfo_DTO(String deviceId, String purpose, String deviceInfo,
 			String foundationalTrustProviderId) {
 		this.deviceId = deviceId;
 		this.purpose = purpose;
@@ -32,11 +33,11 @@ public class RegisterDeviceInfo_DTO {
 	this.purpose = purpose;
 	}
 
-	public RegisterDeviceInfoRequest getDeviceInfo() {
+	public String getDeviceInfo() {
 	return deviceInfo;
 	}
 
-	public void setDeviceInfo(RegisterDeviceInfoRequest deviceInfo) {
+	public void setDeviceInfo(String deviceInfo) {
 	this.deviceInfo = deviceInfo;
 	}
 

@@ -56,6 +56,8 @@ public class DeviceDeRegister extends Util {
 			break;
 		case "qa":
 			env = "Staging";
+		case "qa2":
+			env = "Developer";
 			break;
 		}
 		String jsonValue = buildJson(deviceCode, env);

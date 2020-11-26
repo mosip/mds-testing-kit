@@ -83,7 +83,7 @@ public class SignedRegisteredDevice extends Util{
 			return registerDeviceInfo;
 		}
 		//6.1.b encode the request take the encode string and pass in below request digitalId field
-		private RegisterDeviceInfoRequest createDeviceInfo(Map<String,String> prop) {
+		private String createDeviceInfo(Map<String,String> prop) {
 			RegisterDeviceInfoRequest deviceInfo = new RegisterDeviceInfoRequest();
 			deviceInfo.setDeviceSubId(prop.get("deviceSubId"));
 			deviceInfo.setCertification(prop.get("certification"));
@@ -92,7 +92,8 @@ public class SignedRegisteredDevice extends Util{
 			deviceInfo.setDeviceExpiry("2020-12-16T09:06:38.161Z");
 			deviceInfo.setTimeStamp(getCurrentDateAndTimeForAPI());
 			auditLog.info(convertObjectToJsonString(deviceInfo));
-			return deviceInfo;
+			String deviceInfoJsonString=convertObjectToJsonString(deviceInfo);
+			return deviceInfoJsonString;
 		}
 		// 6.1.a Register device take request value from info
 		private RegisterDeviceDTO createRegDeviceDTO(Map<String,String> prop) {

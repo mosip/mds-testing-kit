@@ -77,12 +77,13 @@ public class ProcessStep extends Util {
 		RegisterDevice registerDevice = new RegisterDevice();
 		String deviceCode = registerDevice.registerDevice(deviceId, prop);
 		// 10.validateDeviceProvider
-		logInfo("Running ValidateDeviceProvider");
+		//logInfo("Running ValidateDeviceProvider");
 		if (!(StringUtils.isEmpty(deviceCode))) {
-		     String errorCode = ValidateHistory.validateDeviceHistory(prop,deviceCode);
-		     if(errorCode==null)
+		    // String errorCode = ValidateHistory.validateDeviceHistory(prop,deviceCode);
+		     //if(errorCode==null)
 		     this.deviceCode=deviceCode;
-		     else this.deviceCode=errorCode;
+		     //else this.deviceCode=errorCode;
+		     
 		}
 		return this.deviceCode;
 	}
