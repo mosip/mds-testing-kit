@@ -144,7 +144,7 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 			for (DeviceInfoResponse deviceInfoResponse : diResponse) {
 				renderContent += deviceInfoHelper.getRenderContent(deviceInfoResponse) + "<BR/>";
 			} 
-			renderContent = "";
+			//renderContent = "";
 			break;
 		case Discover:
 			DiscoverResponse[] dResponse = discoverHelper.decode(responseData);

@@ -102,8 +102,9 @@ public class MdsSignatureValidator extends Validator{
 					String [] parts = deviceInfoMinimal.deviceInfo.split("\\.");
 					validation = commonValidator.setFieldExpected("JWT Signed deviceInfoMinimal.deviceInfo","Expected Signed deviceInfoMinimal.deviceInfo with header,payload,signature",deviceInfoMinimal.deviceInfo);
 					if(parts.length != 3) {
-						commonValidator.setFoundMessageStatus(validation,"Found deviceInfoMinimal.deviceInfo is not valid signed response","Missing header|payload|signature in deviceInfoMinimal.deviceInfo",CommonConstant.FAILED);
-					}
+						commonValidator.setFoundMessageStatus(validation,"Found deviceInfoMinimal.deviceInfo is not valid signed response","Missing header|payload|signature in deviceInfoMinimal.deviceInfo",CommonConstant.FAILED);					
+						validations.add(validation);
+						}
 					if(!validateSignature(deviceInfoMinimal.deviceInfo)) {
 
 						validation = commonValidator.setFieldExpected("JWT Signed device info","Expected Signed device info data with header,payload,signature",deviceInfoMinimal.deviceInfo);					
@@ -113,7 +114,7 @@ public class MdsSignatureValidator extends Validator{
 						validation = commonValidator.setFieldExpected("JWT Signed device info)","Expected Signed deviceinfo data with header,payload,signature",deviceInfoMinimal.deviceInfo);					
 						validations.add(validation);	
 					}
-					validations.add(validation);
+					
 				} catch (CertificateException | JoseException e) {
 					commonValidator.setFoundMessageStatus(validation,deviceInfoMinimal.deviceInfo,"Interuption while validating DiviceInfo Signature->"+e.getMessage(),CommonConstant.FAILED);
 					validations.add(validation);
@@ -188,6 +189,7 @@ public class MdsSignatureValidator extends Validator{
 						CaptureBiometricData dataDecoded = bb.dataDecoded;
 						if(Objects.nonNull(dataDecoded)) {
 							validations = validateSignedDigitalID(dataDecoded.digitalId,validations);
+							validations = validateSignatureValidity(dataDecoded.digitalId,validations);
 							return validations;
 						}
 					}
@@ -210,7 +212,7 @@ public class MdsSignatureValidator extends Validator{
 		}
 		validations.add(validation);
 		validations=mandatoryParamDigitalIdHeader(parts[0],validations);
-
+		validations=validValueHeader(parts[0],validations);
 		try {
 			if(!validateSignature(digitalId)) {
 				validation = commonValidator.setFieldExpected("JWT Signed digital ID","Expected Signed digital ID data with header,payload,signature",digitalId);					
@@ -223,6 +225,31 @@ public class MdsSignatureValidator extends Validator{
 		} catch (CertificateException | JoseException e) {
 			commonValidator.setFoundMessageStatus(validation,"Exception while processing","Interuption while validating digitalId Signature->"+e.getMessage(),CommonConstant.FAILED);
 			validations.add(validation);
+		}
+		return validations;
+	}
+
+	private List<Validation> validValueHeader(String header, List<Validation> validations) {
+		try {
+			validation = commonValidator.setFieldExpected("header","Expected Proper header",header);
+			DataHeader decodedHeader = (DataHeader) (mapper.readValue(Base64.getUrlDecoder().decode(header),
+					DataHeader.class));
+			validations.add(validation);			
+			validation = commonValidator.setFieldExpected("decodedHeader.alg","RS256",decodedHeader.alg);
+			if(!decodedHeader.alg.equals("RS256"))
+			{
+				commonValidator.setFoundMessageStatus(validation,decodedHeader.alg,"Response DigitalId alg block in header is invalid",CommonConstant.FAILED);
+			}
+			validations.add(validation);
+			validation = commonValidator.setFieldExpected("decodedHeader.typ","JWT",decodedHeader.typ);
+			if(decodedHeader.typ.equals("JWT"))
+			{
+				commonValidator.setFoundMessageStatus(validation,decodedHeader.typ,"Response DigitalId typ block in header is invalid",CommonConstant.FAILED);
+			}
+			validations.add(validation);
+		} catch (Exception e) {
+			commonValidator.setFoundMessageStatus(validation,header,"(Invalid Digital Id) Error interpreting header",CommonConstant.FAILED);
+			validations.add(validation); 
 		}
 		return validations;
 	}
@@ -251,10 +278,10 @@ public class MdsSignatureValidator extends Validator{
 				commonValidator.setFoundMessageStatus(validation,decodedHeader.alg,"Response DigitalId does not contain alg block in header",CommonConstant.FAILED);
 			}
 			validations.add(validation);
-			validation = commonValidator.setFieldExpected("decodedHeader.type","JWT",decodedHeader.type);
-			if(decodedHeader.type == null || decodedHeader.type.isEmpty())
+			validation = commonValidator.setFieldExpected("decodedHeader.typ","JWT",decodedHeader.typ);
+			if(decodedHeader.typ == null || decodedHeader.typ.isEmpty())
 			{
-				commonValidator.setFoundMessageStatus(validation,decodedHeader.type,"Response DigitalId does not contain type block in header",CommonConstant.FAILED);
+				commonValidator.setFoundMessageStatus(validation,decodedHeader.typ,"Response DigitalId does not contain typ block in header",CommonConstant.FAILED);
 			}
 			validations.add(validation);
 			validation = commonValidator.setFieldExpected("decodedHeader.x5c","Certificate of the FTM chip",decodedHeader.x5c.toString());
@@ -282,7 +309,7 @@ public class MdsSignatureValidator extends Validator{
 		// TODO handle signature with certificate
 	}
 
-	public List<Validation> validateSignatureValidity(String signature,List<Validation> validations) throws JoseException {
+	public List<Validation> validateSignatureValidity(String signature,List<Validation> validations) {
 		validation = commonValidator.setFieldExpected("signature","signature validity",signature);
 
 		try {
@@ -301,6 +328,9 @@ public class MdsSignatureValidator extends Validator{
 		}
 		catch (CertificateNotYetValidException e) {
 			commonValidator.setFoundMessageStatus(validation,signature," CertificateNotYetValidException - " + "with Message - "+e.getMessage(),CommonConstant.FAILED);
+			validations.add(validation);
+		} catch (JoseException e) {
+			commonValidator.setFoundMessageStatus(validation,signature," JoseException - " + "with Message - "+e.getMessage(),CommonConstant.FAILED);
 			validations.add(validation);
 		}
 		validations.add(validation);

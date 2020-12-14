@@ -490,7 +490,7 @@
         "deviceSubTypes": [
              "Full face"
         ],
-		"segments" : [],
+		"segments" : ["UNKNOWN"],
 		"exceptions" : [],
 		"deviceSubId" : 0,
 		"bioCount" : 1,
@@ -502,42 +502,6 @@
                 "Description": "jwt signature Validator"         
             },
               {
-                "Name": "MandatoryRCaptureResponseValidator",
-                "Description": "Mandatory fields check"
-            },
-			{
-                "Name": "ValidValueRCaptureResponseValidator",
-                "Description": "valid values check"
-            }
-        ]
-    },
-    {
-        "testId": "Registration capture - Face",
-        "method": "rcapture",
-        "testDescription": "Valid Registration capture Request only for Face",
-        "requestGenerator": null,
-        "uiInput": null,
-        "processes": [
-            "Registration"
-        ],
-        "biometricTypes": [
-            "Face"
-        ],
-        "deviceSubTypes": [
-             "Full face"
-        ],
-		"segments" : [],
-		"exceptions" : ["UNKNOWN"],
-		"deviceSubId" : 0,
-		"bioCount" : 1,
-        "mdsSpecVersions": ["0.9.5"],
-        "requestedScore" : 40,
-        "validatorDefs": [
-             {
-            	"Name": "MdsSignatureValidator",
-                "Description": "jwt signature Validator"         
-            },
-             {
                 "Name": "MandatoryRCaptureResponseValidator",
                 "Description": "Mandatory fields check"
             },

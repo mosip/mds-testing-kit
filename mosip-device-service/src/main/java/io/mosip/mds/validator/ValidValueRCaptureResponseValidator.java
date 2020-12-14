@@ -291,7 +291,7 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 					validations.add(validation);
 				}
 				else if(biometrics[bioIndex].dataDecoded.bioType.equals(CommonConstant.FACE)) {
-					validation = commonValidator.setFieldExpected("captured biometrics count","for finger count between 0-1",String.valueOf(request.count));				
+					validation = commonValidator.setFieldExpected("captured biometrics count","for face count between 0-1",String.valueOf(request.count));				
 					if(!(request.count <=1 && request.count>=0)) {
 						commonValidator.setFoundMessageStatus(validation,String.valueOf(request.count),"biometrics count is invalid for face",CommonConstant.FAILED);											
 					}
@@ -307,6 +307,7 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 
 				if((request.bioSubType.length == request.count) && (request.count == biometrics.length))
 				{
+					if(!request.type.equals(CommonConstant.FACE)) {
 					//validations = validateBioSubType(validations, biometrics[bioIndex].dataDecoded);
 					for(String subType:request.bioSubType) {
 						validation = commonValidator.setFieldExpected("dataDecoded.bioSubType",subType,biometrics[bioIndex].dataDecoded.bioSubType);				
@@ -317,7 +318,7 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 						validations.add(validation);
 						bioIndex++;
 					}
-
+					}
 
 					for(int i=0;i<request.count;i++) {
 						validation = commonValidator.setFieldExpected("exception biometrics",Arrays.toString(request.bioSubType),request.bioSubType[i]);					
