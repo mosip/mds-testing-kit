@@ -127,8 +127,7 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 		}
 		validations.add(validation);
 
-		// TODO Check for bioSubType in Decoded biometrics data
-		//check may be empty for face
+		//check bioSubType
 		if(dataDecoded.bioType == CommonConstant.FINGER || dataDecoded.bioType == CommonConstant.IRIS) {
 			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","expected bioSubType value",dataDecoded.bioSubType);		
 			if( dataDecoded.bioSubType == null || dataDecoded.bioSubType.isEmpty())
@@ -137,6 +136,16 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 			}
 			validations.add(validation);
 		}
+		
+		if(dataDecoded.bioType == CommonConstant.FACE) {
+			validation = commonValidator.setFieldExpected("dataDecoded.bioSubType","bioSubType value should not be there for Face",dataDecoded.bioSubType);		
+			if(!(dataDecoded.bioSubType == null || dataDecoded.bioSubType.isEmpty()))
+			{
+				commonValidator.setFoundMessageStatus(validation,dataDecoded.bioSubType,"RegistrationCapture response biometrics dataDecoded Face should not contain bioSubType",CommonConstant.FAILED);
+			}
+			validations.add(validation);
+		}
+		
 		// Check for bioValue in Decoded biometrics data
 		validation = commonValidator.setFieldExpected("dataDecoded.bioValue","expected bioValue block",dataDecoded.bioValue);
 		if(dataDecoded.bioValue == null || dataDecoded.bioValue.isEmpty())

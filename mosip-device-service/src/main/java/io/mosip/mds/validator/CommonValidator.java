@@ -160,17 +160,19 @@ public class CommonValidator{
 			validations.add(validation);
 			validations = validateDeviceSubType(validations, decodedDigitalIdPayload);
 		}
-		validations=validateTimeStamp(decodedDigitalIdPayload.dateTime.toString(),validations);
+		validation = setFieldExpected("decodedDigitalIdPayload.dateTime","ISO Date formate",decodedDigitalIdPayload.dateTime);
+		
+		validations=validateTimeStamp(decodedDigitalIdPayload.dateTime,validations,validation);
 		return validations;
 	}
 
 	private List<Validation> validateDeviceSubType(List<Validation> validations, DigitalId decodedDigitalIdPayload) {
 
-		switch(decodedDigitalIdPayload.deviceSubType) {
+		switch(decodedDigitalIdPayload.type) {
 		case CommonConstant.FACE:
 			validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType",
 					"For Face - Full face",decodedDigitalIdPayload.deviceSubType);
-			if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FACE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FULL_FACE))
+			if(decodedDigitalIdPayload.type.equals(CommonConstant.FACE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FULL_FACE))
 			{
 				setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Face",CommonConstant.FAILED);
 			}
@@ -179,7 +181,7 @@ public class CommonValidator{
 
 		case CommonConstant.FINGER:
 			validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","For Finger - Slap, Single, Touchless",decodedDigitalIdPayload.deviceSubType);	
-			if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.FINGER) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SLAP) 
+			if(decodedDigitalIdPayload.type.equals(CommonConstant.FINGER) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SLAP) 
 					&& !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SINGLE) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.TOUCHLESS))
 			{
 				setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Finger",CommonConstant.FAILED);
@@ -188,7 +190,7 @@ public class CommonValidator{
 			break;
 		case CommonConstant.IRIS:
 			validation = setFieldExpected("decodedDigitalIdPayload.deviceSubType","For Iris - Single, Double",decodedDigitalIdPayload.deviceSubType);
-			if(decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.IRIS) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.DOUBLE) 
+			if(decodedDigitalIdPayload.type.equals(CommonConstant.IRIS) && !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.DOUBLE) 
 					&& !decodedDigitalIdPayload.deviceSubType.equals(CommonConstant.SINGLE))
 			{
 				setFoundMessageStatus(validation,decodedDigitalIdPayload.deviceSubType,"Response DigitalId DeviceSubType is invalid for Iris",CommonConstant.FAILED);
@@ -202,12 +204,13 @@ public class CommonValidator{
 	}
 
 	//Date and Time Validation
-	public List<Validation> validateTimeStamp(String dateString,List<Validation> validations) {
-		validation = setFieldExpected("date","ISO Date formate",dateString);
+	public List<Validation> validateTimeStamp(String dateString,List<Validation> validations,Validation validation) {
+		
 		if (Objects.isNull(dateString)) {
 			setFoundMessageStatus(validation,"timeStamp in null","TimeStamp is empty",CommonConstant.FAILED);
+			validations.add(validation);
+			return validations;
 		}
-		validations.add(validation);
 		String dateStr = dateString.substring(0, dateString.length()-5);
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PATTERN);
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -217,11 +220,12 @@ public class CommonValidator{
 			matchplusminus(plusminus);
 			String zoneStr=dateString.substring(dateString.length()-4, dateString.length());
 			matchTimeZone(zoneStr);
-
+			validations.add(validation);
 		} catch (Exception e) {
 			setFoundMessageStatus(validation,"TimeStamp formatte is invalid as per ISO Date formate",e.getMessage(),CommonConstant.FAILED);
 			validations.add(validation);
 		}
+		
 		return validations;
 	}
 

@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<!--<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.2.RELEASE</version>
-		<relativePath /> &lt;!&ndash; lookup parent from repository &ndash;&gt;
-	</parent>
--->
+	<!--<parent> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-parent</artifactId> 
+		<version>2.0.2.RELEASE</version> <relativePath /> &lt;!&ndash; lookup parent 
+		from repository &ndash;&gt; </parent> -->
 	<groupId>io.mosip</groupId>
 	<artifactId>mosip-device-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -57,7 +53,12 @@
 			<artifactId>velocity</artifactId>
 			<version>1.7</version>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>4.3.1</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.itextpdf.tool/xmlworker -->
 		<dependency>
 			<groupId>com.itextpdf.tool</groupId>
@@ -121,6 +122,13 @@
 			<artifactId>okhttp</artifactId>
 			<version>2.7.5</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.6</version>
+		</dependency>
+
 
 	</dependencies>
 

@@ -122,6 +122,13 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 			commonValidator.setFoundMessageStatus(validation,Arrays.toString(discoverResponse.specVersion),"Device Discover response does not contain specVersion",CommonConstant.FAILED);
 		}
 		validations.add(validation);
+		
+		validation = commonValidator.setFieldExpected("discoverResponse.serviceVersion","Device service version",discoverResponse.serviceVersion);
+		if(discoverResponse.serviceVersion == null || discoverResponse.serviceVersion.isEmpty())
+		{
+			commonValidator.setFoundMessageStatus(validation,discoverResponse.serviceVersion,"Device Discover response does not contain serviceVersion",CommonConstant.FAILED);
+		}
+		validations.add(validation);
 		return validations;
 	}
 

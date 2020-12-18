@@ -1,5 +1,6 @@
 package io.mosip.mds.validator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +13,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
+import io.mosip.mds.dto.DeviceValidatorDigitalIdDto;
+import io.mosip.mds.dto.DeviceValidatorDto;
+import io.mosip.mds.dto.DeviceValidatorRequestDto;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.Validator;
@@ -25,6 +29,8 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 	@Autowired
 	ObjectMapper jsonMapper;
 
+	@Autowired
+	ValidDeviceCheckValidator validDeviceCheckValidator;
 	{
 		jsonMapper = new ObjectMapper();
 		jsonMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -52,8 +58,9 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 				}
 				validations.add(validation);
 				//Check for device certification
-				validation = commonValidator.setFieldExpected("deviceInfoResponse.certification","L0, L1",deviceInfoResponse.certification);
-				if(!deviceInfoResponse.certification.equals(CommonConstant.L0) && !deviceInfoResponse.certification.equals(CommonConstant.L1))
+				validation = commonValidator.setFieldExpected("deviceInfoResponse.certification","\"L0\", \"L1\" or \"L2\" based on the level of certification.",deviceInfoResponse.certification);
+				if(!deviceInfoResponse.certification.equals(CommonConstant.L0) && !deviceInfoResponse.certification.equals(CommonConstant.L1)
+						&& !deviceInfoResponse.certification.equals(CommonConstant.L2))
 				{
 					commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.certification,"Device info response certification is invalid",CommonConstant.FAILED);
 				}
@@ -95,6 +102,10 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 
 				//TODO Check for digital id
 				validations=validateDigitalId(deviceInfoResponse,validations);
+				
+				validations=validDeviceCheck(deviceInfoResponse,validations);
+				
+				
 				return validations;
 			}
 			else{
@@ -108,6 +119,35 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		return validations;
 	}
 
+	private List<Validation> validDeviceCheck(DeviceInfoResponse deviceInfoResponse, List<Validation> validations) {
+		ValidDeviceCheckValidator v=new ValidDeviceCheckValidator();
+		DeviceValidatorDto deviceValidatorDto=new DeviceValidatorDto();
+		DeviceValidatorRequestDto devicevalidatorrequestdto = new DeviceValidatorRequestDto();
+		DeviceValidatorDigitalIdDto digitalId=new DeviceValidatorDigitalIdDto();
+		digitalId.setDateTime(deviceInfoResponse.digitalIdDecoded.dateTime);
+		digitalId.setDeviceSubType(deviceInfoResponse.digitalIdDecoded.deviceSubType);
+		digitalId.setDp(deviceInfoResponse.digitalIdDecoded.deviceProvider);
+		digitalId.setDpId(deviceInfoResponse.digitalIdDecoded.deviceProviderId);
+		digitalId.setMake(deviceInfoResponse.digitalIdDecoded.make);
+		digitalId.setModel(deviceInfoResponse.digitalIdDecoded.model);
+		digitalId.setSerialNo(deviceInfoResponse.digitalIdDecoded.serialNo);
+		digitalId.setType(deviceInfoResponse.digitalIdDecoded.type);
+		devicevalidatorrequestdto.setDeviceCode(deviceInfoResponse.deviceCode);
+		devicevalidatorrequestdto.setDeviceServiceVersion(deviceInfoResponse.serviceVersion);
+		devicevalidatorrequestdto.setPurpose(deviceInfoResponse.purpose);
+
+		devicevalidatorrequestdto.setDigitalId(digitalId);
+		//devicevalidatorrequestdto.setTimeStamp(deviceInfoResponse.);
+		deviceValidatorDto.setRequest(devicevalidatorrequestdto );;
+		
+		try {
+			validations=validDeviceCheckValidator.doValidateDevice(deviceValidatorDto,validations );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return validations;
+	}
 	private List<Validation> validateDigitalId(DeviceInfoResponse deviceInfoResponse,List<Validation> validations) {
 		//		deviceInfo.digitalId - As defined under the digital id section. 
 		//		The digital id will be unsigned if the device is L0 and the the status of the device is "Not Registered".

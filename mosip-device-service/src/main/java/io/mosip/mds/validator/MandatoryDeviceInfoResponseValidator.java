@@ -57,7 +57,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for certification block
-		validation = commonValidator.setFieldExpected("deviceInfoResponse.certification","L0, L1",deviceInfoResponse.certification);
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.certification","\"L0\", \"L1\" or \"L2\" based on the level of certification.",deviceInfoResponse.certification);
 		if(deviceInfoResponse.certification == null || deviceInfoResponse.certification.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.certification,"DeviceInfo response does not contain certification",CommonConstant.FAILED);
@@ -73,12 +73,21 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		validations.add(validation);
 		// Check for deviceId block
 		validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceId","Internal ID",deviceInfoResponse.deviceId);
-		if(deviceInfoResponse.deviceId == null)
+		if(deviceInfoResponse.deviceId == null || deviceInfoResponse.deviceId.isEmpty())
 		{
 			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceId,"DeviceInfo response does not contain deviceId",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 
+		//firmware
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.firmware","Exact version of the firmware",deviceInfoResponse.firmware);
+		if(deviceInfoResponse.firmware == null || deviceInfoResponse.firmware.isEmpty())
+		{
+			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.firmware,"DeviceInfo response does not contain firmware",CommonConstant.FAILED);
+		}
+		validations.add(validation);
+
+		
 		// Check for deviceStatus block
 		validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceStatus","Ready | Busy | Not Ready | Not Registered",deviceInfoResponse.deviceStatus);
 		if(deviceInfoResponse.deviceStatus == null || deviceInfoResponse.deviceStatus.isEmpty())

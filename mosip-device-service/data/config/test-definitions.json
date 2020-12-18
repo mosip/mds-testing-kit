@@ -24,6 +24,10 @@
 			{
                 "Name": "ValidValueDiscoverResponseValidator",
                 "Description": "valid value validations"
+            },
+            {
+            	"Name": "MdsSignatureValidator",
+                "Description": "jwt signature Validator"         
             }
         ]
     },

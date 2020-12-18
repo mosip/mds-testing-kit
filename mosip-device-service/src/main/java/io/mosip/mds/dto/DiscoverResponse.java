@@ -26,6 +26,8 @@ public class DiscoverResponse extends MdsResponse{
 
     public String analysisError;
     
+    public String serviceVersion;
+    
     /*
     [
   {    
