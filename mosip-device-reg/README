@@ -1,18 +1,36 @@
-Steps to run device registration automation application
+Script for automatically registering devices
 
+Steps to run DeviceRegisterAndDeRegister utility using any IDE
+--------------------------------------------------------------
 1.git clone <https://github.com/mosip/mds-testing-kit.git>
-2.import the project mds-testing-kit/mosip-device-reg/DeviceRegister/  into IDE
-3.Check/put your login credential  in DeviceRegister\src\main\resources\commonData.properties
-4.Check environment related files here DeviceRegister\src\main\resources\dbFiles
-5.Check provider details or prerequisite data to run the application here  DeviceRegister\dataFolder\testData.csv
-6.Go to Runner.java class (DeviceRegister\src\main\java\com\mosip\io\Runner.java) right click on class and click on java application select run as run configuraiton.
-7.Give the vm arumgent -Dtype=<Finger> -Denv.user=dev -DbaseUrl=https://dev.mosip.net
-8.vm arumgent -Dtype values can be either Finger,Face,Iris and Auth or All (to run all types at one-shot)
-9.Logs can be found here DeviceRegister\testRun\logs
+2. Navigate to directory mds-testing-kit/mosip-device-reg/DeviceRegisterAndDeRegister and build the project  using command  "mvn clean install"
+3.import the project mds-testing-kit/mosip-device-reg/DeviceRegisterAndDeRegister  into IDE
+4.Check/put your login credential  in DeviceRegisterAndDeRegister\src\main\resources\commonData.properties
+5.Check environment related files here DeviceRegisterAndDeRegister\src\main\resources\dbFiles
+6.Check provider details or prerequisite data to run the application here  DeviceRegisterAndDeRegister\dataFolder\deviceData.csv
+7.Go to Runner.java class (DeviceRegisterAndDeRegister\src\main\java\com\mosip\io\Runner.java) right click on class and click on java application select run as run configuraiton.
+8.Give the vm arumgent -Dtype=<Finger> -Denv.user=<dev> -DbaseUrl=<https://dev.mosip.net>
+9.vm arumgent -Dtype values can be either Finger,Face,Iris and Auth or All (to run all types at one-shot)
+10. After running deviceRegistration steps at last we can see option for de-registration of devices like
+  Do want to de-register the device  press Y/N > Press Y for de-register the deivce  or
+  Press N to exit the program execution.
+11.Logs can be found here DeviceRegisterAndDeRegister\testRun\logs
 
-**Note :  if want to run application in primary language
-          DeviceRegister\src\main\resources\commonData.properties  set secondaryLangRequired=false
-          if want to run application in primary and secondary language both
-          DeviceRegister\src\main\resources\commonData.properties  set secondaryLangRequired=true
-          
-**Note : Required java version 1.8 or higher          
+
+Steps to run DeviceRegisterAndDeRegister utility from command line
+------------------------------------------------------------------
+1. Go to repo <https://github.com/mosip/mds-testing-kit.git>
+2. download the prjoect as zip (mds-testing-kit.zip) and extract it.
+3. Navigate to directory mds-testing-kit/mosip-device-reg/DeviceRegisterAndDeRegister and build the project  using command  "mvn clean install"
+4. Check/put your login credential  in DeviceRegisterAndDeRegister\src\main\resources\commonData.properties
+5.Check provider details or prerequisite data to run the application here  DeviceRegisterAndDeRegister\dataFolder\deviceData.csv
+6. copy dataFolder and request folder from (mds-testing-kit/mosip-device-reg/DeviceRegisterAndDeRegister) and placed inside placed
+   inside target folder at location (mds-testing-kit-master\mosip-device-reg\DeviceRegisterAndDeRegister\target)
+7. Open command prompt at this location mds-testing-kit-master\mosip-device-reg\DeviceRegisterAndDeRegister\target >
+8. run the command at this location  mds-testing-kit-master\mosip-device-reg\DeviceRegisterAndDeRegister\target >
+   java  -Dtype=<Iris> -Denv.user=<dev> -DbaseUrl=<https://dev.mosip.net>  -jar DeviceRegisterAndDeRegister-1.1-jar-with-dependencies.jar
+9.Check the console
+10.After running deviceRegistration steps at last we can see option for de-registration of devices like
+  Do want to de-register the device  press Y/N > Press Y for de-register the deivce  or
+  Press N to exit the program execution.
+11.Logs can be found here DeviceRegisterAndDeRegister\testRun\logs

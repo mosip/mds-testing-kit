@@ -1,0 +1,10 @@
+{
+  "id": "string",
+  "metadata": {},
+  "request": {
+    "desc": "Device Provider",
+    "name": "Device Provider"
+  },
+  "requesttime": "2020-10-01T06:32:35.793Z",
+  "version": "string"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "string",
+  "metadata": {},
+  "request": {
+    "approvalStatus": "Activate",
+    "id": "123456",
+    "isItForRegistrationDevice": true
+  },
+  "requesttime": "2020-10-06T04:55:50.853Z",
+  "version": "string"
+}
