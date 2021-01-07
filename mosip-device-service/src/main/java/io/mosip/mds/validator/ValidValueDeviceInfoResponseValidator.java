@@ -102,10 +102,11 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 
 				//TODO Check for digital id
 				validations=validateDigitalId(deviceInfoResponse,validations);
-
-				validations=validDeviceCheck(deviceInfoResponse,validations);
-
-
+				
+				if(deviceInfoResponse.purpose.equalsIgnoreCase("Registration")) {
+					validations=validDeviceCheck(deviceInfoResponse,validations);
+				}
+				
 				return validations;
 			}
 			else{
@@ -139,7 +140,7 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		devicevalidatorrequestdto.setDigitalId(digitalId);
 		//devicevalidatorrequestdto.setTimeStamp(deviceInfoResponse.);
 		deviceValidatorDto.setRequest(devicevalidatorrequestdto );;
-
+		
 		try {
 			validations=validDeviceCheckValidator.doValidateDevice(deviceValidatorDto,validations );
 		} catch (IOException e) {
