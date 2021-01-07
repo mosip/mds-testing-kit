@@ -40,35 +40,6 @@ public class ValidDeviceCheckValidator {
 	@Autowired
 	CommonValidator commonValidator;
 
-	public static void main(String[] args) {
-		ValidDeviceCheckValidator v=new ValidDeviceCheckValidator();
-		DeviceValidatorDto deviceValidatorDto=new DeviceValidatorDto();
-		DeviceValidatorRequestDto devicevalidatorrequestdto = new DeviceValidatorRequestDto();
-		DeviceValidatorDigitalIdDto digitalId=new DeviceValidatorDigitalIdDto();
-		digitalId.setDateTime(getCurrentDateAndTimeForAPI());
-		digitalId.setDeviceSubType("Slab");
-		digitalId.setDp("");
-		digitalId.setDpId("");
-		digitalId.setMake("");
-		digitalId.setModel("");
-		digitalId.setSerialNo("");
-		digitalId.setType("Finger");
-		devicevalidatorrequestdto.setDeviceCode("123");
-		devicevalidatorrequestdto.setDeviceServiceVersion("1.0");
-		devicevalidatorrequestdto.setPurpose("Registration");
-
-		devicevalidatorrequestdto.setDigitalId(digitalId);
-		devicevalidatorrequestdto.setTimeStamp(getCurrentDateAndTimeForAPI());
-		deviceValidatorDto.setRequest(devicevalidatorrequestdto );;
-		deviceValidatorDto.setRequesttime(getCurrentDateAndTimeForAPI());
-		try {
-			System.out.println(v.doValidateDevice(deviceValidatorDto, null));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public static String getCurrentDateAndTimeForAPI() {
 		String DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DATEFORMAT);

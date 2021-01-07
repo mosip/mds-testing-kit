@@ -248,7 +248,7 @@ public class MdsSignatureValidator extends Validator{
 			}
 			validations.add(validation);
 			validation = commonValidator.setFieldExpected("validValue DigitalIdHeader check decodedHeader.typ","JWT",decodedHeader.typ);
-			if(decodedHeader.typ.equals("JWT"))
+			if(!decodedHeader.typ.equals("JWT"))
 			{
 				commonValidator.setFoundMessageStatus(validation,decodedHeader.typ,"Response DigitalId typ block in header is invalid",CommonConstant.FAILED);
 			}
@@ -274,7 +274,7 @@ public class MdsSignatureValidator extends Validator{
 			}
 			validations.add(validation);
 			validation = commonValidator.setFieldExpected("validValue check decodedHeader.typ","JWT",decodedHeader.typ);
-			if(decodedHeader.typ.equals("JWT"))
+			if(!decodedHeader.typ.equals("JWT"))
 			{
 				commonValidator.setFoundMessageStatus(validation,decodedHeader.typ,"Response DigitalId typ block in header is invalid",CommonConstant.FAILED);
 			}
