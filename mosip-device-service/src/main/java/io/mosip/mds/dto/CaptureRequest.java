@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class CaptureRequest {
 
-    public class CaptureBioRequest
+    public static class CaptureBioRequest
     {
         public String type; //type of the biometric data,
         public Integer count; //fingerprint/Iris count, in case of face max is set to 1
