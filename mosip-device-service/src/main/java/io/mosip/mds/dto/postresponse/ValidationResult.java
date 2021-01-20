@@ -3,6 +3,7 @@ package io.mosip.mds.dto.postresponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.mosip.mds.dto.ValidationTestResultDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,7 +16,7 @@ public class ValidationResult {
 				"\n Validation Name "+ validationName
 				+"\n Validation Description "+ validationDescription
 				+"\n Status "+ status
-				+"\n Errors \n"+ errors
+				+"\n Errors \n"+ validationTestResultDtos
 		);
 	}
 
@@ -29,5 +30,5 @@ public class ValidationResult {
 	public String status;
 	
 	@ApiModelProperty(value = "errors", required = true, dataType = "java.lang.String")
-	public List<String> errors = new ArrayList<String>();
+	public List<ValidationTestResultDto> validationTestResultDtos = new ArrayList<>();
 }
