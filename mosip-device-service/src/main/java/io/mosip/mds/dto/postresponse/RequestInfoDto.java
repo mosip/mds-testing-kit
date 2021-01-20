@@ -18,5 +18,6 @@ public class RequestInfoDto {
 	@ApiModelProperty(value = "body", required = true, dataType = "java.lang.String")
 	public String body;
 	
-
+	@ApiModelProperty(value = "streamUrl", required = true, dataType = "java.lang.String")
+	public String streamUrl;
 }
