@@ -1,24 +1,23 @@
 package io.mosip.mds;
 
 import io.mosip.mds.entitiy.Store;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@SpringBootApplication
-@EnableSwagger2
+@SpringBootApplication(exclude= {SecurityAutoConfiguration.class})
 @Configuration
+@ComponentScan(basePackages="io.mosip.mds")
 public class MosipDeviceSpecificationApplication implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
@@ -40,5 +39,6 @@ public class MosipDeviceSpecificationApplication implements WebMvcConfigurer {
 					"/notFound"));
 		};
 	}
+	
 
 }
