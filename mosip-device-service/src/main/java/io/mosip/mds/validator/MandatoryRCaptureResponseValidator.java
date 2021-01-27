@@ -42,7 +42,7 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 			validations.add(validation);
 			// Check for Biometrics block
 			CaptureResponse registrationCaptureResponse = (CaptureResponse) response.getMdsDecodedResponse();
-			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole Capture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
+			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole Capture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
 
 			if(Objects.nonNull(registrationCaptureResponse))
 			{

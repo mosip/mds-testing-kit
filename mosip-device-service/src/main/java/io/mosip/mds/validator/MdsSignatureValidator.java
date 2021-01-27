@@ -76,7 +76,7 @@ public class MdsSignatureValidator extends Validator{
 	private List<Validation> validateDiscoverDigitalId(ValidateResponseRequestDto response, List<Validation> validations) throws JsonProcessingException {
 		//digitalId - Digital ID as per the Digital ID definition but it will not be signed.
 		DiscoverResponse discoverResponse = (DiscoverResponse) response.getMdsDecodedResponse();
-		validation = commonValidator.setFieldExpected("response.getMdsDecodedResponse()","Expected whole not 'Null' discover decoded Jsone Response",mapper.writeValueAsString(discoverResponse));
+		validation = commonValidator.setFieldExpected("response.getDecodedResponse()","Expected whole not 'Null' discover decoded Jsone Response",mapper.writeValueAsString(discoverResponse));
 		if(Objects.isNull(discoverResponse))
 		{
 			commonValidator.setFoundMessageStatus(validation,"Found Discover Decoded is null","Discover response is empty",CommonConstant.FAILED);
@@ -89,7 +89,7 @@ public class MdsSignatureValidator extends Validator{
 
 	private List<Validation> validateDeviceInfoSignature(ValidateResponseRequestDto response, List<Validation> validations) {
 		try {
-			validation = commonValidator.setFieldExpected("response.getMdsResponse()","JWT Signed ,Array of Device info Details",response.getMdsResponse());
+			validation = commonValidator.setFieldExpected("response.getResponse()","JWT Signed ,Array of Device info Details",response.getMdsResponse());
 			DeviceInfoMinimal[]	deviceInfos = (DeviceInfoMinimal[])(mapper.readValue(response.getMdsResponse().getBytes(), DeviceInfoMinimal[].class));
 			validations.add(validation);
 
@@ -107,7 +107,7 @@ public class MdsSignatureValidator extends Validator{
 					if(!validateSignature(deviceInfoMinimal.deviceInfo)) {
 
 						validation = commonValidator.setFieldExpected("JWT Signed device info (Signature Validation)","Expected Signed device info data with header,payload,signature",deviceInfoMinimal.deviceInfo);					
-						commonValidator.setFoundMessageStatus(validation,deviceInfoMinimal.deviceInfo,"MdsResponse device info signature verification failed",CommonConstant.FAILED);
+						commonValidator.setFoundMessageStatus(validation,deviceInfoMinimal.deviceInfo,"SbiResponse device info signature verification failed",CommonConstant.FAILED);
 						validations.add(validation);
 					}else {
 						validation = commonValidator.setFieldExpected("JWT Signed device info (Signature Validation)","Expected Signed deviceinfo data with header,payload,signature",deviceInfoMinimal.deviceInfo);					
@@ -139,7 +139,7 @@ public class MdsSignatureValidator extends Validator{
 		CaptureResponse mdsResponse = null;
 		if(Objects.nonNull(response))
 		{
-			validation = commonValidator.setFieldExpected("response.mdsResponse","Expected JWT format mdsResponse",response.mdsResponse);
+			validation = commonValidator.setFieldExpected("response.sbiResponse","Expected JWT format sbiResponse",response.mdsResponse);
 			try {
 				mdsResponse = (CaptureResponse) (mapper.readValue(response.mdsResponse.getBytes(), CaptureResponse.class));
 				validations.add(validation);
@@ -168,14 +168,14 @@ public class MdsSignatureValidator extends Validator{
 					try {
 						if(!validateSignature(biometric.getData())) {
 							validation = commonValidator.setFieldExpected("JWT Signed biometric.getData() (Signature Validation)","Expected Signed biometric data with header,payload,signature",biometric.getData());					
-							commonValidator.setFoundMessageStatus(validation,biometric.toString(),"MdsResponse signature verification failed",CommonConstant.FAILED);
+							commonValidator.setFoundMessageStatus(validation,biometric.toString(),"SbiResponse signature verification failed",CommonConstant.FAILED);
 							validations.add(validation);
 						}else {
 							validation = commonValidator.setFieldExpected("JWT Signed biometric.getData() (Signature Validation)","Expected Signed biometric data with header,payload,signature",biometric.getData());					
 							validations.add(validation);	
 						}
 					} catch (CertificateException | JoseException e) {
-						commonValidator.setFoundMessageStatus(validation,"Excetption while validating signature","mdsResponse with Invalid Signature" + e,CommonConstant.FAILED);
+						commonValidator.setFoundMessageStatus(validation,"Excetption while validating signature","sbiResponse with Invalid Signature" + e,CommonConstant.FAILED);
 						validations.add(validation);
 					}
 				}else {

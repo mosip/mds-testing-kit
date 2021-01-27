@@ -41,7 +41,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		}
 		validations.add(validation);
 
-		validation = commonValidator.setFieldExpected("response.getMdsDecodedResponse()","Expected whole divice info decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));		
+		validation = commonValidator.setFieldExpected("response.getDecodedResponse()","Expected whole divice info decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));		
 		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(deviceInfoResponse))
 		{
@@ -151,7 +151,7 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		validations.add(validation);
 
 		// TODO Check for specVersion block
-		validation = commonValidator.setFieldExpected("deviceInfoResponse.specVersion","Array of supported MDS specification version",Arrays.toString(deviceInfoResponse.specVersion));
+		validation = commonValidator.setFieldExpected("deviceInfoResponse.specVersion","Array of supported SBI specification version",Arrays.toString(deviceInfoResponse.specVersion));
 		if(deviceInfoResponse.specVersion == null || deviceInfoResponse.specVersion.length == 0)
 		{
 			commonValidator.setFoundMessageStatus(validation,Arrays.toString(deviceInfoResponse.specVersion),"DeviceInfo response does not contain specVersion",CommonConstant.FAILED);

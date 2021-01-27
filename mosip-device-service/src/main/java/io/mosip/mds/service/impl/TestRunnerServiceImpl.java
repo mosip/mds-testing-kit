@@ -108,10 +108,10 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 								validateRequestDto.getMdsResponse());
 
 						testcaseResult.setPassed(true); //TODO - need to change column name
-						testcaseResult.setCurrentState("MDS Response Validations : Completed");
+						testcaseResult.setCurrentState("SBI Response Validations : Completed");
 					} catch (Exception ex) {
-						logger.error("Exception validating MDS response", ex);
-						testcaseResult.setCurrentState("MDS Response Validations : Failed");
+						logger.error("Exception validating SBI response", ex);
+						testcaseResult.setCurrentState("SBI Response Validations : Failed");
 					}
 					testCaseResultRepository.save(testcaseResult);
 				}
@@ -161,10 +161,10 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 								getIntent(testDefinition.getMethod()));
 						testcaseResult.setDeviceInfo(mapper.writeValueAsString(composeRequestDto.deviceInfo));
 						testcaseResult.setRequest(mapper.writeValueAsString(requestDTO.requestInfoDto));
-						testcaseResult.setCurrentState("Compose MDS request : Completed");
+						testcaseResult.setCurrentState("Compose SBI request : Completed");
 					} catch (Exception ex) {
 						logger.error("Error composing request", ex);
-						testcaseResult.setCurrentState("Compose MDS request : Failed");
+						testcaseResult.setCurrentState("Compose SBI request : Failed");
 					}
 					testCaseResultRepository.save(testcaseResult);
 				}

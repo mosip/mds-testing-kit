@@ -41,7 +41,7 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 		}
 		validations.add(validation);
 		DiscoverResponse discoverResponse = (DiscoverResponse) response.getMdsDecodedResponse();
-		validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole discover decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
+		validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole discover decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
 		if(Objects.isNull(discoverResponse))
 		{
 			commonValidator.setFoundMessageStatus(validation,"Found Discover Decoded is null","Discover response is empty",CommonConstant.FAILED);
@@ -116,7 +116,7 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 		validations.add(validation);
 
 		// TODO Check for specVersion block
-		validation = commonValidator.setFieldExpected("discoverResponse.specVersion","Array of supported MDS specification version",Arrays.toString(discoverResponse.specVersion));
+		validation = commonValidator.setFieldExpected("discoverResponse.specVersion","Array of supported SBI specification version",Arrays.toString(discoverResponse.specVersion));
 		if(discoverResponse.specVersion == null || discoverResponse.specVersion.length == 0)
 		{
 			commonValidator.setFoundMessageStatus(validation,Arrays.toString(discoverResponse.specVersion),"Device Discover response does not contain specVersion",CommonConstant.FAILED);
