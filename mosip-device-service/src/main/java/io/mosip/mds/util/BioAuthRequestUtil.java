@@ -4,43 +4,45 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import javax.crypto.SecretKey;
 
-import com.squareup.okhttp.*;
-import io.mosip.kernel.core.util.CryptoUtil;
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
+import io.mosip.kernel.core.util.CryptoUtil;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.HMACUtils;
-
 import io.mosip.mds.authentication.dto.AuthRequestDTO;
 import io.mosip.mds.authentication.dto.AuthTypeDTO;
-
-import io.mosip.mds.authentication.dto.CryptomanagerRequestDto;
+import io.mosip.mds.authentication.dto.BioIdentityInfoDTO;
 import io.mosip.mds.authentication.dto.EncryptionRequestDto;
 import io.mosip.mds.authentication.dto.EncryptionResponseDto;
 import io.mosip.mds.authentication.dto.RequestDTO;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
-import io.mosip.mds.dto.TestDefinition;
-import io.mosip.mds.entitiy.Store;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class BioAuthRequestUtil {
@@ -48,6 +50,22 @@ public class BioAuthRequestUtil {
     private static final Logger logger = LoggerFactory.getLogger(BioAuthRequestUtil.class);
     private static String AUTH_REQ_TEMPLATE = "{ \"id\": \"string\",\"metadata\": {},\"request\": { \"appId\": \"%s\", \"clientId\": \"%s\", \"secretKey\": \"%s\" }, \"requesttime\": \"%s\", \"version\": \"string\"}";
     private static String SIGN_REQ_TEMPLATE = "{ \"id\": \"string\", \"metadata\": {}, \"request\": { \"data\": \"%s\" }, \"requesttime\": \"%s\", \"version\": \"string\"}";
+   
+    private static String SIGN_REQ_TEMPLATE1 = "{\r\n" + 
+    		"  \"id\": \"string\",\r\n" + 
+    		"  \"metadata\": {},\r\n" + 
+    		"  \"request\": {\r\n" + 
+    		"    \"applicationId\": \"IDA\",\r\n" + 
+    		"    \"dataToSign\": \"%s\",\r\n" + 
+    		"    \"includeCertHash\": true,\r\n" + 
+    		"    \"includeCertificate\": true,\r\n" + 
+    		"    \"includePayload\": false,\r\n" + 
+    		"    \"referenceId\": \"SIGN\"\r\n" + 
+    		"  },\r\n" + 
+    		"  \"requesttime\": \"%s\",\r\n" + 
+    		"  \"version\": \"string\"\r\n" + 
+    		"}";
+    
     private static final String VERSION = "1.0";
     private static final String ASYMMETRIC_ALGORITHM_NAME = "RSA";
     private static final String SSL = "SSL";
@@ -78,8 +96,19 @@ public class BioAuthRequestUtil {
 
         authRequestDTO.setDomainUri("");
         authRequestDTO.setEnv("Staging");
-
+        String authToken = getAuthToken();
+        
+        X509Certificate certificate = getCertificateFull(authToken);
+        String thumbprint = CryptoUtil.encodeBase64(getCertificateThumbprint(certificate));
+        
         RequestDTO requestDTO = new RequestDTO();
+        
+        List<BioIdentityInfoDTO> biometrics=new ArrayList<BioIdentityInfoDTO>();
+        BioIdentityInfoDTO bioIdentityInfoDTO=new BioIdentityInfoDTO();
+        bioIdentityInfoDTO.setThumbprint(thumbprint);
+		biometrics.add(bioIdentityInfoDTO);
+		requestDTO.setBiometrics(biometrics);
+
         requestDTO.setTimestamp(getUTCCurrentDateTimeISOString());
         Map<String, Object> identityBlock = mapper.convertValue(requestDTO, Map.class);
         if(Objects.nonNull(response))
@@ -89,13 +118,13 @@ public class BioAuthRequestUtil {
         encryptionRequestDto.setIdentityRequest(identityBlock);
         EncryptionResponseDto encryptionResponseDto = null;
 
-        String authToken = getAuthToken();
         try {
-            encryptionResponseDto = kernelEncrypt(encryptionRequestDto, authToken);
+            encryptionResponseDto = kernelEncrypt(encryptionRequestDto, authToken,certificate);
         } catch (Exception e) {
             logger.error("Error during encrypting auth request", e);
         }
         // Set request block
+        authRequestDTO.setThumbprint(thumbprint);
         authRequestDTO.setRequest(requestDTO);
         authRequestDTO.setTransactionID(TRANSACTION_ID);
         authRequestDTO.setRequestTime(getUTCCurrentDateTimeISOString());
@@ -109,6 +138,9 @@ public class BioAuthRequestUtil {
         return doAuthRequest(authToken, authRequestMap);
     }
 
+    private byte[] getCertificateThumbprint(Certificate cert) throws CertificateEncodingException {
+        return DigestUtils.sha256(cert.getEncoded());
+    }
 
     private String doAuthRequest(String authToken, Map<String, Object> authRequestMap) {
         try {
@@ -118,8 +150,9 @@ public class BioAuthRequestUtil {
             RequestBody body = RequestBody.create(mediaType, reqBodyJson);
             Request request = new Request.Builder()
                     //curl -X POST "https://dev.mosip.net/v1/keymanager/sign" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"id\": \"string\", \"metadata\": {}, \"request\": { \"data\": \"string\" }, \"requesttime\": \"2018-12-10T06:12:52.994Z\", \"version\": \"string\"}"
-                    .header("signature", getJWTSignedData(reqBodyJson, authToken))
-                    .header("Authorization", "myconsenttoken")
+            		.header("signature", getJWTSignedData(CryptoUtil.encodeBase64(reqBodyJson.getBytes("UTF-8"))
+                    		, authToken))
+            		.header("Authorization", "myconsenttoken")
                     .url(String.format(env.getProperty("ida.auth.url"), env.getProperty("auth.request.misplicense.key"),
                             env.getProperty("auth.request.partnerid"), env.getProperty("auth.request.partnerapi.key")))
                     .post(body)
@@ -134,7 +167,7 @@ public class BioAuthRequestUtil {
         return "Failed to get auth response !";
     }
 
-    private EncryptionResponseDto kernelEncrypt(EncryptionRequestDto encryptionRequestDto, String authToken)
+    private EncryptionResponseDto kernelEncrypt(EncryptionRequestDto encryptionRequestDto, String authToken, X509Certificate certificate)
             throws Exception {
         EncryptionResponseDto encryptionResponseDto = new EncryptionResponseDto();
         String identityBlock = mapper.writeValueAsString(encryptionRequestDto.getIdentityRequest());
@@ -144,7 +177,7 @@ public class BioAuthRequestUtil {
         byte[] encryptedIdentityBlock = cryptoUtil.symmetricEncrypt(identityBlock.getBytes(StandardCharsets.UTF_8), secretKey);
         encryptionResponseDto.setEncryptedIdentity(CryptoUtil.encodeBase64(encryptedIdentityBlock));
 
-        PublicKey publicKey = getPublicKey(authToken);
+        PublicKey publicKey = certificate.getPublicKey();
         byte[] encryptedSessionKeyByte = cryptoUtil.asymmetricEncrypt((secretKey.getEncoded()), publicKey);
         encryptionResponseDto.setEncryptedSessionKey(CryptoUtil.encodeBase64(encryptedSessionKeyByte));
 
@@ -254,9 +287,41 @@ public class BioAuthRequestUtil {
                 new ByteArrayInputStream(java.util.Base64.getDecoder().decode(certificate)));
         return x509Certificate.getPublicKey();
     }
+    
+    private X509Certificate getCertificateFull(String authToken) throws CertificateException {
+        String certificate = trimBeginEnd(getCertificate(authToken));
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        X509Certificate x509Certificate = (X509Certificate) cf.generateCertificate(
+                new ByteArrayInputStream(java.util.Base64.getDecoder().decode(certificate)));
+        return x509Certificate;
+    }
+
 
     private String getJWTSignedData(String data, String authToken) throws IOException, JSONException {
         OkHttpClient client = new OkHttpClient();
+        String requestBody = String.format(SIGN_REQ_TEMPLATE1,
+                data, DateUtils.getUTCCurrentDateTime());
+
+        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(mediaType, requestBody);
+        Request request = new Request.Builder()
+                .header("cookie", "Authorization="+authToken)
+                .url(env.getProperty("internal.auth.jwtSign.url"))
+                .post(body)
+                .build();
+        Response response = client.newCall(request).execute();
+        if(response.isSuccessful()) {
+            JSONObject jsonObject = new JSONObject(response.body().string());
+            jsonObject = jsonObject.getJSONObject("response");
+            return jsonObject.getString("jwtSignedData");
+        }
+        return "";
+    }
+    
+    //depriciated not using
+    private String getJWTSignedData1(String data, String authToken) throws IOException, JSONException {
+        OkHttpClient client = new OkHttpClient();
+
         String requestBody = String.format(SIGN_REQ_TEMPLATE,
                 data, DateUtils.getUTCCurrentDateTime());
         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");

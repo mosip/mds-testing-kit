@@ -62,7 +62,7 @@ public class ValidErrorResponseValidator extends Validator{
 					}
 				}
 				}else {
-					commonValidator.setFoundMessageStatus(validation,"response.mdsResponse is empty","error block is empty",CommonConstant.FAILED);
+					commonValidator.setFoundMessageStatus(validation,"response.sbiResponse is empty","error block is empty",CommonConstant.FAILED);
 					validations.add(validation);
 				}
 

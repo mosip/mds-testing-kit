@@ -37,7 +37,7 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
 		if(Objects.nonNull(response))
 		{
-			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole discover decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));		
+			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole discover decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));		
 			DiscoverResponse discoverResponse = (DiscoverResponse) response.getMdsDecodedResponse();
 			if(Objects.isNull(discoverResponse))
 			{

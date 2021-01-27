@@ -24,4 +24,8 @@ public class BioIdentityInfoDTO {
 	
 	/** The Value for signature */
 	private String signature;
+	
+	/** The Value for thumbprint */
+	private String thumbprint;
+
 }

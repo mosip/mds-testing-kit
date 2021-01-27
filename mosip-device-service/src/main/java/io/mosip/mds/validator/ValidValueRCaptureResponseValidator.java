@@ -48,7 +48,7 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 		{
 			validations.add(validation);
 
-			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole RCapture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
+			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole RCapture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
 			// Check for Biometrics block
 			validations.add(validation);
 

@@ -46,7 +46,7 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 		if(Objects.nonNull(response))
 		{
 			DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
-			validation = commonValidator.setFieldExpected("response.getMdsDecodedResponse()","Expected whole divice info decoded Jsone Response",response.getMdsDecodedResponse().toString());		
+			validation = commonValidator.setFieldExpected("response.getDecodedResponse()","Expected whole divice info decoded Jsone Response",response.getMdsDecodedResponse().toString());		
 			if(Objects.nonNull(deviceInfoResponse))
 			{
 				//Check for device status

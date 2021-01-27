@@ -47,7 +47,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 		if(Objects.nonNull(response))
 		{
 			validations.add(validation);
-			validation = commonValidator.setFieldExpected("mdsDecodedResponse","Expected whole Capture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
+			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole Capture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
 			CaptureResponse cr = (CaptureResponse) response.getMdsDecodedResponse();
 			if(Objects.nonNull(cr))
 			{
