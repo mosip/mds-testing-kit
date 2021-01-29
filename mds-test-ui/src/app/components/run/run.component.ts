@@ -90,7 +90,7 @@ export class RunComponent implements OnInit {
         },
         error => this.openDialog("Alert", error)
       );
-      console.log("Finished capturing MDS requests");
+      console.log("Finished capturing SBI requests");
   }
 
 
@@ -116,7 +116,7 @@ export class RunComponent implements OnInit {
                       //this.loading = false;
                  }
               );
-              console.log("Finished capturing MDS Responses >>>>> " + testId);
+              console.log("Finished capturing SBI Responses >>>>> " + testId);
               this.mdmInitiated = false;
         }
     }

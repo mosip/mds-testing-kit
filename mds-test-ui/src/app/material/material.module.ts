@@ -23,7 +23,8 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatStepperModule} from '@angular/material/stepper';
 
-
+import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [],
@@ -74,7 +75,10 @@ import {MatStepperModule} from '@angular/material/stepper';
     MatSnackBarModule,
     MatTabsModule,
     MatExpansionModule,
-    MatStepperModule
+    MatStepperModule,
+
+    FormsModule,
+    MatDialogModule
   ]
 })
 export class MaterialModule { }

@@ -5,6 +5,9 @@ import {LocalStorageService} from '../../services/local-storage/local-storage.se
 import {MatSelectChange} from '@angular/material/select';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ModalComponent } from '../../modal/modal.component';
+
 @Component({
   selector: 'app-discover-devices',
   templateUrl: './discover-devices.component.html',
@@ -22,7 +25,8 @@ export class DiscoverDevicesComponent implements OnInit {
     private mdsService: MdsService,
     private dataService: DataService,
     private localStorageService: LocalStorageService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -34,7 +38,7 @@ export class DiscoverDevicesComponent implements OnInit {
   discover(port: string) {
     this.mdsService.discover(this.mdshost, port).subscribe(
       response => this.discoveryResponse = response,
-      error => window.alert(error)
+      error => this.openDialog("Alert", error)
     );
   }
 
@@ -44,10 +48,10 @@ export class DiscoverDevicesComponent implements OnInit {
         this.infoResponse = response;
         this.dataService.decodeDeviceInfo(response).subscribe(
           decodedDeviceInfo => this.localStorageService.addDeviceInfos(port, decodedDeviceInfo),
-          error => window.alert(error)
+          error => this.openDialog("Alert", error)
         );
       },
-      error => window.alert(error)
+      error => this.openDialog("Alert", error)
     );
   }
 
@@ -58,7 +62,7 @@ export class DiscoverDevicesComponent implements OnInit {
   scan(host) {
 
     if(host === '') {
-      window.alert("Please enter MDS host")
+      window.alert("Please enter SBI host")
     }
 
     this.mdshost = host;
@@ -69,7 +73,10 @@ export class DiscoverDevicesComponent implements OnInit {
       () => {
         this.scanning = false;
         this.availablePorts = this.localStorageService.getAvailablePorts();
-        this.openSnackBar('Scan Complete', 'Close');
+        if(this.availablePorts && !this.availablePorts.length)
+          this.openDialog("Alert", "Scan Complete, No devices discovered.");
+        else
+          this.openDialog("Message", "Scan Complete");
       }
     );
   }
@@ -79,4 +86,12 @@ export class DiscoverDevicesComponent implements OnInit {
       duration: 2000,
     });
   }
+
+  openDialog(title: string, message: string): void {
+          this.dialog.open(ModalComponent, {
+            width: '40%',
+            data: {'title': title, 'message' : message }
+          });
+      }
+
 }
