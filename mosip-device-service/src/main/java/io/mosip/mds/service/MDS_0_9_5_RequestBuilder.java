@@ -1,11 +1,13 @@
 package io.mosip.mds.service;
 
+import io.mosip.kernel.core.util.HMACUtils;
 import io.mosip.mds.dto.*;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.dto.postresponse.RequestInfoDto;
 import io.mosip.mds.util.BioSubType;
 import io.mosip.mds.util.Intent;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -146,7 +148,8 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         bio.count = test.bioCount;
         bio.deviceId = device.deviceInfo.deviceId;
         bio.deviceSubId = test.deviceSubId;
-        bio.previousHash = "";
+        String previousHash = HMACUtils.digestAsPlainText(HMACUtils.generateHash("".getBytes(StandardCharsets.UTF_8)));
+        bio.previousHash = previousHash;
         bio.requestedScore = test.requestedScore;
         bio.bioSubType = test.segments == null ? null : 
         	BioSubType.convertTo095(test.segments).toArray(new String[0]);            
