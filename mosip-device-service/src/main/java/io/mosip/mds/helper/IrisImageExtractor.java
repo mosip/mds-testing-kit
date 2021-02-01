@@ -1,5 +1,8 @@
 package io.mosip.mds.helper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,16 +10,18 @@ import java.util.List;
 
 public class IrisImageExtractor {
 
+    private static final Logger logger = LoggerFactory.getLogger(IrisImageExtractor.class);
+
     public List<ExtractDTO> extractIrisImageData(byte[] decodedBioValue) {
         List<ExtractDTO> extracts = new ArrayList<>();
 
         try(DataInputStream din = new DataInputStream(new ByteArrayInputStream(decodedBioValue))) {
-            System.out.println("Started processing bio value : " + new Date());
+            logger.debug("Started processing bio value : " + new Date());
 
             //general header parsing
             byte[] formatIdentifier = new byte[4];
             din.read(formatIdentifier, 0, formatIdentifier.length);
-            System.out.println("formatIdentifier >>>> " + new String(formatIdentifier));
+            logger.debug("formatIdentifier >>>> " + new String(formatIdentifier));
 
             int version = din.readInt();
             int recordLength = din.readInt();
@@ -68,7 +73,7 @@ public class IrisImageExtractor {
                         imageFormat == 10 ? "jp2" : imageFormat == 14 ? "png" : "unknown", representationSequenceNo));
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error extracting iris image from biovalue", ex);
         }
         return  extracts;
     }

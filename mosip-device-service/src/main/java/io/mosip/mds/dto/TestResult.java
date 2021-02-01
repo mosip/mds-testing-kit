@@ -1,14 +1,17 @@
 package io.mosip.mds.dto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import io.mosip.mds.dto.postresponse.RequestInfoDto;
 import io.mosip.mds.dto.postresponse.ValidationResult;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
+@Data
 public class TestResult {
 
         @Override
@@ -40,7 +43,7 @@ public class TestResult {
 
     public String testId;
 
-    public Date executedOn;
+    public LocalDateTime executedOn;
 
     public String summary;
     
@@ -57,4 +60,6 @@ public class TestResult {
     public String currentState;
     
     public String streamUrl;
+
+    public boolean enableAuthTest;
 }

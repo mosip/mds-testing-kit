@@ -1,21 +1,26 @@
 package io.mosip.mds.service;
 
+import io.mosip.mds.dto.*;
+import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
+import io.mosip.mds.dto.postresponse.RequestInfoDto;
+import io.mosip.mds.util.Intent;
+import java.util.Date;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.mds.dto.CaptureRequest;
+import io.mosip.mds.dto.CaptureRequest.CaptureBioRequest;
 import io.mosip.mds.dto.DeviceDto;
 import io.mosip.mds.dto.DeviceInfoRequest;
 import io.mosip.mds.dto.DiscoverRequest;
 import io.mosip.mds.dto.RegistrationCaptureRequest_0_9_2;
 import io.mosip.mds.dto.StreamRequest;
-import io.mosip.mds.dto.TestRun;
-import io.mosip.mds.dto.getresponse.TestExtnDto;
+import io.mosip.mds.dto.TestDefinition;
+import io.mosip.mds.dto.TestManagerDto;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.dto.postresponse.RequestInfoDto;
 import io.mosip.mds.util.Intent;
-
-import java.util.Date;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
 
@@ -33,9 +38,9 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
     
     private ObjectMapper mapper = new ObjectMapper();
 
-    public ComposeRequestResponseDto buildRequest(TestRun run, TestExtnDto test, DeviceDto device, Intent op)
+    public ComposeRequestResponseDto buildRequest(String runId, TestManagerDto targetProfile, TestDefinition test, DeviceDto device, Intent op)
     {
-        ComposeRequestResponseDto composeRequestResponseDto=new ComposeRequestResponseDto(run.runId, test.testId);
+        ComposeRequestResponseDto composeRequestResponseDto=new ComposeRequestResponseDto(runId, test.testId);
 		RequestInfoDto requestInfoDto=new RequestInfoDto();
 		
 		
@@ -76,20 +81,20 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         return composeRequestResponseDto;
     }
 
-    private String discover(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String discover(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         DiscoverRequest requestBody = new DiscoverRequest();
         requestBody.type = "BIOMETRIC DEVICE";
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String deviceInfo(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String deviceInfo(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         DeviceInfoRequest requestBody = new DeviceInfoRequest();
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String stream(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String stream(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         StreamRequest requestBody = new StreamRequest();
         requestBody.deviceId = device.discoverInfo;
@@ -98,7 +103,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String capture(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String capture(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         CaptureRequest requestBody = new CaptureRequest();
         requestBody.captureTime = (new Date()).toString();
@@ -108,7 +113,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         requestBody.specVersion = "0.9.2";
         requestBody.timeout = 30;
         requestBody.transactionId = "" + System.currentTimeMillis();
-        CaptureRequest.CaptureBioRequest bio = requestBody.new CaptureBioRequest();
+        CaptureRequest.CaptureBioRequest bio = new CaptureBioRequest();
         bio.count = 1;
 //        bio.deviceId = device.discoverInfo;
         bio.deviceId = "1";
@@ -121,7 +126,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         return mapper.writeValueAsString(requestBody);
     }
 
-    private String registrationCapture(TestExtnDto test, DeviceDto device) throws JsonProcessingException
+    private String registrationCapture(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         RegistrationCaptureRequest_0_9_2 requestBody = new RegistrationCaptureRequest_0_9_2();
         requestBody.captureTime = (new Date()).toString();

@@ -7,6 +7,9 @@ import { DOCUMENT } from '@angular/common';
 import * as jwt_decode from 'jwt-decode';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ModalComponent } from '../../modal/modal.component';
+
 declare const start_streaming: any;
 declare const stop_streaming: any;
 
@@ -31,12 +34,15 @@ export class RunComponent implements OnInit {
   mdmInitiated = false;
   streamingInitiated = false;
   currentTestId: string;
+  loading = false;
+  authloading = false;
 
   constructor(
     private localStorageService: LocalStorageService,
     private dataService: DataService,
     private mdsService: MdsService,
-    private _sanitizer: DomSanitizer
+    private _sanitizer: DomSanitizer,
+    private dialog: MatDialog
   ) {
     this.JSON = JSON;
     this.Object = Object;
@@ -56,7 +62,7 @@ export class RunComponent implements OnInit {
         this.testReportObject = body;
         console.log(body);
       },
-      error => window.alert(error)
+      error => this.openDialog("Alert", error)
     );
   }
 
@@ -82,13 +88,14 @@ export class RunComponent implements OnInit {
           this.testReportObject = body;
           console.log(body);
         },
-        error => window.alert(error)
+        error => this.openDialog("Alert", error)
       );
-      console.log("Finished capturing MDS requests");
+      console.log("Finished capturing SBI requests");
   }
 
 
   getMDSResponse(request, runId, testId) {
+      this.loading = true;
       let mdmResponse = this.testReportObject.testReport[testId].responseData;
       if(this.mdmInitiated === true) {
        console.log("MDM request is currently going on .....");
@@ -102,27 +109,34 @@ export class RunComponent implements OnInit {
         this.mdsService.request(JSON.parse(request)).subscribe(
                 response => {
                   this.validateMDSResponse(runId, testId, request, response);
+                  //this.loading = false;
                 },
-                error => { this.validateMDSResponse(runId, testId, request, error); }
+                error => {
+                      this.validateMDSResponse(runId, testId, request, error);
+                      //this.loading = false;
+                 }
               );
-              console.log("Finished capturing MDS Responses >>>>> " + testId);
+              console.log("Finished capturing SBI Responses >>>>> " + testId);
               this.mdmInitiated = false;
-      }
+        }
     }
 
     validateMDSResponse(runId, testId, request, response) {
           this.dataService.validateResponse(runId, testId, request, response).subscribe(
                       result => {
                         this.testReportObject = result;
-                        console.log('result:' + result);
+                        this.loading = false;
+                        //console.log('result:' + result);
                       },
-                      error => window.alert(error)
+                      error => { this.openDialog("Alert", error);
+                              this.loading = false;
+                        }
                     );
     }
 
     getStreamImgTagId(testId) {
       let id = testId.split(' ').join('-');
-      return id;
+       return id;
     }
 
     /* startStreaming(testId) {
@@ -197,7 +211,15 @@ export class RunComponent implements OnInit {
   }
 
   isStreamRequired(testId) {
-     return this.testReportObject.testReport[testId].streamUrl ? true : false;
+    return this.testReportObject.testReport[testId].streamUrl ? true : false;
+  }
+
+  isRcapture(intent){
+    let method = JSON.parse(intent).verb;
+    if(method=="RCAPTURE"){
+      return true;
+    }
+      return false;
   }
 
   /* isMDSResponseCaptured(testId) {
@@ -277,6 +299,7 @@ export class RunComponent implements OnInit {
     }
 
     startStreaming(testId) {
+      this.stopStreaming(testId);
       let url = this.getStreamUrl(testId);
       var parts = url.split("?");
       var args = parts[1].split("&");
@@ -284,7 +307,39 @@ export class RunComponent implements OnInit {
       this.getStreamImgTagId(testId))
     }
 
+  streamingStart(testId,request) {
+      this.stopStreaming(testId);
+      start_streaming(JSON.parse(request).streamUrl, JSON.parse(JSON.parse(request).body).bio[0].deviceId,
+      JSON.parse(JSON.parse(request).body).bio[0].deviceSubId,
+      this.getStreamImgTagId(testId))
+    }
+
     stopStreaming(testId) {
       stop_streaming();
     }
+
+    isAuthRequestRequired(testId) {
+       return this.testReportObject.testReport[testId].enableAuthTest ? true : false;
+    }
+
+    startAuthTest(testId) {
+        this.authloading = true;
+        console.log("Starting auth test for >>> " + testId);
+        this.dataService.authTestCall(this.testReportObject.testReport[testId].runId, testId).subscribe(
+                result => {
+                     //window.alert(JSON.stringify(result))
+                     this.openDialog("Auth Response", JSON.stringify(result))
+                     this.authloading = false
+                },
+                error => this.openDialog("Auth Error Response", error)
+              );
+
+    }
+
+    openDialog(title: string, message: string): void {
+              this.dialog.open(ModalComponent, {
+                width: '40%',
+                data: {'title': title, 'message' : message }
+              });
+          }
 }
