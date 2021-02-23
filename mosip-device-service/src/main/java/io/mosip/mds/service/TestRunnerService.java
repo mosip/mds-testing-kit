@@ -1,14 +1,10 @@
 package io.mosip.mds.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.mosip.mds.dto.ComposeRequestDto;
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
-import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
-
-import java.util.Map;
 
 public interface TestRunnerService {
 	
@@ -21,6 +17,8 @@ public interface TestRunnerService {
 	public DiscoverResponse[] decodeDiscoverInfo(String discoverInfo);
 
 	public DeviceInfoResponse[] decodeDeviceInfo(String deviceInfo);
+	
+	public void downloadReport(String runId, String testId);
 
 	String validateAuthRequest(String runId, String testId);
 }

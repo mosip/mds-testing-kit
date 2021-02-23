@@ -1,10 +1,18 @@
 package io.mosip.mds.controller;
 
 import io.mosip.mds.dto.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.service.TestRunnerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -74,4 +82,26 @@ public class TestRunnerController {
 		return testRunnerService.validateAuthRequest(authRequestDto.getRunId(), authRequestDto.getTestId());
 	}
 
+	@GetMapping("/download/{runId}/{testId}")
+	public ResponseEntity<Object> download(@PathVariable("runId")String runId,@PathVariable("testId")String testId) {
+		testRunnerService.downloadReport(runId, testId);
+
+		String filename = runId+".pdf";
+		File file = new File(filename);
+		InputStreamResource resource = null;
+		try {
+			resource = new InputStreamResource(new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		HttpHeaders headers = new HttpHeaders();		        
+		headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getName()));
+		headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+		headers.add("Pragma", "no-cache");
+		headers.add("Expires", "0");		        
+		ResponseEntity<Object> 
+		responseEntity = ResponseEntity.ok().headers(headers).contentLength(file.length()).contentType(
+				MediaType.parseMediaType("application/txt")).body(resource);		        
+		return responseEntity;		     
+	}
 }
