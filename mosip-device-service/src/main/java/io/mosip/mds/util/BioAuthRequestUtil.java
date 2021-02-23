@@ -94,8 +94,8 @@ public class BioAuthRequestUtil {
         authRequestDTO.setIndividualIdType(UIN); //Set Individual Id type uin or VID
         authRequestDTO.setIndividualId(env.getProperty("auth.request.uin"));
 
-        authRequestDTO.setDomainUri("");
-        authRequestDTO.setEnv("Staging");
+        authRequestDTO.setDomainUri("default");
+        authRequestDTO.setEnv("Developer");
         String authToken = getAuthToken();
         
         X509Certificate certificate = getCertificateFull(authToken);

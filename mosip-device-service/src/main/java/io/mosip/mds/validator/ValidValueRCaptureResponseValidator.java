@@ -43,22 +43,22 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws IOException {
 		List<Validation> validations = new ArrayList<>();
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",CommonConstant.DATA);		
 		if(Objects.nonNull(response))
 		{
 			validations.add(validation);
 
-			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole RCapture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
+			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole RCapture decoded Jsone Response",CommonConstant.DATA);
 			// Check for Biometrics block
 			validations.add(validation);
 
 			CaptureResponse registrationCaptureResponse = (CaptureResponse) response.getMdsDecodedResponse();
 			if(Objects.nonNull(registrationCaptureResponse))
 			{
-				validation = commonValidator.setFieldExpected("registrationCaptureResponse.biometrics","Expected Array of biometric data",jsonMapper.writeValueAsString(registrationCaptureResponse.biometrics));
+				validation = commonValidator.setFieldExpected("registrationCaptureResponse.biometrics","Expected Array of biometric data",CommonConstant.DATA);
 				if(registrationCaptureResponse.biometrics == null || registrationCaptureResponse.biometrics.length == 0)
 				{
-					commonValidator.setFoundMessageStatus(validation,registrationCaptureResponse.biometrics.toString(),"RCapture response does not contain biometrics block",CommonConstant.FAILED);
+					commonValidator.setFoundMessageStatus(validation,CommonConstant.DATA,"RCapture response does not contain biometrics block",CommonConstant.FAILED);
 				}
 				validations.add(validation);
 

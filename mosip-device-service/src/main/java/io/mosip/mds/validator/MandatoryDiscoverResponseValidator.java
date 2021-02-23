@@ -34,14 +34,14 @@ public class MandatoryDiscoverResponseValidator  extends Validator {
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 
 		List<Validation> validations = new ArrayList<>();		
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",CommonConstant.DATA);		
 		if(Objects.isNull(response))
 		{
 			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 		DiscoverResponse discoverResponse = (DiscoverResponse) response.getMdsDecodedResponse();
-		validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole discover decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
+		validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole discover decoded Jsone Response",CommonConstant.DATA);
 		if(Objects.isNull(discoverResponse))
 		{
 			commonValidator.setFoundMessageStatus(validation,"Found Discover Decoded is null","Discover response is empty",CommonConstant.FAILED);

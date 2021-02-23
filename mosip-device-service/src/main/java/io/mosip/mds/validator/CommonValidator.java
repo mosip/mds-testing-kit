@@ -37,7 +37,7 @@ public class CommonValidator{
 
 	public List<Validation> validateDecodedSignedDigitalID(String digitalId, List<Validation> validations) {
 		String [] parts = digitalId.split("\\.");
-		validation = setFieldExpected("digitalId","Signed DigitalId",digitalId);	
+		validation = setFieldExpected("digitalId","Signed DigitalId",CommonConstant.DATA);	
 		if(parts.length == 3) {
 			validations.add(validation);
 

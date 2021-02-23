@@ -34,10 +34,10 @@ public class ValidValueDiscoverResponseValidator extends Validator {
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations=new ArrayList<Validation>();
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",CommonConstant.DATA);		
 		if(Objects.nonNull(response))
 		{
-			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole discover decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));		
+			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole discover decoded Jsone Response",CommonConstant.DATA);		
 			DiscoverResponse discoverResponse = (DiscoverResponse) response.getMdsDecodedResponse();
 			if(Objects.isNull(discoverResponse))
 			{

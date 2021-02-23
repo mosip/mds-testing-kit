@@ -34,14 +34,14 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
 
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",CommonConstant.DATA);		
 		if(Objects.isNull(response))
 		{
 			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 
-		validation = commonValidator.setFieldExpected("response.getDecodedResponse()","Expected whole divice info decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));		
+		validation = commonValidator.setFieldExpected("response.getDecodedResponse()","Expected whole divice info decoded Jsone Response",CommonConstant.DATA);		
 		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(deviceInfoResponse))
 		{
