@@ -105,7 +105,11 @@
         </mat-accordion>
       </mat-tab>
       <mat-tab label="Result">
-        <div [innerHTML]="getSanitizedSafeURLResource(testReportObject.testReport[key].renderContent)"></div>
+        <div class="centereddiv" >
+        <button mat-raised-button (click)="download(testReportObject.testReport[key].runId, key)" [class.spinner]="loading" [disabled]="loading">
+          Download</button>
+        </div>
+        <!-- <div [innerHTML]="getSanitizedSafeURLResource(testReportObject.testReport[key].renderContent)"></div> -->
       </mat-tab>
     </mat-tab-group>
   </mat-expansion-panel>
