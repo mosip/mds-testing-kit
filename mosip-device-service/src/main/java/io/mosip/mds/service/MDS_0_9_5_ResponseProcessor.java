@@ -38,7 +38,6 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 	@Autowired
 	SecurityUtil securityUtil;
 
-	private String RCAPTURE = "rCapture";
 	private String CAPTURE = "Capture";
 	private String RCAPTURE_DECODE_ERROR = "Error while decoding the " + CAPTURE + " request";
 

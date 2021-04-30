@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.MediaType;
@@ -49,9 +48,8 @@ public class BioAuthRequestUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(BioAuthRequestUtil.class);
     private static String AUTH_REQ_TEMPLATE = "{ \"id\": \"string\",\"metadata\": {},\"request\": { \"appId\": \"%s\", \"clientId\": \"%s\", \"secretKey\": \"%s\" }, \"requesttime\": \"%s\", \"version\": \"string\"}";
-    private static String SIGN_REQ_TEMPLATE = "{ \"id\": \"string\", \"metadata\": {}, \"request\": { \"data\": \"%s\" }, \"requesttime\": \"%s\", \"version\": \"string\"}";
    
-    private static String SIGN_REQ_TEMPLATE1 = "{\r\n" + 
+    private static String SIGN_REQ_TEMPLATE = "{\r\n" + 
     		"  \"id\": \"string\",\r\n" + 
     		"  \"metadata\": {},\r\n" + 
     		"  \"request\": {\r\n" + 
@@ -67,17 +65,12 @@ public class BioAuthRequestUtil {
     		"}";
     
     private static final String VERSION = "1.0";
-    private static final String ASYMMETRIC_ALGORITHM_NAME = "RSA";
-    private static final String SSL = "SSL";
     private static final String UIN = "UIN";
     private static final String TRANSACTION_ID = "1234567890";
     private static final String MOSIP_IDENTITY_AUTH = "mosip.identity.auth";
-    private static final String APPLICATIONID = "IDA";
-    private static final String REFERENCEID = "PARTNER";
-
+    
     private ObjectMapper mapper = new ObjectMapper();
-    private static RestTemplate restTemplate;
-
+  
     @Autowired
     private Environment env;
 
@@ -187,106 +180,6 @@ public class BioAuthRequestUtil {
 
         return encryptionResponseDto;
     }
-
-    /*private RestTemplate createTemplate() throws KeyManagementException, NoSuchAlgorithmException {
-        turnOffSslChecking();
-        RestTemplate restTemplate = new RestTemplate();
-        ClientHttpRequestInterceptor interceptor = new ClientHttpRequestInterceptor() {
-            public Map<String, String> authParams = new HashMap<>();
-
-            @Override
-            public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
-                    throws IOException {
-                String authToken = generateAuthToken(authParams);
-                if (authToken != null && !authToken.isEmpty()) {
-                    request.getHeaders().set("Cookie", "Authorization=" + authToken);
-                }
-                return execution.execute(request, body);
-            }
-
-            public void setAuthParams() {
-                authParams.put("appId", env.getProperty("ida.auth.appid"));
-                authParams.put("clientId", env.getProperty("ida.auth.clientid"));
-                authParams.put("secretKey", env.getProperty("ida.auth.secretkey"));
-            }
-        };
-        restTemplate.setInterceptors(Collections.singletonList(interceptor));
-        return restTemplate;
-    }
-
-    private static void turnOffSslChecking() throws KeyManagementException, java.security.NoSuchAlgorithmException {
-        // Install the all-trusting trust manager
-        final SSLContext sc = SSLContext.getInstance(SSL);
-        sc.init(null, UNQUESTIONING_TRUST_MANAGER, null);
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-    }
-
-    private static final TrustManager[] UNQUESTIONING_TRUST_MANAGER = new TrustManager[] { new X509TrustManager() {
-        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-            return null;
-        }
-
-        public void checkClientTrusted(java.security.cert.X509Certificate[] arg0, String arg1)
-                throws CertificateException {
-        }
-
-        public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String arg1)
-                throws CertificateException {
-        }
-    } };
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private PublicKey getPublicKey(String data, boolean isInternal)
-            throws KeyManagementException, RestClientException, NoSuchAlgorithmException, CertificateException {
-        restTemplate = createTemplate();
-        CryptomanagerRequestDto request = new CryptomanagerRequestDto();
-        request.setApplicationId(APPLICATIONID);
-        request.setData(Base64.encodeBase64URLSafeString(data.getBytes(StandardCharsets.UTF_8)));
-        request.setReferenceId(REFERENCEID);
-        String utcTime = getUTCCurrentDateTimeISOString();
-        request.setTimeStamp(utcTime);
-        Map<String, String> uriParams = new HashMap<>();
-        uriParams.put("appId", APPLICATIONID);
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromUriString(env.getProperty("ida.cert.url"))
-                .queryParam("timeStamp", getUTCCurrentDateTimeISOString())
-                .queryParam("referenceId", REFERENCEID);
-        ResponseEntity<Map> response = restTemplate.exchange(builder.build(uriParams), HttpMethod.GET, null, Map.class);
-        String certificate = (String) ((Map<String, Object>) response.getBody().get("response")).get("certificate");
-
-        certificate = trimBeginEnd(certificate);
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        X509Certificate x509Certificate = (X509Certificate) cf.generateCertificate(
-                new ByteArrayInputStream(java.util.Base64.getDecoder().decode(certificate)));
-        return x509Certificate.getPublicKey();
-    }
-
-    private String generateAuthToken(Map<String, String> authParams) {
-        ObjectNode requestBody = mapper.createObjectNode();
-        requestBody.put("clientId", authParams.get("clientId"));
-        requestBody.put("secretKey", authParams.get("secretKey"));
-        requestBody.put("appId", authParams.get("appId"));
-        RequestWrapper<ObjectNode> request = new RequestWrapper<>();
-        request.setRequesttime(DateUtils.getUTCCurrentDateTime());
-        request.setRequest(requestBody);
-        ClientResponse response = WebClient
-                .create(env.getProperty("ida.authmanager.url"))
-                .post().syncBody(request).exchange().block();
-        List<ResponseCookie> list = response.cookies().get("Authorization");
-        if (list != null && !list.isEmpty()) {
-            ResponseCookie responseCookie = list.get(0);
-            return responseCookie.getValue();
-        }
-        return "";
-    }*/
-
-    private PublicKey getPublicKey(String authToken) throws CertificateException {
-        String certificate = trimBeginEnd(getCertificate(authToken));
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        X509Certificate x509Certificate = (X509Certificate) cf.generateCertificate(
-                new ByteArrayInputStream(java.util.Base64.getDecoder().decode(certificate)));
-        return x509Certificate.getPublicKey();
-    }
     
     private X509Certificate getCertificateFull(String authToken) throws CertificateException {
         String certificate = trimBeginEnd(getCertificate(authToken));
@@ -296,10 +189,9 @@ public class BioAuthRequestUtil {
         return x509Certificate;
     }
 
-
     private String getJWTSignedData(String data, String authToken) throws IOException, JSONException {
         OkHttpClient client = new OkHttpClient();
-        String requestBody = String.format(SIGN_REQ_TEMPLATE1,
+        String requestBody = String.format(SIGN_REQ_TEMPLATE,
                 data, DateUtils.getUTCCurrentDateTime());
 
         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
@@ -314,29 +206,6 @@ public class BioAuthRequestUtil {
             JSONObject jsonObject = new JSONObject(response.body().string());
             jsonObject = jsonObject.getJSONObject("response");
             return jsonObject.getString("jwtSignedData");
-        }
-        return "";
-    }
-    
-    //depriciated not using
-    private String getJWTSignedData1(String data, String authToken) throws IOException, JSONException {
-        OkHttpClient client = new OkHttpClient();
-
-        String requestBody = String.format(SIGN_REQ_TEMPLATE,
-                data, DateUtils.getUTCCurrentDateTime());
-        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-        RequestBody body = RequestBody.create(mediaType, requestBody);
-        Request request = new Request.Builder()
-                .header("cookie", "Authorization="+authToken)
-                .url(env.getProperty("keymanager.sign.url"))
-                .post(body)
-                .build();
-
-        Response response = client.newCall(request).execute();
-        if(response.isSuccessful()) {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            jsonObject = jsonObject.getJSONObject("response");
-            return jsonObject.getString("signature");
         }
         return "";
     }
@@ -372,7 +241,7 @@ public class BioAuthRequestUtil {
                     .get()
                     .build();
 
-            Response idaResponse = new OkHttpClient().newCall(idarequest).execute();
+            Response idaResponse = client.newCall(idarequest).execute();
             if(idaResponse.isSuccessful()) {
                 JSONObject jsonObject = new JSONObject(idaResponse.body().string());
                 jsonObject = jsonObject.getJSONObject("response");

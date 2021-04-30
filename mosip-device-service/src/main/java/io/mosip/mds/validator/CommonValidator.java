@@ -1,7 +1,6 @@
 package io.mosip.mds.validator;
 
 import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -216,7 +215,7 @@ public class CommonValidator{
 		}
 		
 		try {
-			Date dt = DateUtils.parseToDate(dateString, PATTERN);
+			DateUtils.parseToDate(dateString, PATTERN);
 			validations.add(validation);
 		} catch (Exception e) {
 			setFoundMessageStatus(validation,"Invalid TimeStamp,Reqired - ISO 8601 with format yyyy-mm-ddTHH:MM:ssZ (Example: 2020-12-08T09:39:37Z) But Found : " + dateString,e.getMessage(),CommonConstant.FAILED);

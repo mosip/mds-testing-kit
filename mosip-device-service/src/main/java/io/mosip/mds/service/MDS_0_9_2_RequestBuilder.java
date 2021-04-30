@@ -1,9 +1,5 @@
 package io.mosip.mds.service;
 
-import io.mosip.mds.dto.*;
-import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
-import io.mosip.mds.dto.postresponse.RequestInfoDto;
-import io.mosip.mds.util.Intent;
 import java.util.Date;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

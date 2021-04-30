@@ -1,32 +1,14 @@
 package io.mosip.mds.util;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.security.spec.MGF1ParameterSpec;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.OAEPParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.spec.PSource.PSpecified;
 
-import io.mosip.kernel.core.crypto.spi.CryptoCoreSpec;
-import io.mosip.kernel.core.util.CryptoUtil;
-import io.mosip.kernel.core.util.DateUtils;
-import io.mosip.mds.entitiy.CaptureHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import com.squareup.okhttp.*;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
+import io.mosip.kernel.core.crypto.spi.CryptoCoreSpec;
+import io.mosip.kernel.core.util.CryptoUtil;
+import io.mosip.kernel.core.util.DateUtils;
 
 @Component
 public class CryptoUtility {
@@ -76,14 +66,6 @@ public class CryptoUtility {
 		return provider;
 	}
 
-//	public static String getTimestamp() {
-//		DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-//    	return formatter.format(ZonedDateTime.now());
-//    	
-////		LocalDateTime localDateTime = ZonedDateTime.now(ZoneOffset.UTC).toLocalDateTime();
-////		return localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-//	}
-	
 	public String decryptbio(String encSessionKey, String encData, String timestamp, String transactionId, String authToken) {
 		   try {
 		      timestamp = timestamp.trim();
@@ -127,13 +109,11 @@ public class CryptoUtility {
 		return generator.generateKey();
 	}
 
-
 	public byte[] symmetricEncrypt(byte[] data, SecretKey secretKey)
 			throws Exception {
 		return cryptoCore.symmetricEncrypt(secretKey, data, null);
 
 	}
-
 
 	public byte[] symmetricDecrypt(SecretKey secretKey, byte[] encryptedDataByteArr) throws Exception {
 		return cryptoCore.symmetricDecrypt(secretKey, encryptedDataByteArr, null);

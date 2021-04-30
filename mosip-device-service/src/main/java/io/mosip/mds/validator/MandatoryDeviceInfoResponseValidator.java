@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
@@ -26,9 +25,6 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 
 	@Autowired
 	private CommonValidator commonValidator;
-
-	@Autowired
-	private ObjectMapper jsonMapper;
 
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {

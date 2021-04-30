@@ -2,10 +2,14 @@ package io.mosip.mds.service;
 
 import java.util.List;
 
-import io.mosip.mds.dto.*;
-import io.mosip.mds.entitiy.TestcaseResult;
 import org.springframework.http.HttpEntity;
 
+import io.mosip.mds.dto.TestDefinition;
+import io.mosip.mds.dto.TestManagerDto;
+import io.mosip.mds.dto.TestManagerGetDto;
+import io.mosip.mds.dto.TestReport;
+import io.mosip.mds.dto.TestRun;
+import io.mosip.mds.dto.TestRunMetadata;
 import io.mosip.mds.dto.getresponse.MasterDataResponseDto;
 
 

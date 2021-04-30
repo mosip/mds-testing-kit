@@ -121,7 +121,6 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 	}
 
 	private List<Validation> validDeviceCheck(DeviceInfoResponse deviceInfoResponse, List<Validation> validations) {
-		ValidDeviceCheckValidator v=new ValidDeviceCheckValidator();
 		DeviceValidatorDto deviceValidatorDto=new DeviceValidatorDto();
 		DeviceValidatorRequestDto devicevalidatorrequestdto = new DeviceValidatorRequestDto();
 		DeviceValidatorDigitalIdDto digitalId=new DeviceValidatorDigitalIdDto();

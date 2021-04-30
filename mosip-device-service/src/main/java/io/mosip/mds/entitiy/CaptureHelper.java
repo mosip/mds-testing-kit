@@ -50,12 +50,10 @@ public class CaptureHelper {
 	@Autowired
 	private CryptoUtility cryptoUtility;
 
-	private String RCAPTURE = "rCapture";
 	private String CAPTURE = "Capture";
 	private String RCAPTURE_DECODE_ERROR = "Error while decoding the " + CAPTURE + " request";
 	// private static String CAPTURE_DECODE_ERROR = "Error while decoding the " +
 	// CAPTURE + " request";
-	private String PAYLOAD_EMPTY = "PayLoad Empty";
 
 	public CaptureResponse decode(String responseInfo, boolean isRCapture) {
 
@@ -105,7 +103,6 @@ public class CaptureHelper {
 	}
 
 	private String getDecryptedBioValue(CaptureBiometric biometric) throws IOException {
-		PrivateKey privateKey = getPrivateKey();
 		String plainBioValue = cryptoUtility.decryptbio(biometric.sessionKey, biometric.getDataDecoded().bioValue,
 				biometric.getDataDecoded().timestamp, biometric.getDataDecoded().getTransactionId(),bioAuthRequestutil.getAuthToken());
 		return Base64.getUrlEncoder().encodeToString(plainBioValue.getBytes());

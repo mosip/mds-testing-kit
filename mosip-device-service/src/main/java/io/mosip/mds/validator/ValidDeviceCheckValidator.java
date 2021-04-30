@@ -20,9 +20,7 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import io.mosip.kernel.core.util.DateUtils;
-import io.mosip.mds.dto.DeviceValidatorDigitalIdDto;
 import io.mosip.mds.dto.DeviceValidatorDto;
-import io.mosip.mds.dto.DeviceValidatorRequestDto;
 import io.mosip.mds.dto.DeviceValidatorResponseDto;
 import io.mosip.mds.dto.Validation;
 import io.restassured.http.Cookie;

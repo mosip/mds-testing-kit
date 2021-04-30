@@ -65,12 +65,4 @@ public enum BioSubType {
 		return names_095;
 	}
 	
-	/*public static List<String> get095BioSubTypes(String deviceSubType) {
-		List<String> names_095 = new ArrayList<>();		
-		for(BioSubType bioSubType : BioSubType.values()) {
-			if(bioSubType.deviceSubType.contains(deviceSubType))
-				names_095.add(bioSubType.name_095);
-		}		
-		return names_095;
-	}*/
 }
