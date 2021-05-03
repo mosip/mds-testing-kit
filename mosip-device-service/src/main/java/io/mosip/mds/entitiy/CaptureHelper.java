@@ -10,7 +10,6 @@ import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +26,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.DigitalId;
-import io.mosip.mds.helper.ExtractDTO;
-import io.mosip.mds.helper.FaceImageExtractor;
-import io.mosip.mds.helper.FingerPrintImageExtractor;
-import io.mosip.mds.helper.IrisImageExtractor;
 import io.mosip.mds.util.BioAuthRequestUtil;
 import io.mosip.mds.util.CryptoUtility;
 import io.mosip.mds.util.SecurityUtil;;
@@ -55,12 +50,10 @@ public class CaptureHelper {
 	@Autowired
 	private CryptoUtility cryptoUtility;
 
-	private String RCAPTURE = "rCapture";
 	private String CAPTURE = "Capture";
 	private String RCAPTURE_DECODE_ERROR = "Error while decoding the " + CAPTURE + " request";
 	// private static String CAPTURE_DECODE_ERROR = "Error while decoding the " +
 	// CAPTURE + " request";
-	private String PAYLOAD_EMPTY = "PayLoad Empty";
 
 	public CaptureResponse decode(String responseInfo, boolean isRCapture) {
 
@@ -110,7 +103,6 @@ public class CaptureHelper {
 	}
 
 	private String getDecryptedBioValue(CaptureBiometric biometric) throws IOException {
-		PrivateKey privateKey = getPrivateKey();
 		String plainBioValue = cryptoUtility.decryptbio(biometric.sessionKey, biometric.getDataDecoded().bioValue,
 				biometric.getDataDecoded().timestamp, biometric.getDataDecoded().getTransactionId(),bioAuthRequestutil.getAuthToken());
 		return Base64.getUrlEncoder().encodeToString(plainBioValue.getBytes());
@@ -198,61 +190,4 @@ public class CaptureHelper {
 			logger.error("Error creating image", ex);
 		}
 	}
-
-	public List<ExtractDTO> extractJPGfromISO(byte[] isoValue, String bioType) {
-		List<ExtractDTO> extracts = null;
-		if (bioType.equalsIgnoreCase("Finger")) {
-			extracts = new FingerPrintImageExtractor().extractFingerImageData(isoValue);
-		} else if (bioType.equalsIgnoreCase("Face")) {
-			extracts = new FaceImageExtractor().extractFaceImageData(isoValue);
-		} else if (bioType.equalsIgnoreCase("Iris")) {
-			extracts = new IrisImageExtractor().extractIrisImageData(isoValue);
-		}
-		return extracts;
-	}
-
-	/*private static byte[] extractJPGfromISO(byte[] isoValue, String bioType) {
-		// TODO set the correct iso handling technique here
-		try {
-			int isoHeaderSize = 0;
-			byte hasCertBlock = 0;
-			int recordLength = 0;
-			int sizeIndex = 0;
-			int imageSize = 0;
-			int qbSize = 0;
-			int cbSize = 0;
-			if (bioType.equalsIgnoreCase("Finger")) {
-				hasCertBlock = isoValue[14];
-				qbSize = isoValue[34] * 5;
-				cbSize = (hasCertBlock == 1) ? hasCertBlock + (isoValue[35 + qbSize] * 3) : 0;
-				recordLength = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 8, 12)).getInt();
-				sizeIndex = 35 + qbSize + cbSize + 18;
-				imageSize = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, sizeIndex, sizeIndex + 4)).getInt();
-				isoHeaderSize = sizeIndex + 4;
-			} else if (bioType.equalsIgnoreCase("Face")) {
-				hasCertBlock = isoValue[14];
-				qbSize = isoValue[35] * 5;
-				// cbSize = (hasCertBlock == 1) ? hasCertBlock + (isoValue[35 + qbSize] * 3) :
-				// 0;
-				recordLength = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 8, 12)).getInt();
-				int landmarkPoints = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 36 + qbSize, 36 + qbSize + 4)).getShort();
-				sizeIndex = 36 + qbSize + (landmarkPoints * 8) + cbSize + 28;
-				imageSize = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, sizeIndex, sizeIndex + 4)).getInt();
-				isoHeaderSize = sizeIndex + 4;
-			} else if (bioType.equalsIgnoreCase("Iris")) {
-				hasCertBlock = isoValue[14];
-				qbSize = isoValue[34] * 5;
-				// cbSize = (hasCertBlock == 1) ? hasCertBlock + (isoValue[35 + qbSize] * 3) :
-				// 0;
-				recordLength = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, 8, 12)).getInt();
-				sizeIndex = 35 + qbSize + cbSize + 29;
-				imageSize = ByteBuffer.wrap(Arrays.copyOfRange(isoValue, sizeIndex, sizeIndex + 4)).getInt();
-				isoHeaderSize = sizeIndex + 4;
-			}
-			return Arrays.copyOfRange(isoValue, isoHeaderSize, isoHeaderSize + imageSize);
-		} catch(Throwable t) {
-			t.printStackTrace();
-		}
-		return new byte[0];
-	}*/
 }

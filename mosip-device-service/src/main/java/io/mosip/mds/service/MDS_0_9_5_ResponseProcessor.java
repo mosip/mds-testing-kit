@@ -1,8 +1,5 @@
 package io.mosip.mds.service;
 
-import java.util.Base64;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,14 +12,13 @@ import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.DigitalId;
 import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.MdsResponse;
+import io.mosip.mds.dto.TestDefinition;
 import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.entitiy.CaptureHelper;
 import io.mosip.mds.entitiy.DeviceInfoHelper;
 import io.mosip.mds.entitiy.DiscoverHelper;
-import io.mosip.mds.helper.ExtractDTO;
 import io.mosip.mds.util.Intent;
 import io.mosip.mds.util.SecurityUtil;
-import io.mosip.mds.dto.TestDefinition;
 
 @Component
 public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
@@ -42,7 +38,6 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 	@Autowired
 	SecurityUtil securityUtil;
 
-	private String RCAPTURE = "rCapture";
 	private String CAPTURE = "Capture";
 	private String RCAPTURE_DECODE_ERROR = "Error while decoding the " + CAPTURE + " request";
 
@@ -90,33 +85,6 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 		return "";
 	}
 
-	private String getCaptureRenderContent(String responseData, boolean isRCapture)
-	{
-		CaptureResponse captureResponse = decode(responseData,isRCapture);
-		StringBuilder builder = new StringBuilder("<p><u>Capture Info</u></p>");
-		//builder.append("<b>Images Captured:</b>" + images.size() + "<br/>");
-
-		if(captureResponse.biometrics != null) {
-			for (CaptureResponse.CaptureBiometric biometric : captureResponse.biometrics) {
-				byte[] decodedData = Base64.getUrlDecoder().decode(biometric.dataDecoded.bioValue);
-				List<ExtractDTO> extractDTOS = captureHelper.extractJPGfromISO(decodedData,
-						biometric.dataDecoded.bioType);
-				if(extractDTOS != null) {
-					for(ExtractDTO extract : extractDTOS) {
-						String filename = java.util.UUID.randomUUID().toString();
-						captureHelper.createImageFile(extract.getImage(), filename, extract.getFormat(),
-								extract.getName());
-						//data:image/jp2;base64,UklGRkoAAABXRUJQVlA4WAoAAAAQAAAAAAAAAAAAQUxQSAwAAAABBxAR/Q9ERP8DAABWUDggGAAAADABAJ0BKgEAAQADADQlpAADcAD++/1QAA==
-						//builder.append("<img src=\""+filename+".pdf\"/><br/>");
-						builder.append("<h3> "+extract.getName().toUpperCase()+" : </h3> <object data=\""+ filename+".pdf\" width=\"200\" height=\"200\" type=\"application/pdf\" style=\"display: 'block';\" ></object></br>");
-						//builder.append("<img src=\"data:image/png;base64," + DatatypeConverter.printBase64Binary(extract.getImage()) +"\"/><br/>");
-					}
-				}
-			}
-		}
-		return builder.toString();
-	}
-
 	@Override
 	public CaptureResponse getCaptureResponse(Intent method, String encodedValue) {
 		switch(method) {
@@ -133,12 +101,14 @@ public class MDS_0_9_5_ResponseProcessor implements IMDSResponseProcessor {
 		String renderContent = "";
 		switch(method)
 		{
-		case Capture:
-			renderContent += getCaptureRenderContent(responseData, false);
-			break;
-		case RegistrationCapture:
-			renderContent += getCaptureRenderContent(responseData, true);
-			break;
+		
+		// TODO capture image from bio Utils code 
+//		case Capture:
+//			renderContent += getCaptureRenderContent(responseData, false);
+//			break;
+//		case RegistrationCapture:
+//			renderContent += getCaptureRenderContent(responseData, true);
+//			break;
 		case DeviceInfo:
 			DeviceInfoResponse[] diResponse = deviceInfoHelper.decode(responseData);
 			for (DeviceInfoResponse deviceInfoResponse : diResponse) {

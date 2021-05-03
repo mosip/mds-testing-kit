@@ -37,7 +37,7 @@ public class ValidErrorResponseValidator extends Validator{
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response)
 			throws JsonProcessingException, IOException {
 		List<Validation> validations = new ArrayList<>();
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",mapper.writeValueAsString(response));		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",CommonConstant.DATA);		
 		if(Objects.nonNull(response))
 		{
 			validations.add(validation);

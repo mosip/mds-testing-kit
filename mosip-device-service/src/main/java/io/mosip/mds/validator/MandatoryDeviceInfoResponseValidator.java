@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.DeviceInfoResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
@@ -27,21 +26,18 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 	@Autowired
 	private CommonValidator commonValidator;
 
-	@Autowired
-	private ObjectMapper jsonMapper;
-
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
 
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));		
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",CommonConstant.DATA);		
 		if(Objects.isNull(response))
 		{
 			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 
-		validation = commonValidator.setFieldExpected("response.getDecodedResponse()","Expected whole divice info decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));		
+		validation = commonValidator.setFieldExpected("response.getDecodedResponse()","Expected whole divice info decoded Jsone Response",CommonConstant.DATA);		
 		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
 		if(Objects.isNull(deviceInfoResponse))
 		{

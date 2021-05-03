@@ -3,7 +3,6 @@ package io.mosip.mds.service;
 import io.mosip.mds.dto.DeviceDto;
 import io.mosip.mds.dto.TestDefinition;
 import io.mosip.mds.dto.TestManagerDto;
-import io.mosip.mds.dto.TestRun;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.util.Intent;
 

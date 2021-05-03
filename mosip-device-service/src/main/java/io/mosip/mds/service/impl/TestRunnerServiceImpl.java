@@ -2,7 +2,12 @@ package io.mosip.mds.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import io.mosip.mds.dto.*;
+import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.dto.postresponse.ValidationResult;
 import io.mosip.mds.entitiy.*;
@@ -22,10 +27,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.io.FileOutputStream;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 
 @Service
 public class TestRunnerServiceImpl implements TestRunnerService {
@@ -57,6 +66,10 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 	@Autowired
 	BioAuthRequestUtil bioAuthRequestUtil;
 
+	@Autowired
+	ObjectMapper jsonMapper;
+
+	ModelMapper modelMapper= new ModelMapper();
 
 	@Override
 	public TestRun validateResponse(ValidateResponseRequestDto validateRequestDto) throws Exception {
@@ -296,5 +309,68 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
 		if(!deviceDto.deviceInfo.deviceStatus.equals("Ready"))
 			throw new Exception("Invalid device status !");
+	}
+	
+	@Override
+	public void downloadReport(String runId,String testId) {
+
+		ValidateResponseRequestDto validateRequestDto=new ValidateResponseRequestDto();
+		validateRequestDto.setRunId(runId);
+		validateRequestDto.setTestId(testId);
+		validateRequestDto.setIntent(Intent.Capture);
+		createpdfFile(validateRequestDto);
+
+	}
+
+	public void createpdfFile(ValidateResponseRequestDto validateRequestDto) {
+
+		try {
+
+			Document document = new Document();
+
+			List<TestcaseResult> testcaseResults = testCaseResultRepository.findAllByTestResultKeyRunId(validateRequestDto.runId);
+			Type listType = new TypeToken<List<TestcaseResultDto>>(){}.getType();
+
+			MdsResponse[] mdsDecodedResponses = getResponseProcessor("0.9.5").getMdsDecodedResponse(validateRequestDto.getIntent(),
+					testcaseResults.get(0).getResponse());
+			CaptureResponse a = (CaptureResponse) mdsDecodedResponses[0];
+			CaptureBiometric b = (CaptureBiometric) a.biometrics[0];
+			List<TestcaseResultDto> testcaseResultDtos = modelMapper.map(testcaseResults, listType);
+			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(validateRequestDto.getRunId()+".pdf"));
+			document.open();
+			for(TestcaseResultDto testcaseResultDto : testcaseResultDtos) {
+				if(testcaseResultDto.getTestResultKey().getTestcaseName().equals(validateRequestDto.getTestId())) {
+					
+					Paragraph details = new Paragraph (
+							"\n \n OWNER :  " + testcaseResultDto.getOwner()
+					+"\n \n Executed On :  "+ testcaseResultDto.getExecutedOn()
+					+"\n \n Test Case Name :  "+ testcaseResultDto.getTestResultKey().testcaseName
+					+"\n \n Run Id :  "+ testcaseResultDto.getTestResultKey().runId
+					
+							);
+					
+					Paragraph para1 = new Paragraph ("REQUEST \n \n " + testcaseResultDto.getRequest());
+					String para2="RESPONSE \n \n" +jsonMapper.writeValueAsString(b.dataDecoded);
+					Paragraph paragraph2 = new Paragraph(para2); 
+					String validationResult = "VALIDATION RESULT \n \n" + testcaseResultDto.getValidationResults();
+					Paragraph paragraph3 = new Paragraph(validationResult);              
+
+					document.add(details);
+					document.newPage();
+					
+					document.add(para1);
+					document.newPage();            //Opened new page
+
+					document.add(paragraph2);
+					document.newPage();            //Opened new page
+
+					document.add(paragraph3);
+					document.close();
+					writer.close();
+				}
+			}
+		} catch (Exception ex) {
+			logger.error("Error creating image", ex);
+		}
 	}
 }

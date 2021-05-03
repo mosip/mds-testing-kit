@@ -342,4 +342,31 @@ export class RunComponent implements OnInit {
                 data: {'title': title, 'message' : message }
               });
           }
+          
+    download( runId, testId){
+
+            this.loading = true;
+    //calling service
+    this.dataService.download(runId, testId).subscribe(response => {
+
+      console.log(response);
+      var binaryData = [];
+      binaryData.push(response.data);
+      var url = window.URL.createObjectURL(new Blob(binaryData, {type: "application/pdf"}));
+      var a = document.createElement('a');
+      document.body.appendChild(a);
+      a.setAttribute('style', 'display: none');
+      a.setAttribute('target', 'blank');
+      a.href = url;
+      a.download = response.filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+      this.loading = false;
+  }, error => {
+    this.loading = false;
+      window.alert(error)
+  });
+
+  }
 }

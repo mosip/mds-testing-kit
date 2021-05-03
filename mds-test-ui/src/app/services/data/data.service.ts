@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { throwError } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { catchError } from 'rxjs/operators';
 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ModalComponent } from '../../modal/modal.component';
-
+import { map } from "rxjs/operators";
 @Injectable({
   providedIn: 'root'
 })
@@ -45,6 +45,16 @@ export class DataService {
       .pipe(
         catchError(this.handleError)
       );
+  }
+
+  download(runId,testId): any {
+      return this.httpClient.get(environment.base_url + 'testrunner/download/' + runId+"/"+testId, { responseType: 'blob' }).pipe(map((response)=>{
+        console.log(response);
+        return {
+            filename: runId+'.pdf',
+            data: response
+        };
+    }));
   }
 
   decodeDeviceInfo(deviceInfoResponse: any) {

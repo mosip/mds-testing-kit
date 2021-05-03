@@ -1,17 +1,15 @@
 package io.mosip.mds.validator;
 
-import java.text.SimpleDateFormat;
 import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.mds.dto.DigitalId;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.util.SecurityUtil;
@@ -20,8 +18,12 @@ import io.mosip.mds.util.SecurityUtil;
 public class CommonValidator{
 
 	//2020-07-07T01:18:58.804+05:30
-	private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+	//private static final String PATTERN1 = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
+	// 2020-12-08T09:39:37Z new timeStamp supported in testing-kit after 19 Apr 2021
+	private static final String PATTERN = "yyyy-mm-dd'T'HH:MM:ss'Z'";
+
+	
 	@Autowired
 	private ObjectMapper mapper;
 
@@ -37,7 +39,7 @@ public class CommonValidator{
 
 	public List<Validation> validateDecodedSignedDigitalID(String digitalId, List<Validation> validations) {
 		String [] parts = digitalId.split("\\.");
-		validation = setFieldExpected("digitalId","Signed DigitalId",digitalId);	
+		validation = setFieldExpected("digitalId","Signed DigitalId",CommonConstant.DATA);	
 		if(parts.length == 3) {
 			validations.add(validation);
 
@@ -211,35 +213,16 @@ public class CommonValidator{
 			validations.add(validation);
 			return validations;
 		}
-		String dateStr = dateString.substring(0, dateString.length()-5);
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PATTERN);
-		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		
 		try {
-			Date dt = simpleDateFormat.parse(dateStr);
-			String plusminus=dateString.substring(dateString.length()-6, dateString.length()-5);
-			matchplusminus(plusminus);
-			String zoneStr=dateString.substring(dateString.length()-4, dateString.length());
-			matchTimeZone(zoneStr);
+			DateUtils.parseToDate(dateString, PATTERN);
 			validations.add(validation);
 		} catch (Exception e) {
-			setFoundMessageStatus(validation,"TimeStamp formatte is invalid as per ISO Date formate",e.getMessage(),CommonConstant.FAILED);
+			setFoundMessageStatus(validation,"Invalid TimeStamp,Reqired - ISO 8601 with format yyyy-mm-ddTHH:MM:ssZ (Example: 2020-12-08T09:39:37Z) But Found : " + dateString,e.getMessage(),CommonConstant.FAILED);
 			validations.add(validation);
 		}
 		
 		return validations;
-	}
-
-	private void matchplusminus(String plusminus) throws Exception {
-		if(!(plusminus.equals("+") || plusminus.equals("-"))) {
-			throw new Exception();
-		}
-	}
-
-	private void matchTimeZone(String zoneStr) throws Exception {
-		String pattern ="^\\d{1,2}[:]{1}\\d{1,2}$";
-		if(!(zoneStr.matches(pattern))) {
-			throw new Exception();
-		}
 	}
 
 	public void setFoundMessageStatus(Validation validation,String found,String message,String status) {

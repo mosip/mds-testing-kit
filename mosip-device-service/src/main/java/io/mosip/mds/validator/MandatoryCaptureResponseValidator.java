@@ -35,17 +35,17 @@ public class MandatoryCaptureResponseValidator extends Validator {
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
 		// Check for Biometrics block
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",CommonConstant.DATA);
 		if(Objects.nonNull(response))
 		{
-			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole Capture decoded Jsone Response",response.getMdsDecodedResponse().toString());
+			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole Capture decoded Jsone Response",CommonConstant.DATA);
 			CaptureResponse cr = (CaptureResponse) response.getMdsDecodedResponse();
 			if(Objects.nonNull(cr))
 			{
-				validation = commonValidator.setFieldExpected("CaptureResponse.biometrics","Expected Array of biometric data",jsonMapper.writeValueAsString(cr.biometrics));
+				validation = commonValidator.setFieldExpected("CaptureResponse.biometrics","Expected Array of biometric data",CommonConstant.DATA);
 				if(cr.biometrics == null || cr.biometrics.length == 0)
 				{
-					commonValidator.setFoundMessageStatus(validation,jsonMapper.writeValueAsString(cr.biometrics),"Capture response does not contain biometrics block",CommonConstant.FAILED);
+					commonValidator.setFoundMessageStatus(validation,CommonConstant.DATA,"Capture response does not contain biometrics block",CommonConstant.FAILED);
 				}
 				validations.add(validation);
 
@@ -53,7 +53,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 				{
 					if(!ObjectUtils.isEmpty(bb)) {
 						// Check for data elements
-						validation = commonValidator.setFieldExpected("biometrics.data","Expected data block",bb.data);
+						validation = commonValidator.setFieldExpected("biometrics.data","Expected data block",CommonConstant.DATA);
 						if(bb.data == null || bb.data.isEmpty())
 						{
 							commonValidator.setFoundMessageStatus(validation,bb.data,"Capture response does not contain data in biometrics",CommonConstant.FAILED);
@@ -75,7 +75,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 						validations.add(validation);
 
 						// Check for sessionKey
-						validation = commonValidator.setFieldExpected("biometrics.sessionKey","Expected sessionKey block",bb.sessionKey);
+						validation = commonValidator.setFieldExpected("biometrics.sessionKey","Expected sessionKey block",CommonConstant.DATA);
 						if(bb.sessionKey == null || bb.sessionKey.isEmpty())
 						{
 							commonValidator.setFoundMessageStatus(validation,bb.sessionKey,"Capture response biometrics does not contain sessionKey value",CommonConstant.FAILED);
@@ -89,7 +89,7 @@ public class MandatoryCaptureResponseValidator extends Validator {
 						}
 						validations.add(validation);
 						// Check for Decoded biometrics data
-						validation = commonValidator.setFieldExpected("biometrics.dataDecoded","Expected dataDecoded block",jsonMapper.writeValueAsString(bb.dataDecoded));
+						validation = commonValidator.setFieldExpected("biometrics.dataDecoded","Expected dataDecoded block",CommonConstant.DATA);
 						if(bb.dataDecoded == null)
 						{
 							commonValidator.setFoundMessageStatus(validation,jsonMapper.writeValueAsString(bb.dataDecoded),"Capture response biometrics does not contain dataDecoded",CommonConstant.FAILED);
@@ -173,10 +173,10 @@ public class MandatoryCaptureResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for digitalId in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.digitalId","expected digitalId value",dataDecoded.digitalId);
+		validation = commonValidator.setFieldExpected("dataDecoded.digitalId","expected digitalId value",CommonConstant.DATA);
 		if(dataDecoded.digitalId == null || dataDecoded.digitalId.isEmpty())
 		{
-			commonValidator.setFoundMessageStatus(validation,dataDecoded.digitalId,"Capture response biometrics dataDecoded does not contain digitalId",CommonConstant.FAILED);
+			commonValidator.setFoundMessageStatus(validation,CommonConstant.DATA,"Capture response biometrics dataDecoded does not contain digitalId",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 

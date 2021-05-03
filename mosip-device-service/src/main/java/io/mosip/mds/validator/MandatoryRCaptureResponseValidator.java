@@ -36,13 +36,13 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 	@Override
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",CommonConstant.DATA);
 		if(Objects.nonNull(response))
 		{
 			validations.add(validation);
 			// Check for Biometrics block
 			CaptureResponse registrationCaptureResponse = (CaptureResponse) response.getMdsDecodedResponse();
-			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole Capture decoded Jsone Response",jsonMapper.writeValueAsString(response.getMdsDecodedResponse()));
+			validation = commonValidator.setFieldExpected("DecodedResponse","Expected whole Capture decoded Jsone Response",CommonConstant.DATA);
 
 			if(Objects.nonNull(registrationCaptureResponse))
 			{
@@ -55,10 +55,10 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 					return validations;
 				}
 
-				validation = commonValidator.setFieldExpected("registrationCaptureResponse.biometrics","Expected Array of biometric data",jsonMapper.writeValueAsString(registrationCaptureResponse.biometrics));
+				validation = commonValidator.setFieldExpected("registrationCaptureResponse.biometrics","Expected Array of biometric data",CommonConstant.DATA);
 				if(registrationCaptureResponse.biometrics == null || registrationCaptureResponse.biometrics.length == 0)
 				{
-					commonValidator.setFoundMessageStatus(validation,jsonMapper.writeValueAsString(registrationCaptureResponse.biometrics),"RegistrationCapture response does not contain biometrics block",CommonConstant.FAILED);
+					commonValidator.setFoundMessageStatus(validation,CommonConstant.DATA,"RegistrationCapture response does not contain biometrics block",CommonConstant.FAILED);
 				}
 				validations.add(validation);
 				for(CaptureBiometric bb:registrationCaptureResponse.biometrics)
@@ -66,7 +66,7 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 					if(!ObjectUtils.isEmpty(bb)) {
 
 						// Check for data elements
-						validation = commonValidator.setFieldExpected("biometrics.data","Expected data block",bb.data);
+						validation = commonValidator.setFieldExpected("biometrics.data","Expected data block",CommonConstant.DATA);
 						if(bb.data == null || bb.data.isEmpty())
 						{
 							commonValidator.setFoundMessageStatus(validation,bb.data,"RegistrationCapture response does not contain data in biometrics",CommonConstant.FAILED);
@@ -171,10 +171,10 @@ public class MandatoryRCaptureResponseValidator extends Validator {
 		validations.add(validation);
 
 		// Check for digitalId in Decoded biometrics data
-		validation = commonValidator.setFieldExpected("dataDecoded.digitalId","expected digitalId value",dataDecoded.digitalId);
+		validation = commonValidator.setFieldExpected("dataDecoded.digitalId","expected digitalId value",CommonConstant.DATA);
 		if(dataDecoded.digitalId == null || dataDecoded.digitalId.isEmpty())
 		{
-			commonValidator.setFoundMessageStatus(validation,dataDecoded.digitalId,"RegistrationCapture response biometrics dataDecoded does not contain digitalId",CommonConstant.FAILED);
+			commonValidator.setFoundMessageStatus(validation,CommonConstant.DATA,"RegistrationCapture response biometrics dataDecoded does not contain digitalId",CommonConstant.FAILED);
 		}
 		validations.add(validation);
 

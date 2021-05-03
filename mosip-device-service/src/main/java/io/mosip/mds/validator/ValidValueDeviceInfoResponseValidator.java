@@ -42,11 +42,11 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 	protected List<Validation> DoValidate(ValidateResponseRequestDto response) throws JsonProcessingException {
 		List<Validation> validations = new ArrayList<>();
 
-		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",jsonMapper.writeValueAsString(response));	
+		validation = commonValidator.setFieldExpected("response","Expected whole Jsone Response",CommonConstant.DATA);	
 		if(Objects.nonNull(response))
 		{
 			DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
-			validation = commonValidator.setFieldExpected("response.getDecodedResponse()","Expected whole divice info decoded Jsone Response",response.getMdsDecodedResponse().toString());		
+			validation = commonValidator.setFieldExpected("response.getDecodedResponse()","Expected whole divice info decoded Jsone Response",CommonConstant.DATA);		
 			if(Objects.nonNull(deviceInfoResponse))
 			{
 				//Check for device status
@@ -121,7 +121,6 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 	}
 
 	private List<Validation> validDeviceCheck(DeviceInfoResponse deviceInfoResponse, List<Validation> validations) {
-		ValidDeviceCheckValidator v=new ValidDeviceCheckValidator();
 		DeviceValidatorDto deviceValidatorDto=new DeviceValidatorDto();
 		DeviceValidatorRequestDto devicevalidatorrequestdto = new DeviceValidatorRequestDto();
 		DeviceValidatorDigitalIdDto digitalId=new DeviceValidatorDigitalIdDto();
