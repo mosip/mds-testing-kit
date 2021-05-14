@@ -31,9 +31,21 @@ export class DiscoverDevicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.scanning = false;
+    this.localStorageService.clearAllInfos();
+    
     this.availablePorts = this.localStorageService.getAvailablePorts();
     this.mdshost = '';
   }
+
+  onClear(): void {
+    this.discoveryResponse = null;
+    this.infoResponse = null;
+    this.availablePorts = [];
+    this.devices = [];
+    this.localStorageService.clearDeviceDiscover();
+    this.localStorageService.clearDeviceInfos();
+    }
+
 
   discover(port: string) {
     this.mdsService.discover(this.mdshost, port).subscribe(
@@ -57,6 +69,8 @@ export class DiscoverDevicesComponent implements OnInit {
 
   OnPortSelect(port) {
     this.devices = this.localStorageService.getDevicesByPortNumber(port);
+    if (!this.devices.length)
+      window.alert(JSON.stringify(this.devices));
   }
 
   scan(host) {
@@ -81,6 +95,26 @@ export class DiscoverDevicesComponent implements OnInit {
     );
   }
 
+  async scanSync(host) {
+    if(host === '') {
+      window.alert("Please enter SBI host")
+    }
+    this.onClear();
+    this.mdshost = host;
+    this.scanning = true;
+    await this.mdsService.scanSync(this.mdshost);
+    
+    this.scanning = false;
+    this.availablePorts = this.localStorageService.getAvailablePorts();
+
+    if(this.availablePorts && !this.availablePorts.length)
+      this.openDialog("Alert", "Scan Complete, No devices discovered.");
+    else
+      this.openDialog("Message", "Scan Complete");
+
+    console.log("scanSync>>Error>" + host + "<<<<availablePorts>>>");
+  }
+  
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 2000,

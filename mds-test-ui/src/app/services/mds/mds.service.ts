@@ -100,6 +100,60 @@ export class MdsService {
     );
   }
 
+
+  async scanSync(host:string) {
+    for (let i = 4501; i <= 4510; i++) {
+      try {
+        await this.discoverSynchronous(host, i + "");
+     }
+     catch (e) {
+        console.log(e);
+     }
+    }
+  }
+
+  async discoverSynchronous(host:string, port: string) {
+    await this.discoverSynchronousPromise(host, port).then(
+      response => {
+        // Promise successful
+        if (response)
+        {
+          this.localStorageService.addDeviceDiscover(port, response); 
+        }
+      }
+    ).catch(error => { console.log("promise result:err" + error) });
+  }
+
+  discoverSynchronousPromise(host:string, port: string) {
+    try {
+      return new Promise(resolve => {
+          this.mdsHost = host;
+          this.mdsUrl = this.mdsHost + ':' + port + '/device';
+          let r : any;
+          this.httpClient.request('MOSIPDISC', this.mdsUrl, {
+            body: {
+              type: 'Biometric Device'
+            }
+        }).subscribe(
+              response => {
+                  r = response;
+              },
+              error => {
+                  // Config error handling if port and address not reolved error does not work
+                  ;//return Promise.resolve(error); //this.handleErrorPromise(error);
+                  resolve(r);
+              },
+              () => {
+                  resolve(r);
+              }
+          )
+      });
+     }
+   catch (e) {
+      console.log(e);
+   }
+  }
+
   request(requestInfoDto: any) {
     return this.httpClient.request(requestInfoDto.verb, requestInfoDto.url, {body: requestInfoDto.body});
   }
