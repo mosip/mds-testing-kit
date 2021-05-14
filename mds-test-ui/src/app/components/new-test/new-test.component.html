@@ -2,14 +2,14 @@
   <mat-step label="Select run configration" state="phone">
 
     <mat-form-field appearance="fill">
-      <mat-label>Process</mat-label>
-      <mat-select [(ngModel)]="selectedProcess">
-        <mat-option class="option" *ngFor="let obj of masterData.process;" [value]="obj ">{{obj}}</mat-option>
+      <mat-label>Purpose</mat-label>
+      <mat-select [(ngModel)]="selectedPurpose">
+        <mat-option class="option" *ngFor="let obj of masterData.purpose;" [value]="obj ">{{obj}}</mat-option>
       </mat-select>
     </mat-form-field><br/>
 
     <mat-form-field appearance="fill">
-      <mat-label>Biometric type</mat-label>
+      <mat-label>Biometric Device Type</mat-label>
       <mat-select [(ngModel)]="selectedBiometricType" (selectionChange)='OnBiometricSelect($event)' name="sel2">
         <mat-option *ngFor="let obj of masterData.biometricType;" [value]="obj ">{{obj.type}}</mat-option>
       </mat-select>
@@ -17,7 +17,7 @@
 
     <br/>
     <mat-form-field appearance="fill">
-      <mat-label>Device type</mat-label>
+      <mat-label>Device Sub Type</mat-label>
       <mat-select [(ngModel)]="selectedDeviceType">
         <mat-option *ngFor="let obj of deviceTypes;" [value]="obj">{{obj}}</mat-option>
       </mat-select>
@@ -25,9 +25,9 @@
     <br/>
 
      <mat-form-field appearance="fill">
-      <mat-label>SBI version</mat-label>
-      <mat-select [(ngModel)]="selectedMdsVersion">
-        <mat-option class="option" *ngFor="let obj of masterData.mdsSpecificationVersion;" [value]="obj ">{{obj}}</mat-option>
+      <mat-label>SBI Spec Version</mat-label>
+      <mat-select [(ngModel)]="selectedSbiVersion">
+        <mat-option class="option" *ngFor="let obj of masterData.sbiSpecificationVersion;" [value]="obj ">{{obj}}</mat-option>
       </mat-select>
     </mat-form-field>
     <br/>

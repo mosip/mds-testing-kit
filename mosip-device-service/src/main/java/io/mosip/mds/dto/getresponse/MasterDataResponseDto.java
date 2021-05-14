@@ -12,10 +12,10 @@ public class MasterDataResponseDto {
 	@ApiModelProperty(value = "biometricType", required = true, dataType = "java.util.List")
 	public List<BiometricTypeDto> biometricType = new ArrayList<>();
 	
-	@ApiModelProperty(value = "mdsSpecificationVersion", required = true, dataType = "java.util.List<java.lang.String>")
-	public List<String> mdsSpecificationVersion = new ArrayList<>();
+	@ApiModelProperty(value = "sbiSpecificationVersion", required = true, dataType = "java.util.List<java.lang.String>")
+	public List<String> sbiSpecificationVersion = new ArrayList<>();
 	
-	@ApiModelProperty(value = "process", required = true, dataType = "java.util.List<java.lang.String>")
-	public List<String> process = new ArrayList<>();
+	@ApiModelProperty(value = "purpose", required = true, dataType = "java.util.List<java.lang.String>")
+	public List<String> purpose = new ArrayList<>();
 
 }

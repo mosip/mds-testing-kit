@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TestManagerGetDto {
 
-	@ApiModelProperty(value = "mdsSpecificationVersion", required = true, dataType = "java.lang.String")
-	public String mdsSpecificationVersion;
+	@ApiModelProperty(value = "sbiSpecificationVersion", required = true, dataType = "java.lang.String")
+	public String sbiSpecificationVersion;
 	
-	@ApiModelProperty(value = "process", required = true, dataType = "java.lang.String")
-	public String process;
+	@ApiModelProperty(value = "purpose", required = true, dataType = "java.lang.String")
+	public String purpose;
 	
 	@ApiModelProperty(value = "biometricType", required = true, dataType = "java.lang.String")
 	public String biometricType;

@@ -1,9 +1,9 @@
 <div class="body">
 
   <mat-form-field appearance="fill">
-    <mat-label>Process</mat-label>
-    <mat-select [(ngModel)]="selectedProcess">
-      <mat-option class="option" *ngFor="let obj of masterData.process;" [value]="obj ">{{obj}}</mat-option>
+    <mat-label>Purpose</mat-label>
+    <mat-select [(ngModel)]="selectedPurpose">
+      <mat-option class="option" *ngFor="let obj of masterData.purpose;" [value]="obj ">{{obj}}</mat-option>
     </mat-select>
   </mat-form-field><br/>
 
@@ -31,8 +31,8 @@
 
   <mat-form-field appearance="fill">
     <mat-label>SBI version</mat-label>
-    <mat-select [(ngModel)]="selectedMdsVersion">
-      <mat-option class="option" *ngFor="let obj of masterData.mdsSpecificationVersion;" [value]="obj ">{{obj}}</mat-option>
+    <mat-select [(ngModel)]="selectedSbiVersion">
+      <mat-option class="option" *ngFor="let obj of masterData.sbiSpecificationVersion;" [value]="obj ">{{obj}}</mat-option>
     </mat-select>
   </mat-form-field>
   <br/>

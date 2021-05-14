@@ -60,10 +60,10 @@ public class TestManagerServiceImpl implements TestManagerService {
 	{
 		Map<String, TestDefinition> testDefinitions = Store.getAllTestDefinitions();
 		List<TestDefinition> results =  testDefinitions.values().stream().filter(test ->
-				(isValid(test.processes) && test.processes.contains(filter.process)) &&
+				(isValid(test.purposes) && test.purposes.contains(filter.purpose)) &&
 						(isValid(test.biometricTypes) && test.biometricTypes.contains(filter.biometricType)) &&
 						(isValid(test.deviceSubTypes) && test.deviceSubTypes.contains(filter.deviceSubType)) &&
-						( !isValid(test.mdsSpecVersions) || test.mdsSpecVersions.contains(filter.mdsSpecificationVersion ) ))
+						( !isValid(test.sbiSpecVersions) || test.sbiSpecVersions.contains(filter.sbiSpecificationVersion ) ))
 				.collect(Collectors.toList());
 
 		return results;
@@ -93,7 +93,7 @@ public class TestManagerServiceImpl implements TestManagerService {
 	@Override
 	public TestRunMetadata createRun(TestManagerDto testManagerDto) {
 		//validate data
-		List<TestDefinition> definitions = getTests(new TestManagerGetDto(testManagerDto.mdsSpecVersion, testManagerDto.process,
+		List<TestDefinition> definitions = getTests(new TestManagerGetDto(testManagerDto.mdsSpecVersion, testManagerDto.purpose,
 				testManagerDto.biometricType, testManagerDto.deviceSubType));
 
 		definitions = definitions.stream()

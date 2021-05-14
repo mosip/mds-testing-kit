@@ -15,8 +15,8 @@ export class CreateRunComponent implements OnInit {
   selectedTests = [];
   selectedBiometricType: any;
   selectedDeviceType: any;
-  selectedMdsVersion: any;
-  selectedProcess: any;
+  selectedSbiVersion: any;
+  selectedPurpose: any;
   email = '';
   runName: '';
 
@@ -40,8 +40,8 @@ export class CreateRunComponent implements OnInit {
     const requestBody = {
       biometricType: this.selectedBiometricType.type,
       deviceSubType: this.selectedDeviceType,
-      mdsSpecificationVersion: this.selectedMdsVersion,
-      process: this.selectedProcess
+      sbiSpecificationVersion: this.selectedSbiVersion,
+      purpose: this.selectedPurpose
     };
     // console.log(requestBody);
     this.dataService.getTests(requestBody)
@@ -55,8 +55,8 @@ export class CreateRunComponent implements OnInit {
     const requestBody = {
       biometricType: this.selectedBiometricType.type,
       deviceSubType: this.selectedDeviceType,
-      mdsSpecificationVersion: this.selectedMdsVersion,
-      process: this.selectedProcess,
+      sbiSpecificationVersion: this.selectedSbiVersion,
+      purpose: this.selectedPurpose,
       tests: this.selectedTests,
       email: this.email,
       runName: this.runName

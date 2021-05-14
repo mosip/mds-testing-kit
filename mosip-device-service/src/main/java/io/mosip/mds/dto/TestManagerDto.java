@@ -13,8 +13,8 @@ public class TestManagerDto {
 	@ApiModelProperty(value = "mdsSpecVersion", required = true, dataType = "java.lang.String")
 	public String mdsSpecVersion;
 
-	@ApiModelProperty(value = "process", required = true, dataType = "java.lang.String")
-	public String process;
+	@ApiModelProperty(value = "purpose", required = true, dataType = "java.lang.String")
+	public String purpose;
 
 	@ApiModelProperty(value = "biometricType", required = true, dataType = "java.lang.String")
 	public String biometricType;

@@ -4,7 +4,8 @@
             "type": "Finger",
             "deviceSubTypes": [
                 "Slap",
-				"Single"
+				"Single",
+				"Touchless"
             ]
         },
         {
@@ -21,10 +22,10 @@
 			]
         }
     ],
-    "mdsSpecificationVersion": [
+    "sbiSpecificationVersion": [
          "0.9.5"
     ],
-    "process": [
+    "purpose": [
         "Registration",
         "Auth"
     ]
