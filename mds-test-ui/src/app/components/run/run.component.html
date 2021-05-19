@@ -15,7 +15,7 @@
   <mat-form-field appearance="fill">
     <mat-label>Device</mat-label>
     <mat-select [(ngModel)]="selectedDevice">
-      <mat-option *ngFor="let obj of devices;" [value]="obj">{{obj.purpose + obj.deviceId}}</mat-option>
+      <mat-option *ngFor="let obj of devices;" [value]="obj">{{'Purpose[' + obj.purpose + '] - BiometricDeviceType[' + obj.digitalIdDis.type + '] - DeviceSubType[' + obj.digitalIdDis.deviceSubType + ']' + ' - DeviceId[' + obj.deviceId+ ']'}}</mat-option>
     </mat-select>
   </mat-form-field>
   <button mat-raised-button

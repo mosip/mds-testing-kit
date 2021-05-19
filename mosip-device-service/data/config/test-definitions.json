@@ -5,7 +5,7 @@
         "testDescription": "Valid Discover Request",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration",
             "Auth"
         ],
@@ -15,7 +15,7 @@
         "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
 		"segments" : [],
 		"exceptions" : [],
-        "mdsSpecVersions":["0.9.5"],
+        "sbiSpecVersions":["0.9.5"],
         "validatorDefs": [
             {
                 "Name": "MandatoryDiscoverResponseValidator",
@@ -37,7 +37,7 @@
         "testDescription": "Valid DeviceInfo Request",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration",
             "Auth"
         ],
@@ -47,7 +47,7 @@
         "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
 		"segments" : [],
 		"exceptions" : [],
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "validatorDefs": [
              {
             	"Name": "MdsSignatureValidator",
@@ -69,7 +69,7 @@
         "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -82,7 +82,7 @@
 		"deviceSubId" : 1,
 		"bioCount" : 4,
 		"exceptions" : [],
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
              {
@@ -105,7 +105,7 @@
         "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -118,7 +118,7 @@
 		"deviceSubId" : 1,
 		"bioCount" : 3,
 		"exceptions" : ["LeftRing"],
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
              {
@@ -141,7 +141,7 @@
         "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -155,7 +155,7 @@
 		"bioCount" : 4,
 		"exceptions" : [],
         "requestedScore" : 40,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "validatorDefs": [
              {
             	"Name": "MdsSignatureValidator",
@@ -177,7 +177,7 @@
         "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -191,7 +191,7 @@
 		"bioCount" : 2,
 		"exceptions" : ["RightIndex", "RightMiddle"],
         "requestedScore" : 40,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "validatorDefs": [
              {
             	"Name": "MdsSignatureValidator",
@@ -213,7 +213,7 @@
         "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -226,7 +226,7 @@
 		"exceptions" : [],
 		"deviceSubId" : 3,
 		"bioCount" : 2,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
              {
@@ -249,7 +249,7 @@
         "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -262,7 +262,7 @@
 		"exceptions" : ["LeftThumb"],
 		"deviceSubId" : 3,
 		"bioCount" : 1,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
              {
@@ -285,7 +285,7 @@
         "testDescription": "Valid Registration capture Request for Slap scanner type",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -298,7 +298,7 @@
 		"exceptions" : ["RightThumb","LeftThumb"],
 		"deviceSubId" : 3,
 		"bioCount" : 0,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
              {
@@ -313,7 +313,7 @@
         "testDescription": "Valid Registration capture Request",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -326,7 +326,7 @@
 		"exceptions" : [],
 		"deviceSubId" : 3,
 		"bioCount" : 2,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
               {
@@ -349,7 +349,7 @@
         "testDescription": "Valid Registration capture Request",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -362,7 +362,7 @@
 		"exceptions" : ["LeftEye"],
 		"deviceSubId" : 3,
 		"bioCount" : 1,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
               {
@@ -385,7 +385,7 @@
         "testDescription": "Valid Registration capture Request",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -398,7 +398,7 @@
 		"exceptions" : ["LeftEye","RightEye"],
 		"deviceSubId" : 3,
 		"bioCount" : 0,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
                {
@@ -413,7 +413,7 @@
         "testDescription": "Valid Registration capture Request for left iris",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -426,7 +426,7 @@
 		"exceptions" : [],
 		"deviceSubId" : 1,
 		"bioCount" : 1,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
               {
@@ -449,7 +449,7 @@
         "testDescription": "Valid Registration capture Request for right iris",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -462,7 +462,7 @@
 		"exceptions" : [],
 		"deviceSubId" : 2,
 		"bioCount" : 1,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
              {
@@ -485,7 +485,7 @@
         "testDescription": "Valid Registration capture Request only for Face",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Registration"
         ],
         "biometricTypes": [
@@ -498,7 +498,7 @@
 		"exceptions" : [],
 		"deviceSubId" : 0,
 		"bioCount" : 1,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
             {
@@ -521,7 +521,7 @@
         "testDescription": "Valid Auth capture Request only for Face",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Auth"
         ],
         "biometricTypes": [
@@ -534,7 +534,7 @@
         "exceptions" : [],
         "deviceSubId" : 0,
         "bioCount" : 1,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
             {
@@ -557,7 +557,7 @@
         "testDescription": "Valid Auth capture Request for Unknown iris",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Auth"
         ],
         "biometricTypes": [
@@ -570,7 +570,7 @@
         "exceptions" : [],
         "deviceSubId" : 2,
         "bioCount" : 1,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
              {
@@ -593,7 +593,7 @@
         "testDescription": "Valid Auth capture Request for Unknown iris",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Auth"
         ],
         "biometricTypes": [
@@ -606,7 +606,7 @@
         "exceptions" : [],
         "deviceSubId" : 1,
         "bioCount" : 1,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
             {
@@ -629,7 +629,7 @@
         "testDescription": "Valid Auth capture Request for Unknown iris",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Auth"
         ],
         "biometricTypes": [
@@ -642,7 +642,7 @@
         "exceptions" : [],
         "deviceSubId" : 2,
         "bioCount" : 1,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
              {
@@ -665,7 +665,7 @@
         "testDescription": "Valid Auth capture Request for Unknown Finger",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Auth"
         ],
         "biometricTypes": [
@@ -679,7 +679,7 @@
         "deviceSubId" : 1,
         "bioCount" : 1,
         "requestedScore" : 40,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "validatorDefs": [
             {
             	"Name": "MdsSignatureValidator",
@@ -701,7 +701,7 @@
         "testDescription": "Valid Auth capture Request for Two Unknown Finger",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Auth"
         ],
         "biometricTypes": [
@@ -715,7 +715,7 @@
         "deviceSubId" : 2,
         "bioCount" : 2,
         "requestedScore" : 40,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "validatorDefs": [
              {
             	"Name": "MdsSignatureValidator",
@@ -737,7 +737,7 @@
         "testDescription": "Valid Auth capture Request for LeftIndex Finger",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Auth"
         ],
         "biometricTypes": [
@@ -751,7 +751,7 @@
         "deviceSubId" : 1,
         "bioCount" : 1,
         "requestedScore" : 40,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "validatorDefs": [
             {
             	"Name": "MdsSignatureValidator",
@@ -773,7 +773,7 @@
         "testDescription": "Valid Auth capture Request for Two Finger",
         "requestGenerator": null,
         "uiInput": null,
-        "processes": [
+        "purposes": [
             "Auth"
         ],
         "biometricTypes": [
@@ -787,7 +787,7 @@
         "deviceSubId" : 1,
         "bioCount" : 2,
         "requestedScore" : 40,
-        "mdsSpecVersions": ["0.9.5"],
+        "sbiSpecVersions": ["0.9.5"],
         "validatorDefs": [
              {
             	"Name": "MdsSignatureValidator",

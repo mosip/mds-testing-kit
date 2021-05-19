@@ -23,7 +23,7 @@ public class TestManager {
 	public String mdsSpecVersion;
 
 
-	public String process;
+	public String purpose;
 
 	@Column(name = "biometric_type")
 	public String biometricType;

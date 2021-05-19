@@ -51,7 +51,9 @@ export class RunComponent implements OnInit {
   ngOnInit(): void {
     console.log(history.state.data);
     this.run = history.state.data;
-    this.availablePorts = this.localStorageService.getAvailablePorts();
+    this.availablePorts = this.localStorageService.getAvailablePortsForDevice();
+  
+    // this.availablePorts = this.localStorageService.getAvailablePorts();
     //this.fetchReport();
     this.panelOpenState = false;
   }

@@ -23,7 +23,7 @@ public class TestDefinition {
 
     public List<UIInput> uiInput;
 
-    public List<String> processes;
+    public List<String> purposes;
 
     public List<String> biometricTypes;
 
@@ -45,7 +45,7 @@ public class TestDefinition {
 
     public String partnerApiKey;
 
-    public List<String> mdsSpecVersions;
+    public List<String> sbiSpecVersions;
 
     public List<ValidatorDef> validatorDefs;
 
