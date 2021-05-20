@@ -32,6 +32,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -79,6 +80,9 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
 		List<TestcaseResult> testcaseResults = testCaseResultRepository.findAllByTestResultKeyRunId(validateRequestDto.getRunId());
 		if(testcaseResults != null) {
+			
+			String orderId = getOrderId(validateRequestDto.getTestId(),Store.getAllTestDefinitions());
+			
 			boolean matched = testcaseResults.stream().anyMatch(testcaseResult ->
 					testcaseResult.getTestResultKey().getTestcaseName().equals(validateRequestDto.getTestId()));
 			if(!matched)
@@ -86,7 +90,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
 			TestRun testRun = getTestRunDetail(runStatus);
 			for(TestcaseResult testcaseResult : testcaseResults) {
-				TestDefinition testDefinition = Store.getAllTestDefinitions().get(validateRequestDto.getTestId());
+				TestDefinition testDefinition = Store.getAllTestDefinitions().get(orderId);
 				Intent intent = getIntent(testDefinition.getMethod());
 				String renderContent = "";
 
@@ -131,6 +135,15 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 				TestResult testResult = getTestResult(validateRequestDto.getRunId(), testcaseResult, testDefinition);
 				testResult.setRenderContent(renderContent);
 				testRun.getTests().add(testcaseResult.getTestResultKey().getTestcaseName());
+				LinkedHashMap<String , TestResult> tr=new LinkedHashMap<String, TestResult>();
+				
+				addAllTestReportToKey(testRun,testResult,testcaseResult,tr);
+				
+				tr.put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
+				
+				if(validateRequestDto.getTestId().equals(testcaseResult.getTestResultKey().getTestcaseName()))
+				testRun.getTestReportKey().put(orderId, tr);
+				
 				testRun.getTestReport().put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
 			}
 			return testRun;
@@ -164,7 +177,8 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		if(testcaseResults != null) {
 			for(TestcaseResult testcaseResult : testcaseResults) {
 				ComposeRequestResponseDto requestDTO = null;
-				TestDefinition testDefinition = Store.getAllTestDefinitions().get(testcaseResult.getTestResultKey().getTestcaseName());
+				String orderId = getOrderId(testcaseResult.getTestResultKey().getTestcaseName(),Store.getAllTestDefinitions());
+				TestDefinition testDefinition = Store.getAllTestDefinitions().get(orderId);
 				if(!testcaseResult.isPassed() || composeRequestDto.forceReset) { //test case is already executed,or if force reset is enabled
 					try {
 						requestDTO = getRequestBuilder(composeRequestDto).buildRequest(composeRequestDto.runId,
@@ -181,13 +195,38 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 					}
 					testCaseResultRepository.save(testcaseResult);
 				}
+								
 				TestResult testResult = getTestResult(composeRequestDto.runId, testcaseResult, testDefinition);
 				testResult.streamUrl = requestDTO != null ? requestDTO.getRequestInfoDto().streamUrl : null;
+				
+				//Preparing TestResultKey to get Ordered response
+				LinkedHashMap<String , TestResult> tr=new LinkedHashMap<String, TestResult>();				
+				addAllTestReportToKey(testRun,testResult,testcaseResult,tr);
 				testRun.getTests().add(testcaseResult.getTestResultKey().getTestcaseName());
+				tr.put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
+				testRun.getTestReportKey().put(orderId, tr);
+				
 				testRun.getTestReport().put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
 			}
 		}
 		return testRun;
+	}
+	
+	private void addAllTestReportToKey(TestRun testRun, TestResult testResult, TestcaseResult testcaseResult, LinkedHashMap<String, TestResult> tr) {
+		testRun.getTestReport().put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
+          String orderId = getOrderId(testcaseResult.getTestResultKey().getTestcaseName(),Store.getAllTestDefinitions());
+         tr.put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
+         testRun.getTestReportKey().put(orderId, tr);
+		
+	}
+
+	private String getOrderId(String testcaseName, Map<String, TestDefinition> allTestDefinitions) {
+		for (Entry<String, TestDefinition> entry : allTestDefinitions.entrySet()) {
+			if(testcaseName.equals(entry.getValue().testId)) {
+            	return entry.getKey();
+            }
+		}
+		return null;
 	}
 
 	@Override

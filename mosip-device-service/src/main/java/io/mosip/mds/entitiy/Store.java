@@ -2,6 +2,7 @@ package io.mosip.mds.entitiy;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,12 +88,13 @@ public class Store {
 		if(file.exists()) {
 			try
 			{
-				testDefinitions = new HashMap<>();
+				testDefinitions = new LinkedHashMap<>();
 				List<TestDefinition> definitions = (List<TestDefinition>) mapper.readValue(file,
 						new TypeReference<List<TestDefinition>>(){});
 
 				for(TestDefinition definition : definitions) {
-					testDefinitions.put(definition.testId, definition);
+					testDefinitions.put(definition.testOrderId, definition);
+//					testDefinitions.put(definition.testId, definition);
 				}
 			}
 			catch(Exception ex)

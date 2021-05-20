@@ -29,8 +29,9 @@
 <!--Form Ends-->
 <div style="padding: 1%;">
 <mat-accordion *ngIf="testReportObject">
-  <mat-expansion-panel *ngFor="let key of objectKeys(testReportObject.testReport)">
-    <mat-expansion-panel-header>
+  <div *ngFor="let key1 of objectKeys(testReportObject.testReportKey)"> 
+    <mat-expansion-panel *ngFor="let key of objectKeys(testReportObject.testReportKey[key1])">
+     <mat-expansion-panel-header>
       <mat-panel-title>
         {{key}}
       </mat-panel-title>
@@ -113,5 +114,6 @@
       </mat-tab>
     </mat-tab-group>
   </mat-expansion-panel>
+</div>
 </mat-accordion>
 </div>
