@@ -216,6 +216,13 @@ export class RunComponent implements OnInit {
     return this.testReportObject.testReport[testId].streamUrl ? true : false;
   }
 
+  isCapture(intent){
+    let method = JSON.parse(intent).verb;
+    if(method=="CAPTURE"){
+      return true;
+    }
+      return false;
+  }
   isRcapture(intent){
     let method = JSON.parse(intent).verb;
     if(method=="RCAPTURE"){
@@ -339,6 +346,7 @@ export class RunComponent implements OnInit {
     }
 
     openDialog(title: string, message: string): void {
+      this.authloading = false
               this.dialog.open(ModalComponent, {
                 width: '40%',
                 data: {'title': title, 'message' : message }
