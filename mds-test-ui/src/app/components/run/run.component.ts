@@ -85,13 +85,13 @@ export class RunComponent implements OnInit {
     };
     const profileObject = JSON.parse(this.run.profile);
     if (profileObject.purpose != deviceDto.deviceInfo.purpose) {
-      this.openDialog("Error", "Selected Device Purpose and Created Test Run Purpose Missmatch");
+      this.openDialog("Error", "Selected Device Purpose and Created Test Run Purpose Mismatch");
     }
     else if (profileObject.biometricType != deviceDto.deviceInfo.digitalIdDecoded.type) {
-      this.openDialog("Error", "Selected Device Type and Created Test Run BiometricDeviceType Missmatch");
+      this.openDialog("Error", "Selected Device Type and Created Test Run BiometricDeviceType Mismatch");
     }
     else if (profileObject.deviceSubType != deviceDto.deviceInfo.digitalIdDecoded.deviceSubType) {
-      this.openDialog("Error", "Selected Device DeviceSubType and Created Test Run DeviceSubType Missmatch");
+      this.openDialog("Error", "Selected DeviceSubType and Created Test Run DeviceSubType Mismatch");
     }
     else {
       this.dataService.composeAllRequests(this.run.runId, deviceDto).subscribe(
