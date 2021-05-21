@@ -103,7 +103,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
     private String getDiscoverRequest(TestDefinition test, DeviceDto device) throws JsonProcessingException
     {
         DiscoverRequest requestBody = new DiscoverRequest();
-        requestBody.type = (test.biometricTypes == null || test.biometricTypes.size() == 0) ? null : test.biometricTypes.get(0);
+        requestBody.type = (test.biometricTypes == null || test.biometricTypes.size() == 0) ? null : device.getDeviceInfo().getDigitalIdDecoded().getType();
         return mapper.writeValueAsString(requestBody);
     }
 

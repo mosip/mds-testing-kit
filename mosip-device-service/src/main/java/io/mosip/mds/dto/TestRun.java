@@ -35,6 +35,8 @@ public class TestRun {
 
     public List<String> tests;
     
+    public String error;
+    
     public LinkedHashMap<String, Object>  testReportKey= new LinkedHashMap<>();
     
     public LinkedHashMap<String, TestResult> testReport = new LinkedHashMap<>();

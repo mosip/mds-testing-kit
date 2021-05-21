@@ -76,6 +76,7 @@ public class TestManagerServiceImpl implements TestManagerService {
 		List<io.mosip.mds.entitiy.RunStatus> runs = runIdStatusRepository.findAllByRunOwner(email);
 		for (io.mosip.mds.entitiy.RunStatus runStatus : runs) {
 			TestRunMetadata testRunMetadata = new TestRunMetadata();
+			testRunMetadata.setProfile(runStatus.getProfile());
 			testRunMetadata.setRunId(runStatus.getRunId());
 			testRunMetadata.setRunName(runStatus.getRunName());
 			int total = testCaseResultRepository.countByTestResultKeyRunId(runStatus.getRunId());
