@@ -115,10 +115,9 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 						for(MdsResponse mdsResponse : mdsDecodedResponses) {
 							if(mdsResponse instanceof DeviceInfoResponse) {
 								DeviceInfoResponse df=(DeviceInfoResponse)mdsResponse;
-								if(df.getAnalysisError() == null) {
-								if(!(df.digitalIdDecoded.type.equalsIgnoreCase(targetProfile.biometricType))) {									
+								if((df.getAnalysisError() == null) && 
+										!(df.digitalIdDecoded.type.equalsIgnoreCase(targetProfile.biometricType))) {									
 									continue;
-								}
 								}
 							}
 							validateRequestDto.setMdsDecodedResponse(mdsResponse);
@@ -129,12 +128,9 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 							}
 						}
 						
-						if(validationResults.size()!=0){
+						validationResults = (validationResults.size() != 0) ? validationResults : setInvalidDeviceResults(validationResults);
 						testcaseResult.setValidationResults(mapper.writeValueAsString(validationResults));
-						}else {
-							validationResults=setIvalidDeviceResults(validationResults);							
-							testcaseResult.setValidationResults(mapper.writeValueAsString(validationResults));
-						}
+						
 //						renderContent = getResponseProcessor(targetProfile.mdsSpecVersion).getRenderContent(intent,
 //								validateRequestDto.getMdsResponse());
 
@@ -165,7 +161,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		throw new Exception("No Test cases found for the provided run !");
 	}
 
-	private List<ValidationResult> setIvalidDeviceResults(List<ValidationResult> validationResults) {
+	private List<ValidationResult> setInvalidDeviceResults(List<ValidationResult> validationResults) {
 		Validation validationException = new Validation();
 		List<Validation> validations = new ArrayList<Validation>();
 		ValidationTestResultDto validationTestResult = new ValidationTestResultDto(); 
