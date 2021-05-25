@@ -1,5 +1,6 @@
 package io.mosip.mds.validator;
 
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.mds.dto.DigitalId;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.util.SecurityUtil;
@@ -215,7 +215,8 @@ public class CommonValidator{
 		}
 		
 		try {
-			DateUtils.parseToDate(dateString, PATTERN);
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PATTERN);
+			 simpleDateFormat.parse(dateString);
 			validations.add(validation);
 		} catch (Exception e) {
 			setFoundMessageStatus(validation,"Invalid TimeStamp,Reqired - ISO 8601 with format yyyy-mm-ddTHH:MM:ssZ (Example: 2020-12-08T09:39:37Z) But Found : " + dateString,e.getMessage(),CommonConstant.FAILED);
