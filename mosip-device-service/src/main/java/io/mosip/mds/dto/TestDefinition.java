@@ -15,6 +15,9 @@ public class TestDefinition {
     @ApiModelProperty(value = "testId", required = true, dataType = "java.lang.String")
     public String testId;
 
+    @ApiModelProperty(value = "testOrderId", required = true, dataType = "java.lang.String")
+    public String testOrderId;
+    
     @ApiModelProperty(value = "testDescription", required = true, dataType = "java.lang.String")
     public String testDescription;
 

@@ -1,5 +1,8 @@
 package io.mosip.mds.dto;
 
+import lombok.Data;
+
+@Data
 public class DeviceInfoResponse extends MdsResponse{
 
     public String callbackId;

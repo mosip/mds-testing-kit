@@ -11,6 +11,7 @@ import io.mosip.mds.dto.CaptureResponse.CaptureBiometric;
 import io.mosip.mds.dto.postresponse.ComposeRequestResponseDto;
 import io.mosip.mds.dto.postresponse.ValidationResult;
 import io.mosip.mds.entitiy.*;
+import io.mosip.mds.entitiy.Validator.ValidationStatus;
 import io.mosip.mds.repository.RunIdStatusRepository;
 import io.mosip.mds.repository.TestCaseResultRepository;
 import io.mosip.mds.service.IMDSRequestBuilder;
@@ -32,6 +33,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -79,6 +81,9 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
 		List<TestcaseResult> testcaseResults = testCaseResultRepository.findAllByTestResultKeyRunId(validateRequestDto.getRunId());
 		if(testcaseResults != null) {
+			
+			String orderId = getOrderId(validateRequestDto.getTestId(),Store.getAllTestDefinitions());
+			
 			boolean matched = testcaseResults.stream().anyMatch(testcaseResult ->
 					testcaseResult.getTestResultKey().getTestcaseName().equals(validateRequestDto.getTestId()));
 			if(!matched)
@@ -86,7 +91,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
 			TestRun testRun = getTestRunDetail(runStatus);
 			for(TestcaseResult testcaseResult : testcaseResults) {
-				TestDefinition testDefinition = Store.getAllTestDefinitions().get(validateRequestDto.getTestId());
+				TestDefinition testDefinition = Store.getAllTestDefinitions().get(orderId);
 				Intent intent = getIntent(testDefinition.getMethod());
 				String renderContent = "";
 
@@ -108,6 +113,13 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 						validateRequestDto.setIntent(intent);
 						validateRequestDto.setTestManagerDto(targetProfile);
 						for(MdsResponse mdsResponse : mdsDecodedResponses) {
+							if(mdsResponse instanceof DeviceInfoResponse) {
+								DeviceInfoResponse df=(DeviceInfoResponse)mdsResponse;
+								if((df.getAnalysisError() == null) && 
+										!(df.digitalIdDecoded.type.equalsIgnoreCase(targetProfile.biometricType))) {									
+									continue;
+								}
+							}
 							validateRequestDto.setMdsDecodedResponse(mdsResponse);
 							for(ValidatorDef validatorDef : testDefinition.validatorDefs) {
 								Optional<Validator> validator = validators.stream().filter(v ->	v.Name.equals(validatorDef.Name)).findFirst();
@@ -115,10 +127,12 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 									validationResults.add(validator.get().Validate(validateRequestDto));
 							}
 						}
+						
+						validationResults = (validationResults.size() != 0) ? validationResults : setInvalidDeviceResults(validationResults);
 						testcaseResult.setValidationResults(mapper.writeValueAsString(validationResults));
 						
-						renderContent = getResponseProcessor(targetProfile.mdsSpecVersion).getRenderContent(intent,
-								validateRequestDto.getMdsResponse());
+//						renderContent = getResponseProcessor(targetProfile.mdsSpecVersion).getRenderContent(intent,
+//								validateRequestDto.getMdsResponse());
 
 						testcaseResult.setPassed(true); //TODO - need to change column name
 						testcaseResult.setCurrentState("SBI Response Validations : Completed");
@@ -129,13 +143,42 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 					testCaseResultRepository.save(testcaseResult);
 				}
 				TestResult testResult = getTestResult(validateRequestDto.getRunId(), testcaseResult, testDefinition);
-				testResult.setRenderContent(renderContent);
+				//testResult.setRenderContent(renderContent);
 				testRun.getTests().add(testcaseResult.getTestResultKey().getTestcaseName());
+				LinkedHashMap<String , TestResult> tr=new LinkedHashMap<String, TestResult>();
+				
+				addAllTestReportToKey(testRun,testResult,testcaseResult,tr);
+				
+				tr.put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
+				
+				if(validateRequestDto.getTestId().equals(testcaseResult.getTestResultKey().getTestcaseName()))
+				testRun.getTestReportKey().put(orderId, tr);
+				
 				testRun.getTestReport().put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
 			}
 			return testRun;
 		}
 		throw new Exception("No Test cases found for the provided run !");
+	}
+
+	private List<ValidationResult> setInvalidDeviceResults(List<ValidationResult> validationResults) {
+		Validation validationException = new Validation();
+		List<Validation> validations = new ArrayList<Validation>();
+		ValidationTestResultDto validationTestResult = new ValidationTestResultDto(); 
+		ValidationResult validationResult = new ValidationResult();
+		validationException.setExpected("Valid Device Info");
+		validationException.setFound(null);
+		validationException.setField("deviceInfo");
+		validationException.setStatus(ValidationStatus.Failed.name());
+		validationException.setMessage("Required device info not found ");
+		validations.add(validationException);
+		validationTestResult.setValidations(validations);
+		validationResult.validationTestResultDtos.add(validationTestResult);
+		validationResult.setStatus(ValidationStatus.Failed.name());
+		validationResult.setValidationName("MandatoryDeviceInfoResponseValidator");
+		validationResult.setValidationDescription("Mandatory DeviceInfo Response Validator");
+		validationResults.add(validationResult);
+		return validationResults;
 	}
 
 	private String getRequiredJson(String jsonString,String key) {
@@ -164,8 +207,13 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		if(testcaseResults != null) {
 			for(TestcaseResult testcaseResult : testcaseResults) {
 				ComposeRequestResponseDto requestDTO = null;
-				TestDefinition testDefinition = Store.getAllTestDefinitions().get(testcaseResult.getTestResultKey().getTestcaseName());
-				if(!testcaseResult.isPassed() || composeRequestDto.forceReset) { //test case is already executed,or if force reset is enabled
+				String orderId = getOrderId(testcaseResult.getTestResultKey().getTestcaseName(),Store.getAllTestDefinitions());
+				TestDefinition testDefinition = Store.getAllTestDefinitions().get(orderId);
+				
+				// Port change not worked and 'forceReset' no were implemeted yet 24may2021 
+				if(!testcaseResult.isPassed()) {
+				//test case is already executed,or if force reset is enabled
+//				if(!testcaseResult.isPassed() || composeRequestDto.forceReset) { 
 					try {
 						requestDTO = getRequestBuilder(composeRequestDto).buildRequest(composeRequestDto.runId,
 								mapper.readValue(runStatus.getProfile(), TestManagerDto.class),
@@ -181,13 +229,38 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 					}
 					testCaseResultRepository.save(testcaseResult);
 				}
+								
 				TestResult testResult = getTestResult(composeRequestDto.runId, testcaseResult, testDefinition);
 				testResult.streamUrl = requestDTO != null ? requestDTO.getRequestInfoDto().streamUrl : null;
+				
+				//Preparing TestResultKey to get Ordered response
+				LinkedHashMap<String , TestResult> tr=new LinkedHashMap<String, TestResult>();				
+				addAllTestReportToKey(testRun,testResult,testcaseResult,tr);
 				testRun.getTests().add(testcaseResult.getTestResultKey().getTestcaseName());
+				tr.put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
+				testRun.getTestReportKey().put(orderId, tr);
+				
 				testRun.getTestReport().put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
 			}
 		}
 		return testRun;
+	}
+	
+	private void addAllTestReportToKey(TestRun testRun, TestResult testResult, TestcaseResult testcaseResult, LinkedHashMap<String, TestResult> tr) {
+		testRun.getTestReport().put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
+          String orderId = getOrderId(testcaseResult.getTestResultKey().getTestcaseName(),Store.getAllTestDefinitions());
+         tr.put(testcaseResult.getTestResultKey().getTestcaseName(), testResult);
+         testRun.getTestReportKey().put(orderId, tr);
+		
+	}
+
+	private String getOrderId(String testcaseName, Map<String, TestDefinition> allTestDefinitions) {
+		for (Entry<String, TestDefinition> entry : allTestDefinitions.entrySet()) {
+			if(testcaseName.equals(entry.getValue().testId)) {
+            	return entry.getKey();
+            }
+		}
+		return null;
 	}
 
 	@Override
@@ -323,11 +396,8 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 	}
 
 	public void createpdfFile(ValidateResponseRequestDto validateRequestDto) {
-
 		try {
-
 			Document document = new Document();
-
 			List<TestcaseResult> testcaseResults = testCaseResultRepository.findAllByTestResultKeyRunId(validateRequestDto.runId);
 			Type listType = new TypeToken<List<TestcaseResultDto>>(){}.getType();
 

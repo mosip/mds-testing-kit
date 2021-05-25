@@ -2,6 +2,7 @@ package io.mosip.mds.dto;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import lombok.Data;
@@ -33,7 +34,10 @@ public class TestRun {
     public TestManagerDto targetProfile;
 
     public List<String> tests;
-
-    public HashMap<String, TestResult> testReport = new HashMap<>();
     
+    public String error;
+    
+    public LinkedHashMap<String, Object>  testReportKey= new LinkedHashMap<>();
+    
+    public LinkedHashMap<String, TestResult> testReport = new LinkedHashMap<>();
 }

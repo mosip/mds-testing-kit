@@ -145,7 +145,7 @@ export class LocalStorageService {
             var discoverObj = JSON.parse(JSON.stringify(deviceDiscoverInfo[dindex]));
             var digitalIdDisObj = JSON.parse(atob (discoverObj.digitalId));
             //created new obj to add digitalIdDis: digitalIdDisObj for display purpose only
-            var discoverObjNew = {deviceId:discoverObj.deviceId, purpose:discoverObj.purpose, deviceSubId:discoverObj.deviceSubId, digitalId: discoverObj.digitalId, digitalIdDis: digitalIdDisObj, deviceStatus:discoverObj.deviceStatus, deviceCode:discoverObj.deviceCode, error:discoverObj.error, certification:discoverObj.certification, specVersion: discoverObj.specVersion, callbackId: discoverObj.callbackId, serviceVersion:discoverObj.serviceVersion};
+            var discoverObjNew = {deviceId:discoverObj.deviceId, purpose:discoverObj.purpose, deviceSubId:discoverObj.deviceSubId, digitalId: discoverObj.digitalId, digitalIdDecoded: digitalIdDisObj, deviceStatus:discoverObj.deviceStatus, deviceCode:discoverObj.deviceCode, error:discoverObj.error, certification:discoverObj.certification, specVersion: discoverObj.specVersion, callbackId: discoverObj.callbackId, serviceVersion:discoverObj.serviceVersion};
             deviceDiscoverInfo[dindex] = discoverObjNew;
           }          
         }

@@ -15,4 +15,5 @@ public class TestRunMetadata {
     private List<String> tests;
     private Date createdOn;
     private Date updatedOn;
+    private String profile;
 }
