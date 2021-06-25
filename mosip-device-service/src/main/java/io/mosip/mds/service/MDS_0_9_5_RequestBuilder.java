@@ -127,7 +127,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
     {
         CaptureRequest requestBody = new CaptureRequest();
         requestBody.captureTime = getTimestamp();
-        requestBody.domainUri = "default";
+        requestBody.domainUri = "https://extint1.mosip.net";
         requestBody.env = "Developer";
         requestBody.purpose = "Auth";
         requestBody.specVersion = "0.9.5";

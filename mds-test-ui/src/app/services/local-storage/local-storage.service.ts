@@ -107,7 +107,7 @@ export class LocalStorageService {
           //console.log("getAvailablePortsForDevice>>" + JSON.stringify(discoverObj));
 
           var errorObj = discoverObj.error;
-          if (parseInt (errorObj.errorCode) == 100)
+          if (parseInt (errorObj.errorCode) == 0 || parseInt (errorObj.errorCode) == 100 )
           {
             noError = true;
           }
