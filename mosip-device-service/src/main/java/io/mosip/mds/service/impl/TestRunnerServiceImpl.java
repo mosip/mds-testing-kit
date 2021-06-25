@@ -274,7 +274,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 	}
 
 	@Override
-	public String validateAuthRequest(String runId, String testId) {
+	public String validateAuthRequest(String runId, String testId,String uin) {
 		io.mosip.mds.entitiy.RunStatus runStatus = runIdStatusRepository.findByRunId(runId);
 		if(runStatus == null)
 			return null;
@@ -285,7 +285,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 				ValidateResponseRequestDto validateResponseRequestDto = new ValidateResponseRequestDto();
 				validateResponseRequestDto.setTestId(testId);
 				validateResponseRequestDto.setMdsResponse(result.get().getResponse());
-				return bioAuthRequestUtil.authenticateResponse(validateResponseRequestDto);
+				return bioAuthRequestUtil.authenticateResponse(validateResponseRequestDto,uin);
 			} catch (Exception e) {
 				logger.error("Error validating auth request", e);
 			}

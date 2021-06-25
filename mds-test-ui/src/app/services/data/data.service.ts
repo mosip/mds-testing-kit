@@ -82,6 +82,10 @@ export class DataService {
         `Backend returned code ${error.status}, ` +
         `body was: ${error.error}`);
     }
+    if(error.status === 200 ) {
+      return throwError(error);
+  }
+   
     // return an observable with a user-facing error message
     return throwError(error.error.message);
   }
@@ -133,6 +137,17 @@ export class DataService {
         );
     }
 
+    authTestCallByUin(runId: any, testId: string,uin :any) {
+      return this.httpClient.post(environment.base_url + 'testrunner/validateauthrequest', {
+        runId,
+        testId,
+        uin
+      })
+        .pipe(
+          catchError(this.handleError)
+        );
+    }
+    
     openDialog(title: string, message: string): void {
               this.dialog.open(ModalComponent, {
                 width: '40%',

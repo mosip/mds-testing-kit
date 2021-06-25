@@ -1,0 +1,62 @@
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+  margin: 18px;
+}
+
+.example-full-width {
+  width: 100%;
+}
+
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+
+:host ::ng-deep .mat-tab-body-wrapper {
+  min-height: 150px;
+
+}
+
+:host ::ng-deep .mat-tab-body.mat-tab-body-active {
+  min-height: 150px;
+
+}
+
+.Passed{color: green;}
+.Failed{color: red;}
+
+.centereddiv {
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+}
+
+#video {
+    border: 5px solid transparent;
+    background-color: #000000;
+}
+
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+
+.spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  border-top-color: #000000;
+  animation: spinner .8s linear infinite;
+}

@@ -10,6 +10,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ModalComponent } from '../../modal/modal.component';
 
+import {DialogOverviewExampleDialog } from '../../auth/auth.component'
+
 declare const start_streaming: any;
 declare const stop_streaming: any;
 
@@ -19,6 +21,11 @@ declare const stop_streaming: any;
   styleUrls: ['./run.component.css']
 })
 export class RunComponent implements OnInit {
+
+  uin: string;
+  testId: string;
+  testReportObject1: any;
+
   run;
   tests = [];
   selectedDevice: any;
@@ -352,7 +359,7 @@ export class RunComponent implements OnInit {
         this.openDialog("Auth Response", JSON.stringify(result))
         this.authloading = false
       },
-      error => this.openDialog("Auth Error Response", error)
+      error => this.openDialog("Auth Response", JSON.stringify(error.error.text))
     );
 
   }
@@ -364,6 +371,39 @@ export class RunComponent implements OnInit {
       data: { 'title': title, 'message': message }
     });
   }
+
+  startAuthTest1(testId) {
+    this.authloading = true;
+    let uin=0;
+    console.log("Starting auth test for >>> " + testId);
+    this.dataService.authTestCallByUin(this.testReportObject.testReport[testId].runId, testId,uin).subscribe(
+            result => {
+                 //window.alert(JSON.stringify(result))
+                 this.openDialog("Auth Response", JSON.stringify(result))
+                 this.authloading = false
+            },
+            error => this.openDialog("Auth Response", JSON.stringify(error.error.text))
+    );
+
+}
+
+      openUINDialog(testReportObject1:any,key:any): void {
+        this.testReportObject1=testReportObject1;
+        this.testId=key;
+        console.log(this.testId);
+        console.log(this.testReportObject1);
+        const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+          width: '300px',
+          data: {uin: this.uin,testReportObject1:this.testReportObject1,testId : this.testId}
+        }
+        
+        );
+    
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed');
+          this.uin = result;
+        });
+      }
 
   download(runId, testId) {
 
