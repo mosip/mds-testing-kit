@@ -74,6 +74,7 @@ import io.mosip.mds.authentication.dto.EncryptionRequestDto;
 import io.mosip.mds.authentication.dto.EncryptionResponseDto;
 import io.mosip.mds.authentication.dto.RequestDTO;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
+import io.mosip.mds.entitiy.Store;
 
 @Component
 public class BioAuthRequestUtil {
@@ -371,7 +372,7 @@ public class BioAuthRequestUtil {
 	{
 
 		JsonWebSignature jwSign = new JsonWebSignature();
-		String partnerFilePath = getStorePath() + "keys\\" + "rp-partner.p12";
+		String partnerFilePath = Store.getStorePath() + "keys/rp-partner.p12";
 		PrivateKeyEntry keyEntry =  getPrivateKeyEntry(partnerFilePath);
 
 		if (Objects.isNull(keyEntry)) {

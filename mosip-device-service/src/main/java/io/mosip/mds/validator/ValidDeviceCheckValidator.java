@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -37,6 +38,9 @@ public class ValidDeviceCheckValidator {
 
 	@Autowired
 	CommonValidator commonValidator;
+	
+	@Autowired
+	ObjectMapper mapper;
 
 	public static String getCurrentDateAndTimeForAPI() {
 		String DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
@@ -59,16 +63,18 @@ public class ValidDeviceCheckValidator {
 
 		try{
 			validation = commonValidator.setFieldExpected("Registered Device","Succes Response",postResponse.getBody().asString());
-
-			Gson gson = new Gson();
-
-			DeviceValidatorResponseDto deviceValidatorResponseDto= gson.fromJson(postResponse.getBody().asString() , DeviceValidatorResponseDto.class);
+			
+			DeviceValidatorResponseDto deviceValidatorResponseDto= mapper.readValue(postResponse.getBody().asString() , DeviceValidatorResponseDto.class);
+//			Gson gson = new Gson();
+//
+//			DeviceValidatorResponseDto deviceValidatorResponseDto= gson.fromJson(postResponse.getBody().asString() , DeviceValidatorResponseDto.class);
 
 
 			if(deviceValidatorResponseDto.getErrors().size()>0) {
 				commonValidator.setFoundMessageStatus(validation,postResponse.getBody().asString(),"Device Registration check failed",CommonConstant.FAILED);
 				validations.add(validation);
-			}else if(deviceValidatorResponseDto.getResponse().size()>0) {
+			}else {
+				validation = commonValidator.setFieldExpected("Registered Device","Succes Response",mapper.writeValueAsString(deviceValidatorResponseDto.getResponse()));			
 				validations.add(validation);
 			}
 		}
