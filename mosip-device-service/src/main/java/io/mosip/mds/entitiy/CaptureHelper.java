@@ -104,7 +104,7 @@ public class CaptureHelper {
 
 	private String getDecryptedBioValue(CaptureBiometric biometric) throws IOException {
 		String plainBioValue = cryptoUtility.decryptbio(biometric.sessionKey, biometric.getDataDecoded().bioValue,
-				biometric.getDataDecoded().timestamp, biometric.getDataDecoded().getTransactionId(),bioAuthRequestutil.getAuthToken());
+				biometric.getDataDecoded().timestamp, biometric.getDataDecoded().getTransactionId(),bioAuthRequestutil.getAuthToken(),biometric.getThumbprint());
 		return Base64.getUrlEncoder().encodeToString(plainBioValue.getBytes());
 	}
 

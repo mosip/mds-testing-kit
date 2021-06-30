@@ -9,6 +9,9 @@ import java.security.Security;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.ArrayUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,19 +69,25 @@ public class CryptoUtility {
 		return provider;
 	}
 
-	public String decryptbio(String encSessionKey, String encData, String timestamp, String transactionId, String authToken) {
+	public String decryptbio(String encSessionKey, String encData, 
+			String timestamp, String transactionId, String authToken,String thumbprint) {
 		   try {
+			   byte[] bytesFromThumbprint = getBytesFromThumbprint(thumbprint);
+			   byte[] data = combineToByteArray(encData, encSessionKey);
+			    data = ArrayUtils.addAll(bytesFromThumbprint, data);
+
+			   
 		      timestamp = timestamp.trim();
 		      byte[] xorResult = getXOR(timestamp, transactionId);
 		      byte[] aadBytes = getLastBytes(xorResult, 16);
 		      byte[] ivBytes = getLastBytes(xorResult, 12);
-		      String data = CryptoUtil.encodeBase64(CryptoUtil.combineByteArray(CryptoUtil.decodeBase64(encData),
-		            CryptoUtil.decodeBase64(encSessionKey), KEY_SPLITTER));
+//		      String data = CryptoUtil.encodeBase64(CryptoUtil.combineByteArray(CryptoUtil.decodeBase64(encData),
+//		            CryptoUtil.decodeBase64(encSessionKey), KEY_SPLITTER));
 		      OkHttpClient client = new OkHttpClient();
 		      String requestBody = String.format(DECRYPT_REQ_TEMPLATE,
 		            CryptoUtil.encodeBase64(aadBytes),
 		            IDA,
-		            data,
+		            CryptoUtil.encodeBase64(data),
 		            IDA_FIR,
 		            CryptoUtil.encodeBase64(ivBytes),
 		            DateUtils.formatToISOString(DateUtils.getUTCCurrentDateTime()),
@@ -102,6 +111,28 @@ public class CryptoUtility {
 		return null;
 		}
 	
+	private byte[] combineToByteArray(String request, String requestSessionKey) {
+		byte[] encryptedRequest = CryptoUtil.decodeBase64(request);
+		byte[] encryptedSessionKey = CryptoUtil.decodeBase64(requestSessionKey);
+		return CryptoUtil.combineByteArray(encryptedRequest, encryptedSessionKey, KEY_SPLITTER);
+	}
+
+	public byte[] getBytesFromThumbprint(String thumbprint) {
+		try {
+			//First try decoding with hex
+			return decodeHex(thumbprint);
+		} catch (DecoderException e) {
+			
+				//Then try decoding with base64
+				return CryptoUtil.decodeBase64(thumbprint);
+			
+		}
+	}
+	
+	public static byte[] decodeHex(String hexData) throws DecoderException{
+        return Hex.decodeHex(hexData);
+    }
+
 	public SecretKey getSymmetricKey() throws NoSuchAlgorithmException {
 		javax.crypto.KeyGenerator generator = KeyGenerator.getInstance("AES", bouncyCastleProvider);
 		SecureRandom random = new SecureRandom();
