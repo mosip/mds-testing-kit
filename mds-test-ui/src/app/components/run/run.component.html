@@ -76,7 +76,7 @@
             testReportObject.testReport[key].runId, key)" [class.spinner]="loading" [disabled]="loading">
               {{getButtonName(testReportObject.testReport[key].requestData)}}</button>
 
-              <button name="testId" ngDefaultControl [(ngModel)]="testId" mat-raised-button (click)="openUINDialog(testReportObject,key)">Enter UIN & Authenticate</button>
+              <button *ngIf="isCapture(testReportObject.testReport[key].requestData)" name="testId" ngDefaultControl [(ngModel)]="testId" mat-raised-button (click)="openUINDialog(testReportObject,key)">Enter UIN & Authenticate</button>
   
             <!-- <button *ngIf="isCapture(testReportObject.testReport[key].requestData)" mat-raised-button (click)="startAuthTest(key)"
                     [class.spinner]="authloading" [disabled]="authloading">Test Authentication</button> -->
