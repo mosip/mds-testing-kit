@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.TestDefinition;
@@ -26,6 +27,9 @@ public class Store {
 	private static Map<String, TestDefinition> testDefinitions = null;
 	private static MasterDataResponseDto masterDataResponseDto = null;
 
+	static {
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
 	public static String getStorePath()
 	{
 		String storePath = STORAGE_PATH == null ? System.getProperty("user.dir") :

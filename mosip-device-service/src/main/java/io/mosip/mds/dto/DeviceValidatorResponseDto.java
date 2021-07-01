@@ -9,7 +9,7 @@ public class DeviceValidatorResponseDto {
 
 	String id;
 	Object metadata;
-	List<DeviceValidatorResponse> response;
+	DeviceValidatorResponse response;
 	String responsetime;
 	String version;
 	List<ErrorDto> errors;

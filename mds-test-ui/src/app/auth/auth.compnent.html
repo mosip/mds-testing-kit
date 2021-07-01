@@ -1,0 +1,22 @@
+<!-- <h1 mat-dialog-title>Hi {{data.testId}}</h1> -->
+<h1 mat-dialog-title>Authentication</h1>
+
+<div mat-dialog-content>
+  <!-- <p>Enter UIN</p> -->
+  <mat-form-field>
+    <mat-label>Enter UIN</mat-label>
+    <input matInput name="data.uin" ngDefaultControl [(ngModel)]="data.uin">
+   </mat-form-field>
+   <p>* Default UIN is 6027349120, Provide your UIN to authenticate</p>
+  
+</div>
+<div mat-dialog-actions>
+ 
+  <!-- <button mat-button (click)="startAuthTest(data.uin)"
+  >Test Authentication</button> -->
+  <button  mat-raised-button (click)="startAuthTest(data.uin)"
+  [class.spinner]="authloading" [disabled]="authloading">Test Authentication</button>
+
+  <button mat-button [mat-dialog-close]="data.uin" cdkFocusInitial>Ok</button>
+</div>
+

@@ -20,5 +20,5 @@ public interface TestRunnerService {
 	
 	public void downloadReport(String runId, String testId);
 
-	String validateAuthRequest(String runId, String testId);
+	String validateAuthRequest(String runId, String testId, String uin);
 }

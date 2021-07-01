@@ -79,7 +79,7 @@ public class TestRunnerController {
 	@ApiOperation(value = "Service to validate auth request", notes = "Service to validate auth request")
 	public String validateAuthRequest(@RequestBody AuthApiRequestDto authRequestDto) {
 		// TODO handle null return for invalid runId and testId
-		return testRunnerService.validateAuthRequest(authRequestDto.getRunId(), authRequestDto.getTestId());
+		return testRunnerService.validateAuthRequest(authRequestDto.getRunId(), authRequestDto.getTestId(),authRequestDto.getUin());
 	}
 
 	@GetMapping("/download/{runId}/{testId}")
