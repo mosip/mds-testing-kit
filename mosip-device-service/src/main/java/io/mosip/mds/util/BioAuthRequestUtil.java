@@ -233,7 +233,6 @@ public class BioAuthRequestUtil {
 	}
 
 	public RestTemplate createRestTemplate(String authToken) throws NoSuchAlgorithmException, KeyManagementException {
-		Encrypt.turnOffSslChecking();
 		RestTemplate restTemplate = new RestTemplate();
 		ClientHttpRequestInterceptor interceptor = new ClientHttpRequestInterceptor() {
 
