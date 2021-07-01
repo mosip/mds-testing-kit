@@ -585,7 +585,7 @@
         ],
         "segments" : ["UNKNOWN"],
         "exceptions" : [],
-        "deviceSubId" : 2,
+        "deviceSubId" : 0,
         "bioCount" : 1,
         "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
