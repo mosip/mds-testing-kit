@@ -64,7 +64,11 @@ export class RunComponent implements OnInit {
     //this.fetchReport();
     this.panelOpenState = false;
   }
-
+  
+  ngDoCheck(){
+    this.availablePorts =[];
+    this.availablePorts = this.localStorageService.getAvailablePortsForDevice();
+  }
   fetchReport() {
    this.dataService.getTestReport(this.run.runId).subscribe(
       body => {
