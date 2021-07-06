@@ -103,9 +103,10 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 				//TODO Check for digital id
 				validations=validateDigitalId(deviceInfoResponse,validations);
 				
-				if(deviceInfoResponse.purpose.equalsIgnoreCase("Registration")) {
-					validations=validDeviceCheck(deviceInfoResponse,validations);
-				}
+				// This check weather the device is Registered or not
+//				if(deviceInfoResponse.purpose.equalsIgnoreCase("Registration")) {
+//					validations=validDeviceCheck(deviceInfoResponse,validations);
+//				}
 				
 				return validations;
 			}
