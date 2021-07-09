@@ -63,7 +63,15 @@ public class DeviceInfoHelper {
 		DeviceInfoResponse resp = new DeviceInfoResponse();	
 		try
 		{		
-			resp = (DeviceInfoResponse) (mapper.readValue(securityUtil.getPayload(encodeInfo), DeviceInfoResponse.class));
+			try {
+			resp = (DeviceInfoResponse) mapper.readValue(securityUtil.getPayload(encodeInfo), DeviceInfoResponse.class);
+			
+			}catch (Exception e) {
+				
+					resp = (DeviceInfoResponse) (mapper.readValue(Base64.getUrlDecoder().decode(encodeInfo), DeviceInfoResponse.class));
+				
+			}
+						
 			try {
 				if(resp.deviceStatus.equalsIgnoreCase("Not Registered"))
 					resp.digitalIdDecoded = (DigitalId) (mapper.readValue(Base64.getUrlDecoder().decode(resp.digitalId), DigitalId.class));

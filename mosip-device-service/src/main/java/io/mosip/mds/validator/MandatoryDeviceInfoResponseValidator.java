@@ -90,18 +90,18 @@ public class MandatoryDeviceInfoResponseValidator extends Validator {
 		{
 			commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceStatus,"DeviceInfo response does not contain deviceStatus",CommonConstant.FAILED);
 			validations.add(validation);
-		}else if(!(!deviceInfoResponse.deviceStatus.equals(CommonConstant.READY) && !deviceInfoResponse.deviceStatus.equals(CommonConstant.BUSY)
-				&& !deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_READY) && !deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))){
-			validations.add(validation);
-			// Check for deviceCode block
-			validation = commonValidator.setFieldExpected("discoverResponse.deviceCode","A unique code given by MOSIP after successful registration",deviceInfoResponse.deviceCode);
-			if(!deviceInfoResponse.deviceStatus.equals("Not Registered") && (deviceInfoResponse.deviceCode == null || deviceInfoResponse.deviceCode.isEmpty()))
-			{
-				commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceCode,"Device Discover response does not contain deviceCode",CommonConstant.FAILED);
-			}else if(deviceInfoResponse.deviceStatus.equals("Not Registered") && (deviceInfoResponse.deviceCode != null && (!deviceInfoResponse.deviceCode.isEmpty()))) {
-				commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceCode,"Device Discover response deviceCode should be empty when deviceStatus is Not Registered",CommonConstant.FAILED);
-			}
-			validations.add(validation);
+//		}else if(!(!deviceInfoResponse.deviceStatus.equals(CommonConstant.READY) && !deviceInfoResponse.deviceStatus.equals(CommonConstant.BUSY)
+//				&& !deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_READY) && !deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))){
+//			validations.add(validation);
+//			// Check for deviceCode block
+//			validation = commonValidator.setFieldExpected("deviceInfoResponse.deviceCode","A unique code given by MOSIP after successful registration",deviceInfoResponse.deviceCode);
+//			if(!deviceInfoResponse.deviceStatus.equals("Not Registered") && (deviceInfoResponse.deviceCode == null || deviceInfoResponse.deviceCode.isEmpty()))
+//			{
+//				commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceCode,"Device Discover response does not contain deviceCode",CommonConstant.FAILED);
+//			}else if(deviceInfoResponse.deviceStatus.equals("Not Registered") && (deviceInfoResponse.deviceCode != null && (!deviceInfoResponse.deviceCode.isEmpty()))) {
+//				commonValidator.setFoundMessageStatus(validation,deviceInfoResponse.deviceCode,"Device Discover response deviceCode should be empty when deviceStatus is Not Registered",CommonConstant.FAILED);
+//			}
+//			validations.add(validation);
 		}else {
 			validations.add(validation);
 		}

@@ -7,7 +7,8 @@ public class DeviceValidatorDto {
 
 	String id;
 	Object metadata;
-	DeviceValidatorRequestDto request;
+	DeviceTrustRequestDto request;
+//	DeviceValidatorRequestDto request;
 	String requesttime;
 	String version;
 }

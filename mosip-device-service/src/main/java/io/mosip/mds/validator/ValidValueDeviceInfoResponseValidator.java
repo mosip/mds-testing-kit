@@ -139,8 +139,7 @@ public class ValidValueDeviceInfoResponseValidator extends Validator {
 
 		devicevalidatorrequestdto.setDigitalId(digitalId);
 		//devicevalidatorrequestdto.setTimeStamp(deviceInfoResponse.);
-		deviceValidatorDto.setRequest(devicevalidatorrequestdto );;
-		
+		//deviceValidatorDto.setRequest(devicevalidatorrequestdto );
 		try {
 			validations=validDeviceCheckValidator.doValidateDevice(deviceValidatorDto,validations );
 		} catch (IOException e) {
