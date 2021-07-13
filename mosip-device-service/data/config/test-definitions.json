@@ -420,7 +420,7 @@
         ]
     },
 	{
-        "testId": "Registration capture - Left Iris",
+        "testId": "Registration capture - Single Iris - Left Iris",
         "testOrderId":1011,
         "method": "rcapture",
         "testDescription": "Valid Registration capture Request for left iris",
@@ -437,7 +437,7 @@
         ],
 		"segments" : ["LeftEye"],
 		"exceptions" : [],
-		"deviceSubId" : 1,
+		"deviceSubId" : 0,
 		"bioCount" : 1,
         "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
@@ -457,7 +457,7 @@
         ]
     },
 	{
-        "testId": "Registration capture - Right Iris",
+        "testId": "Registration capture - Single Iris - Right Iris",
         "testOrderId":1012,
         "method": "rcapture",
         "testDescription": "Valid Registration capture Request for right iris",
@@ -474,7 +474,7 @@
         ],
 		"segments" : ["RightEye"],
 		"exceptions" : [],
-		"deviceSubId" : 2,
+		"deviceSubId" : 0,
 		"bioCount" : 1,
         "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
@@ -509,12 +509,49 @@
         "deviceSubTypes": [
              "Full face"
         ],
-		"segments" : ["UNKNOWN"],
+		"segments" : [],
 		"exceptions" : [],
 		"deviceSubId" : 0,
 		"bioCount" : 1,
         "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
+        "validatorDefs": [
+            {
+            	"Name": "MdsSignatureValidator",
+                "Description": "jwt signature Validator"         
+            },
+              {
+                "Name": "MandatoryRCaptureResponseValidator",
+                "Description": "Mandatory fields check"
+            },
+			{
+                "Name": "ValidValueRCaptureResponseValidator",
+                "Description": "valid values check"
+            }
+        ]
+    },
+	{
+        "testId": "Registration capture - Exception Photo",
+        "testOrderId":1014,
+        "method": "rcapture",
+        "testDescription": "Valid Registration capture Request only for Exception photo",
+        "requestGenerator": null,
+        "uiInput": null,
+        "purposes": [
+            "Registration"
+        ],
+        "biometricTypes": [
+            "Face"
+        ],
+        "deviceSubTypes": [
+             "Full face"
+        ],
+		"segments" : [],
+		"exceptions" : ["LeftLittle"],
+		"deviceSubId" : 0,
+		"bioCount" : 1,
+        "sbiSpecVersions": ["0.9.5"],
+        "requestedScore" : 10,
         "validatorDefs": [
             {
             	"Name": "MdsSignatureValidator",
@@ -608,7 +645,7 @@
         "testId": "Auth capture - Left Iris",
          "testOrderId":2002,
         "method": "capture",
-        "testDescription": "Valid Auth capture Request for Unknown iris",
+        "testDescription": "Valid Auth capture Request for Left iris",
         "requestGenerator": null,
         "uiInput": null,
         "purposes": [
@@ -622,7 +659,7 @@
         ],
         "segments" : ["Left"],
         "exceptions" : [],
-        "deviceSubId" : 1,
+        "deviceSubId" : 0,
         "bioCount" : 1,
         "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
@@ -645,7 +682,7 @@
         "testId": "Auth capture - Right Iris",
          "testOrderId":2003,
         "method": "capture",
-        "testDescription": "Valid Auth capture Request for Unknown iris",
+        "testDescription": "Valid Auth capture Request for Right iris",
         "requestGenerator": null,
         "uiInput": null,
         "purposes": [
@@ -659,7 +696,7 @@
         ],
         "segments" : ["Right"],
         "exceptions" : [],
-        "deviceSubId" : 2,
+        "deviceSubId" : 0,
         "bioCount" : 1,
         "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
@@ -696,7 +733,7 @@
         ],
         "segments" : ["UNKNOWN"],
         "exceptions" : [],
-        "deviceSubId" : 1,
+        "deviceSubId" : 0,
         "bioCount" : 1,
         "requestedScore" : 40,
         "sbiSpecVersions": ["0.9.5"],
@@ -729,11 +766,11 @@
             "Finger"
         ],
         "deviceSubTypes": [
-            "Slap"
+            "Single"
         ],
         "segments" : ["UNKNOWN","UNKNOWN"],
         "exceptions" : [],
-        "deviceSubId" : 2,
+        "deviceSubId" : 0,
         "bioCount" : 2,
         "requestedScore" : 40,
         "sbiSpecVersions": ["0.9.5"],
@@ -770,7 +807,7 @@
         ],
         "segments" : ["LeftIndex"],
         "exceptions" : [],
-        "deviceSubId" : 1,
+        "deviceSubId" : 0,
         "bioCount" : 1,
         "requestedScore" : 40,
         "sbiSpecVersions": ["0.9.5"],
@@ -807,7 +844,7 @@
         ],
         "segments" : ["LeftIndex","LeftMiddle"],
         "exceptions" : [],
-        "deviceSubId" : 1,
+        "deviceSubId" : 0,
         "bioCount" : 2,
         "requestedScore" : 40,
         "sbiSpecVersions": ["0.9.5"],
