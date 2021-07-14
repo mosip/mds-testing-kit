@@ -28,8 +28,6 @@ import io.restassured.http.Cookie;
 @Component
 public class TrustValidation {
 
-	private static final String DEVICE = "DEVICE";
-
 	private static final String END_CERTIFICATE = "\n-----END CERTIFICATE-----\n";
 
 	private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----\n";
@@ -78,13 +76,13 @@ public class TrustValidation {
 		return "";
 	}
 
-	public Validation trustRootValidation(String certificateData , Validation validation) throws IOException {
+	public Validation trustRootValidation(String certificateData , Validation validation,String certification) throws IOException {
 		DeviceValidatorDto deviceValidatorDto = new DeviceValidatorDto();
 		deviceValidatorDto.setRequesttime(getCurrentDateAndTimeForAPI());
 		DeviceTrustRequestDto trustRequest = new DeviceTrustRequestDto();
 
 		trustRequest.setCertificateData(BEGIN_CERTIFICATE+certificateData+END_CERTIFICATE);
-		trustRequest.setPartnerDomain(DEVICE);
+		trustRequest.setPartnerDomain(certification);
 		deviceValidatorDto.setRequest(trustRequest);
 
 		Cookie.Builder builder = new Cookie.Builder("Authorization", getAuthToken());

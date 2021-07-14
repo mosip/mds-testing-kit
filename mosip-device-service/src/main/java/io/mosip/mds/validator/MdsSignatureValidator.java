@@ -107,7 +107,7 @@ public class MdsSignatureValidator extends Validator{
 			if(deviceInfoResponse.certification.equals(CommonConstant.L0) && deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
 				validations = validateUnSignedDigitalID(deviceInfoResponse.digitalId,validations);
 			else
-				validations = validateSignedDigitalID(deviceInfoResponse.digitalId,validations,intent);
+				validations = validateSignedDigitalID(deviceInfoResponse.digitalId,validations,intent,deviceInfoResponse.certification);
 
 			
 			for(DeviceInfoMinimal deviceInfoMinimal:deviceInfos)
@@ -219,7 +219,7 @@ public class MdsSignatureValidator extends Validator{
 					{
 						CaptureBiometricData dataDecoded = bb.dataDecoded;
 						if(Objects.nonNull(dataDecoded)) {
-							validations = validateSignedDigitalID(dataDecoded.digitalId,validations,intent);
+							validations = validateSignedDigitalID(dataDecoded.digitalId,validations,intent,response.getDeviceInfo().certification);
 							validation = commonValidator.setFieldExpected("signed dataDecoded.digitalId","signature validity",CommonConstant.DATA);				
 							validations = validateSignatureValidity(dataDecoded.digitalId,validations,validation);
 							//							return validations;
@@ -235,7 +235,7 @@ public class MdsSignatureValidator extends Validator{
 		return validations;
 	}
 
-	public List<Validation> validateSignedDigitalID(String digitalId,List<Validation> validations,Intent intent) {
+	public List<Validation> validateSignedDigitalID(String digitalId,List<Validation> validations,Intent intent, String certification) {
 		//List<Validation> validations= new ArrayList<>();
 		String [] parts = digitalId.split("\\.");
 		validation = commonValidator.setFieldExpected("digitalId","Expected Signed digitalId with header,payload,signature",CommonConstant.DATA);
@@ -244,7 +244,7 @@ public class MdsSignatureValidator extends Validator{
 		}
 		validations.add(validation);
 		validations=mandatoryParamDigitalIdHeader(parts[0],validations);
-		validations=validValueDigitalIdHeader(parts[0],validations,intent);
+		validations=validValueDigitalIdHeader(parts[0],validations,intent,certification);
 		try {
 			if(!validateSignature(digitalId)) {
 				validation = commonValidator.setFieldExpected("JWT Signed digital ID (Signature Validation)","Expected Signed digital ID data with header,payload,signature",CommonConstant.DATA);					
@@ -261,7 +261,7 @@ public class MdsSignatureValidator extends Validator{
 		return validations;
 	}
 
-	private List<Validation> validValueDigitalIdHeader(String header, List<Validation> validations, Intent intent) {
+	private List<Validation> validValueDigitalIdHeader(String header, List<Validation> validations, Intent intent, String certification) {
 		try {
 			validation = commonValidator.setFieldExpected("validValue DigitalIdHeader check header","Expected Proper header",CommonConstant.DATA);
 			DataHeader decodedHeader = (DataHeader) (mapper.readValue(Base64.getUrlDecoder().decode(header),
@@ -282,9 +282,14 @@ public class MdsSignatureValidator extends Validator{
 
 			if(intent.equals(Intent.DeviceInfo) || intent.equals(Intent.RegistrationCapture)) {
 				validation = commonValidator.setFieldExpected("Trust Root Validation for DigitalId","Succes Response","");			
-
-				trustValidation.trustRootValidation(decodedHeader.x5c.get(0), validation);
+				if(certification.equals(CommonConstant.L0)) {
+				trustValidation.trustRootValidation(decodedHeader.x5c.get(0), validation,CommonConstant.DEVICE);
 				validations.add(validation);
+				}
+				else if(certification.equals(CommonConstant.L1)) {
+					trustValidation.trustRootValidation(decodedHeader.x5c.get(0), validation,CommonConstant.FTM);
+					validations.add(validation);
+				}
 			}
 		} catch (Exception e) {
 			validation = commonValidator.setFieldExpected("validValue DigitalIdHeader check header","complete header",CommonConstant.DATA);
@@ -316,7 +321,7 @@ public class MdsSignatureValidator extends Validator{
 			if(intent.equals(Intent.DeviceInfo) || intent.equals(Intent.RegistrationCapture)) {
 				validation = commonValidator.setFieldExpected("Trust Root Validation","Succes Response","");			
 
-				trustValidation.trustRootValidation(decodedHeader.x5c.get(0), validation);
+				trustValidation.trustRootValidation(decodedHeader.x5c.get(0), validation,CommonConstant.DEVICE);
 				validations.add(validation);
 			}
 

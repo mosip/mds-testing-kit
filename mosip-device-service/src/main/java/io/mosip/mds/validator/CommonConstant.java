@@ -41,4 +41,6 @@ public class CommonConstant {
 	public static final String SUCCESS = "SUCCESS";
 	public static final String MATCHED = "MATCHED";
 	public static final String DATA = "<data>";
+	static final String DEVICE = "DEVICE";
+	public static final String FTM = "FTM";
 }
