@@ -93,6 +93,9 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 			for(TestcaseResult testcaseResult : testcaseResults) {
 				TestDefinition testDefinition = Store.getAllTestDefinitions().get(orderId);
 				Intent intent = getIntent(testDefinition.getMethod());
+				if(intent.equals(intent.DeviceStatus)) {
+					intent=intent.DeviceInfo;
+				}
 				String renderContent = "";
 
 				
@@ -350,6 +353,10 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		else if(method.equals("stream"))
 		{
 			intent = Intent.Stream;
+		}
+		else if(method.equals("deviceStatus"))
+		{
+			intent = Intent.DeviceStatus;
 		}
 		return intent;
 	}

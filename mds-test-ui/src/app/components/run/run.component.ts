@@ -43,6 +43,11 @@ export class RunComponent implements OnInit {
   currentTestId: string;
   loading = false;
   authloading = false;
+  readyButton = false;
+  busyButton = false;
+  notReadyButton = false;
+  notRegisteredButton = false;
+  statusButton = false;
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -118,8 +123,20 @@ export class RunComponent implements OnInit {
   }
 
 
-  getMDSResponse(request, runId, testId) {
+  getMDSResponse(request, runId, testId, status) {
     this.loading = true;
+    this.statusButton = true;
+    if (status == 'Ready') {
+      this.readyButton = true;
+    } else if (status == 'Not Ready') {
+      this.notReadyButton = true;
+    } else if (status == 'Busy') {
+      this.busyButton = true;
+    } else if (status == 'Not Registered') {
+      this.notRegisteredButton = true;
+    }
+
+
     let mdmResponse = this.testReportObject.testReport[testId].responseData;
     if (this.mdmInitiated === true) {
       console.log("MDM request is currently going on .....");
@@ -132,11 +149,11 @@ export class RunComponent implements OnInit {
       this.stopStreaming(testId);
       this.mdsService.request(JSON.parse(request)).subscribe(
         response => {
-          this.validateMDSResponse(runId, testId, request, response);
+          this.validateMDSResponse(runId, testId, request, response, status);
           //this.loading = false;
         },
         error => {
-          this.validateMDSResponse(runId, testId, request, error);
+          this.validateMDSResponse(runId, testId, request, error, status);
           //this.loading = false;
         }
       );
@@ -145,16 +162,43 @@ export class RunComponent implements OnInit {
     }
   }
 
-  validateMDSResponse(runId, testId, request, response) {
+  validateMDSResponse(runId, testId, request, response, status) {
     this.dataService.validateResponse(runId, testId, request, response).subscribe(
       result => {
         this.testReportObject = result;
+       if (testId == "Device Status") {
+       let testObjectValidationResult=this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0];
+        testObjectValidationResult.validations[1].expected = status;
+          if (testObjectValidationResult.validations[1].found != status) {
+            testObjectValidationResult.status = "Failed";
+            testObjectValidationResult.validations[1].status="FAILED";
+          testObjectValidationResult.validations[1].message='Device info response device status is invalid';
+          }
+
+          let testKeyObjectValidationResult=this.testReportObject.testReportKey[3][testId].validationResults[0].validationTestResultDtos[0];
+          testKeyObjectValidationResult.validations[1].expected = status;
+          if (testKeyObjectValidationResult.validations[1].found != status) {
+            this.testReportObject.testReportKey[3][testId].validationResults[0].status = 'Failed';
+            testKeyObjectValidationResult.validations[1].status="FAILED";
+            testKeyObjectValidationResult.validations[1].message='Device info response device status is invalid';           
+          }
+        }
         this.loading = false;
+        this.readyButton = false;
+        this.busyButton = false;
+        this.notReadyButton = false;
+        this.notRegisteredButton = false;
+        this.statusButton = false;
         //console.log('result:' + result);
       },
       error => {
         this.openDialog("Alert", error);
         this.loading = false;
+        this.readyButton = false;
+        this.busyButton = false;
+        this.notReadyButton = false;
+        this.notRegisteredButton = false;
+        this.statusButton = false;
       }
     );
   }
@@ -254,6 +298,13 @@ export class RunComponent implements OnInit {
     return false;
   }
 
+  isDeviceStatus(intent, testId) {
+    let method = JSON.parse(intent).verb;
+    if (method == "MOSIPDINFO" && testId == "Device Status") {
+      return true;
+    }
+    return false;
+  }
   /* isMDSResponseCaptured(testId) {
       let mdmCaptured = false;
       for(let i=0; i<this.requests.length;i++) {
@@ -354,6 +405,13 @@ export class RunComponent implements OnInit {
     return this.testReportObject.testReport[testId].enableAuthTest ? true : false;
   }
 
+  isRequired(testId) {
+    if (testId == "Device Status") {
+      return false;
+    }else{
+      return true;
+    }
+  }
   startAuthTest(testId) {
     this.authloading = true;
     console.log("Starting auth test for >>> " + testId);

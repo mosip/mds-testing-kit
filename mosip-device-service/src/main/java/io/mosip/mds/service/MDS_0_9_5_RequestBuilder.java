@@ -85,10 +85,14 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
                     requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/capture";
                    // String streamUrl = "http://127.0.0.1:" + getPort(device) + "/stream?deviceId=%s&deviceSubId=%s";                    
                     requestInfoDto.streamUrl = "http://127.0.0.1:" + getPort(device) + "/stream";                    
-                   // composeRequestResponseDto.streamUrl = String.format(streamUrl, device.deviceInfo.deviceId, test.deviceSubId);
-                    
+                   // composeRequestResponseDto.streamUrl = String.format(streamUrl, device.deviceInfo.deviceId, test.deviceSubId);                    
                 break;
                 case DeviceInfo:
+                    requestInfoDto.verb = "MOSIPDINFO";
+                    requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/info";
+                    requestInfoDto.body = getDeviceInfoRequest(test, device);
+                    break;
+                case DeviceStatus:
                     requestInfoDto.verb = "MOSIPDINFO";
                     requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/info";
                     requestInfoDto.body = getDeviceInfoRequest(test, device);

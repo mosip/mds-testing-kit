@@ -66,6 +66,32 @@
         ]
     },
     {
+        "testId": "Device Status",
+        "testOrderId":3,
+        "method": "deviceStatus",
+        "testDescription": "Valid Device Status",
+        "requestGenerator": null,
+        "uiInput": null,
+        "purposes": [
+            "Registration",
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Finger","Iris","Face"
+        ],
+        "deviceSubTypes": ["Slap", "Single", "Double", "Full face"],
+		"segments" : [],
+		"exceptions" : [],
+        "sbiSpecVersions":["0.9.5"],
+        "validatorDefs": [
+            {
+                "Name": "DeviceStatusCheckValidator",
+                "Description": "DeviceStatusCheckValidator"
+            }
+			
+        ]
+    },
+    {
         "testId": "Registration capture - Left Slab",
         "testOrderId":1000,
         "method": "rcapture",
