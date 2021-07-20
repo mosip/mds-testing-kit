@@ -358,7 +358,7 @@
         "deviceSubTypes": [
             "Double"
         ],
-		"segments" : ["LeftEye", "RightEye"],
+		"segments" : ["Left", "Right"],
 		"exceptions" : [],
 		"deviceSubId" : 3,
 		"bioCount" : 2,
@@ -395,8 +395,8 @@
         "deviceSubTypes": [
             "Double"
         ],
-		"segments" : ["RightEye"],
-		"exceptions" : ["LeftEye"],
+		"segments" : ["Right"],
+		"exceptions" : ["Left"],
 		"deviceSubId" : 3,
 		"bioCount" : 1,
         "sbiSpecVersions": ["0.9.5"],
@@ -433,7 +433,7 @@
             "Double"
         ],
 		"segments" : [],
-		"exceptions" : ["LeftEye","RightEye"],
+		"exceptions" : ["Left","Right"],
 		"deviceSubId" : 3,
 		"bioCount" : 0,
         "sbiSpecVersions": ["0.9.5"],
@@ -461,7 +461,7 @@
         "deviceSubTypes": [
             "Single"
         ],
-		"segments" : ["LeftEye"],
+		"segments" : ["Left"],
 		"exceptions" : [],
 		"deviceSubId" : 0,
 		"bioCount" : 1,
@@ -498,7 +498,7 @@
         "deviceSubTypes": [
             "Single"
         ],
-		"segments" : ["RightEye"],
+		"segments" : ["Right"],
 		"exceptions" : [],
 		"deviceSubId" : 0,
 		"bioCount" : 1,
