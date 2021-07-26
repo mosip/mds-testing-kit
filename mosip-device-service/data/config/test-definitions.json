@@ -631,7 +631,7 @@
         ]
     },
     {
-        "testId": "Auth capture - Unknown Iris",
+        "testId": "Auth capture - Single Iris - Unknown Iris",
         "testOrderId":2001,
         "method": "capture",
         "testDescription": "Valid Auth capture Request for Unknown iris",
@@ -668,7 +668,7 @@
         ]
     },
     {
-        "testId": "Auth capture - Left Iris",
+        "testId": "Auth capture - Single Iris - Left Iris",
          "testOrderId":2002,
         "method": "capture",
         "testDescription": "Valid Auth capture Request for Left iris",
@@ -705,7 +705,7 @@
         ]
     },
     {
-        "testId": "Auth capture - Right Iris",
+        "testId": "Auth capture - Single Iris - Right Iris",
          "testOrderId":2003,
         "method": "capture",
         "testDescription": "Valid Auth capture Request for Right iris",
