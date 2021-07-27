@@ -1,6 +1,7 @@
 package io.mosip.mds.service;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.HMACUtils;
 import io.mosip.mds.dto.CaptureRequest;
 import io.mosip.mds.dto.CaptureRequest.CaptureBioRequest;
@@ -34,6 +36,8 @@ import io.mosip.mds.util.Intent;
 public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(MDS_0_9_5_RequestBuilder.class);
+
+    private final String UTC_DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     @Autowired
 	private ObjectMapper mapper;
@@ -81,10 +85,14 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
                     requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/capture";
                    // String streamUrl = "http://127.0.0.1:" + getPort(device) + "/stream?deviceId=%s&deviceSubId=%s";                    
                     requestInfoDto.streamUrl = "http://127.0.0.1:" + getPort(device) + "/stream";                    
-                   // composeRequestResponseDto.streamUrl = String.format(streamUrl, device.deviceInfo.deviceId, test.deviceSubId);
-                    
+                   // composeRequestResponseDto.streamUrl = String.format(streamUrl, device.deviceInfo.deviceId, test.deviceSubId);                    
                 break;
                 case DeviceInfo:
+                    requestInfoDto.verb = "MOSIPDINFO";
+                    requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/info";
+                    requestInfoDto.body = getDeviceInfoRequest(test, device);
+                    break;
+                case DeviceStatus:
                     requestInfoDto.verb = "MOSIPDINFO";
                     requestInfoDto.url = "http://127.0.0.1:" + getPort(device) + "/info";
                     requestInfoDto.body = getDeviceInfoRequest(test, device);
@@ -181,10 +189,13 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         requestBody.bio[0] = bio;        
         return mapper.writeValueAsString(requestBody);
     }
-
+    
      public String getTimestamp() {
-    	DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-    	return formatter.format(ZonedDateTime.now());
+    		return formatToISOString(DateUtils.getUTCCurrentDateTime());
+    		
     }
 
+     public String formatToISOString(LocalDateTime localDateTime) {
+ 		return localDateTime.format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
+ 	}
 }

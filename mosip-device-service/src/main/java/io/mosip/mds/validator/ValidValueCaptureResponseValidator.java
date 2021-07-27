@@ -122,6 +122,16 @@ public class ValidValueCaptureResponseValidator extends Validator {
 						validations.add(validation);
 						bioIndex++;
 					}
+				}else if(bio.bioSubType[0].equals(CommonConstant.UNKNOWN)) {
+					for(String subType:bio.bioSubType)
+					{
+					validation = commonValidator.setFieldExpected("dataDecoded.bioSubType",subType,biometrics[bioIndex].dataDecoded.bioSubType);				
+					if(!biometrics[0].dataDecoded.bioSubType.equals(subType) &&
+							!biometrics[1].dataDecoded.bioSubType.equals(subType)) {
+						commonValidator.setFoundMessageStatus(validation,biometrics[bioIndex].dataDecoded.bioSubType,"invalid biometrics SubType returned",CommonConstant.FAILED);											
+					}
+					validations.add(validation);
+					}				
 				}else {
 					validation = commonValidator.setFieldExpected("dataDecoded data count",bio.count.toString(),String.valueOf(bio.bioSubType.length));				
 					commonValidator.setFoundMessageStatus(validation,String.valueOf(bio.bioSubType.length),"invalid biometrics count bio.count v/s expected bio.bioSubType",CommonConstant.FAILED);																

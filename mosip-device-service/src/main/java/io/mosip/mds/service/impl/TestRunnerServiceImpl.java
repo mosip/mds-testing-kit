@@ -93,6 +93,9 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 			for(TestcaseResult testcaseResult : testcaseResults) {
 				TestDefinition testDefinition = Store.getAllTestDefinitions().get(orderId);
 				Intent intent = getIntent(testDefinition.getMethod());
+				if(intent.equals(intent.DeviceStatus)) {
+					intent=intent.DeviceInfo;
+				}
 				String renderContent = "";
 
 				
@@ -351,6 +354,10 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		{
 			intent = Intent.Stream;
 		}
+		else if(method.equals("deviceStatus"))
+		{
+			intent = Intent.DeviceStatus;
+		}
 		return intent;
 	}
 
@@ -380,8 +387,9 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 		if(deviceDto.deviceInfo.deviceStatus == null)
 			throw new Exception("Invalid device status !");
 
-		if(!deviceDto.deviceInfo.deviceStatus.equals("Ready"))
-			throw new Exception("Invalid device status !");
+		//Any status let continue validation,based on stats related test shold happen.
+//		if(!deviceDto.deviceInfo.deviceStatus.equals("Ready"))
+//			throw new Exception("Invalid device status !");
 	}
 	
 	@Override
@@ -395,7 +403,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
 
 	}
 
-	public void createpdfFile(ValidateResponseRequestDto validateRequestDto) {
+	private void createpdfFile(ValidateResponseRequestDto validateRequestDto) {
 		try {
 			Document document = new Document();
 			List<TestcaseResult> testcaseResults = testCaseResultRepository.findAllByTestResultKeyRunId(validateRequestDto.runId);

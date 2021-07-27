@@ -2,8 +2,10 @@ package io.mosip.mds.dto;
 
 import java.util.HashMap;
 
+import lombok.Data;
+@Data
 public class CaptureRequest {
-
+	@Data
     public static class CaptureBioRequest
     {
         public String type; //type of the biometric data,

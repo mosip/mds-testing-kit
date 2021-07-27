@@ -6,5 +6,6 @@ public enum Intent
 	DeviceInfo,
 	Capture,
 	RegistrationCapture,
-	Stream
+	Stream,
+	DeviceStatus
 }

@@ -5,8 +5,8 @@ import java.util.List;
 
 public enum BioSubType {
 	
-	LEFT_IRIS("LeftEye", "LEFT_IRIS,TWO_IRIS", "", "Left"),
-	RIGHT_IRIS("RightEye", "RIGHT_IRIS,TWO_IRIS", "", "Right"),
+	LEFT_IRIS("Left", "LEFT_IRIS,TWO_IRIS", "", "Left"),
+	RIGHT_IRIS("Right", "RIGHT_IRIS,TWO_IRIS", "", "Right"),
 	
 	RIGHT_INDEX("RightIndex", "RIGHT_SLAP", "", "Right IndexFinger"),
 	RIGHT_MIDDLE("RightMiddle", "RIGHT_SLAP", "", "Right MiddleFinger"),

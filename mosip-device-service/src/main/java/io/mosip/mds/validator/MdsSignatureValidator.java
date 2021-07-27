@@ -17,18 +17,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.mds.dto.CaptureResponse;
 import io.mosip.mds.dto.CaptureResponse.CaptureBiometricData;
 import io.mosip.mds.dto.DataHeader;
 import io.mosip.mds.dto.DeviceInfoResponse;
+import io.mosip.mds.dto.DigitalId;
 import io.mosip.mds.dto.DiscoverResponse;
 import io.mosip.mds.dto.ValidateResponseRequestDto;
 import io.mosip.mds.dto.Validation;
 import io.mosip.mds.entitiy.DeviceInfoMinimal;
 import io.mosip.mds.entitiy.Validator;
 import io.mosip.mds.util.Intent;
+import io.mosip.mds.util.SecurityUtil;
 
 @Component
 public class MdsSignatureValidator extends Validator{
@@ -39,12 +42,18 @@ public class MdsSignatureValidator extends Validator{
 	private Validation validation = new Validation();
 
 	@Autowired
+	TrustValidation trustValidation;
+
+	@Autowired
 	private CommonValidator commonValidator;
 
-	//	static {
-	//		mapper = new ObjectMapper();
-	//		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-	//	}
+	@Autowired
+	private SecurityUtil securityUtil;
+	
+	{
+		mapper = new ObjectMapper();
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
 
 	public MdsSignatureValidator()
 	{
@@ -59,12 +68,12 @@ public class MdsSignatureValidator extends Validator{
 		{
 			validations.add(validation);
 			if(response.getIntent().equals(Intent.DeviceInfo)) {
-				validations = validateDeviceInfoSignature(response, validations);
+				validations = validateDeviceInfoSignature(response, validations,response.getIntent());
 			}else if(response.getIntent().equals(Intent.Discover)) {
 				validations=validateDiscoverDigitalId(response, validations);
 			}
 			else if(response.getIntent().equals(Intent.Capture) || response.getIntent().equals(Intent.RegistrationCapture)) {
-				validations=validateCaptureSignatureTampered(response, validations);
+				validations=validateCaptureSignatureTampered(response, validations,response.getIntent());
 			}
 		}else {
 			commonValidator.setFoundMessageStatus(validation,"Expected response is null","Response is empty",CommonConstant.FAILED);
@@ -87,12 +96,20 @@ public class MdsSignatureValidator extends Validator{
 		return validations;
 	}
 
-	private List<Validation> validateDeviceInfoSignature(ValidateResponseRequestDto response, List<Validation> validations) {
+	private List<Validation> validateDeviceInfoSignature(ValidateResponseRequestDto response, List<Validation> validations, Intent intent) {
 		try {
 			validation = commonValidator.setFieldExpected("response.getResponse()","JWT Signed ,Array of Device info Details",response.getMdsResponse());
 			DeviceInfoMinimal[]	deviceInfos = (DeviceInfoMinimal[])(mapper.readValue(response.getMdsResponse().getBytes(), DeviceInfoMinimal[].class));
 			validations.add(validation);
 
+			// validate digitalId for signature
+			DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
+			if(deviceInfoResponse.certification.equals(CommonConstant.L0) && deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
+				validations = validateUnSignedDigitalID(deviceInfoResponse.digitalId,validations);
+			else
+				validations = validateSignedDigitalID(deviceInfoResponse.digitalId,validations,intent,deviceInfoResponse.certification);
+
+			
 			for(DeviceInfoMinimal deviceInfoMinimal:deviceInfos)
 			{
 				try {
@@ -103,6 +120,22 @@ public class MdsSignatureValidator extends Validator{
 					if(parts.length != 3) {
 						commonValidator.setFoundMessageStatus(validation,"Found deviceInfoMinimal.deviceInfo is not valid signed response","Missing header|payload|signature in deviceInfoMinimal.deviceInfo",CommonConstant.FAILED);					
 						validations.add(validation);
+					}
+					else {
+						DeviceInfoResponse info = (DeviceInfoResponse)mapper.readValue(Base64.getUrlDecoder().decode(parts[1]), DeviceInfoResponse.class);
+						if(info.deviceStatus.equalsIgnoreCase("Not Registered"))
+							info.digitalIdDecoded = (DigitalId) (mapper.readValue(Base64.getUrlDecoder().decode(info.digitalId), DigitalId.class));
+						else
+							info.digitalIdDecoded = (DigitalId) (mapper.readValue(securityUtil.getPayload(info.digitalId), DigitalId.class));
+					
+						
+						String type = null;
+						//						info.getDigitalIdDecoded().type;
+//						 mapper.readValue(securityUtil.getPayload(deviceInfoMinima), DeviceInfoResponse.class)
+						if(info.getDigitalIdDecoded().getType().equalsIgnoreCase(response.getTestManagerDto().biometricType)) {
+							validations=mandatoryParamDataHeader(parts[0],validations);
+							validations=validValueDataHeader(parts[0],validations,intent);	
+						}
 					}
 					if(!validateSignature(deviceInfoMinimal.deviceInfo)) {
 
@@ -125,17 +158,10 @@ public class MdsSignatureValidator extends Validator{
 			validations.add(validation);
 		}
 
-		// validate digitalId for signature
-		DeviceInfoResponse deviceInfoResponse = (DeviceInfoResponse) response.getMdsDecodedResponse();
-		if(deviceInfoResponse.certification.equals(CommonConstant.L0) && deviceInfoResponse.deviceStatus.equals(CommonConstant.NOT_REGISTERED))
-			validations = validateUnSignedDigitalID(deviceInfoResponse.digitalId,validations);
-		else
-			validations = validateSignedDigitalID(deviceInfoResponse.digitalId,validations);
-
 		return validations;
 	}
 
-	private List<Validation> validateCaptureSignatureTampered(ValidateResponseRequestDto response, List<Validation> validations) {
+	private List<Validation> validateCaptureSignatureTampered(ValidateResponseRequestDto response, List<Validation> validations, Intent intent) {
 		CaptureResponse mdsResponse = null;
 		if(Objects.nonNull(response))
 		{
@@ -160,7 +186,7 @@ public class MdsSignatureValidator extends Validator{
 					}
 					validations.add(validation);
 					validations=mandatoryParamDataHeader(parts[0],validations);
-					validations=validValueDataHeader(parts[0],validations);
+					validations=validValueDataHeader(parts[0],validations,intent);
 
 					validation = commonValidator.setFieldExpected("signed biometric.getData()","signature validity",CommonConstant.DATA);
 					validations = validateSignatureValidity(biometric.getData(),validations,validation);
@@ -193,10 +219,10 @@ public class MdsSignatureValidator extends Validator{
 					{
 						CaptureBiometricData dataDecoded = bb.dataDecoded;
 						if(Objects.nonNull(dataDecoded)) {
-							validations = validateSignedDigitalID(dataDecoded.digitalId,validations);
+							validations = validateSignedDigitalID(dataDecoded.digitalId,validations,intent,response.getDeviceInfo().certification);
 							validation = commonValidator.setFieldExpected("signed dataDecoded.digitalId","signature validity",CommonConstant.DATA);				
 							validations = validateSignatureValidity(dataDecoded.digitalId,validations,validation);
-							return validations;
+							//							return validations;
 						}
 					}
 				}
@@ -209,7 +235,7 @@ public class MdsSignatureValidator extends Validator{
 		return validations;
 	}
 
-	public List<Validation> validateSignedDigitalID(String digitalId,List<Validation> validations) {
+	public List<Validation> validateSignedDigitalID(String digitalId,List<Validation> validations,Intent intent, String certification) {
 		//List<Validation> validations= new ArrayList<>();
 		String [] parts = digitalId.split("\\.");
 		validation = commonValidator.setFieldExpected("digitalId","Expected Signed digitalId with header,payload,signature",CommonConstant.DATA);
@@ -218,7 +244,7 @@ public class MdsSignatureValidator extends Validator{
 		}
 		validations.add(validation);
 		validations=mandatoryParamDigitalIdHeader(parts[0],validations);
-		validations=validValueDigitalIdHeader(parts[0],validations);
+		validations=validValueDigitalIdHeader(parts[0],validations,intent,certification);
 		try {
 			if(!validateSignature(digitalId)) {
 				validation = commonValidator.setFieldExpected("JWT Signed digital ID (Signature Validation)","Expected Signed digital ID data with header,payload,signature",CommonConstant.DATA);					
@@ -235,7 +261,7 @@ public class MdsSignatureValidator extends Validator{
 		return validations;
 	}
 
-	private List<Validation> validValueDigitalIdHeader(String header, List<Validation> validations) {
+	private List<Validation> validValueDigitalIdHeader(String header, List<Validation> validations, Intent intent, String certification) {
 		try {
 			validation = commonValidator.setFieldExpected("validValue DigitalIdHeader check header","Expected Proper header",CommonConstant.DATA);
 			DataHeader decodedHeader = (DataHeader) (mapper.readValue(Base64.getUrlDecoder().decode(header),
@@ -253,6 +279,18 @@ public class MdsSignatureValidator extends Validator{
 				commonValidator.setFoundMessageStatus(validation,decodedHeader.typ,"Response DigitalId typ block in header is invalid",CommonConstant.FAILED);
 			}
 			validations.add(validation);
+
+			if(intent.equals(Intent.DeviceInfo) || intent.equals(Intent.RegistrationCapture)) {
+				validation = commonValidator.setFieldExpected("Trust Root Validation for DigitalId","Succes Response","");			
+				if(certification.equals(CommonConstant.L0)) {
+				trustValidation.trustRootValidation(decodedHeader.x5c.get(0), validation,CommonConstant.DEVICE);
+				validations.add(validation);
+				}
+				else if(certification.equals(CommonConstant.L1)) {
+					trustValidation.trustRootValidation(decodedHeader.x5c.get(0), validation,CommonConstant.FTM);
+					validations.add(validation);
+				}
+			}
 		} catch (Exception e) {
 			validation = commonValidator.setFieldExpected("validValue DigitalIdHeader check header","complete header",CommonConstant.DATA);
 			commonValidator.setFoundMessageStatus(validation,CommonConstant.DATA,"validValueDigitalIdHeader: (Invalid Digital Id) Error interpreting header",CommonConstant.FAILED);
@@ -261,7 +299,7 @@ public class MdsSignatureValidator extends Validator{
 		return validations;
 	}
 
-	private List<Validation> validValueDataHeader(String header, List<Validation> validations) {
+	private List<Validation> validValueDataHeader(String header, List<Validation> validations, Intent intent) {
 		try {
 			validation = commonValidator.setFieldExpected("validValue check header","Expected Proper header",CommonConstant.DATA);
 			DataHeader decodedHeader = (DataHeader) (mapper.readValue(Base64.getUrlDecoder().decode(header),
@@ -279,6 +317,14 @@ public class MdsSignatureValidator extends Validator{
 				commonValidator.setFoundMessageStatus(validation,decodedHeader.typ,"Response DigitalId typ block in header is invalid",CommonConstant.FAILED);
 			}
 			validations.add(validation);
+
+			if(intent.equals(Intent.DeviceInfo) || intent.equals(Intent.RegistrationCapture)) {
+				validation = commonValidator.setFieldExpected("Trust Root Validation","Succes Response","");			
+
+				trustValidation.trustRootValidation(decodedHeader.x5c.get(0), validation,CommonConstant.DEVICE);
+				validations.add(validation);
+			}
+
 		} catch (Exception e) {
 			validation = commonValidator.setFieldExpected("validValue check header","complete header",CommonConstant.DATA);
 			commonValidator.setFoundMessageStatus(validation,CommonConstant.DATA,"validValueDataHeader: (Invalid Digital Id) Error interpreting header",CommonConstant.FAILED);
