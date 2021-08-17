@@ -20,7 +20,11 @@ function stop_streaming() {
 function start_streaming(url, dId, dSubId, tagId) {
       interrupt = false;
       var obj = { deviceId: dId, deviceSubId: dSubId };
-      fetch(url, {method: 'STREAM', body: JSON.stringify(obj), signal: controller.signal })
+      fetch(url, {method: 'STREAM', body: JSON.stringify(obj),
+      keepalive:true,
+      headers: typeof Headers !== 'undefined' ? new Headers({ 'content-type': 'text/plain' }) : { 'content-type': 'text/plain' }
+
+    })
       .then(response => {
           if (!response.ok) {
               throw Error(response.status+' '+response.statusText)
