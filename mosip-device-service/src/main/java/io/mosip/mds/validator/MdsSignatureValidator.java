@@ -403,14 +403,11 @@ public class MdsSignatureValidator extends Validator{
 			jws.getLeafCertificateHeaderValue().checkValidity();
 		}catch (CertificateExpiredException e) {
 			commonValidator.setFoundMessageStatus(validation,signature," CertificateExpiredException - " + "with Message - "+ e.getMessage() ,CommonConstant.FAILED);
-			validations.add(validation);
 		}
 		catch (CertificateNotYetValidException e) {
 			commonValidator.setFoundMessageStatus(validation,signature," CertificateNotYetValidException - " + "with Message - "+e.getMessage(),CommonConstant.FAILED);
-			validations.add(validation);
 		} catch (JoseException e) {
 			commonValidator.setFoundMessageStatus(validation,signature," JoseException - " + "with Message - "+e.getMessage(),CommonConstant.FAILED);
-			validations.add(validation);
 		}
 		validations.add(validation);
 

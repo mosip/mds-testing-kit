@@ -111,7 +111,7 @@ public class ValidValueCaptureResponseValidator extends Validator {
 					commonValidator.setFoundMessageStatus(validation,biometrics[bioIndex].dataDecoded.bioType,"invalid biometrics type returned",CommonConstant.FAILED);					
 				}
 				validations.add(validation);
-				if(bio.bioSubType.length == bio.count)
+				if(bio.bioSubType.length == Integer.parseInt(bio.count))
 				{			
 					for(String subType:bio.bioSubType)
 					{
