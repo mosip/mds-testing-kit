@@ -26,6 +26,12 @@ export class RunComponent implements OnInit {
   testId: string;
   testReportObject1: any;
 
+  keyRotatOrderIdList=[11,12,13];
+  successErrorCodeOfAuth="IDA-BIA-001";
+  succesAuth="authStatus=true";
+  failErrorCodeOfAuth="IDA-MPA-002";
+  validationResult:any;
+
   run;
   tests = [];
   selectedDevice: any;
@@ -48,6 +54,10 @@ export class RunComponent implements OnInit {
   notReadyButton = false;
   notRegisteredButton = false;
   statusButton = false;
+  validCertButton = false;
+  expiredCertButton = false;
+  afterKeyRotationButton = false;
+  
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -134,6 +144,12 @@ export class RunComponent implements OnInit {
       this.busyButton = true;
     } else if (status == 'Not Registered') {
       this.notRegisteredButton = true;
+    }else if (status == 'validCertButton') {
+      this.validCertButton = true;
+    }else if (status == 'expiredCertButton') {
+      this.expiredCertButton = true;
+    }else if (status == 'afterKeyRotationButton') {
+      this.afterKeyRotationButton = true;
     }
 
 
@@ -183,22 +199,78 @@ export class RunComponent implements OnInit {
             testKeyObjectValidationResult.validations[1].message='Device info response device status is invalid';           
           }
         }
+
+
+        for(let i=0; i<this.keyRotatOrderIdList.length;i++) {
+          if(this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]] != null){
+            // let testKeyObjectValidationResult=this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0];
+            console.log("not null");
+             this.validationResult=this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0].validations[0];
+           let authResponse= this.validationResult.found;
+           
+           if(status=="validCertButton" || status == "afterKeyRotationButton"){
+            if(!(authResponse.includes(this.successErrorCodeOfAuth) ||
+            authResponse.includes(this.succesAuth))){
+              this.validationResult.message="Unexpected result returned";
+              this.validationResult.status="FAILED";
+              this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].status="Failed";
+            }
+           }else if(status=="expiredCertButton"){
+            if(!(authResponse.includes(this.failErrorCodeOfAuth))){
+              this.validationResult.message="Unexpected result returned";
+              this.validationResult.status="FAILED";
+              this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].status="Failed";
+            }
+           }
+           this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0].validations[0]=this.validationResult;
+           }
+
+            // let testKeyObjectValidationResult=this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0];
+             this.validationResult=this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0].validations[0];
+           let authResponse= this.validationResult.found;
+           
+           if(status=="validCertButton" || status == "afterKeyRotationButton"){
+            if(!(authResponse.includes(this.successErrorCodeOfAuth) ||
+            authResponse.includes(this.succesAuth))){
+              this.validationResult.message="Unexpected result returned";
+              this.validationResult.status="FAILED";
+              this.testReportObject.testReport[testId].validationResults[0].status="Failed";         
+            }
+           }else if(status=="expiredCertButton"){
+            if(!(authResponse.includes(this.failErrorCodeOfAuth))){
+              this.validationResult.message="Unexpected result returned";
+              this.validationResult.status="FAILED";
+                this.testReportObject.testReport[testId].validationResults[0].status="Failed";
+            }
+           }
+           this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0].validations[0]=this.validationResult;
+          }
+         
+        
         this.loading = false;
+        this.statusButton = false;
         this.readyButton = false;
         this.busyButton = false;
         this.notReadyButton = false;
         this.notRegisteredButton = false;
         this.statusButton = false;
+        this.validCertButton = false;
+        this.expiredCertButton = false;
+        this.afterKeyRotationButton = false;
         //console.log('result:' + result);
       },
       error => {
         this.openDialog("Alert", error);
         this.loading = false;
+        this.statusButton = false;
         this.readyButton = false;
         this.busyButton = false;
         this.notReadyButton = false;
         this.notRegisteredButton = false;
         this.statusButton = false;
+        this.validCertButton = false;
+        this.expiredCertButton = false;
+        this.afterKeyRotationButton = false;
       }
     );
   }
@@ -283,9 +355,9 @@ export class RunComponent implements OnInit {
     return this.testReportObject.testReport[testId].streamUrl ? true : false;
   }
 
-  isCapture(intent) {
+  isCapture(intent,testId) {
     let method = JSON.parse(intent).verb;
-    if (method == "CAPTURE") {
+    if (method == "CAPTURE" && (!testId.includes("Key Rotation"))) {
       return true;
     }
     return false;
@@ -301,6 +373,26 @@ export class RunComponent implements OnInit {
   isDeviceStatus(intent, testId) {
     let method = JSON.parse(intent).verb;
     if (method == "MOSIPDINFO" && testId == "Device Status") {
+      return true;
+    }
+    return false;
+  }
+
+  isAuthRequestRequired(testId) {
+    return this.testReportObject.testReport[testId].enableAuthTest ? true : false;
+  }
+
+  isRequired(testId) {
+    if (testId == "Device Status" || testId.includes("Key Rotation")) {
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+  isKeyRotation(intent, testId) {
+    let method = JSON.parse(intent).verb;
+    if ((method == "CAPTURE" || method == "RCAPTURE") && testId.includes("Key Rotation")) {
       return true;
     }
     return false;
@@ -401,17 +493,6 @@ export class RunComponent implements OnInit {
     stop_streaming();
   }
 
-  isAuthRequestRequired(testId) {
-    return this.testReportObject.testReport[testId].enableAuthTest ? true : false;
-  }
-
-  isRequired(testId) {
-    if (testId == "Device Status") {
-      return false;
-    }else{
-      return true;
-    }
-  }
   startAuthTest(testId) {
     this.authloading = true;
     console.log("Starting auth test for >>> " + testId);

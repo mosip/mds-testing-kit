@@ -76,8 +76,22 @@
             testReportObject.testReport[key].runId, key,null)" [class.spinner]="loading" [disabled]="loading">
                 {{getButtonName(testReportObject.testReport[key].requestData)}}</button>
 
-              <button *ngIf="isCapture(testReportObject.testReport[key].requestData)" name="testId" ngDefaultControl [(ngModel)]="testId" mat-raised-button (click)="openUINDialog(testReportObject,key)">Enter UIN & Authenticate</button>
+              <button *ngIf="isCapture(testReportObject.testReport[key].requestData,key)" name="testId" ngDefaultControl [(ngModel)]="testId" mat-raised-button (click)="openUINDialog(testReportObject,key)">Enter UIN & Authenticate</button>
   
+
+              <button *ngIf="isKeyRotation(testReportObject.testReport[key].requestData,key)" mat-raised-button
+                (click)="getMDSResponse(testReportObject.testReport[key].requestData,
+                    testReportObject.testReport[key].runId, key,'validCertButton')" [class.spinner]="validCertButton"
+                [disabled]="statusButton">check With valid certificate</button>
+                <button *ngIf="isKeyRotation(testReportObject.testReport[key].requestData,key)" mat-raised-button
+                (click)="getMDSResponse(testReportObject.testReport[key].requestData,
+                    testReportObject.testReport[key].runId, key,'expiredCertButton')" [class.spinner]="expiredCertButton"
+                [disabled]="statusButton">check with expired certificate</button>
+                <button *ngIf="isKeyRotation(testReportObject.testReport[key].requestData,key)" mat-raised-button
+                (click)="getMDSResponse(testReportObject.testReport[key].requestData,
+                    testReportObject.testReport[key].runId, key,'afterKeyRotationButton')" [class.spinner]="afterKeyRotationButton"
+                [disabled]="statusButton">check after key rotation</button>
+              
             <!-- <button *ngIf="isCapture(testReportObject.testReport[key].requestData)" mat-raised-button (click)="startAuthTest(key)"
                     [class.spinner]="authloading" [disabled]="authloading">Test Authentication</button> -->
 
