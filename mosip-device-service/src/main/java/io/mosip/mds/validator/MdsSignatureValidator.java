@@ -98,7 +98,7 @@ public class MdsSignatureValidator extends Validator{
 
 	private List<Validation> validateDeviceInfoSignature(ValidateResponseRequestDto response, List<Validation> validations, Intent intent) {
 		try {
-			validation = commonValidator.setFieldExpected("response.getResponse()","JWT Signed ,Array of Device info Details",response.getMdsResponse());
+			validation = commonValidator.setFieldExpected("response.getResponse()","JWT Signed ,Array of Device info Details",CommonConstant.DATA);
 			DeviceInfoMinimal[]	deviceInfos = (DeviceInfoMinimal[])(mapper.readValue(response.getMdsResponse().getBytes(), DeviceInfoMinimal[].class));
 			validations.add(validation);
 
@@ -113,7 +113,7 @@ public class MdsSignatureValidator extends Validator{
 			for(DeviceInfoMinimal deviceInfoMinimal:deviceInfos)
 			{
 				try {
-					validation = commonValidator.setFieldExpected("signeddeviceInfoMinimal.deviceInfo","signature validity",deviceInfoMinimal.deviceInfo);				
+					validation = commonValidator.setFieldExpected("signeddeviceInfoMinimal.deviceInfo","signature validity",CommonConstant.DATA);				
 					validations = validateSignatureValidity(deviceInfoMinimal.deviceInfo,validations,validation);
 					String [] parts = deviceInfoMinimal.deviceInfo.split("\\.");
 					validation = commonValidator.setFieldExpected("JWT Signed deviceInfoMinimal.deviceInfo","Expected Signed deviceInfoMinimal.deviceInfo with header,payload,signature",deviceInfoMinimal.deviceInfo);
@@ -139,7 +139,7 @@ public class MdsSignatureValidator extends Validator{
 					}
 					if(!validateSignature(deviceInfoMinimal.deviceInfo)) {
 
-						validation = commonValidator.setFieldExpected("JWT Signed device info (Signature Validation)","Expected Signed device info data with header,payload,signature",deviceInfoMinimal.deviceInfo);					
+						validation = commonValidator.setFieldExpected("JWT Signed device info (Signature Validation)","Expected Signed device info data with header,payload,signature",CommonConstant.DATA);					
 						commonValidator.setFoundMessageStatus(validation,deviceInfoMinimal.deviceInfo,"SbiResponse device info signature verification failed",CommonConstant.FAILED);
 						validations.add(validation);
 					}else {
