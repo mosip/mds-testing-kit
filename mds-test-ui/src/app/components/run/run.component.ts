@@ -1,8 +1,8 @@
-import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
-import {LocalStorageService} from '../../services/local-storage/local-storage.service';
-import {ComposeRequest} from '../../dto/compose-request';
-import {DataService} from '../../services/data/data.service';
-import {MdsService} from '../../services/mds/mds.service';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { LocalStorageService } from '../../services/local-storage/local-storage.service';
+import { ComposeRequest } from '../../dto/compose-request';
+import { DataService } from '../../services/data/data.service';
+import { MdsService } from '../../services/mds/mds.service';
 import { DOCUMENT } from '@angular/common';
 import * as jwt_decode from 'jwt-decode';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ModalComponent } from '../../modal/modal.component';
 
-import {DialogOverviewExampleDialog } from '../../auth/auth.component'
+import { DialogOverviewExampleDialog } from '../../auth/auth.component'
 
 declare const start_streaming: any;
 declare const stop_streaming: any;
@@ -26,11 +26,15 @@ export class RunComponent implements OnInit {
   testId: string;
   testReportObject1: any;
 
-  keyRotatOrderIdList=[11,12,13];
-  successErrorCodeOfAuth="IDA-BIA-001";
-  succesAuth="authStatus=true";
-  failErrorCodeOfAuth="IDA-MPA-002";
-  validationResult:any;
+  keyRotatOrderIdList = [11, 12, 13];
+
+  keyRotatOrderIdListRcapture = [14];
+  successErrorCodeOfAuth = "IDA-BIA-001";
+  succesAuth = "authStatus=true";
+  failErrorCodeOfAuth = "IDA-MPA-002";
+  validationResult: any;
+
+
 
   run;
   tests = [];
@@ -57,7 +61,7 @@ export class RunComponent implements OnInit {
   validCertButton = false;
   expiredCertButton = false;
   afterKeyRotationButton = false;
-  
+
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -74,18 +78,18 @@ export class RunComponent implements OnInit {
     console.log(history.state.data);
     this.run = history.state.data;
     this.availablePorts = this.localStorageService.getAvailablePortsForDevice();
-  
+
     // this.availablePorts = this.localStorageService.getAvailablePorts();
     //this.fetchReport();
     this.panelOpenState = false;
   }
-  
-  ngDoCheck(){
-    this.availablePorts =[];
+
+  ngDoCheck() {
+    this.availablePorts = [];
     this.availablePorts = this.localStorageService.getAvailablePortsForDevice();
   }
   fetchReport() {
-   this.dataService.getTestReport(this.run.runId).subscribe(
+    this.dataService.getTestReport(this.run.runId).subscribe(
       body => {
         this.testReportObject = body;
         console.log(body);
@@ -144,11 +148,11 @@ export class RunComponent implements OnInit {
       this.busyButton = true;
     } else if (status == 'Not Registered') {
       this.notRegisteredButton = true;
-    }else if (status == 'validCertButton') {
+    } else if (status == 'validCertButton') {
       this.validCertButton = true;
-    }else if (status == 'expiredCertButton') {
+    } else if (status == 'expiredCertButton') {
       this.expiredCertButton = true;
-    }else if (status == 'afterKeyRotationButton') {
+    } else if (status == 'afterKeyRotationButton') {
       this.afterKeyRotationButton = true;
     }
 
@@ -182,71 +186,119 @@ export class RunComponent implements OnInit {
     this.dataService.validateResponse(runId, testId, request, response).subscribe(
       result => {
         this.testReportObject = result;
-       if (testId == "Device Status") {
-       let testObjectValidationResult=this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0];
-        testObjectValidationResult.validations[1].expected = status;
+        if (testId == "Device Status") {
+          let testObjectValidationResult = this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0];
+          testObjectValidationResult.validations[1].expected = status;
           if (testObjectValidationResult.validations[1].found != status) {
-            testObjectValidationResult.status = "Failed";
-            testObjectValidationResult.validations[1].status="FAILED";
-          testObjectValidationResult.validations[1].message='Device info response device status is invalid';
+            this.testReportObject.testReport[testId].validationResults[0].status = "Failed";
+            testObjectValidationResult.validations[1].status = "FAILED";
+            testObjectValidationResult.validations[1].message = 'Device info response device status is invalid';
           }
 
-          let testKeyObjectValidationResult=this.testReportObject.testReportKey[3][testId].validationResults[0].validationTestResultDtos[0];
+          let testKeyObjectValidationResult = this.testReportObject.testReportKey[3][testId].validationResults[0].validationTestResultDtos[0];
           testKeyObjectValidationResult.validations[1].expected = status;
           if (testKeyObjectValidationResult.validations[1].found != status) {
             this.testReportObject.testReportKey[3][testId].validationResults[0].status = 'Failed';
-            testKeyObjectValidationResult.validations[1].status="FAILED";
-            testKeyObjectValidationResult.validations[1].message='Device info response device status is invalid';           
+            testKeyObjectValidationResult.validations[1].status = "FAILED";
+            testKeyObjectValidationResult.validations[1].message = 'Device info response device status is invalid';
           }
         }
 
+        if (testId.includes("Key Rotation")) {
+          for (let i = 0; i < this.keyRotatOrderIdList.length; i++) {
+            if (this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]] != null) {
+              // let testKeyObjectValidationResult=this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0];
+              console.log("not null");
+              this.validationResult = this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0].validations[0];
+              var reqData = JSON.parse(this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].requestData)
+              if (reqData.verb == 'CAPTURE') {
 
-        for(let i=0; i<this.keyRotatOrderIdList.length;i++) {
-          if(this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]] != null){
-            // let testKeyObjectValidationResult=this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0];
-            console.log("not null");
-             this.validationResult=this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0].validations[0];
-           let authResponse= this.validationResult.found;
-           
-           if(status=="validCertButton" || status == "afterKeyRotationButton"){
-            if(!(authResponse.includes(this.successErrorCodeOfAuth) ||
-            authResponse.includes(this.succesAuth))){
-              this.validationResult.message="Unexpected result returned";
-              this.validationResult.status="FAILED";
-              this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].status="Failed";
-            }
-           }else if(status=="expiredCertButton"){
-            if(!(authResponse.includes(this.failErrorCodeOfAuth))){
-              this.validationResult.message="Unexpected result returned";
-              this.validationResult.status="FAILED";
-              this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].status="Failed";
-            }
-           }
-           this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0].validations[0]=this.validationResult;
-           }
+                let authResponse = this.validationResult.found;
+                if (status == "validCertButton" || status == "afterKeyRotationButton") {
+                  if (!(authResponse.includes(this.successErrorCodeOfAuth) ||
+                    authResponse.includes(this.succesAuth))) {
+                    this.validationResult.message = "Unexpected result returned";
+                    this.validationResult.status = "FAILED";
+                    this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].status = "Failed";
+                  }
+                } else if (status == "expiredCertButton") {
+                  if (!(authResponse.includes(this.failErrorCodeOfAuth))) {
+                    this.validationResult.message = "Unexpected result returned";
+                    this.validationResult.status = "FAILED";
+                    this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].status = "Failed";
+                  }
+                }
+                this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0].validations[0] = this.validationResult;
+              }
 
+            }
             // let testKeyObjectValidationResult=this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0];
-             this.validationResult=this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0].validations[0];
-           let authResponse= this.validationResult.found;
-           
-           if(status=="validCertButton" || status == "afterKeyRotationButton"){
-            if(!(authResponse.includes(this.successErrorCodeOfAuth) ||
-            authResponse.includes(this.succesAuth))){
-              this.validationResult.message="Unexpected result returned";
-              this.validationResult.status="FAILED";
-              this.testReportObject.testReport[testId].validationResults[0].status="Failed";         
+            this.validationResult = this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0].validations[0];
+            var reqData = JSON.parse(this.testReportObject.testReport[testId].requestData);
+            if (reqData.verb == 'CAPTURE') {
+
+              let authResponse = this.validationResult.found;
+
+              if (status == "validCertButton" || status == "afterKeyRotationButton") {
+                if (!(authResponse.includes(this.successErrorCodeOfAuth) ||
+                  authResponse.includes(this.succesAuth))) {
+                  this.validationResult.message = "Unexpected result returned";
+                  this.validationResult.status = "FAILED";
+                  this.testReportObject.testReport[testId].validationResults[0].status = "Failed";
+                }
+              } else if (status == "expiredCertButton") {
+                if (!(authResponse.includes(this.failErrorCodeOfAuth))) {
+                  this.validationResult.message = "Unexpected result returned";
+                  this.validationResult.status = "FAILED";
+                  this.testReportObject.testReport[testId].validationResults[0].status = "Failed";
+                }
+              }
+
+              this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0].validations[0] = this.validationResult;
             }
-           }else if(status=="expiredCertButton"){
-            if(!(authResponse.includes(this.failErrorCodeOfAuth))){
-              this.validationResult.message="Unexpected result returned";
-              this.validationResult.status="FAILED";
-                this.testReportObject.testReport[testId].validationResults[0].status="Failed";
-            }
-           }
-           this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0].validations[0]=this.validationResult;
+
           }
-         
-        
+          for (let i = 0; i < this.keyRotatOrderIdListRcapture.length; i++) {
+            if (this.testReportObject.testReportKey[this.keyRotatOrderIdListRcapture[i]] != null) {
+              // let testKeyObjectValidationResult=this.testReportObject.testReportKey[this.keyRotatOrderIdList[i]][testId].validationResults[0].validationTestResultDtos[0];
+              console.log("not null");
+              this.validationResult = this.testReportObject.testReportKey[this.keyRotatOrderIdListRcapture[i]][testId].validationResults[0].validationTestResultDtos[0].validations[0];
+              var reqData = JSON.parse(this.testReportObject.testReportKey[this.keyRotatOrderIdListRcapture[i]][testId].requestData)
+
+              if (reqData.verb == 'RCAPTURE') {
+                if (status == "expiredCertButton") {
+                  if (this.validationResult.status == "FAILED") {
+                    this.validationResult.status = "SUCCESS";
+                    this.testReportObject.testReportKey[this.keyRotatOrderIdListRcapture[i]][testId].validationResults[0].status = "Passed";
+
+                  } else if (this.validationResult.status == "SUCCESS") {
+                    this.validationResult.status = "FAILED";
+                    this.testReportObject.testReportKey[this.keyRotatOrderIdListRcapture[i]][testId].validationResults[0].status = "Failed";
+
+                  }
+                }
+                this.testReportObject.testReportKey[this.keyRotatOrderIdListRcapture[i]][testId].validationResults[0].validationTestResultDtos[0].validations[0] = this.validationResult;
+                this.validationResult = this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0].validations[0];
+                var reqData = JSON.parse(this.testReportObject.testReport[testId].requestData);
+                if (reqData.verb == 'RCAPTURE') {
+                  if (status == "expiredCertButton") {
+                    if (this.validationResult.status == "FAILED") {
+                      this.validationResult.status = "SUCCESS";
+                      this.testReportObject.testReport[testId].validationResults[0].status = "Passed";
+
+                    } else if (this.validationResult.status == "SUCCESS") {
+                      this.validationResult.status = "FAILED";
+                      this.testReportObject.testReport[testId].validationResults[0].status = "Failed";
+
+                    }
+                  }
+                  this.testReportObject.testReport[testId].validationResults[0].validationTestResultDtos[0].validations[0] = this.validationResult;
+
+                }
+              }
+            }
+          }
+        }
         this.loading = false;
         this.statusButton = false;
         this.readyButton = false;
@@ -280,73 +332,6 @@ export class RunComponent implements OnInit {
     return id;
   }
 
-  /* startStreaming(testId) {
-     let element = document.getElementById(this.getStreamImgTagId(testId));
-     if(element) {
-       (<HTMLImageElement>element).setAttribute("src", this.getStreamUrl(testId));
-     }
-  }
-
-  stopStreaming(testId) {
-    let element = document.getElementById(this.getStreamImgTagId(testId));
-    if(element) {
-      (<HTMLImageElement>element).setAttribute("src", "");
-    }
-  } */
-
-  /* startStreaming(testId) {
-     console.log("startStreaming invoked.... >>> " + testId);
-      var self = this;
-      var element = document.getElementById("test-id");
-      if(element) {
-        var mediaSource = new MediaSource();
-        var url = URL.createObjectURL(myMediaSource);
-        mediaSource.addEventListener('sourceopen', this.sourceOpen);
-
-        self.mdsService.startMDSStream('http://127.0.0.1:4501/stream?deviceId=1&devideSubId=1');
-
-        console.log("after startMDSStream>>>>>>>>>>.");
-
-        myMediaSource.addEventListener('sourceopen', function () {
-              console.log(myMediaSource.readyState);
-              var sourceBuffer = myMediaSource.addSourceBuffer('video/mp4; codecs="avc1.64001e"');
-              console.log(myMediaSource.readyState);
-
-              self.mdsService.messages.subscribe(msg => {
-                    console.log("i got a message");
-                    sourceBuffer.appendBuffer(msg);
-                  });
-         });
-      }
-  }
-
-  sourceOpen() {
-      console.log("source open received");
-      var mediaSource = this;
-      var sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
-  }
-
-
-  uint8ToBase64(buffer) {
-       var binary = '';
-       var len = buffer.byteLength;
-       for (var i = 0; i < len; i++) {
-           binary += String.fromCharCode(buffer[i]);
-       }
-       var result = window.btoa( binary );
-       console.log("window.btoa result >>>>>>>>>>>>>>>>>>");
-       return result;
-  }
-
-  stopStreaming(testId) {
-    this.mdsStream = "";
-    let element = document.getElementById(this.getStreamImgTagId(testId));
-    if(element) {
-      (<HTMLVideoElement>element).setAttribute("src", "");
-    }
-  } */
-
-
   getStreamUrl(testId) {
     return this.testReportObject.testReport[testId].streamUrl;
   }
@@ -355,16 +340,16 @@ export class RunComponent implements OnInit {
     return this.testReportObject.testReport[testId].streamUrl ? true : false;
   }
 
-  isCapture(intent,testId) {
+  isCapture(intent, testId) {
     let method = JSON.parse(intent).verb;
     if (method == "CAPTURE" && (!testId.includes("Key Rotation"))) {
       return true;
     }
     return false;
   }
-  isRcapture(intent) {
+  isRcapture(intent, testId) {
     let method = JSON.parse(intent).verb;
-    if (method == "RCAPTURE") {
+    if (method == "RCAPTURE" && (!testId.includes("Key Rotation"))) {
       return true;
     }
     return false;
@@ -385,7 +370,7 @@ export class RunComponent implements OnInit {
   isRequired(testId) {
     if (testId == "Device Status" || testId.includes("Key Rotation")) {
       return false;
-    }else{
+    } else {
       return true;
     }
   }
@@ -397,45 +382,7 @@ export class RunComponent implements OnInit {
     }
     return false;
   }
-  /* isMDSResponseCaptured(testId) {
-      let mdmCaptured = false;
-      for(let i=0; i<this.requests.length;i++) {
-        if(this.requests[i] === testId) {
-          mdmCaptured = true;
-        }
-      }
-      return mdmCaptured;
-  } */
 
-  /* getMDSResponse(request, runId, testId) {
-      this.mdsService.request(request.requestInfoDto).subscribe(
-          response => {
-            console.log(response);
-            this.dataService.validateResponse(runId, testId, request, response).subscribe(
-              result => {console.log('result:' + result);
-                         this.fetchReport();
-              },
-              error => window.alert(error)
-            );
-          },
-        error => window.alert(error)
-      );
-    } */
-
-  /* requestMds(request, runId, testId) {
-    this.mdsService.request(request.requestInfoDto).subscribe(
-        response => {
-          console.log(response);
-          this.dataService.validateResponse(runId, testId, request, response).subscribe(
-            result => {console.log('result:' + result);
-                       this.fetchReport();
-            },
-            error => window.alert(error)
-          );
-        },
-      error => window.alert(error)
-    );
-  } */
 
   getButtonName(request) {
     let method = JSON.parse(request).verb;
@@ -517,36 +464,36 @@ export class RunComponent implements OnInit {
 
   startAuthTest1(testId) {
     this.authloading = true;
-    let uin=0;
+    let uin = 0;
     console.log("Starting auth test for >>> " + testId);
-    this.dataService.authTestCallByUin(this.testReportObject.testReport[testId].runId, testId,uin).subscribe(
-            result => {
-                 //window.alert(JSON.stringify(result))
-                 this.openDialog("Auth Response", JSON.stringify(result))
-                 this.authloading = false
-            },
-            error => this.openDialog("Auth Response", JSON.stringify(error.error.text))
+    this.dataService.authTestCallByUin(this.testReportObject.testReport[testId].runId, testId, uin).subscribe(
+      result => {
+        //window.alert(JSON.stringify(result))
+        this.openDialog("Auth Response", JSON.stringify(result))
+        this.authloading = false
+      },
+      error => this.openDialog("Auth Response", JSON.stringify(error.error.text))
     );
 
-}
+  }
 
-      openUINDialog(testReportObject1:any,key:any): void {
-        this.testReportObject1=testReportObject1;
-        this.testId=key;
-        console.log(this.testId);
-        console.log(this.testReportObject1);
-        const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
-          width: '300px',
-          data: {uin: this.uin,testReportObject1:this.testReportObject1,testId : this.testId}
-        }
-        
-        );
-    
-        dialogRef.afterClosed().subscribe(result => {
-          console.log('The dialog was closed');
-          this.uin = result;
-        });
-      }
+  openUINDialog(testReportObject1: any, key: any): void {
+    this.testReportObject1 = testReportObject1;
+    this.testId = key;
+    console.log(this.testId);
+    console.log(this.testReportObject1);
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '300px',
+      data: { uin: this.uin, testReportObject1: this.testReportObject1, testId: this.testId }
+    }
+
+    );
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.uin = result;
+    });
+  }
 
   download(runId, testId) {
 
