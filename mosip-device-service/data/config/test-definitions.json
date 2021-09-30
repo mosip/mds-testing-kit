@@ -892,7 +892,7 @@
         ,
      {
         "testId": "Registration capture -Key Rotation - Left Slab",
-        "testOrderId":12,
+        "testOrderId":14,
         "method": "rcapture",
         "testDescription": "Key Rotation Registration capture Request for Slap scanner",
         "requestGenerator": null,
@@ -913,10 +913,9 @@
         "sbiSpecVersions": ["0.9.5"],
         "requestedScore" : 40,
         "validatorDefs": [
-             
             {
-                "Name": "KeyRotationValidator",
-                "Description": "Key Rotation Validator"
+                "Name": "RCaptureKeyRotationValidator",
+                "Description": "RCapture Key Rotation Validator"
             }
         ]
     },
