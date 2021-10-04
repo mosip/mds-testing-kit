@@ -18,7 +18,7 @@ import io.mosip.mds.util.BioAuthRequestUtil;
 
 @Component
 public class KeyRotationValidator extends Validator {
-	
+
 	public KeyRotationValidator() {
 		super("KeyRotationValidator", "Key Rotation Validator");   
 	}
