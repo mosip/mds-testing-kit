@@ -36,9 +36,9 @@ public class TestDefinition {
 
     public List<String> exceptions;
 
-    public int deviceSubId;
+    public String deviceSubId;
 
-    public int bioCount;
+    public String bioCount;
 
     public String uinNumber;
 
@@ -52,5 +52,5 @@ public class TestDefinition {
 
     public List<ValidatorDef> validatorDefs;
 
-    public int requestedScore;
+    public String requestedScore;
 }

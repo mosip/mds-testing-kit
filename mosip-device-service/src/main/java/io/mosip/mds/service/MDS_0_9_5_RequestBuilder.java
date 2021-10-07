@@ -1,10 +1,13 @@
 package io.mosip.mds.service;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,7 +142,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         requestBody.env = "Developer";
         requestBody.purpose = "Auth";
         requestBody.specVersion = "0.9.5";
-        requestBody.timeout = 10000;
+        requestBody.timeout = "10000";
         requestBody.transactionId = "" + System.currentTimeMillis();
         
         requestBody.bio = new CaptureRequest.CaptureBioRequest[1];
@@ -148,8 +151,20 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         bio.count = test.bioCount;
         bio.deviceId = device.deviceInfo.deviceId;
         bio.deviceSubId = test.deviceSubId;
-        String previousHash = HMACUtils.digestAsPlainText(HMACUtils.generateHash("".getBytes(StandardCharsets.UTF_8)));
-        bio.previousHash = previousHash;
+       
+       // String previousHash = HMACUtils.digestAsPlainText(HMACUtils.generateHash("".getBytes(StandardCharsets.UTF_8)));
+       //
+    	
+    	try {
+    		byte [] previousDataByteArr = "".getBytes (StandardCharsets.UTF_8);
+    		String	previousHash = toHex (generateHash(previousDataByteArr));
+    		 bio.previousHash = previousHash;
+    	       
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+        
+        //
         bio.requestedScore = test.requestedScore;
         bio.bioSubType = test.segments == null ? null : 
         	BioSubType.convertTo095(test.segments).toArray(new String[0]);            
@@ -158,6 +173,16 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         return mapper.writeValueAsString(requestBody);
     }
 
+    private final static String HASH_ALGORITHM_NAME = "SHA-256";
+	public static byte[] generateHash(final byte[] bytes) throws NoSuchAlgorithmException{
+		MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITHM_NAME);
+		return messageDigest.digest(bytes);
+	}
+	public static String toHex(byte[] bytes) {
+		return Hex.encodeHexString(bytes).toUpperCase();
+	}
+
+	
     private String getRegistrationCaptureRequest(TestManagerDto targetProfile, TestDefinition test, DeviceDto device)
     		throws JsonProcessingException
     {

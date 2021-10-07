@@ -889,4 +889,120 @@
             }
         ]
     }
+        ,
+     {
+        "testId": "Registration capture -Key Rotation - Left Slab",
+        "testOrderId":14,
+        "method": "rcapture",
+        "testDescription": "Key Rotation Registration capture Request for Slap scanner",
+        "requestGenerator": null,
+        "uiInput": null,
+        "purposes": [
+            "Registration"
+            ],
+        "biometricTypes": [
+             "Finger"
+        ],
+        "deviceSubTypes": [
+            "Slap"
+        ],
+		"segments" : ["LeftIndex", "LeftMiddle", "LeftRing", "LeftLittle"],
+		"deviceSubId" : 1,
+		"bioCount" : 4,
+		"exceptions" : [],
+        "sbiSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+            {
+                "Name": "RCaptureKeyRotationValidator",
+                "Description": "RCapture Key Rotation Validator"
+            }
+        ]
+    },
+{
+        "testId": "Auth capture -Key Rotation - Single Iris - Left Iris",
+         "testOrderId":12,
+        "method": "capture",
+        "testDescription": "Valid Auth capture Key Rotation Request for Left iris",
+        "requestGenerator": null,
+        "uiInput": null,
+        "purposes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Iris"
+        ],
+        "deviceSubTypes": [
+            "Single"
+        ],
+        "segments" : ["Left"],
+        "exceptions" : [],
+        "deviceSubId" : 0,
+        "bioCount" : 1,
+        "sbiSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+            {
+                "Name": "KeyRotationValidator",
+                "Description": "Key Rotation Validator"
+            }
+        ]
+    }, {
+        "testId": "Auth capture -Key Rotation - LeftIndex Finger",
+         "testOrderId":11,
+       "method": "capture",
+        "testDescription": "Key Rotation Auth capture Request for LeftIndex Finger",
+        "requestGenerator": null,
+        "uiInput": null,
+        "purposes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Finger"
+        ],
+        "deviceSubTypes": [
+            "Single"
+        ],
+        "segments" : ["LeftIndex"],
+        "exceptions" : [],
+        "deviceSubId" : 0,
+        "bioCount" : 1,
+        "requestedScore" : 40,
+        "sbiSpecVersions": ["0.9.5"],
+        "validatorDefs": [
+           {
+                "Name": "KeyRotationValidator",
+                "Description": "Key Rotation Validator"
+            }
+        ]
+    },
+    {
+        "testId": "Auth capture - Face",
+        "testOrderId":13,
+        "method": "capture",
+        "testDescription": "Valid Auth capture Request only for Face",
+        "requestGenerator": null,
+        "uiInput": null,
+        "purposes": [
+            "Auth"
+        ],
+        "biometricTypes": [
+            "Face"
+        ],
+        "deviceSubTypes": [
+            "Full face"
+        ],
+        "segments" : [],
+        "exceptions" : [],
+        "deviceSubId" : 0,
+        "bioCount" : 1,
+        "sbiSpecVersions": ["0.9.5"],
+        "requestedScore" : 40,
+        "validatorDefs": [
+            {
+                "Name": "KeyRotationValidator",
+                "Description": "Key Rotation Validator"
+            }
+        ]
+    }
 ]

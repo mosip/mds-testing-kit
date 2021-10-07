@@ -130,7 +130,7 @@ public class BioAuthRequestUtil {
 //		authRequestDTO.setIndividualId(env.getProperty("auth.request.uin"));
 		authRequestDTO.setIndividualId(uin);
 
-		authRequestDTO.setDomainUri("https://extint1.mosip.net");
+		authRequestDTO.setDomainUri(env.getProperty("mosip.base.url"));
 		authRequestDTO.setEnv("Developer");
 		String authToken = getAuthToken();
 

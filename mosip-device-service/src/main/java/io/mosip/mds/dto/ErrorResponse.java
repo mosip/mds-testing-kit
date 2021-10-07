@@ -1,5 +1,6 @@
 package io.mosip.mds.dto;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
@@ -10,15 +11,17 @@ import lombok.Data;
 
 @Data
 public class ErrorResponse {
-	
+
+	private static final String PATTERN = "dd-MM-yyyy'T'hh:mm:ss'Z'";
 	private HttpStatus status;	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'hh:mm:ss'Z'")
-	private LocalDateTime timestamp;
+	private SimpleDateFormat timestamp;
 	private String message;
 	private String debugMessage;
-	
+
 	private ErrorResponse() {
-		timestamp = LocalDateTime.now();
+		timestamp = new SimpleDateFormat(PATTERN);
+
 	}
 
 	public ErrorResponse(HttpStatus status) {

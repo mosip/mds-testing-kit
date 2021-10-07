@@ -94,7 +94,7 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
     {
         StreamRequest requestBody = new StreamRequest();
         requestBody.deviceId = device.discoverInfo;
-        requestBody.deviceSubId = 1;
+        requestBody.deviceSubId = "1";
         // TODO extract discoverinfo into device dto
         return mapper.writeValueAsString(requestBody);
     }
@@ -107,15 +107,15 @@ public class MDS_0_9_2_RequestBuilder implements IMDSRequestBuilder {
         requestBody.env = "test";
         requestBody.purpose = "AUTHENTICATION";
         requestBody.specVersion = "0.9.2";
-        requestBody.timeout = 30;
+        requestBody.timeout = "30";
         requestBody.transactionId = "" + System.currentTimeMillis();
         CaptureRequest.CaptureBioRequest bio = new CaptureBioRequest();
-        bio.count = 1;
+        bio.count = "1";
 //        bio.deviceId = device.discoverInfo;
         bio.deviceId = "1";
-        bio.deviceSubId = 1;
+        bio.deviceSubId = "1";
         bio.previousHash = "";
-        bio.requestedScore = 80;
+        bio.requestedScore = "80";
         bio.bioSubType = new String[]{"FULL"};
         bio.type = "FACE";
         requestBody.bio = new CaptureRequest.CaptureBioRequest[]{bio};
