@@ -9,7 +9,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<postgresql.version>42.2.2</postgresql.version>
-		<hibernate.version>5.4.2.Final</hibernate.version>
+		<hibernate.version>5.4.24.Final</hibernate.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
