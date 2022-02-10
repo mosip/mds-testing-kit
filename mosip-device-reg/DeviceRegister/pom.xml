@@ -9,7 +9,7 @@
 <properties>
 		<java.version>11.0.8</java.version>
 		<postgresql.version>42.2.2</postgresql.version>
-		<hibernate.version>5.4.2.Final</hibernate.version>
+		<hibernate.version>5.4.24.Final</hibernate.version>
 	</properties>
 
 
