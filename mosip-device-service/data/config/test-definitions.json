@@ -892,7 +892,7 @@
         ,
      {
         "testId": "Registration capture -Key Rotation - Left Slab",
-        "testOrderId":14,
+        "testOrderId":3014,
         "method": "rcapture",
         "testDescription": "Key Rotation Registration capture Request for Slap scanner",
         "requestGenerator": null,
@@ -921,7 +921,7 @@
     },
 {
         "testId": "Auth capture -Key Rotation - Single Iris - Left Iris",
-         "testOrderId":12,
+         "testOrderId":3012,
         "method": "capture",
         "testDescription": "Valid Auth capture Key Rotation Request for Left iris",
         "requestGenerator": null,
@@ -949,7 +949,7 @@
         ]
     }, {
         "testId": "Auth capture -Key Rotation - LeftIndex Finger",
-         "testOrderId":11,
+         "testOrderId":3011,
        "method": "capture",
         "testDescription": "Key Rotation Auth capture Request for LeftIndex Finger",
         "requestGenerator": null,
@@ -977,8 +977,8 @@
         ]
     },
     {
-        "testId": "Auth capture - Face",
-        "testOrderId":13,
+        "testId": "Auth capture -Key Rotation - Face",
+        "testOrderId":3013,
         "method": "capture",
         "testDescription": "Valid Auth capture Request only for Face",
         "requestGenerator": null,

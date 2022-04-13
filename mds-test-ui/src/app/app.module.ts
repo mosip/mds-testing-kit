@@ -19,6 +19,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { MatVideoModule } from 'mat-video';
 import { ModalComponent } from './modal/modal.component';
 import { DialogOverviewExampleDialog} from './auth/auth.component'
+import { DialogOverviewCaptureDialog} from './capture/capture.component'
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { DialogOverviewExampleDialog} from './auth/auth.component'
     HeaderComponent,
     FooterComponent,
     ModalComponent,
-    DialogOverviewExampleDialog
+    DialogOverviewExampleDialog,
+    DialogOverviewCaptureDialog
   ],
   imports: [
     BrowserModule,

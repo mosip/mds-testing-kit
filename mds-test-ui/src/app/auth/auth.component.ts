@@ -18,17 +18,16 @@ export interface DialogData {
     authloading = false;
 
     data1 :DialogData;
-    uin=5698342963;
+    uin=6795809148;
   testReportObject: any;
     constructor(
         private dataService: DataService,
         private dialog: MatDialog,
       public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
       @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-          console.log(data);
          
 this.data1=data;
-this.data1.uin="6027349120";
+this.data1.uin="6795809148";
       }
   
     onNoClick(): void {

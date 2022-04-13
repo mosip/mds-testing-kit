@@ -15,11 +15,12 @@
   <mat-form-field appearance="fill">
     <mat-label>Device</mat-label>
     <mat-select [(ngModel)]="selectedDevice">
-      <mat-option *ngFor="let obj of devices;" [value]="obj">{{'Purpose[' + obj.purpose + '] - BiometricDeviceType[' + obj.digitalIdDecoded.type + '] - DeviceSubType[' + obj.digitalIdDecoded.deviceSubType + ']' + ' - DeviceId[' + obj.deviceId+ ']'}}</mat-option>
+      <mat-option *ngFor="let obj of devices;" [value]="obj">{{'Purpose[' + obj.purpose + '] - BiometricDeviceType[' +
+        obj.digitalIdDecoded.type + '] - DeviceSubType[' + obj.digitalIdDecoded.deviceSubType + ']' + ' - DeviceId[' +
+        obj.deviceId+ ']'}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <button mat-raised-button
-          (click)="onRunClicked()">
+  <button mat-raised-button (click)="onRunClicked()">
     RUN
   </button>
 </div>
@@ -28,71 +29,78 @@
 
 <!--Form Ends-->
 <div style="padding: 1%;">
-<mat-accordion *ngIf="testReportObject">
-  <div *ngFor="let key1 of objectKeys(testReportObject.testReportKey)"> 
-    <mat-expansion-panel *ngFor="let key of objectKeys(testReportObject.testReportKey[key1])">
-     <mat-expansion-panel-header>
-      <mat-panel-title>
-        {{key}}
-      </mat-panel-title>
-      <mat-panel-description>
-        {{testReportObject.testReport[key].currentState}}
-       <!-- {{ getPassedValidators(testReportObject.testReport[key].validationResults) }}-->
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <mat-tab-group dynamicHeight>
-      <mat-tab label="Description">
-        <p *ngIf="testReportObject.testReport[key].summary">
-         <b>Summary</b> : {{testReportObject.testReport[key].summary}}
-        </p>
-        <br/>
-        <p><b>ExecutedOn</b> : {{testReportObject.testReport[key].executedOn | date: 'full'}}</p>
-      </mat-tab>
+  <mat-accordion *ngIf="testReportObject">
+    <div *ngFor="let key1 of objectKeys(testReportObject.testReportKey)">
+      <mat-expansion-panel *ngFor="let key of objectKeys(testReportObject.testReportKey[key1])">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{key}}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{testReportObject.testReport[key].currentState}}
+            <!-- {{ getPassedValidators(testReportObject.testReport[key].validationResults) }}-->
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-tab-group dynamicHeight>
+          <mat-tab label="Description">
+            <p *ngIf="testReportObject.testReport[key].summary">
+              <b>Summary</b> : {{testReportObject.testReport[key].summary}}
+            </p>
+            <br />
+            <p><b>ExecutedOn</b> : {{testReportObject.testReport[key].executedOn | date: 'full'}}</p>
+          </mat-tab>
 
-      <mat-tab label="Request">
-
-          <div class="centereddiv" *ngIf="isRcapture(testReportObject.testReport[key].requestData,key)">
-            <!--<img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
+          <mat-tab label="Request">
+            <div class="centereddiv" *ngIf="isKeyRotation(testReportObject.testReport[key].requestData,key)">
+              <div class="leftdiv">
+                1) Check with Valid certificate.<br />
+                2) Wait for certificate to expire.Then test with expired certificate.<br />
+                3) Key Rotate and then test after key rotation.<br />
+              </div>
+            </div>
+            <div class="centereddiv" *ngIf="isRcapture(testReportObject.testReport[key].requestData,key)">
+              <!--<img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
                  style="background-color: #000000;" border="1">-->
-            <!--<mat-video [id]="getStreamImgTagId(key)" width="200" height="200" ></mat-video>-->
-            <!--<img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
+              <!--<mat-video [id]="getStreamImgTagId(key)" width="200" height="200" ></mat-video>-->
+              <!--<img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="stream video feed"
                  style="background-color: #000000;" border="1" >-->
-            <!--<video #stream id="test-id" width="200" height="200" ></video>-->
-           <!-- <img [id]="getStreamImgTagId(key)" [src]="imageToShow"
+              <!--<video #stream id="test-id" width="200" height="200" ></video>-->
+              <!-- <img [id]="getStreamImgTagId(key)" [src]="imageToShow"
                  alt="STREAMING ..."
                  *ngIf="!isImageLoading; else noImageFound">
             <ng-template #noImageFound>
               <img src="fallbackImage.png" alt="Fallbackimage">
             </ng-template>-->
-            <img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="Start Streaming to Display" border="1">
-          </div>
+              <img #stream [id]="getStreamImgTagId(key)" width="200" height="200" alt="Start Streaming to Display"
+                border="1">
+            </div>
 
-          <div class="centereddiv" >
+            <div class="centereddiv">
 
-            <!-- <button *ngIf="isStreamRequired(key)" mat-raised-button (click)="startStreaming(key)">Start Streaming</button> -->
-            <button *ngIf="isRcapture(testReportObject.testReport[key].requestData,key)" mat-raised-button (click)="streamingStart(key,testReportObject.testReport[key].requestData)">Start Streaming</button>
+              <!-- <button *ngIf="isStreamRequired(key)" mat-raised-button (click)="startStreaming(key)">Start Streaming</button> -->
+              <button *ngIf="isRcapture(testReportObject.testReport[key].requestData,key)" mat-raised-button
+                (click)="streamingStart(key,testReportObject.testReport[key].requestData)">Start Streaming</button>
 
               <button mat-raised-button *ngIf="isRequired(key)" (click)="getMDSResponse(testReportObject.testReport[key].requestData,
             testReportObject.testReport[key].runId, key,null)" [class.spinner]="loading" [disabled]="loading">
                 {{getButtonName(testReportObject.testReport[key].requestData)}}</button>
 
-              <button *ngIf="isCapture(testReportObject.testReport[key].requestData,key)" name="testId" ngDefaultControl [(ngModel)]="testId" mat-raised-button (click)="openUINDialog(testReportObject,key)">Enter UIN & Authenticate</button>
-  
+              <button *ngIf="isCapture(testReportObject.testReport[key].requestData,key)" name="testId" ngDefaultControl
+                [(ngModel)]="testId" mat-raised-button (click)="openUINDialog(testReportObject,key)">Enter UIN &
+                Authenticate</button>
 
-              <button *ngIf="isKeyRotation(testReportObject.testReport[key].requestData,key)" mat-raised-button
-                (click)="getMDSResponse(testReportObject.testReport[key].requestData,
+
+              <button *ngIf="isKeyRotation(testReportObject.testReport[key].requestData,key)" mat-raised-button (click)="getMDSResponse(testReportObject.testReport[key].requestData,
                     testReportObject.testReport[key].runId, key,'validCertButton')" [class.spinner]="validCertButton"
                 [disabled]="statusButton">check With valid certificate</button>
-                <button *ngIf="isKeyRotation(testReportObject.testReport[key].requestData,key)" mat-raised-button
-                (click)="getMDSResponse(testReportObject.testReport[key].requestData,
-                    testReportObject.testReport[key].runId, key,'expiredCertButton')" [class.spinner]="expiredCertButton"
-                [disabled]="statusButton">check with expired certificate</button>
-                <button *ngIf="isKeyRotation(testReportObject.testReport[key].requestData,key)" mat-raised-button
-                (click)="getMDSResponse(testReportObject.testReport[key].requestData,
-                    testReportObject.testReport[key].runId, key,'afterKeyRotationButton')" [class.spinner]="afterKeyRotationButton"
-                [disabled]="statusButton">check after key rotation</button>
-              
-            <!-- <button *ngIf="isCapture(testReportObject.testReport[key].requestData)" mat-raised-button (click)="startAuthTest(key)"
+              <button *ngIf="isKeyRotation(testReportObject.testReport[key].requestData,key)" mat-raised-button (click)="getMDSResponse(testReportObject.testReport[key].requestData,
+                    testReportObject.testReport[key].runId, key,'expiredCertButton')"
+                [class.spinner]="expiredCertButton" [disabled]="statusButton">check with expired certificate</button>
+              <button *ngIf="isKeyRotation(testReportObject.testReport[key].requestData,key)" mat-raised-button (click)="getMDSResponse(testReportObject.testReport[key].requestData,
+                    testReportObject.testReport[key].runId, key,'afterKeyRotationButton')"
+                [class.spinner]="afterKeyRotationButton" [disabled]="statusButton">check after key rotation</button>
+
+              <!-- <button *ngIf="isCapture(testReportObject.testReport[key].requestData)" mat-raised-button (click)="startAuthTest(key)"
                     [class.spinner]="authloading" [disabled]="authloading">Test Authentication</button> -->
 
               <button *ngIf="isDeviceStatus(testReportObject.testReport[key].requestData,key)" mat-raised-button
@@ -143,8 +151,9 @@
           </mat-tab>
           <mat-tab label="Result">
             <div class="centereddiv">
-              <button *ngIf="isCapture(testReportObject.testReport[key].requestData,key)" mat-raised-button (click)="download(testReportObject.testReport[key].runId, key)"
-                [class.spinner]="loading" [disabled]="loading">
+              <button *ngIf="isCapture(testReportObject.testReport[key].requestData,key)" mat-raised-button
+                (click)="download(testReportObject.testReport[key].runId, key)" [class.spinner]="loading"
+                [disabled]="loading">
                 Download</button>
             </div>
             <!-- <div [innerHTML]="getSanitizedSafeURLResource(testReportObject.testReport[key].renderContent)"></div> -->
