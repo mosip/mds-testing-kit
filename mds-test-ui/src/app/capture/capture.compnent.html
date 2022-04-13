@@ -1,0 +1,31 @@
+<!-- <h1 mat-dialog-title>Hi {{data.testId}}</h1> -->
+<h1 mat-dialog-title>Request Options</h1>
+
+<div mat-dialog-content>
+  <!-- <p>Enter UIN</p> -->
+  <mat-form-field>
+    <mat-label>Enter Time Out(in ms)</mat-label>
+    <input matInput name="data.timeOut" ngDefaultControl [(ngModel)]="data.timeOut">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Enter Previous Hash</mat-label>
+    <input matInput name="data.previousHash" ngDefaultControl [(ngModel)]="data.previousHash">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Enter Request Score</mat-label>
+    <input matInput name="data.requestScore" ngDefaultControl [(ngModel)]="data.requestScore">
+   </mat-form-field>
+   <!-- <p>* Default UIN is 6027349120, Provide your UIN to authenticate</p> -->
+  
+</div>
+<div mat-dialog-actions>
+  <!-- <button mat-raised-button *ngIf="isRequired(key)" (click)="getMDSResponse(testReportObject.testReport[key].requestData,
+  testReportObject.testReport[key].runId, key,null)" [class.spinner]="loading" [disabled]="loading">
+      {{getButtonName(testReportObject.testReport[key].requestData)}}</button> -->
+
+  <button  mat-raised-button (click)="getMDSResponse()"
+  [class.spinner]="authloading" [disabled]="authloading">{{getButtonName()}}</button>
+
+  <button mat-button [mat-dialog-close]="data.timeOut" cdkFocusInitial>Ok</button>
+</div>
+
