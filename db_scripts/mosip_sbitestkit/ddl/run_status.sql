@@ -1,6 +1,6 @@
 -- Table: sbitestkit.run_status
 
--- DROP TABLE sbitestkit.run_status;
+
 
 CREATE TABLE IF NOT EXISTS sbitestkit.run_status
 (

@@ -1,6 +1,6 @@
 -- Table: sbitestkit.testcase_result
 
--- DROP TABLE sbitestkit.testcase_result;
+
 
 CREATE TABLE IF NOT EXISTS sbitestkit.testcase_result
 (

@@ -1,5 +1,5 @@
 -- object: sbitestkituser | type: ROLE --
--- DROP ROLE IF EXISTS sbitestkituser;
+
 CREATE ROLE sbitestkituser WITH 
 	INHERIT
 	LOGIN
