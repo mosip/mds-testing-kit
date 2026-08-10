@@ -102,10 +102,13 @@ will not see them. `-Dtype` accepts `Finger`, `Face`, `Iris`, `Auth`, or
 `All`. Full step-by-step instructions (including running from an IDE) are
 in `mosip-device-reg/README`.
 
-There is no dedicated automated test suite (`mvn test` target with real
-tests) in any of the three modules as of this writing — verify with
-`mvn test` / `npm run test` output on the module you touch rather than
-assuming coverage exists.
+Test support differs by module. `mds-test-ui` has real Karma unit tests
+and Protractor e2e tests, run via `npm run test` and `npm run e2e`
+(above). `mosip-device-service` and `mosip-device-reg` have no `src/test`
+sources despite declaring test dependencies (e.g. TestNG) in their
+`pom.xml` — running `mvn test` on those modules will not exercise real
+tests. Verify with the actual command output on the module you touch
+rather than assuming coverage exists.
 
 ## Configuration
 
@@ -121,13 +124,16 @@ sandbox-environment values rather than real production secrets:
   `target/data` at build time by the `maven-resources-plugin` binding in
   `pom.xml`.
 - `mosip-device-service/data/keys/PrivateKey.pem` and
-  `PrivateKey_old.pem` — pre-existing test-only key files already
-  committed to this repo. Do not add real/production private keys next
-  to them, and do not assume these are safe to reuse for anything beyond
-  local test runs.
+  `PrivateKey_old.pem` — pre-existing private key files already
+  committed to this repo. Treat them as sensitive even though they are
+  sandbox/test fixtures: do not add real/production private keys next
+  to them, and do not copy or reuse them outside local test runs.
 - `mosip-device-reg/DeviceRegisterAndDeRegister/src/main/resources/commonData.properties` —
-  admin/partner login credentials and device-provider test data (checked
-  in with default MOSIP sandbox test credentials).
+  admin/partner login credentials and device-provider test data. These
+  are already-committed MOSIP sandbox test credentials, not inert
+  placeholders — they still work as real authentication material
+  against the sandbox environment, so do not print, log, or copy them
+  elsewhere.
 - `mosip-device-reg/DeviceRegisterAndDeRegister/src/main/resources/dbFiles/` —
   one Hibernate `cfg.xml` per target environment (dev, qa, qa2, sandbox,
   extint).
@@ -196,10 +202,11 @@ build regenerated in place.
   confuse. Only `DeviceRegisterAndDeRegister` has a documented, runnable
   build; check which one an issue actually refers to before editing.
 - Credentials and keys in this repo (see Configuration above) are
-  already-committed test fixtures for shared MOSIP sandbox environments,
-  not secrets you introduced. Treat any new secret-like value the same
-  way, but flag to a human reviewer before adding new real credentials
-  anywhere in the tree.
+  already-committed sandbox test fixtures, not secrets you introduced —
+  but they remain live authentication material for the shared MOSIP
+  sandbox, not inert placeholders. Treat any new secret-like value the
+  same way, and flag to a human reviewer before adding new real
+  credentials anywhere in the tree.
 
 ## Agent rules
 
@@ -222,9 +229,11 @@ build regenerated in place.
 
 1. Do not assume `develop` is the default branch here — it is `master`;
    confirm before branching if this ever changes.
-2. Do not invent a CI workflow, Dockerfile, or automated test suite that
-   does not exist in this repository — none of the three modules has one
-   as of this writing.
+2. Do not invent a CI workflow or Dockerfile — this repository has
+   neither. Do not assume an automated test suite exists for
+   `mosip-device-service` or `mosip-device-reg` — they have no
+   `src/test` sources. `mds-test-ui` is the exception: it has real
+   Karma/Protractor tests (`npm run test` / `npm run e2e`).
 3. Do not commit real credentials, keys, or connection strings over the
    placeholder/sandbox values in `application.properties`,
    `bootstrap.properties`, `commonData.properties`, or the `data/keys/`
