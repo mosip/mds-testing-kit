@@ -118,22 +118,29 @@ sandbox-environment values rather than real production secrets:
 
 - `mosip-device-service/src/main/resources/application.properties` and
   `bootstrap.properties` — MOSIP base URL, IDA/keymanager endpoints, DB
-  connection string, and a `<pwd>` placeholder for the DB password.
+  connection string, and two separate `<pwd>` placeholders:
+  `ida.auth.secretkey=<pwd>` (IDA authentication secret) in
+  `application.properties`, and `javax.persistence.jdbc.password=<pwd>`
+  (DB password) in `bootstrap.properties`.
 - `mosip-device-service/data/config/masterdata.json` and
   `test-definitions.json` — test case master data, copied into
   `target/data` at build time by the `maven-resources-plugin` binding in
   `pom.xml`.
 - `mosip-device-service/data/keys/PrivateKey.pem` and
-  `PrivateKey_old.pem` — pre-existing private key files already
-  committed to this repo. Treat them as sensitive even though they are
-  sandbox/test fixtures: do not add real/production private keys next
-  to them, and do not copy or reuse them outside local test runs.
+  `PrivateKey_old.pem` — full RSA private key material already
+  committed to this public repo; treat both as compromised, not as a
+  safe pattern to copy. Do not add any real/production private key
+  anywhere in this repo, do not reuse these keys outside local test
+  runs, and flag to a human maintainer that they should be
+  rotated/revoked and moved to a managed local secret store or
+  environment configuration instead of a tracked file.
 - `mosip-device-reg/DeviceRegisterAndDeRegister/src/main/resources/commonData.properties` —
-  admin/partner login credentials and device-provider test data. These
-  are already-committed MOSIP sandbox test credentials, not inert
-  placeholders — they still work as real authentication material
-  against the sandbox environment, so do not print, log, or copy them
-  elsewhere.
+  admin/partner login credentials (`admin_password`, `partner_password`)
+  and device-provider test data, committed in plaintext to this public
+  repo. Treat these as compromised, live authentication material against
+  the shared MOSIP sandbox, not as inert placeholders — do not print,
+  log, or copy them elsewhere, and flag to a human maintainer that they
+  should be rotated and moved out of a tracked file.
 - `mosip-device-reg/DeviceRegisterAndDeRegister/src/main/resources/dbFiles/` —
   one Hibernate `cfg.xml` per target environment (dev, qa, qa2, sandbox,
   extint).
@@ -174,9 +181,13 @@ build regenerated in place.
    branch (verify with `gh repo view mosip/mds-testing-kit --json
    defaultBranchRef` if unsure; it is not `develop` here even though
    many other MOSIP repos use `develop`).
-3. Make changes inside the one module you are working on. Build and run
-   that module's own commands (above) to verify your change — there is
-   no top-level command that builds all three at once.
+3. For module source or configuration changes, keep work inside the one
+   module you are working on, and build/run that module's own commands
+   (above) to verify your change — there is no top-level command that
+   builds all three at once. For repository-root documentation changes
+   (e.g. this `AGENTS.md`), which intentionally cover all three modules,
+   validate the Markdown and any command references instead of running
+   an unrelated module's build.
 4. Since there is no CI workflow defined in this repository, your local
    build/test run is the only verification step before opening a PR —
    run it and check the output yourself.
@@ -202,10 +213,12 @@ build regenerated in place.
   confuse. Only `DeviceRegisterAndDeRegister` has a documented, runnable
   build; check which one an issue actually refers to before editing.
 - Credentials and keys in this repo (see Configuration above) are
-  already-committed sandbox test fixtures, not secrets you introduced —
-  but they remain live authentication material for the shared MOSIP
-  sandbox, not inert placeholders. Treat any new secret-like value the
-  same way, and flag to a human reviewer before adding new real
+  already-committed to a public repo and should be treated as
+  compromised — not as a safe pattern to follow. They remain live
+  authentication material for the shared MOSIP sandbox, not inert
+  placeholders. Do not introduce any new secret-like value the same
+  way; use a managed local secret store or environment configuration
+  instead, and flag to a human reviewer before adding new real
   credentials anywhere in the tree.
 
 ## Agent rules
@@ -216,8 +229,10 @@ build regenerated in place.
    `mosip-device-reg/DeviceRegisterAndDeRegister`, or the legacy
    `mosip-device-reg/DeviceRegister`) an issue is actually about before
    editing, since their build systems and READMEs are independent.
-2. Run that module's own build/test command (npm or Maven, as listed
-   above) after making a change, and report the actual output in the PR.
+2. If a module changed, run its own build/test command (npm or Maven, as
+   listed above) and report the actual output in the PR. For a
+   repository-root documentation-only change, report the documentation
+   and command-reference checks you performed instead.
 3. Put JVM `-D` system properties before `-jar` in any command you write
    or document.
 4. Quote or name placeholder values explicitly (e.g. `ENV_USER="dev"`)
