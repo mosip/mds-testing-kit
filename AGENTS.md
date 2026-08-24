@@ -2,8 +2,8 @@
 
 ## Repository Overview
 
-`mds-testing-kit` holds tools for testing MOSIP-compliant Mobile/Biometric
-Device Service (MDS) implementations. It is a loose collection of three
+`mds-testing-kit` holds tools for testing MOSIP-compliant MOSIP Device
+Service (MDS) implementations. It is a loose collection of three
 independent projects, not a single build:
 
 - **`mds-test-ui`** — an Angular web UI for driving MDS conformance test
@@ -58,7 +58,7 @@ npm run lint    # ng lint
 
 Before running the dev server, point it at your backend by editing
 `mds-test-ui/src/environments/environment.ts` (`base_url`, default is
-`http://localhost:8080/`).
+`http://localhost:8081/`).
 
 ### mosip-device-service
 
@@ -69,10 +69,10 @@ cd mosip-device-service
 ```
 
 On Windows use `mvnw.cmd` instead of `./mvnw`. The service listens on
-port `8080` by default (`server.port` in
+port `8081` by default (`server.port` in
 `src/main/resources/bootstrap.properties`). Its two REST controllers are
-mounted under `/testrunner` (`TestRunnerController`) and the equivalent
-path in `TestManagerController` — read those classes under
+mounted under `/testrunner` (`TestRunnerController`) and `/testmanager`
+(`TestManagerController`) — read those classes under
 `src/main/java/io/mosip/mds/controller/` for the exact endpoint list
 before wiring a client against them.
 
@@ -121,19 +121,24 @@ sandbox-environment values rather than real production secrets:
   connection string, and two separate `<pwd>` placeholders:
   `ida.auth.secretkey=<pwd>` (IDA authentication secret) in
   `application.properties`, and `javax.persistence.jdbc.password=<pwd>`
-  (DB password) in `bootstrap.properties`.
+  (DB password) in `bootstrap.properties`. `application.properties` also
+  has non-placeholder, live-looking values committed in plaintext —
+  `auth.request.misplicense.key`, `auth.request.partnerid`, and
+  `auth.request.partnerapi.key` — treat these the same as the other
+  committed secrets below, not as inert samples.
 - `mosip-device-service/data/config/masterdata.json` and
   `test-definitions.json` — test case master data, copied into
   `target/data` at build time by the `maven-resources-plugin` binding in
   `pom.xml`.
-- `mosip-device-service/data/keys/PrivateKey.pem` and
-  `PrivateKey_old.pem` — full RSA private key material already
-  committed to this public repo; treat both as compromised, not as a
-  safe pattern to copy. Do not add any real/production private key
-  anywhere in this repo, do not reuse these keys outside local test
-  runs, and flag to a human maintainer that they should be
-  rotated/revoked and moved to a managed local secret store or
-  environment configuration instead of a tracked file.
+- `mosip-device-service/data/keys/PrivateKey.pem`, `PrivateKey_old.pem`,
+  and `rp-partner.p12` — full RSA private key material and a partner
+  keystore already committed to this public repo; treat all three as
+  compromised, not as a safe pattern to copy. Do not add any real/
+  production private key or keystore anywhere in this repo, do not
+  reuse these files outside local test runs, and flag to a human
+  maintainer that they should be rotated/revoked and moved to a managed
+  local secret store or environment configuration instead of a tracked
+  file.
 - `mosip-device-reg/DeviceRegisterAndDeRegister/src/main/resources/commonData.properties` —
   admin/partner login credentials (`admin_password`, `partner_password`)
   and device-provider test data, committed in plaintext to this public
@@ -142,8 +147,10 @@ sandbox-environment values rather than real production secrets:
   log, or copy them elsewhere, and flag to a human maintainer that they
   should be rotated and moved out of a tracked file.
 - `mosip-device-reg/DeviceRegisterAndDeRegister/src/main/resources/dbFiles/` —
-  one Hibernate `cfg.xml` per target environment (dev, qa, qa2, sandbox,
-  extint).
+  multiple Hibernate `cfg.xml` files per target environment, one set
+  each for `masterdata*`, `pms*`, and `regdevice*` (dev, qa, qa2,
+  sandbox, extint, as available per set) — not a single config per
+  environment.
 - `mds-test-ui/src/environments/environment.ts` /
   `environment.prod.ts` — backend base URL used by the Angular app.
 
@@ -177,10 +184,12 @@ build regenerated in place.
 ## Development Workflow
 
 1. Fork the repo and clone your fork.
-2. Branch from `master` — this is the repository's actual default
-   branch (verify with `gh repo view mosip/mds-testing-kit --json
-   defaultBranchRef` if unsure; it is not `develop` here even though
-   many other MOSIP repos use `develop`).
+2. GitHub reports `master` as this repository's default branch (verify
+   with `gh repo view mosip/mds-testing-kit --json defaultBranchRef` if
+   unsure), but `develop` is the active integration branch — it is ahead
+   of `master` and recent human-authored PRs target it. Branch from and
+   open feature PRs against `develop` unless you are specifically
+   backporting to `master`.
 3. For module source or configuration changes, keep work inside the one
    module you are working on, and build/run that module's own commands
    (above) to verify your change — there is no top-level command that
@@ -194,7 +203,9 @@ build regenerated in place.
 
 ## Pull Request Guidelines
 
-- Target the `master` branch on `mosip/mds-testing-kit`.
+- Target the `develop` branch on `mosip/mds-testing-kit` (the active
+  integration branch), unless you are specifically backporting to
+  `master`.
 - Reference the relevant tracking issue in the PR description.
 - Since there is no CI pipeline here, describe in the PR body what you
   ran locally (e.g. `npm run build`, `mvn clean install`) and the
@@ -242,8 +253,10 @@ build regenerated in place.
 
 ### Do not
 
-1. Do not assume `develop` is the default branch here — it is `master`;
-   confirm before branching if this ever changes.
+1. Do not assume `master` is where feature work lands just because
+   GitHub reports it as the default branch — `develop` is the active
+   integration branch; confirm which branch a PR should target if this
+   ever changes.
 2. Do not invent a CI workflow or Dockerfile — this repository has
    neither. Do not assume an automated test suite exists for
    `mosip-device-service` or `mosip-device-reg` — they have no
@@ -252,7 +265,7 @@ build regenerated in place.
 3. Do not commit real credentials, keys, or connection strings over the
    placeholder/sandbox values in `application.properties`,
    `bootstrap.properties`, `commonData.properties`, or the `data/keys/`
-   PEM files.
+   PEM and `.p12` files.
 4. Do not try to build `mosip-device-reg/DeviceRegister` as a runnable
    jar — its `pom.xml` has no assembly/main-class configuration for that.
 5. Do not merge the three modules' build systems or assume a shared
