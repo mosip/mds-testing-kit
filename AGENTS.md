@@ -132,20 +132,12 @@ sandbox-environment values rather than real production secrets:
   `pom.xml`.
 - `mosip-device-service/data/keys/PrivateKey.pem`, `PrivateKey_old.pem`,
   and `rp-partner.p12` — full RSA private key material and a partner
-  keystore already committed to this public repo; treat all three as
-  compromised, not as a safe pattern to copy. Do not add any real/
-  production private key or keystore anywhere in this repo, do not
-  reuse these files outside local test runs, and flag to a human
-  maintainer that they should be rotated/revoked and moved to a managed
-  local secret store or environment configuration instead of a tracked
-  file.
+  keystore already committed to this public repo. Compromised, not a
+  pattern to copy (see Repository-Specific Considerations).
 - `mosip-device-reg/DeviceRegisterAndDeRegister/src/main/resources/commonData.properties` —
   admin/partner login credentials (`admin_password`, `partner_password`)
-  and device-provider test data, committed in plaintext to this public
-  repo. Treat these as compromised, live authentication material against
-  the shared MOSIP sandbox, not as inert placeholders — do not print,
-  log, or copy them elsewhere, and flag to a human maintainer that they
-  should be rotated and moved out of a tracked file.
+  and device-provider test data, committed in plaintext. Same treatment
+  as above — live sandbox credentials, not inert placeholders.
 - `mosip-device-reg/DeviceRegisterAndDeRegister/src/main/resources/dbFiles/` —
   multiple Hibernate `cfg.xml` files per target environment, one set
   each for `masterdata*`, `pms*`, and `regdevice*` (dev, qa, qa2,
