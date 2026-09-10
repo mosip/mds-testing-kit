@@ -79,26 +79,8 @@ import io.mosip.mds.entitiy.Store;
 @Component
 public class BioAuthRequestUtil {
 
-	@Autowired
-	private ObjectMapper objMapper;
-
 	private static final Logger logger = LoggerFactory.getLogger(BioAuthRequestUtil.class);
 	private static String AUTH_REQ_TEMPLATE = "{ \"id\": \"string\",\"metadata\": {},\"request\": { \"appId\": \"%s\", \"clientId\": \"%s\", \"secretKey\": \"%s\" }, \"requesttime\": \"%s\", \"version\": \"string\"}";
-
-	private static String SIGN_REQ_TEMPLATE = "{\r\n" + 
-			"  \"id\": \"string\",\r\n" + 
-			"  \"metadata\": {},\r\n" + 
-			"  \"request\": {\r\n" + 
-			"    \"applicationId\": \"IDA\",\r\n" + 
-			"    \"dataToSign\": \"%s\",\r\n" + 
-			"    \"includeCertHash\": true,\r\n" + 
-			"    \"includeCertificate\": true,\r\n" + 
-			"    \"includePayload\": false,\r\n" + 
-			"    \"referenceId\": \"SIGN\"\r\n" + 
-			"  },\r\n" + 
-			"  \"requesttime\": \"%s\",\r\n" + 
-			"  \"version\": \"string\"\r\n" + 
-			"}";
 
 	private static final String VERSION = "1.0";
 	private static final String UIN = "UIN";
@@ -250,30 +232,6 @@ public class BioAuthRequestUtil {
 		return restTemplate;
 	}
 
-	private String doAuthRequest(String authToken, Map<String, Object> authRequestMap) throws Exception {
-		try {
-			String reqBodyJson = mapper.writeValueAsString(authRequestMap);
-			OkHttpClient client = new OkHttpClient();
-			MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-			RequestBody body = RequestBody.create(mediaType, reqBodyJson);
-			Request request = new Request.Builder()
-					//curl -X POST "https://dev.mosip.net/v1/keymanager/sign" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"id\": \"string\", \"metadata\": {}, \"request\": { \"data\": \"string\" }, \"requesttime\": \"2018-12-10T06:12:52.994Z\", \"version\": \"string\"}"
-					.header("signature", sign(CryptoUtil.encodeBase64(reqBodyJson.getBytes("UTF-8"))
-							))
-					.header( "Authorization" , authToken)
-					.url(String.format(env.getProperty("ida.auth.url"), env.getProperty("auth.request.misplicense.key"),
-							env.getProperty("auth.request.partnerid"), env.getProperty("auth.request.partnerapi.key")))
-					.post(body)
-					.build();
-			Response idaResponse = client.newCall(request).execute();
-			return idaResponse.body().string();
-
-		} catch (IOException | JSONException e) {
-			logger.error("Failed to fetch cert from IDA auth server", e);
-		}
-		return "Failed to get auth response !";
-	}
-
 	private EncryptionResponseDto kernelEncrypt(EncryptionRequestDto encryptionRequestDto, X509Certificate certificate)
 			throws Exception {
 		EncryptionResponseDto encryptionResponseDto = new EncryptionResponseDto();
@@ -295,22 +253,6 @@ public class BioAuthRequestUtil {
 		return encryptionResponseDto;
 	}
 
-	private EncryptionResponseDto kernelEncrypt1(EncryptionRequestDto encryptionRequestDto, X509Certificate x509Cert) throws Exception	 {
-		String identityBlock = objMapper.writeValueAsString(encryptionRequestDto.getIdentityRequest());
-		SecretKey secretKey = cryptoUtil.genSecKey();
-		EncryptionResponseDto encryptionResponseDto = new EncryptionResponseDto();
-		byte[] encryptedIdentityBlock = cryptoUtil.symmetricEncrypt(identityBlock.getBytes(StandardCharsets.UTF_8),
-				secretKey);
-		encryptionResponseDto.setEncryptedIdentity(Base64.encodeBase64URLSafeString(encryptedIdentityBlock));
-		PublicKey publicKey = x509Cert.getPublicKey();
-		byte[] encryptedSessionKeyByte = cryptoUtil.asymmetricEncrypt((secretKey.getEncoded()), publicKey);
-		encryptionResponseDto.setEncryptedSessionKey(Base64.encodeBase64URLSafeString(encryptedSessionKeyByte));
-		byte[] byteArr = cryptoUtil.symmetricEncrypt(digestAsPlainText(HMACUtils2.generateHash(identityBlock.getBytes(StandardCharsets.UTF_8))).getBytes(),
-				secretKey);
-		encryptionResponseDto.setRequestHMAC(Base64.encodeBase64URLSafeString(byteArr));
-		return encryptionResponseDto;
-	}
-
 	public static String digestAsPlainText(byte[] data) {
 		return DatatypeConverter.printHexBinary(data).toUpperCase();
 	}
@@ -321,28 +263,6 @@ public class BioAuthRequestUtil {
 		X509Certificate x509Certificate = (X509Certificate) cf.generateCertificate(
 				new ByteArrayInputStream(java.util.Base64.getDecoder().decode(certificate)));
 		return x509Certificate;
-	}
-
-	//Depriciated
-	private String getJWTSignedData(String data, String authToken) throws IOException, JSONException {
-		OkHttpClient client = new OkHttpClient();
-		String requestBody = String.format(SIGN_REQ_TEMPLATE,
-				data, DateUtils.getUTCCurrentDateTime());
-
-		MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-		RequestBody body = RequestBody.create(mediaType, requestBody);
-		Request request = new Request.Builder()
-				.header("cookie", "Authorization="+authToken)
-				.url(env.getProperty("internal.auth.jwtSign.url"))
-				.post(body)
-				.build();
-		Response response = client.newCall(request).execute();
-		if(response.isSuccessful()) {
-			JSONObject jsonObject = new JSONObject(response.body().string());
-			jsonObject = jsonObject.getJSONObject("response");
-			return jsonObject.getString("jwtSignedData");
-		}
-		return "";
 	}
 
 	public String getAuthToken() throws IOException {

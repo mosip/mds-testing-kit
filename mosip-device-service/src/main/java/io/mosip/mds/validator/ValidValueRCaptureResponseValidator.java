@@ -325,16 +325,16 @@ public class ValidValueRCaptureResponseValidator extends Validator{
 						validations.add(validation);
 						bioIndex++;
 						}
-						 if(biometrics[bioIndex].dataDecoded.bioType.equals(CommonConstant.IRIS)) {
-								
-								validation = commonValidator.setFieldExpected("dataDecoded.bioSubType",subType,biometrics[bioIndex].dataDecoded.bioSubType);				
-								if(!biometrics[bioIndex].dataDecoded.bioSubType.equals(subType)
-										&& !bioSubTypeIrisList.contains(biometrics[bioIndex].dataDecoded.bioSubType)) {
-									commonValidator.setFoundMessageStatus(validation,biometrics[bioIndex].dataDecoded.bioSubType,"invalid biometrics SubType returned",CommonConstant.FAILED);											
-								}
-								validations.add(validation);
-								bioIndex++;
-								}
+//						 if(biometrics[bioIndex].dataDecoded.bioType.equals(CommonConstant.IRIS)) {
+//								
+//								validation = commonValidator.setFieldExpected("dataDecoded.bioSubType",subType,biometrics[bioIndex].dataDecoded.bioSubType);				
+//								if(!biometrics[bioIndex].dataDecoded.bioSubType.equals(subType)
+//										&& !bioSubTypeIrisList.contains(biometrics[bioIndex].dataDecoded.bioSubType)) {
+//									commonValidator.setFoundMessageStatus(validation,biometrics[bioIndex].dataDecoded.bioSubType,"invalid biometrics SubType returned",CommonConstant.FAILED);											
+//								}
+//								validations.add(validation);
+//								bioIndex++;
+//								}
 					}
 					}
 

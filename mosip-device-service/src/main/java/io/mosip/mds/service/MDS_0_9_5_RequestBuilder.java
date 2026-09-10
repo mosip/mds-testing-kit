@@ -192,7 +192,7 @@ public class MDS_0_9_5_RequestBuilder implements IMDSRequestBuilder {
         requestBody.env = "Developer";
         requestBody.purpose = "Registration";
         requestBody.specVersion = "0.9.5";
-        requestBody.timeout = 10000;
+        requestBody.timeout = "10000";
         requestBody.transactionId = "" + System.currentTimeMillis();
         
         requestBody.bio = new RegistrationCaptureRequest.RegistrationCaptureBioRequest[1];

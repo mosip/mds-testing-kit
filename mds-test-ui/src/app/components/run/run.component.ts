@@ -10,7 +10,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ModalComponent } from '../../modal/modal.component';
 
-import { DialogOverviewExampleDialog } from '../../auth/auth.component'
+import { DialogOverviewExampleDialog } from '../../auth/auth.component';
+import { DialogOverviewCaptureDialog } from '../../capture/capture.component'
+
 
 declare const start_streaming: any;
 declare const stop_streaming: any;
@@ -25,10 +27,12 @@ export class RunComponent implements OnInit {
   uin: string;
   testId: string;
   testReportObject1: any;
+  timeOut:any;
+  requestScore:any;
+  previousHash:any;
+  keyRotatOrderIdList = [3011, 3012, 3013];
 
-  keyRotatOrderIdList = [11, 12, 13];
-
-  keyRotatOrderIdListRcapture = [14];
+  keyRotatOrderIdListRcapture = [3014];
   successErrorCodeOfAuth = "IDA-BIA-001";
   succesAuth = "authStatus=true";
   failErrorCodeOfAuth = "IDA-MPA-002";
@@ -138,8 +142,7 @@ export class RunComponent implements OnInit {
 
 
   getMDSResponse(request, runId, testId, status) {
-    this.loading = true;
-    this.statusButton = true;
+   this.statusButton = true;
     if (status == 'Ready') {
       this.readyButton = true;
     } else if (status == 'Not Ready') {
@@ -158,6 +161,17 @@ export class RunComponent implements OnInit {
 
 
     let mdmResponse = this.testReportObject.testReport[testId].responseData;
+    let method = JSON.parse(request).verb;
+   
+    if((method === "CAPTURE" || method==="RCAPTURE") && status == null)
+    this.openCaptureDataDialog(this.testReportObject,testId,request);
+    else
+    this.otherInitate(testId, request, runId, status);
+  }
+
+  private otherInitate(testId: any, request: any, runId: any, status: any) {
+    this.loading = true;
+    
     if (this.mdmInitiated === true) {
       console.log("MDM request is currently going on .....");
     }
@@ -489,6 +503,26 @@ export class RunComponent implements OnInit {
 
     );
 
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.uin = result;
+    });
+  }
+
+
+
+  openCaptureDataDialog(testReportObject1: any, key: any,request:any): void {
+    this.testReportObject1 = testReportObject1;
+    this.testId = key;
+    const dialogRef = this.dialog.open(DialogOverviewCaptureDialog, {
+      width: '300px',
+      data: { timeOut: this.timeOut,
+        requestScore:this.requestScore,
+        previousHash:this.previousHash,
+        testReportObject1:this.testReportObject1,
+        testId: this.testId ,
+        request:request}
+    });
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
       this.uin = result;

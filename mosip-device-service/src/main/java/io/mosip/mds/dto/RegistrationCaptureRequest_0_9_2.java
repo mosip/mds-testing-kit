@@ -17,7 +17,7 @@ public class RegistrationCaptureRequest_0_9_2 {
     
     public String env; //target environment
     public String specVersion; //expected MDS spec version
-    public Integer timeout; //timeout for registration capture
+    public String timeout; //timeout for registration capture
     public String captureTime; //time of capture request in ISO format including timezone
     public String registrationId; //registration Id for the current capture
     public RegistrationCaptureBioRequest_0_9_2[] bio;
